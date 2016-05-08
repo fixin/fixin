@@ -25,7 +25,7 @@ class SimpleLoader {
      * @param string|array $path
      * @return \Fixin\Loader\SimpleLoader
      */
-    public function addNamespace($prefix, $path) {
+    public function addNamespace(string $prefix, $path) {
         // Prepare prefix
         $prefix = trim($prefix, '\\');
         if (DIRECTORY_SEPARATOR !== '\\') {
@@ -59,12 +59,13 @@ class SimpleLoader {
      *
      * @param string $class
      */
-    public function autoload($class) {
+    public function autoload(string $class) {
         // Swap '\'
         if (DIRECTORY_SEPARATOR !== '\\') {
             $class = strtr($class, '\\', DIRECTORY_SEPARATOR);
         }
 
+        // Searching for prefix
         $length = 0;
 
         while (($length = strpos($class, DIRECTORY_SEPARATOR, $length + 1)) !== false) {
