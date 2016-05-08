@@ -12,14 +12,14 @@ class SimpleLoader {
     protected $paths = [];
 
     /**
-     * @param array $namespaces
+     * @param array $prefixes
      */
-    public function __construct(array $namespaces = []) {
-        $this->addNamespaces($namespaces);
+    public function __construct(array $prefixes = []) {
+        $this->addNamespacePrefixes($prefixes);
     }
 
     /**
-     * Adds a base path for a prefix
+     * Adds a base path(s) for a prefix
      *
      * @param string $prefix
      * @param string|array $path
@@ -41,13 +41,13 @@ class SimpleLoader {
     }
 
     /**
-     * Adds multiple namespaces
+     * Adds multiple namespace prefixes
      *
-     * @param array $namespaces
+     * @param array $prefixes
      * @return \Fixin\Loader\SimpleLoader
      */
-    public function addNamespaces(array $namespaces) {
-        foreach ($namespaces as $prefix => $path) {
+    public function addNamespacePrefixes(array $prefixes) {
+        foreach ($prefixes as $prefix => $path) {
             $this->addNamespace($prefix, $path);
         }
 
