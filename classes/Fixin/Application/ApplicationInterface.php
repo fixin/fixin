@@ -4,12 +4,7 @@ namespace Fixin\Application;
 
 interface ApplicationInterface {
 
-    /**
-     * Gets the resource manager
-     *
-     * @return \Fixin\ResourceManager\ServiceLocatorInterface
-     */
-    public function getResourceManager();
+    const CONFIG_KEY = 'config';
 
     /**
      * Runs the application
