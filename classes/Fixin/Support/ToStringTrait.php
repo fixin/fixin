@@ -8,13 +8,15 @@ trait ToStringTrait {
      * @return string
      */
     public function __toString() {
-        $info = '';
+        $info = '[' . get_class($this) . "] {\n";
 
         foreach ($this as $key => $value) {
-            // TODO: exchange print_r
+            // TODO: replace print_r
             $info .= "\t{$key}: " . str_replace("\n", "\n\t", print_r($value, true)) . "\n";
         }
 
-        return '[' . get_class($this) . "]\n{$info}\n";
+        $info .= "}\n";
+
+        return Ground::isConsole() ? $info : '<pre>' . htmlspecialchars($info) . '</pre>';
     }
 }
