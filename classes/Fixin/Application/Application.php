@@ -8,7 +8,7 @@ use Fixin\ResourceManager\ResourceManager;
 class Application implements ApplicationInterface {
 
     /**
-     * @var ResourceManager
+     * @var \Fixin\ResourceManager\ResourceManagerInterface
      */
     protected $resourceManager;
 
@@ -20,12 +20,12 @@ class Application implements ApplicationInterface {
         $rmConfig = $config['resourceManager'];
         unset($config['resourceManager']);
 
-        $rmConfigClass = $rmConfig['class'] ?? '\Fixin\ResourceManager\ResourceManager';
+        $rmClass = $rmConfig['class'] ?? '\Fixin\ResourceManager\ResourceManager';
         unset($rmConfig['class']);
 
         // Resoure Manager init
         $this->resourceManager =
-        $rm = new $rmConfigClass($rmConfig);
+        $rm = new $rmClass($rmConfig);
         $rm->set(ApplicationInterface::CONFIG_KEY, new Config($config));
     }
 

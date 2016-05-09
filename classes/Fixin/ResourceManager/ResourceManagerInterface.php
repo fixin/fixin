@@ -2,7 +2,7 @@
 
 namespace Fixin\ResourceManager;
 
-interface ServiceLocatorInterface {
+interface ResourceManagerInterface {
 
     /**
      * Gets the registered instance
