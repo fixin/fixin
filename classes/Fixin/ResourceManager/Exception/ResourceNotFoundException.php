@@ -2,6 +2,6 @@
 
 namespace Fixin\ResourceManager\Exception;
 
-class ResourceFaultException extends Exception {
+class ResourceNotFoundException extends Exception {
 
 }

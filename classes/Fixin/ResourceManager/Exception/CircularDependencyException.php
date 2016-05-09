@@ -2,6 +2,6 @@
 
 namespace Fixin\ResourceManager\Exception;
 
-class CircularDependencyException extends \LogicException {
+class CircularDependencyException extends Exception {
 
 }

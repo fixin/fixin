@@ -6,6 +6,7 @@ use Closure;
 use Fixin\Base\Configurable;
 use Fixin\ResourceManager\Factory\FactoryInterface;
 use Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface;
+use Fixin\Base\Exception\InvalidParameterException;
 
 class ResourceManager extends Configurable implements ResourceManagerInterface {
 
@@ -84,7 +85,7 @@ class ResourceManager extends Configurable implements ResourceManagerInterface {
         // Circular dependency test
         if (isset($this->dependencyStack[$name])) {
             $this->dependencyStack = [];
-            throw new Exception\CircularDependencyException('Circular dependency found for ' . $name);
+            throw new Exception\CircularDependencyException("Circular dependency found for '$name'");
         }
 
         // Indicate no source
@@ -115,12 +116,12 @@ class ResourceManager extends Configurable implements ResourceManagerInterface {
 
         // Faults
         if ($instance === null) {
-            throw new Exception\ResourceFaultException('Resource not allocatable for name "' . $name . '"');
+            throw new Exception\ResourceFaultException("Resource not allocatable for name '$name'");
         }
         elseif ($instance === false) {
             $similar = $this->unifiedResourceNames[strtolower($name)] ?? null;
 
-            throw new Exception\ResourceNotFoundException('Resource is not registered with name "' . $name . '"' . ($similar ? '. Do you think "' . $similar . '"?' : ''));
+            throw new Exception\ResourceNotFoundException("Resource is not registered with name '$name'" . ($similar ? ". Do you think '$similar'?" : ''));
         }
 
         return $instance;
@@ -133,7 +134,7 @@ class ResourceManager extends Configurable implements ResourceManagerInterface {
         }
 
         if (!$factory instanceof AbstractFactoryInterface) {
-            throw new InvalidArgumentException('Invalid type for abstract factory: ' . gettype($definition));
+            throw new InvalidParameterException('Invalid type for abstract factory: ' . gettype($definition));
         }
 
         return $factory;
@@ -145,7 +146,7 @@ class ResourceManager extends Configurable implements ResourceManagerInterface {
         // Resolve class name
         if (is_string($creator) && class_exists($creator)) {
             $this->definitions[$name] =
-            $creator = new $creator($this);
+            $creator = new $creator();
         }
 
         // Factory
@@ -161,7 +162,7 @@ class ResourceManager extends Configurable implements ResourceManagerInterface {
             return $creator($this);
         }
 
-        throw new Exception\ResourceFaultException('Invalid definition registered for name "' . $name . '"');
+        throw new Exception\ResourceFaultException("Invalid definition registered for name '$name'");
     }
 
     public function get(string $name) {
@@ -198,7 +199,7 @@ class ResourceManager extends Configurable implements ResourceManagerInterface {
 
         // Already exists
         if ($existingName = $this->unifiedResourceNames[$unifiedName] ?? null) {
-            throw new Exception\InvalidResourceNameException('A resource with a corresponding name "' . $existingName . '" already registered');
+            throw new Exception\ResourceNameUsedException("A resource with a corresponding name '$existingName' already registered");
         }
 
         // Type check
@@ -207,7 +208,7 @@ class ResourceManager extends Configurable implements ResourceManagerInterface {
             $this->unifiedResourceNames[$unifiedName] = $name;
         }
         else {
-            throw new InvalidConfigurationException('Invalid configuration type for the name "' . $name . '": ' . gettype($definition));
+            throw new InvalidParameterException("Invalid definition for the name '$name': " . gettype($definition));
         }
 
         return $this;
