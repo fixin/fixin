@@ -7,7 +7,7 @@ use Fixin\ResourceManager\ResourceManagerInterface;
 interface AbstractFactoryInterface {
 
     /**
-     * Determins if we can produce a resource by name
+     * Determines if we can produce a resource by name
      *
      * @param ResourceManagerInterface $manager
      * @param string $name
