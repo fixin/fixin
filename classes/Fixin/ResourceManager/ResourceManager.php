@@ -2,9 +2,21 @@
 
 namespace Fixin\ResourceManager;
 
-use Fixin\Base\WithOptions;
+use Closure;
+use Fixin\Base\Configurable;
+use Fixin\ResourceManager\Factory\FactoryInterface;
+use Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface;
 
-class ResourceManager extends WithOptions implements ServiceLocatorInterface {
+class ResourceManager extends Configurable implements ResourceManagerInterface {
+
+    const ABSTRACT_FACTORIES_KEY = 'abstractFactories';
+
+    /**
+     * Abstract factories
+     *
+     * @var array
+     */
+    protected $abstractFactories = [];
 
     /**
      * Definitions
@@ -28,181 +40,190 @@ class ResourceManager extends WithOptions implements ServiceLocatorInterface {
     protected $resources = [];
 
     /**
-     * Unified names
+     * Unified resource names
      *
      * @var array
      */
-    protected $unifiedNames = [];
+    protected $unifiedResourceNames = [];
 
-    public function canCreateByAbstractFactory(string $key, string $name): bool {
+    /**
+     * @param array $config
+     */
+    public function __construct(array $config = []) {
+        // Abstract factories
+        if (isset($config[static::ABSTRACT_FACTORIES_KEY])) {
+            foreach ($config[static::ABSTRACT_FACTORIES_KEY] as $abstractFactory) {
+                $this->appendAbstractFactory($abstractFactory);
+            }
+
+            unset($config[static::ABSTRACT_FACTORIES_KEY]);
+        }
+
+        $this->iHaveToWriteThis = 'iHaveToWriteThis';
+
+        parent::__construct($config);
+    }
+
+    /**
+     * Appends abstract factory to the list
+     *
+     * @param AbstractFactoryInterface|string $factory
+     * @return \Fixin\ResourceManager\ResourceManager
+     */
+    public function appendAbstractFactory($factory) {
+        array_push($this->abstractFactories, $this->createAbstractFactory($factory));
+
+        return $this;
+    }
+
+    protected function canCreateResourceFromAbstractFactory(string $name) {
         return false;
     }
 
-    public function create(string $key, string $name) {
-        $instance = null;
-
-        // Circular dependency
-        if (isset($this->dependencyStack[$key])) {
+    protected function create(string $name) {
+        // Circular dependency test
+        if (isset($this->dependencyStack[$name])) {
             $this->dependencyStack = [];
             throw new Exception\CircularDependencyException('Circular dependency found for ' . $name);
         }
 
+        // Indicate no source
+        $instance = false;
+
+        // Create
         try {
-            $this->dependencyStack[$key] = true;
+            // Circular dependency
+            $this->dependencyStack[$name] = true;
 
             // Definition
-            if (isset($this->definitions[$key])) {
-                $instance = $this->createFromDefinition($key, $name);
+            if (isset($this->definitions[$name])) {
+                $instance = $this->createResourceFromDefinition($name);
             }
 
             // Abstract factories
-            if (!$instance && $this->canCreateByAbstractFactory($key, $name)) {
-                $instance = $this->createFromAbstractFactory($key, $name);
+            if (!$instance && $this->canCreateResourceFromAbstractFactory($name)) {
+                $instance = $this->createFromAbstractFactory($name);
             }
 
             // Circular dependency
-            unset($this->dependencyStack[$key]);
+            unset($this->dependencyStack[$name]);
         }
         catch (\Exception $e) {
-            unset($this->dependencyStack[$key]);
+            unset($this->dependencyStack[$name]);
             throw $e;
         }
 
-        // Can't create
-        if (!$instance) {
-            throw new Exception\ResourceFaultException('Resource not allocatable for ' . $name);
+        // Faults
+        if ($instance === null) {
+            throw new Exception\ResourceFaultException('Resource not allocatable for name "' . $name . '"');
+        }
+        elseif ($instance === false) {
+            $similar = $this->unifiedResourceNames[strtolower($name)] ?? null;
+
+            throw new Exception\ResourceNotFoundException('Resource is not registered with name "' . $name . '"' . ($similar ? '. Do you think "' . $similar . '"?' : ''));
         }
 
         return $instance;
     }
 
-    /**
-     * Create instanse from definition
-     *
-     * @param string $key
-     * @param string $name
-     * @throws Exception\ResourceFaultException
-     * @return object
-     */
-    protected function createFromDefinition(string $key, string $name) {
-        $creator = $this->definitions[$key];
+    protected function createAbstractFactory($factory) {
+        // Resolve class name
+        if (is_string($factory) && class_exists($factory)) {
+            $factory = new $factory($this);
+        }
 
-        // Resolve class string
+        if (!$factory instanceof AbstractFactoryInterface) {
+            throw new InvalidArgumentException('Invalid type for abstract factory: ' . gettype($definition));
+        }
+
+        return $factory;
+    }
+
+    protected function createResourceFromDefinition(string $name) {
+        $creator = $this->definitions[$name];
+
+        // Resolve class name
         if (is_string($creator) && class_exists($creator)) {
-            $creator = new $creator();
-            $this->definitions[$key] = $creator;
+            $this->definitions[$name] =
+            $creator = new $creator($this);
         }
 
         // Factory
         if ($creator instanceof FactoryInterface) {
-            return $creator->createSource();
+            return $creator->produce($this);
         }
-        elseif (is_callable($creator)) {
-            return $creator();
-        }
-        elseif (is_object($creator)) {
+        // Object
+        elseif (is_object($creator) && !$creator instanceof Closure) {
             return $creator;
         }
+        // Callable
+        elseif (is_callable($creator)) {
+            return $creator($this);
+        }
 
-        throw new Exception\ResourceFaultException('Invalid factory registered: ' . $name);
+        throw new Exception\ResourceFaultException('Invalid definition registered for name "' . $name . '"');
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\ResourceManager\ServiceLocatorInterface::get()
-     */
     public function get(string $name) {
-        $key = $this->unifiedNames[$name] ?? $this->unifieName($name);
-
-        // Resource
-        if (isset($this->resources[$key])) {
-            return $this->resources[$key];
-        }
-
-        // Create
-        $instance = $this->create($key, $name);
-
-        return $instance;
+        return $this->resources[$name] ?? $this->resources[$name] = $this->create($name);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\ResourceManager\ServiceLocatorInterface::has()
-     */
     public function has(string $name, bool $testAbstractCreation = true): bool {
-        return $this->hasKey($this->unifiedNames[$name] ?? $this->unifieName($name), $testAbstractCreation);
+        return isset($this->resources[$name]) || isset($this->definitions[$name]) || ($testAbstractCreation && $this->canCreateFromAbstractFactory($name));
     }
 
     /**
-     * Checks key
+     * Prepends abstract factory to the list
      *
-     * @param string $key
-     * @param bool $testAbstractCreation
-     * @return bool
+     * @param AbstractFactoryInterface|string $factory
+     * @return \Fixin\ResourceManager\ResourceManager
      */
-    protected function hasKey(string $key, bool $testAbstractCreation): bool {
-        return isset($this->resources[$key]) || isset($this->factories[$key]) || ($testAbstractCreation && $this->canCreateByAbstractFactory($key));
-    }
-
-    public function set(string $name, \stdClass $resource) {
-        $key = $this->unifiedNames[$name] ?? $this->unifieName($name);
-
-        if ($this->hasKey($key, false)) {
-            throw new Exception\InvalidResourceNameException(sprintf('A resource with the name "%s" already exists.', $name));
-        }
-
-        $this->resources[$key] = $resource;
+    public function prependAbstractFactory($factory) {
+        array_unshift($this->abstractFactories, $this->createAbstractFactory($factory));
 
         return $this;
     }
 
     /**
-     * Sets definition
+     * Registers resource definition
      *
      * @param string $name
-     * @param string|FactoryInterface|callable $definition
-     * @return \Fixin\ResourceManager\ResourceManager
+     * @param string|object|callable $definition
+     * @throws Exception\InvalidResourceNameException
+     * @throws InvalidConfigurationException
+     * @return self
      */
-    public function setDefinition(string $name, $definition) {
-        $key = $this->unifiedNames[$name] ?? $this->unifieName($name);
+    public function set(string $name, $definition) {
+        $unifiedName = strtolower($name);
 
-        // Test
-        if (!is_object($definition) && !is_callable($definition)) {
-
+        // Already exists
+        if ($existingName = $this->unifiedResourceNames[$unifiedName] ?? null) {
+            throw new Exception\InvalidResourceNameException('A resource with a corresponding name "' . $existingName . '" already registered');
         }
 
-        // Already existing
-        if ($this->hasKey($key, false)) {
-            throw new Exception\InvalidResourceNameException(sprintf('A resource with the name "%s" already exists.', $name));
+        // Type check
+        if (is_object($definition) || is_callable($definition, true)) {
+            $this->definitions[$name] = $definition;
+            $this->unifiedResourceNames[$unifiedName] = $name;
         }
-
-        // Store
-        $this->definitions[$key] = $definition;
+        else {
+            throw new InvalidConfigurationException('Invalid configuration type for the name "' . $name . '": ' . gettype($definition));
+        }
 
         return $this;
     }
 
     /**
-     * Sets multiple definitions
+     * Registers multiple resource definitions
      *
      * @param array $definitions
-     * @return \Fixin\ResourceManager\ResourceManager
+     * @return self
      */
     public function setDefinitions(array $definitions) {
         foreach ($definitions as $name => $definition) {
-            $this->setDefinition($name, $definition);
+            $this->set($name, $definition);
         }
 
         return $this;
-    }
-
-    /**
-     * Unifie name
-     *
-     * @param string $name
-     * @return string
-     */
-    protected function unifieName(string $name) {
-        return $this->unifiedNames[$name] = strtolower($name);
     }
 }
