@@ -1,9 +1,13 @@
 <?php
 
-return array(
-    'resourceManager' => array(
+return [
+    'resourceManager' => [
         'class' => '\Fixin\ResourceManager\ResourceManager',
-        'definitions' => array(
-        ),
-    )
-);
+        'definitions' => [
+            'Request' => 'Fixin\ResourceManager\Factory\RequestFactory',
+        ],
+        'abstractFactories' => [
+            'prefixFallback' => 'Fixin\ResourceManager\AbstractFactory\PrefixFallbackAbstractFactory'
+        ]
+    ],
+];
