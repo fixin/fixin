@@ -154,18 +154,12 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
                 $this->definitions[$name] = $definition;
             }
 
-            // Factory
-            if ($definition instanceof FactoryInterface) {
-                return $definition->produce($this, $name);
-            }
-
-            // Non-Factory object
-            elseif (is_object($definition) && !$definition instanceof Closure) {
+            // Non-factory object
+            if (is_object($definition) && !$definition instanceof FactoryInterface && !$definition instanceof Closure) {
                 return $definition;
             }
 
-            // Callable
-            elseif (is_callable($definition)) {
+            if (is_callable($definition)) {
                 return $definition($this, $name);
             }
 

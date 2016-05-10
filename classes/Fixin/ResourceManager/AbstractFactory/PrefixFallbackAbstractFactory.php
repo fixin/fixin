@@ -34,6 +34,16 @@ class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
+     */
+    public function __invoke(ContainerInterface $container, string $name) {
+        $mapped = $this->map[$name];
+
+        return $mapped ? new $mapped($container, [static::RESOURCE_NAME_KEY => $name]) : null;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface::canProduce($manager, $name)
      */
     public function canProduce(ContainerInterface $container, string $name): bool {
@@ -57,15 +67,5 @@ class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
         $this->map[$name] = false;
 
         return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface::produce($manager, $name)
-     */
-    public function produce(ContainerInterface $container, string $name) {
-        $mapped = $this->map[$name];
-
-        return $mapped ? new $mapped($container, [static::RESOURCE_NAME_KEY => $name]) : null;
     }
 }
