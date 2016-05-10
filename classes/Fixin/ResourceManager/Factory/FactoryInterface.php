@@ -2,15 +2,15 @@
 
 namespace Fixin\ResourceManager\Factory;
 
-use Fixin\ResourceManager\ResourceManagerInterface;
+use Fixin\Support\ContainerInterface;
 
 interface FactoryInterface {
 
     /**
      * Produces resource
      *
-     * @param ResourceManagerInterface $manager
+     * @param ContainerInterface $container
      * @param string $name
      */
-    public function produce(ResourceManagerInterface $manager, string $name);
+    public function produce(ContainerInterface $container, string $name);
 }

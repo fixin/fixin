@@ -6,8 +6,9 @@ use Closure;
 use Fixin\Base\Exception\InvalidParameterException;
 use Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface;
 use Fixin\ResourceManager\Factory\FactoryInterface;
+use Fixin\Support\ContainerInterface;
 
-class ResourceManager implements ResourceManagerInterface {
+class ResourceManager implements ContainerInterface {
 
     const ABSTRACT_FACTORIES = 'abstractFactories';
     const DEFINITIONS = 'definitions';
@@ -45,7 +46,7 @@ class ResourceManager implements ResourceManagerInterface {
      * Adds abstract factory
      *
      * @param string|object $abstractFactory
-     * @return \Fixin\ResourceManager\ResourceManager
+     * @return self
      */
     public function addAbstractFactory($abstractFactory) {
         $this->setupAbstractFactories([$abstractFactory]);
@@ -86,7 +87,7 @@ class ResourceManager implements ResourceManagerInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\ResourceManager\ResourceManagerInterface::get($name)
+     * @see \Fixin\Support\ContainerInterface::get($name)
      */
     public function get(string $name) {
         return $this->resources[$name] ?? $this->resources[$name] = $this->produceResource($name);
@@ -94,7 +95,7 @@ class ResourceManager implements ResourceManagerInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\ResourceManager\ResourceManagerInterface::has($name)
+     * @see \Fixin\Support\ContainerInterface::has($name)
      */
     public function has(string $name): bool {
         // Resource or definition

@@ -2,7 +2,7 @@
 
 namespace Fixin\ResourceManager\AbstractFactory;
 
-use Fixin\ResourceManager\ResourceManagerInterface;
+use Fixin\Support\ContainerInterface;
 
 class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
 
@@ -21,10 +21,10 @@ class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
     protected $searchOrder = ['Fixin'];
 
     /**
-     * @param ResourceManagerInterface $manager
+     * @param ContainerInterface $container
      * @param array $options
      */
-    public function __construct(ResourceManagerInterface $manager, array $options = []) {
+    public function __construct(ContainerInterface $container, array $options = []) {
         // Search order
         $this->searchOrder = $options['searchOrder'] ?? null;
     }
@@ -33,7 +33,7 @@ class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface::canProduce($manager, $name)
      */
-    public function canProduce(ResourceManagerInterface $manager, string $name): bool {
+    public function canProduce(ContainerInterface $container, string $name): bool {
         // Alread resolved
         if (($result = $this->map[$name] ?? null) !== null) {
             return $result;
@@ -60,9 +60,9 @@ class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface::produce($manager, $name)
      */
-    public function produce(ResourceManagerInterface $manager, string $name) {
+    public function produce(ContainerInterface $container, string $name) {
         $mapped = $this->map[$name];
 
-        return $mapped ? new $mapped($manager, ['resourceName' => $name]) : null;
+        return $mapped ? new $mapped($container, ['resourceName' => $name]) : null;
     }
 }
