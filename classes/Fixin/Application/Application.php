@@ -2,8 +2,6 @@
 
 namespace Fixin\Application;
 
-use Fixin\Config\Config;
-
 class Application implements ApplicationInterface {
 
     /**
@@ -16,16 +14,20 @@ class Application implements ApplicationInterface {
      */
     public function __construct(array $config) {
         // Resource Manager config
-        $rmConfig = $config['resourceManager'];
+        $containerConfig = $config['resourceManager'];
         unset($config['resourceManager']);
 
-        $rmClass = $rmConfig['class'] ?? '\Fixin\ResourceManager\ResourceManager';
-        unset($rmConfig['class']);
+        // Classes
+        $containerClass = $containerConfig['class'] ?? '\Fixin\ResourceManager\ResourceManager';
+        unset($containerConfig['class']);
+
+        $configClass = $containerConfig['configClass'] ?? '\Fixin\Base\Config\Config';
+        unset($containerConfig['configClass']);
 
         // Resoure Manager init
-        $this->resourceManager =
-        $rm = new $rmClass($rmConfig);
-        $rm->setResource(ApplicationInterface::CONFIG_KEY, new Config($config));
+        $this->container =
+        $rm = new $containerClass($containerConfig);
+        $rm->setResource(ApplicationInterface::CONFIG_KEY, new $configClass($config));
     }
 
     /**
