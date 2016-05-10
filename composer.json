@@ -1,0 +1,26 @@
+{
+    "name": "fixin/fixin",
+    "description": "Fixin Framework",
+    "type": "library",
+    "keywords": [
+        "fixin",
+        "framework"
+    ],
+    "license": "MIT",
+    "authors": [
+		{
+			"name": "Attila Jenei",
+			"email": "www@attilajenei.com"
+			"homepage": "http://www.attilajenei.com"
+		}
+	],
+    "require": {
+        "php": "^7.0",
+    },
+    "autoload": {
+        "psr-4": {
+            "Fixin\\": "classes/Fixin/",
+        }
+    },
+    "minimum-stability": "dev"
+}
