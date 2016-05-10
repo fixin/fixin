@@ -126,7 +126,7 @@ class ResourceManager implements ResourceManagerInterface {
             // Resolve class name
             if (is_string($definition) && class_exists($definition)) {
                 $this->definitions[$name] =
-                $definition = new $definition();
+                $definition = new $definition($this);
             }
             // Resolve class array
             elseif (is_array($definition) && ($class = $definition['class'] ?? null) && class_exists($class)) {
