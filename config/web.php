@@ -2,7 +2,7 @@
 
 return [
     'resourceManager' => [
-        'class' => '\Fixin\ResourceManager\ResourceManager',
+        'class' => 'Fixin\ResourceManager\ResourceManager',
         'definitions' => [
             'Request' => 'Fixin\ResourceManager\Factory\RequestFactory',
         ],
