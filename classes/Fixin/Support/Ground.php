@@ -16,7 +16,7 @@ class Ground {
      *
      * @return boolean
      */
-    static function isConsole() {
+    static public function isConsole() {
         return static::$isConsole ?? (static::$isConsole = PHP_SAPI == 'cli');
     }
 }
