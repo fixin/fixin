@@ -128,6 +128,12 @@ class ResourceManager implements ResourceManagerInterface {
                 $this->definitions[$name] =
                 $definition = new $definition();
             }
+            // Resolve class array
+            elseif (is_array($definition) && ($class = $definition['class'] ?? null) && class_exists($class)) {
+                unset($definition['class']);
+
+                $definition = new $class($this, $definition);
+            }
 
             // Factory
             if ($definition instanceof FactoryInterface) {
@@ -198,6 +204,12 @@ class ResourceManager implements ResourceManagerInterface {
             if (is_string($abstractFactory) && class_exists($abstractFactory)) {
                 $abstractFactory = new $abstractFactory($this);
             }
+            // Resolve class array
+            elseif (is_array($abstractFactory) && ($class = $abstractFactory['class'] ?? null) && class_exists($class)) {
+                unset($abstractFactory['class']);
+
+                $abstractFactory = new $class($this, $abstractFactory);
+            }
 
             if ($abstractFactory instanceof AbstractFactoryInterface) {
                 $this->abstractFactories[] = $abstractFactory;
@@ -205,8 +217,13 @@ class ResourceManager implements ResourceManagerInterface {
                 continue;
             }
 
+            // Fault
             if (is_string($abstractFactory)) {
                 throw new InvalidParameterException('Invalid abstract factory: ' . $abstractFactory);
+            }
+
+            if (is_array($abstractFactory)) {
+                throw new InvalidParameterException('Invalid abstract factory array data');
             }
 
             throw new InvalidParameterException('Invalid type for abstract factory: ' . gettype($abstractFactory));
