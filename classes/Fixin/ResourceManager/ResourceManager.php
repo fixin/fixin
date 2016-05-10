@@ -69,7 +69,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
         // Definitions
         if ($values = $config[static::DEFINITIONS_KEY] ?? null) {
             if ($names = array_intersect_key($values, $this->definitions)) {
-                throw new Exception\OverrideNotAllowedException("Definition already defined for '" . implode("', '", array_keys($names))  . "'");
+                throw new Exception\OverrideNotAllowedException("Definition already defined for '" . implode("', '", array_keys($names)) . "'");
             }
 
             $this->definitions = $values + $this->definitions;
@@ -78,7 +78,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
         // Resources
         if ($values = $config[static::RESOURCES_KEY] ?? null) {
             if ($names = array_intersect_key($values, $this->resources)) {
-                throw new Exception\OverrideNotAllowedException("Resource already defined for '" . implode("', '", array_keys($names))  . "'");
+                throw new Exception\OverrideNotAllowedException("Resource already defined for '" . implode("', '", array_keys($names)) . "'");
             }
 
             $this->resources = $values + $this->resources;
