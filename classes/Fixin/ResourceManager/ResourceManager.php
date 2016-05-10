@@ -11,9 +11,9 @@ use Fixin\Support\ContainerInterface;
 
 class ResourceManager implements ContainerInterface, ConfigurableInterface {
 
-    const ABSTRACT_FACTORIES = 'abstractFactories';
-    const DEFINITIONS = 'definitions';
-    const RESOURCES = 'resources';
+    const ABSTRACT_FACTORIES_KEY = 'abstractFactories';
+    const DEFINITIONS_KEY = 'definitions';
+    const RESOURCES_KEY = 'resources';
 
     /**
      * Abstract factories
@@ -61,12 +61,12 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      */
     public function configure(array $config) {
         // Abstract factories
-        if (isset($config[static::ABSTRACT_FACTORIES])) {
-            $this->setupAbstractFactories($config[static::ABSTRACT_FACTORIES]);
+        if (isset($config[static::ABSTRACT_FACTORIES_KEY])) {
+            $this->setupAbstractFactories($config[static::ABSTRACT_FACTORIES_KEY]);
         }
 
         // Definitions
-        if ($values = $config[static::DEFINITIONS] ?? null) {
+        if ($values = $config[static::DEFINITIONS_KEY] ?? null) {
             if ($names = array_intersect_key($values, $this->definitions)) {
                 throw new Exception\OverrideNotAllowedException("Definition already defined for '" . implode("', '", array_keys($names))  . "'");
             }
@@ -75,7 +75,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
         }
 
         // Resources
-        if ($values = $config[static::RESOURCES] ?? null) {
+        if ($values = $config[static::RESOURCES_KEY] ?? null) {
             if ($names = array_intersect_key($values, $this->resources)) {
                 throw new Exception\OverrideNotAllowedException("Resource already defined for '" . implode("', '", array_keys($names))  . "'");
             }
@@ -175,7 +175,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      * @return self
      */
     public function setDefinition(string $name, $definition) {
-        $this->configure([static::DEFINITIONS => [$name => $definition]]);
+        $this->configure([static::DEFINITIONS_KEY => [$name => $definition]]);
 
         return $this;
     }
@@ -193,7 +193,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
             throw new InvalidParameterException('Resource must be an object.');
         }
 
-        $this->configure([static::RESOURCES => [$name => $resource]]);
+        $this->configure([static::RESOURCES_KEY => [$name => $resource]]);
 
         return $this;
     }

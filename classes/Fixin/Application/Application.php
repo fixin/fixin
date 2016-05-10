@@ -4,6 +4,9 @@ namespace Fixin\Application;
 
 class Application implements ApplicationInterface {
 
+    const CLASS_KEY = 'class';
+    const CONFIG_CLASS_KEY = 'configClass';
+
     /**
      * @var \Fixin\Support\ContainerInterface
      */
@@ -18,10 +21,10 @@ class Application implements ApplicationInterface {
         unset($config['resourceManager']);
 
         // Classes
-        $containerClass = $containerConfig['class'] ?? '\Fixin\ResourceManager\ResourceManager';
+        $containerClass = $containerConfig[static::CLASS_KEY] ?? 'Fixin\ResourceManager\ResourceManager';
         unset($containerConfig['class']);
 
-        $configClass = $containerConfig['configClass'] ?? '\Fixin\Base\Config\Config';
+        $configClass = $containerConfig[static::CONFIG_CLASS_KEY] ?? 'Fixin\Base\Config\Config';
         unset($containerConfig['configClass']);
 
         // Resoure Manager init
