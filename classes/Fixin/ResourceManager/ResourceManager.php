@@ -184,11 +184,15 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      * Sets resource
      *
      * @param string $name
-     * @param \stdClass $resource
+     * @param object $resource
      * @throws Exception\OverrideNotAllowedException
      * @return self
      */
-    public function setResource(string $name, \stdClass $resource) {
+    public function setResource(string $name, $resource) {
+        if (!is_object($resource)) {
+            throw new InvalidParameterException('Resource must be an object.');
+        }
+
         $this->configure([static::RESOURCES => [$name => $resource]]);
 
         return $this;
