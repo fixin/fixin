@@ -10,6 +10,7 @@ interface FactoryInterface {
      * Produces resource
      *
      * @param ResourceManagerInterface $manager
+     * @param string $name
      */
-    public function produce(ResourceManagerInterface $manager);
+    public function produce(ResourceManagerInterface $manager, string $name);
 }
