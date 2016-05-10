@@ -116,6 +116,30 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     }
 
     /**
+     * Preprocesses definition
+     *
+     * @param mixed $definition
+     * @return boolean
+     */
+    protected function preprocessDefinition(&$definition) {
+        // Resolve class name
+        if (is_string($definition) && class_exists($definition)) {
+            $definition = new $definition($this);
+
+            return true;
+        }
+        // Resolve class array
+        elseif (is_array($definition) && ($class = $definition[static::CLASS_KEY] ?? null) && class_exists($class)) {
+            unset($definition[static::CLASS_KEY]);
+            $definition = new $class($this, $definition);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Produces resource from definition or abstract factories
      *
      * @param string $name
@@ -126,16 +150,8 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     protected function produceResource(string $name) {
         // Definitions
         if ($definition = $this->definitions[$name] ?? null) {
-            // Resolve class name
-            if (is_string($definition) && class_exists($definition)) {
-                $this->definitions[$name] =
-                $definition = new $definition($this);
-            }
-            // Resolve class array
-            elseif (is_array($definition) && ($class = $definition[static::CLASS_KEY] ?? null) && class_exists($class)) {
-                unset($definition[static::CLASS_KEY]);
-
-                $definition = new $class($this, $definition);
+            if ($this->preprocessDefinition($definition)) {
+                $this->definitions[$name] = $definition;
             }
 
             // Factory
@@ -207,16 +223,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      */
     protected function setupAbstractFactories(array $abstractFactories) {
         foreach ($abstractFactories as $abstractFactory) {
-            // Resolve class name
-            if (is_string($abstractFactory) && class_exists($abstractFactory)) {
-                $abstractFactory = new $abstractFactory($this);
-            }
-            // Resolve class array
-            elseif (is_array($abstractFactory) && ($class = $abstractFactory[static::CLASS_KEY] ?? null) && class_exists($class)) {
-                unset($abstractFactory[static::CLASS_KEY]);
-
-                $abstractFactory = new $class($this, $abstractFactory);
-            }
+            $this->preprocessDefinition($abstractFactory);
 
             if ($abstractFactory instanceof AbstractFactoryInterface) {
                 $this->abstractFactories[] = $abstractFactory;
