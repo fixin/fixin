@@ -6,6 +6,9 @@ use Fixin\Support\ContainerInterface;
 
 class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
 
+    const RESOURCE_NAME_KEY = 'resourceName';
+    const SEARCH_ORDER_KEY = 'searchOrder';
+
     /**
      * Resolved names to class names
      *
@@ -26,7 +29,7 @@ class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
      */
     public function __construct(ContainerInterface $container, array $options = []) {
         // Search order
-        $this->searchOrder = $options['searchOrder'] ?? null;
+        $this->searchOrder = $options[static::SEARCH_ORDER_KEY] ?? null;
     }
 
     /**
@@ -63,6 +66,6 @@ class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
     public function produce(ContainerInterface $container, string $name) {
         $mapped = $this->map[$name];
 
-        return $mapped ? new $mapped($container, ['resourceName' => $name]) : null;
+        return $mapped ? new $mapped($container, [static::RESOURCE_NAME_KEY => $name]) : null;
     }
 }

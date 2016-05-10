@@ -6,6 +6,7 @@ class Application implements ApplicationInterface {
 
     const CLASS_KEY = 'class';
     const CONFIG_CLASS_KEY = 'configClass';
+    const RESOURCE_MANAGER_KEY = 'resourceManager';
 
     /**
      * @var \Fixin\Support\ContainerInterface
@@ -17,15 +18,15 @@ class Application implements ApplicationInterface {
      */
     public function __construct(array $config) {
         // Resource Manager config
-        $containerConfig = $config['resourceManager'];
-        unset($config['resourceManager']);
+        $containerConfig = $config[static::RESOURCE_MANAGER_KEY];
+        unset($config[static::RESOURCE_MANAGER_KEY]);
 
         // Classes
         $containerClass = $containerConfig[static::CLASS_KEY] ?? 'Fixin\ResourceManager\ResourceManager';
-        unset($containerConfig['class']);
+        unset($containerConfig[static::CLASS_KEY]);
 
         $configClass = $containerConfig[static::CONFIG_CLASS_KEY] ?? 'Fixin\Base\Config\Config';
-        unset($containerConfig['configClass']);
+        unset($containerConfig[static::CONFIG_CLASS_KEY]);
 
         // Resoure Manager init
         $this->container =

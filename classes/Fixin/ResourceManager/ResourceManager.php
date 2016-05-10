@@ -12,6 +12,7 @@ use Fixin\Support\ContainerInterface;
 class ResourceManager implements ContainerInterface, ConfigurableInterface {
 
     const ABSTRACT_FACTORIES_KEY = 'abstractFactories';
+    const CLASS_KEY = 'class';
     const DEFINITIONS_KEY = 'definitions';
     const RESOURCES_KEY = 'resources';
 
@@ -131,8 +132,8 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
                 $definition = new $definition($this);
             }
             // Resolve class array
-            elseif (is_array($definition) && ($class = $definition['class'] ?? null) && class_exists($class)) {
-                unset($definition['class']);
+            elseif (is_array($definition) && ($class = $definition[static::CLASS_KEY] ?? null) && class_exists($class)) {
+                unset($definition[static::CLASS_KEY]);
 
                 $definition = new $class($this, $definition);
             }
@@ -211,8 +212,8 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
                 $abstractFactory = new $abstractFactory($this);
             }
             // Resolve class array
-            elseif (is_array($abstractFactory) && ($class = $abstractFactory['class'] ?? null) && class_exists($class)) {
-                unset($abstractFactory['class']);
+            elseif (is_array($abstractFactory) && ($class = $abstractFactory[static::CLASS_KEY] ?? null) && class_exists($class)) {
+                unset($abstractFactory[static::CLASS_KEY]);
 
                 $abstractFactory = new $class($this, $abstractFactory);
             }
