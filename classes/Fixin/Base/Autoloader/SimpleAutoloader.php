@@ -1,8 +1,10 @@
 <?php
 
-namespace Fixin\Loader;
+namespace Fixin\Base\Autoloader;
 
-class SimpleLoader {
+require_once 'AutoloaderInterface.php';
+
+class SimpleAutoloader implements AutoloaderInterface {
 
     /**
      * Registered paths
@@ -52,9 +54,8 @@ class SimpleLoader {
     }
 
     /**
-     * Load class source file if exists
-     *
-     * @param string $class
+     * {@inheritDoc}
+     * @see \Fixin\Base\Autoloader\AutoloaderInterface::autoload()
      */
     public function autoload(string $class) {
         // Swap '\'
@@ -88,9 +89,8 @@ class SimpleLoader {
     }
 
     /**
-     * Register to autoloader stack
-     *
-     * @return \Fixin\Loader\SimpleLoader
+     * {@inheritDoc}
+     * @see \Fixin\Base\Autoloader\AutoloaderInterface::register()
      */
     public function register() {
         spl_autoload_register([$this, 'autoload']);
