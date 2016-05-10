@@ -3,9 +3,10 @@
 namespace Fixin\Base\Config;
 
 use Fixin\Base\Exception\InvalidKeyException;
+use Fixin\Support\ContainerInterface;
 use Fixin\Support\ToStringTrait;
 
-class Config {
+class Config implements ContainerInterface {
 
     use ToStringTrait;
 
