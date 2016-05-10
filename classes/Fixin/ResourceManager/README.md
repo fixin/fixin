@@ -1,0 +1,27 @@
+#ResourceManager
+
+##Example Configuration
+Here are possible definitions for resources.
+
+**_Do not use closures in production configuration._**
+```
+return [
+    'resourceManager' => [
+        'class' => 'Fixin\ResourceManager\ResourceManager',
+        'definitions' => [
+            'byClassName' => 'Fixin\ResourceManager\Test',
+            'byArray' => [
+                'class' => 'Fixin\ResourceManager\Test',
+                'param1' => 'test'
+            ],
+            'byClosure' => function($container) {
+                return new Fixin\ResourceManager\Test($container);
+            },
+            'byFactory' => 'Fixin\ResourceManager\Factory\RequestFactory',
+        ],
+        'abstractFactories' => [
+            'prefixFallback' => 'Fixin\ResourceManager\AbstractFactory\PrefixFallbackAbstractFactory'
+        ]
+    ],
+];
+```
