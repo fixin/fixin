@@ -3,12 +3,13 @@
 namespace Fixin\ResourceManager;
 
 use Closure;
+use Fixin\Base\Configurable\ConfigurableInterface;
 use Fixin\Base\Exception\InvalidParameterException;
 use Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface;
 use Fixin\ResourceManager\Factory\FactoryInterface;
 use Fixin\Support\ContainerInterface;
 
-class ResourceManager implements ContainerInterface {
+class ResourceManager implements ContainerInterface, ConfigurableInterface {
 
     const ABSTRACT_FACTORIES = 'abstractFactories';
     const DEFINITIONS = 'definitions';
