@@ -15,7 +15,7 @@ class SimpleLoader {
      * @param array $prefixes
      */
     public function __construct(array $prefixes = []) {
-        $this->addNamespacePrefixes($prefixes);
+        $this->addPrefixes($prefixes);
     }
 
     /**
@@ -25,12 +25,9 @@ class SimpleLoader {
      * @param string|array $path
      * @return \Fixin\Loader\SimpleLoader
      */
-    public function addNamespace(string $prefix, $path) {
+    public function addPrefixPath(string $prefix, $path) {
         // Prepare prefix
-        $prefix = trim($prefix, '\\');
-        if (DIRECTORY_SEPARATOR !== '\\') {
-            $prefix = strtr($prefix, '\\', DIRECTORY_SEPARATOR);
-        }
+        $prefix = strtr(trim($prefix, '\\'), '\\', DIRECTORY_SEPARATOR);
 
         // Add normalized path(s)
         foreach (is_array($path) ? $path : [$path] as $item) {
@@ -41,14 +38,14 @@ class SimpleLoader {
     }
 
     /**
-     * Adds multiple namespace prefixes
+     * Adds multiple prefixes
      *
      * @param array $prefixes
      * @return \Fixin\Loader\SimpleLoader
      */
-    public function addNamespacePrefixes(array $prefixes) {
+    public function addPrefixes(array $prefixes) {
         foreach ($prefixes as $prefix => $path) {
-            $this->addNamespace($prefix, $path);
+            $this->addPrefixPath($prefix, $path);
         }
 
         return $this;
@@ -61,9 +58,7 @@ class SimpleLoader {
      */
     public function autoload(string $class) {
         // Swap '\'
-        if (DIRECTORY_SEPARATOR !== '\\') {
-            $class = strtr($class, '\\', DIRECTORY_SEPARATOR);
-        }
+        $class = strtr($class, '\\', DIRECTORY_SEPARATOR);
 
         // Searching for prefix
         $length = 0;
@@ -81,7 +76,7 @@ class SimpleLoader {
 
                     // Source file found
                     if (file_exists($filename)) {
-                        require $filename;
+                        include $filename;
 
                         return;
                     }
@@ -98,7 +93,7 @@ class SimpleLoader {
      * @return \Fixin\Loader\SimpleLoader
      */
     public function register() {
-        spl_autoload_register(array($this, 'autoload'));
+        spl_autoload_register([$this, 'autoload']);
 
         return $this;
     }
