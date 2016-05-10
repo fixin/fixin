@@ -1,8 +1,8 @@
 <?php
 
-namespace Fixin\ResourceManager;
+namespace Fixin\Support;
 
-interface ResourceManagerInterface {
+interface ContainerInterface {
 
     /**
      * Gets the registered instance

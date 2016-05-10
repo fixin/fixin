@@ -3,14 +3,13 @@
 namespace Fixin\Application;
 
 use Fixin\Config\Config;
-use Fixin\ResourceManager\ResourceManager;
 
 class Application implements ApplicationInterface {
 
     /**
-     * @var \Fixin\ResourceManager\ResourceManagerInterface
+     * @var \Fixin\Support\ContainerInterface
      */
-    protected $resourceManager;
+    protected $container;
 
     /**
      * @param array $config

@@ -3,11 +3,13 @@
 namespace Fixin\ResourceManager;
 
 use Closure;
+use Fixin\Base\Configurable\ConfigurableInterface;
 use Fixin\Base\Exception\InvalidParameterException;
 use Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface;
 use Fixin\ResourceManager\Factory\FactoryInterface;
+use Fixin\Support\ContainerInterface;
 
-class ResourceManager implements ResourceManagerInterface {
+class ResourceManager implements ContainerInterface, ConfigurableInterface {
 
     const ABSTRACT_FACTORIES = 'abstractFactories';
     const DEFINITIONS = 'definitions';
@@ -45,7 +47,7 @@ class ResourceManager implements ResourceManagerInterface {
      * Adds abstract factory
      *
      * @param string|object $abstractFactory
-     * @return \Fixin\ResourceManager\ResourceManager
+     * @return self
      */
     public function addAbstractFactory($abstractFactory) {
         $this->setupAbstractFactories([$abstractFactory]);
@@ -86,7 +88,7 @@ class ResourceManager implements ResourceManagerInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\ResourceManager\ResourceManagerInterface::get($name)
+     * @see \Fixin\Support\ContainerInterface::get($name)
      */
     public function get(string $name) {
         return $this->resources[$name] ?? $this->resources[$name] = $this->produceResource($name);
@@ -94,7 +96,7 @@ class ResourceManager implements ResourceManagerInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\ResourceManager\ResourceManagerInterface::has($name)
+     * @see \Fixin\Support\ContainerInterface::has($name)
      */
     public function has(string $name): bool {
         // Resource or definition
@@ -126,7 +128,13 @@ class ResourceManager implements ResourceManagerInterface {
             // Resolve class name
             if (is_string($definition) && class_exists($definition)) {
                 $this->definitions[$name] =
-                $definition = new $definition();
+                $definition = new $definition($this);
+            }
+            // Resolve class array
+            elseif (is_array($definition) && ($class = $definition['class'] ?? null) && class_exists($class)) {
+                unset($definition['class']);
+
+                $definition = new $class($this, $definition);
             }
 
             // Factory
@@ -198,6 +206,12 @@ class ResourceManager implements ResourceManagerInterface {
             if (is_string($abstractFactory) && class_exists($abstractFactory)) {
                 $abstractFactory = new $abstractFactory($this);
             }
+            // Resolve class array
+            elseif (is_array($abstractFactory) && ($class = $abstractFactory['class'] ?? null) && class_exists($class)) {
+                unset($abstractFactory['class']);
+
+                $abstractFactory = new $class($this, $abstractFactory);
+            }
 
             if ($abstractFactory instanceof AbstractFactoryInterface) {
                 $this->abstractFactories[] = $abstractFactory;
@@ -205,8 +219,13 @@ class ResourceManager implements ResourceManagerInterface {
                 continue;
             }
 
+            // Fault
             if (is_string($abstractFactory)) {
                 throw new InvalidParameterException('Invalid abstract factory: ' . $abstractFactory);
+            }
+
+            if (is_array($abstractFactory)) {
+                throw new InvalidParameterException('Invalid abstract factory array data');
             }
 
             throw new InvalidParameterException('Invalid type for abstract factory: ' . gettype($abstractFactory));
