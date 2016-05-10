@@ -6,6 +6,7 @@ class Application implements ApplicationInterface {
 
     const CLASS_KEY = 'class';
     const CONFIG_CLASS_KEY = 'configClass';
+    const CONFIG_KEY = 'config';
     const RESOURCE_MANAGER_KEY = 'resourceManager';
 
     /**
@@ -31,7 +32,7 @@ class Application implements ApplicationInterface {
         // Resoure Manager init
         $this->container =
         $rm = new $containerClass($containerConfig);
-        $rm->setResource(ApplicationInterface::CONFIG_KEY, new $configClass($config));
+        $rm->setResource(static::CONFIG_KEY, new $configClass($config));
     }
 
     /**
