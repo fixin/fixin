@@ -5,6 +5,8 @@
 [![Latest Unstable Version](https://poser.pugx.org/fixin/fixin/v/unstable)](https://packagist.org/packages/fixin/fixin)
 [![License](https://poser.pugx.org/fixin/fixin/license)](https://packagist.org/packages/fixin/fixin)
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fixin/Fixin/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fixin/Fixin/?branch=master)
+
 Framework for PHP 7.
 
 ## Requirements
