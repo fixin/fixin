@@ -11,6 +11,7 @@ class ResourceManager implements ResourceManagerInterface {
 
     const ABSTRACT_FACTORIES = 'abstractFactories';
     const DEFINITIONS = 'definitions';
+    const RESOURCES = 'resources';
 
     /**
      * Abstract factories
@@ -64,7 +65,20 @@ class ResourceManager implements ResourceManagerInterface {
 
         // Definitions
         if ($values = $config[static::DEFINITIONS] ?? null) {
+            if ($names = array_intersect_key($values, $this->definitions)) {
+                throw new Exception\OverrideNotAllowedException("Definition already defined for '" . implode("', '", array_keys($names))  . "'");
+            }
+
             $this->definitions = $values + $this->definitions;
+        }
+
+        // Resources
+        if ($values = $config[static::RESOURCES] ?? null) {
+            if ($names = array_intersect_key($values, $this->resources)) {
+                throw new Exception\OverrideNotAllowedException("Resource already defined for '" . implode("', '", array_keys($names))  . "'");
+            }
+
+            $this->resources = $values + $this->resources;
         }
 
         return $this;
@@ -141,9 +155,7 @@ class ResourceManager implements ResourceManagerInterface {
         }
 
         // Not found
-        $similar = $this->unifiedResourceNames[strtolower($name)] ?? null;
-
-        throw new Exception\ResourceNotFoundException("Resource is not registered with name '$name'" . ($similar ? ". Do you think '$similar'?" : ''));
+        throw new Exception\ResourceNotFoundException("Resource is not registered with name '$name'");
     }
 
     /**
@@ -155,11 +167,7 @@ class ResourceManager implements ResourceManagerInterface {
      * @return self
      */
     public function setDefinition(string $name, $definition) {
-        if (isset($this->resources[$name])) {
-            throw new Exception\OverrideNotAllowedException("Definition name '$name' already used");
-        }
-
-        $this->definitions[$name] = $definition;
+        $this->configure([static::DEFINITIONS => [$name => $definition]]);
 
         return $this;
     }
@@ -173,11 +181,7 @@ class ResourceManager implements ResourceManagerInterface {
      * @return self
      */
     public function setResource(string $name, \stdClass $resource) {
-        if (isset($this->resources[$name])) {
-            throw new Exception\OverrideNotAllowedException("Resource name '$name' already used");
-        }
-
-        $this->resources[$name] = $resource;
+        $this->configure([static::RESOURCES => [$name => $resource]]);
 
         return $this;
     }
