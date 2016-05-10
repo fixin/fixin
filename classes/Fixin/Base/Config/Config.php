@@ -1,11 +1,11 @@
 <?php
 
-namespace Fixin\Config;
+namespace Fixin\Base\Config;
 
 use Fixin\Base\Exception\InvalidKeyException;
 use Fixin\Support\ToStringTrait;
 
-class Config extends \stdClass {
+class Config {
 
     use ToStringTrait;
 
