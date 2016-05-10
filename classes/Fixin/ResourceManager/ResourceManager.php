@@ -160,12 +160,12 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
             }
 
             // Non-Factory object
-            if (is_object($definition) && !$definition instanceof Closure) {
+            elseif (is_object($definition) && !$definition instanceof Closure) {
                 return $definition;
             }
 
             // Callable
-            if (is_callable($definition)) {
+            elseif (is_callable($definition)) {
                 return $definition($this, $name);
             }
 
@@ -227,20 +227,17 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
 
             if ($abstractFactory instanceof AbstractFactoryInterface) {
                 $this->abstractFactories[] = $abstractFactory;
-
-                continue;
             }
-
             // Fault
-            if (is_string($abstractFactory)) {
+            elseif (is_string($abstractFactory)) {
                 throw new InvalidParameterException('Invalid abstract factory: ' . $abstractFactory);
             }
-
-            if (is_array($abstractFactory)) {
+            elseif (is_array($abstractFactory)) {
                 throw new InvalidParameterException('Invalid abstract factory array data');
             }
-
-            throw new InvalidParameterException('Invalid type for abstract factory: ' . gettype($abstractFactory));
+            else {
+                throw new InvalidParameterException('Invalid type for abstract factory: ' . gettype($abstractFactory));
+            }
         }
     }
 }
