@@ -63,6 +63,6 @@ class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
     public function produce(ResourceManagerInterface $manager, string $name) {
         $mapped = $this->map[$name];
 
-        return $mapped ? new $mapped($manager, $name) : null;
+        return $mapped ? new $mapped($manager, ['resourceName' => $name]) : null;
     }
 }
