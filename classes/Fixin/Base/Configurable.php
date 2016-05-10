@@ -18,7 +18,7 @@ abstract class Configurable {
      * @throws Exception\InvalidKeyException
      * @return self
      */
-    protected function configure(array $config) {
+    public function configure(array $config) {
         foreach ($config as $key => $value) {
             $method = 'set' . $key;
 

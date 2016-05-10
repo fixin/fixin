@@ -26,7 +26,7 @@ class Application implements ApplicationInterface {
         // Resoure Manager init
         $this->resourceManager =
         $rm = new $rmClass($rmConfig);
-        $rm->set(ApplicationInterface::CONFIG_KEY, new Config($config));
+        $rm->setResource(ApplicationInterface::CONFIG_KEY, new Config($config));
     }
 
     /**
