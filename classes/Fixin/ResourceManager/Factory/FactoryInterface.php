@@ -12,5 +12,5 @@ interface FactoryInterface {
      * @param ContainerInterface $container
      * @param string $name
      */
-    public function __invoke(ContainerInterface $container, string $name);
+    public function __invoke(ContainerInterface $container, string $name = null);
 }
