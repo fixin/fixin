@@ -72,6 +72,4 @@ class Http extends DoNotCreate {
     const STATUS_INSUFFICIENT_STORAGE_507 = 507;
     const STATUS_LOOP_DETECTED_508 = 508;
     const STATUS_NETWORK_AUTHENTICATION_REQUIRED_511 = 511;
-
-
 }
