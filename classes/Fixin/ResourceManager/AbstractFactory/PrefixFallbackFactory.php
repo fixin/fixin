@@ -4,7 +4,7 @@ namespace Fixin\ResourceManager\AbstractFactory;
 
 use Fixin\Support\ContainerInterface;
 
-class PrefixFallbackAbstractFactory implements AbstractFactoryInterface {
+class PrefixFallbackFactory implements AbstractFactoryInterface {
 
     const RESOURCE_NAME_KEY = 'resourceName';
     const SEARCH_ORDER_KEY = 'searchOrder';
