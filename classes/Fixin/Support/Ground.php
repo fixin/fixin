@@ -2,9 +2,7 @@
 
 namespace Fixin\Support;
 
-class Ground {
-
-    use DoNotCreateTrait;
+class Ground extends DoNotCreate {
 
     /**
      * @var bool

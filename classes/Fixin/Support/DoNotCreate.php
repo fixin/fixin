@@ -2,7 +2,7 @@
 
 namespace Fixin\Support;
 
-trait DoNotCreateTrait {
+abstract class DoNotCreate {
 
     /**
      * Block creation
