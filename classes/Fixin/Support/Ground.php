@@ -15,6 +15,6 @@ class Ground extends DoNotCreate {
      * @return boolean
      */
     public static function isConsole() {
-        return static::$isConsole ?? (static::$isConsole = PHP_SAPI == 'cli');
+        return static::$isConsole ?? (static::$isConsole = PHP_SAPI === 'cli');
     }
 }
