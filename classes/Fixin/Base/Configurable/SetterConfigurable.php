@@ -16,10 +16,11 @@ class SetterConfigurable implements ConfigurableInterface {
 
             if (method_exists($this, $method)) {
                 $this->$method($value);
+
+                continue;
             }
-            else {
-                throw new InvalidParameterException("Invalid option: '$key'");
-            }
+
+            throw new InvalidParameterException("Invalid option: '$key'");
         }
 
         return $this;
