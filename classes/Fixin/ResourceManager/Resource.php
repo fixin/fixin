@@ -15,7 +15,7 @@ abstract class Resource implements ResourceInterface {
      * @param ContainerInterface $container
      * @param array $options
      */
-    public function __construct(ContainerInterface $container, array $options = []) {
+    public function __construct(ContainerInterface $container, array $options = null) {
         $this->container = $container;
     }
 }
