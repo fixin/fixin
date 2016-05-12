@@ -4,10 +4,12 @@ return [
     'resourceManager' => [
         'class' => 'Fixin\ResourceManager\ResourceManager',
         'definitions' => [
-            'Request' => 'Fixin\ResourceManager\Factory\RequestFactory',
+            'Cargo' => 'Fixin\Cargo\Factory\HttpCargoFactory',
         ],
         'abstractFactories' => [
-            'prefixFallback' => 'Fixin\ResourceManager\AbstractFactory\PrefixFallbackAbstractFactory'
+            'prefixFallback' => [
+                'class' => 'Fixin\ResourceManager\AbstractFactory\PrefixFallbackFactory'
+            ]
         ]
     ],
 ];
