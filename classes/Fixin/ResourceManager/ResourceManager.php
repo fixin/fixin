@@ -67,7 +67,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
         }
 
         // Definitions
-        if ($values = $config[static::DEFINITIONS_KEY] ?? null) {
+        if ($values = $config[static::DEFINITIONS_KEY] ?? false) {
             if ($names = array_intersect_key($values, $this->definitions)) {
                 throw new Exception\OverrideNotAllowedException("Definition already defined for '" . implode("', '", array_keys($names)) . "'");
             }
@@ -76,7 +76,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
         }
 
         // Resources
-        if ($values = $config[static::RESOURCES_KEY] ?? null) {
+        if ($values = $config[static::RESOURCES_KEY] ?? false) {
             if ($names = array_intersect_key($values, $this->resources)) {
                 throw new Exception\OverrideNotAllowedException("Resource already defined for '" . implode("', '", array_keys($names)) . "'");
             }
@@ -129,7 +129,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
             return true;
         }
         // Resolve class array
-        elseif (is_array($definition) && ($class = $definition[static::CLASS_KEY] ?? null) && class_exists($class)) {
+        elseif (($class = $definition[static::CLASS_KEY] ?? false) && class_exists($class)) {
             unset($definition[static::CLASS_KEY]);
             $definition = new $class($this, $definition);
 
@@ -149,7 +149,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      */
     protected function produceResource(string $name) {
         // Definitions
-        if ($definition = $this->definitions[$name] ?? null) {
+        if ($definition = $this->definitions[$name] ?? false) {
             if ($this->preprocessDefinition($definition)) {
                 $this->definitions[$name] = $definition;
             }
