@@ -11,6 +11,7 @@ interface FactoryInterface {
      *
      * @param ContainerInterface $container
      * @param string $name
+     * @return mixed
      */
-    public function __invoke(ContainerInterface $container, string $name = null);
+    public function __invoke(ContainerInterface $container, string $name);
 }

@@ -27,7 +27,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      * @param ContainerInterface $container
      * @param array $options
      */
-    public function __construct(ContainerInterface $container, array $options = null) {
+    public function __construct(ContainerInterface $container, array $options = []) {
         // Search order
         $this->searchOrder = $options[static::SEARCH_ORDER_KEY] ?? null;
     }
@@ -36,7 +36,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ContainerInterface $container, string $name = null) {
+    public function __invoke(ContainerInterface $container, string $name) {
         $mapped = $this->map[$name];
 
         return $mapped ? new $mapped($container, [static::RESOURCE_NAME_KEY => $name]) : null;
