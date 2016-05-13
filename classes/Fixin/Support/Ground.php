@@ -22,9 +22,10 @@ class Ground extends DoNotCreate {
      * Returns readable description of value
      *
      * @param mixed $value
+     * @param string $stringBorder
      * @return string
      */
-    public static function valueInfo($value, $stringBorder = '') {
+    public static function valueInfo($value, string $stringBorder = '') {
         // Object
         if (is_object($value)) {
             if (method_exists($value, '__toString')) {
