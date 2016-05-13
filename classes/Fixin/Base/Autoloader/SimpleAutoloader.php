@@ -25,7 +25,7 @@ class SimpleAutoloader implements AutoloaderInterface {
      *
      * @param string $prefix
      * @param string|array $path
-     * @return \Fixin\Loader\SimpleLoader
+     * @return self
      */
     public function addPrefixPath(string $prefix, $path) {
         // Prepare prefix
@@ -43,7 +43,7 @@ class SimpleAutoloader implements AutoloaderInterface {
      * Adds multiple prefixes
      *
      * @param array $prefixes
-     * @return \Fixin\Loader\SimpleLoader
+     * @return self
      */
     public function addPrefixes(array $prefixes) {
         foreach ($prefixes as $prefix => $path) {
