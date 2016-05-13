@@ -85,7 +85,8 @@ class HttpCargoFactory implements FactoryInterface {
      * @return string
      */
     protected function getProtocolVersion(): string {
-        return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::PROTOCOL_VERSION_1_0) ? Http::PROTOCOL_VERSION_1_0 : Http::PROTOCOL_VERSION_1_1;
+        return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::PROTOCOL_VERSION_1_0)
+            ? Http::PROTOCOL_VERSION_1_0 : Http::PROTOCOL_VERSION_1_1;
     }
 
     /**
@@ -95,10 +96,11 @@ class HttpCargoFactory implements FactoryInterface {
      */
     protected function getUri() {
         $uri = new \stdClass;
-        $uri->scheme = ($https = $_SERVER['HTTPS'] ?? false) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';
+        $uri->scheme = ($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http';
         $uri->host = $_SERVER['HTTP_HOST'];
         $uri->port = $_SERVER['SERVER_PORT'];
-        $uri->path = $this->getUriString();
+        $uri->path = ($index = strpos($path = $this->getUriString(), '?')) ? substr($path, 0, $index) : $path;
+        $uri->query = $_SERVER['QUERY_STRING'];
 
         return $uri;
     }
