@@ -5,17 +5,20 @@ namespace Fixin\Support;
 trait ToStringTrait {
 
     /**
+     * Returns readable list of variables of instance
+     *
      * @return string
      */
     public function __toString() {
-        $info = '[' . get_class($this) . "] {\n";
+        $info = get_class($this) . " {\n";
+        $items = [];
 
         foreach (get_object_vars($this) as $key => $value) {
-            $info .= "\t{$key}: " . str_replace("\n", "\n\t", print_r($value, true)) . "\n";
+            $items[] = Ground::valueInfo($key) . ': ' . strtr(Ground::valueInfo($value, '"'), ["\n" => "\n    "]);
         }
 
-        $info .= "}\n";
+        $info .= $items ? "    " . implode(",\n    ", $items) . "\n}\n" : '';
 
-        return Ground::isConsole() ? $info : '<pre>' . htmlspecialchars($info) . '</pre>';
+        return Ground::isConsole() ? $info : '<div style="font-family: monospace; white-space: pre">' . htmlspecialchars($info) . '</div>';
     }
 }
