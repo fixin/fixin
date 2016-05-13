@@ -211,7 +211,7 @@ class HttpCargo extends Cargo {
      * @return self
      */
     public function setEnvironmentParameters(array $parameters) {
-        $this->environment = $parameters;
+        $this->environmentParameters = $parameters;
 
         return $this;
     }
