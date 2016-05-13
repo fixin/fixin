@@ -26,7 +26,7 @@ class HttpCargoFactory implements FactoryInterface {
 
         // POST
         if ($method === Http::METHOD_POST) {
-            $cargo->setContent($this->getPost());
+            $cargo->setContent($this->getPostParameters());
         }
 
         return $cargo;
@@ -71,7 +71,9 @@ class HttpCargoFactory implements FactoryInterface {
 
         // Files
         if ($_FILES) {
-//             $post += $this->processUploadedFiles();
+            foreach ($_FILES as $key => $file) {
+                $post[$key] = $file;
+            }
         }
 
         return $post;
