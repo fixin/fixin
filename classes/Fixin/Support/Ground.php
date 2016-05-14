@@ -60,27 +60,41 @@ class Ground extends DoNotCreate {
         // Object
         if (is_object($var)) {
             $opening = get_class($var) . ' {';
-            $closing = '}';
-            $assigner = ': ';
-            $isArray = false;
 
-            $var = method_exists($var, '__debugInfo') ? $var->__debugInfo() : get_object_vars($var);
+            if (method_exists($var, '__debugInfo')) {
+                $var = $var->__debugInfo();
+            }
+            elseif (method_exists($var, '__toString')) {
+                return $opening . static::scalarValueInfo((string) $var) . '}';
+            }
+            else {
+                $var = get_object_vars($var);
+            }
+
+            $closing = '}';
         }
 
         // Array
         if (is_array($var)) {
-            $assigner = $assigner ?? '';
-            $isArray = $isArray ?? true;
-
+            $rowTemplate = isset($closing) ? '%s %s' : '<span style="color: #567">%s</span> %s';
             $items = [];
 
             foreach ($var as $key => $value) {
-                $items[] = str_pad(htmlspecialchars($key . $assigner), 30) . ' ' . str_replace("\n", "\n    ", static::valueInfo($value));
+                if (stripos($key, 'password') !== false) {
+                    if (is_array($value)) {
+                        $value = array_fill_keys(array_keys($value), '*****');
+                    }
+                    elseif (is_scalar($value)) {
+                        $value = '*****';
+                    }
+                }
+
+                $items[] = sprintf($rowTemplate, str_pad(htmlspecialchars($key), 30), str_replace("\n", "\n    ", static::valueInfo($value)));
             }
 
-            return '<span style="font-weight: bold">' . ($opening ?? '[') . '</span>'
+            return ($opening ?? '[')
                 . ($items ? "\n    " . implode(",\n    ", $items) . "\n" : '')
-                . '<span style="font-weight: bold">' . ($closing ?? ']') . '</span>';
+                . ($closing ?? ']');
         }
 
         // Null
