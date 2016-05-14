@@ -15,6 +15,6 @@ abstract class DoNotCreate {
      * @throws Exception\DoNotCreateException
      */
     final public function __construct() {
-        throw new Exception\DoNotCreateException("Don't create instance for " . __CLASS__);
+        throw new Exception\DoNotCreateException("Do not create instance for " . __CLASS__);
     }
 }
