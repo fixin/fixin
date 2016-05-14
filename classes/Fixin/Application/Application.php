@@ -50,7 +50,5 @@ class Application implements ApplicationInterface {
         $cargo = (new HttpCargoFactory())($this->container);
 
         echo $cargo;
-
-//         echo $cargo->getRequestUri();
     }
 }
