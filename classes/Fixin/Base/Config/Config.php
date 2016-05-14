@@ -1,6 +1,10 @@
 <?php
 
 namespace Fixin\Base\Config;
+/**
+ * @link       http://www.attilajenei.com
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 use Fixin\Base\Exception\InvalidKeyException;
 use Fixin\Support\ContainerInterface;
@@ -11,8 +15,6 @@ class Config implements ContainerInterface {
     use ToStringTrait;
 
     /**
-     * Stored config
-     *
      * @var array
      */
     protected $config;
@@ -25,7 +27,7 @@ class Config implements ContainerInterface {
     }
 
     /**
-     * Gets the value
+     * Get value for name
      *
      * @param string $name
      * @throws InvalidKeyException
@@ -40,7 +42,7 @@ class Config implements ContainerInterface {
     }
 
     /**
-     * Checks if name has value
+     * Check if name has value
      *
      * @param string $name
      * @return bool
