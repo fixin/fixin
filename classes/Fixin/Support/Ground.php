@@ -18,9 +18,11 @@ class Ground extends DoNotCreate {
      * Return readable description of array
      *
      * @param array $var
+     * @param string $opening
+     * @param string $closing
      * @return string
      */
-    public static function arrayInfo(array $var): string {
+    public static function arrayInfo(array $var, string $opening = '[', string $closing = ']'): string {
         $rowTemplate = isset($closing) ? '%s %s' : '<span style="color: #567">%s</span> %s';
         $items = [];
 
@@ -37,7 +39,7 @@ class Ground extends DoNotCreate {
             $items[] = sprintf($rowTemplate, str_pad(htmlspecialchars($key), 30), str_replace("\n", "\n    ", static::valueInfo($value)));
         }
 
-        return ($opening ?? '[') . ($items ? "\n    " . implode(",\n    ", $items) . "\n" : '') . ($closing ?? ']');
+        return $opening . ($items ? "\n    " . implode(",\n    ", $items) . "\n" : '') . $closing;
     }
 
     /**
@@ -87,16 +89,14 @@ class Ground extends DoNotCreate {
             $opening = get_class($var) . ' {';
 
             if (method_exists($var, '__debugInfo')) {
-                $var = $var->__debugInfo();
-            }
-            elseif (method_exists($var, '__toString')) {
-                return $opening . static::scalarValueInfo((string) $var) . '}';
-            }
-            else {
-                $var = get_object_vars($var);
+                return static::arrayInfo($var->__debugInfo(), $opening, '}');
             }
 
-            $closing = '}';
+            if (method_exists($var, '__toString')) {
+                return $opening . static::scalarValueInfo((string) $var) . '}';
+            }
+
+            return static::arrayInfo(get_object_vars($var), $opening, '}');
         }
 
         // Array
