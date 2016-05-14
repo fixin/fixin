@@ -17,7 +17,7 @@ trait ToStringTrait {
     public function __toString(): string {
         return Ground::isConsole()
         ? htmlspecialchars_decode(strip_tags(Ground::valueInfo($this)))
-        : '<div style="font-family: monospace; white-space: pre">' . Ground::valueInfo($this) . '</div>';
+        : '<div style="font-family: monospace; white-space: pre; color: #000; line-height: 1.05">' . Ground::valueInfo($this) . '</div>';
     }
 
     /**
