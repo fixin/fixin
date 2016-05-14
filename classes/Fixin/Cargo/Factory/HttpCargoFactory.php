@@ -3,6 +3,7 @@
  * Fixin Framework
  *
  * @copyright  Copyright (c) 2016 Attila Jenei
+ * @SuppressWarnings(PHPMD.Superglobals)
  */
 
 namespace Fixin\Cargo\Factory;

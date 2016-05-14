@@ -1,15 +1,6 @@
 engines:
   phpmd:
     enabled: true
-    exclude_fingerprints:
-    - cc0a5b24390a9b879da72b5577cd010c
-    - 12197a1ab094378acb0d95ec8a307599
-    - ec360e3ae72499f015824c5a2ad35cb8
-    - 59e09928f5b66998b76266cd3feb9617
-    - b7adae71fc6c2b0c9bd6708376d6979d
-    checks:
-      Controversial/Superglobals:
-        enabled: false
 ratings:    
     paths:
     - classes/**
