@@ -1,6 +1,13 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\Application;
+
+use Fixin\Cargo\Factory\HttpCargoFactory;
 
 class Application implements ApplicationInterface {
 
@@ -40,5 +47,10 @@ class Application implements ApplicationInterface {
      * @see \Fixin\Application\ApplicationInterface::run()
      */
     public function run() {
+        $cargo = (new HttpCargoFactory())($this->container);
+
+        echo $cargo;
+
+//         echo $cargo->getRequestUri();
     }
 }
