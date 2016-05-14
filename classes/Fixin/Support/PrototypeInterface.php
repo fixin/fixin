@@ -7,6 +7,6 @@
 
 namespace Fixin\Support;
 
-interface PrototypeInterface extends ResourceInterface {
+interface PrototypeInterface {
 
 }
