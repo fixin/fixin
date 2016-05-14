@@ -1,6 +1,8 @@
 engines:
   phpmd:
     enabled: true
+    paths:
+    - /    
     exclude_fingerprints:
     - cc0a5b24390a9b879da72b5577cd010c
     - 12197a1ab094378acb0d95ec8a307599
