@@ -22,7 +22,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
     /**
      * @var array
      */
-    protected $searchOrder = ['Fixin'];
+    protected $searchOrder;
 
     /**
      * @param ContainerInterface $container
@@ -30,7 +30,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      */
     public function __construct(ContainerInterface $container, array $options = []) {
         // Search order
-        $this->searchOrder = $options[static::SEARCH_ORDER_KEY] ?? null;
+        $this->searchOrder = $options[static::SEARCH_ORDER_KEY] ?? ['Fixin'];
     }
 
     /**
@@ -49,8 +49,8 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      */
     public function canProduce(ContainerInterface $container, string $name): bool {
         // Already resolved
-        if (($result = $this->map[$name] ?? null) !== null) {
-            return (bool) $result;
+        if (isset($this->map[$name])) {
+            return (bool) $this->map[$name];
         }
 
         // Mapping
@@ -65,8 +65,6 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
         }
 
         // Not found
-        $this->map[$name] = false;
-
-        return false;
+        return $this->map[$name] = false;
     }
 }
