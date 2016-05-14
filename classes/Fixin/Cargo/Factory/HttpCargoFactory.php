@@ -7,7 +7,6 @@
 
 namespace Fixin\Cargo\Factory;
 
-use Fixin\Base\Uri\Uri;
 use Fixin\Cargo\HttpCargo;
 use Fixin\ResourceManager\Factory\FactoryInterface;
 use Fixin\Support\ContainerInterface;
@@ -23,7 +22,7 @@ class HttpCargoFactory implements FactoryInterface {
         $cargo = new HttpCargo();
         $cargo->setRequestProtocolVersion($this->getProtocolVersion())
             ->setRequestMethod($method = $this->getMethod())
-            ->setRequestUri($this->getUri())
+            ->setRequestUri($container->get('RequestUri'))
             ->setRequestParameters($_GET)
             ->setRequestHeaders($this->getHeaders())
             ->setCookies($_COOKIE)
@@ -93,47 +92,5 @@ class HttpCargoFactory implements FactoryInterface {
     protected function getProtocolVersion(): string {
         return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::PROTOCOL_VERSION_1_0)
             ? Http::PROTOCOL_VERSION_1_0 : Http::PROTOCOL_VERSION_1_1;
-    }
-
-    /**
-     * Get URI instance
-     *
-     * @return Uri
-     */
-    protected function getUri(): Uri {
-        $uri = new Uri();
-        $uri->setScheme(($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http')
-            ->setHost($_SERVER['HTTP_HOST'])
-            ->setPort($_SERVER['SERVER_PORT'])
-            ->setPath(($index = strpos($path = $this->getUriString(), '?')) ? substr($path, 0, $index) : $path)
-            ->setQuery($_SERVER['QUERY_STRING']);
-
-        return $uri;
-    }
-
-    /**
-     * Get URI string
-     *
-     * @throws InvalidConfigException
-     * @return string
-     */
-    protected function getUriString(): string {
-        if ($requestUri = $_SERVER['HTTP_X_REWRITE_URL'] ?? false) {
-            return $requestUri;
-        }
-
-        if ($requestUri = $_SERVER['REQUEST_URI']) {
-            if ($requestUri[0] !== '/') {
-                $requestUri = preg_replace('/^(http|https):\/\/[^\/]+/i', '', $requestUri);
-            }
-
-            return $requestUri;
-        }
-
-        if ($requestUri = $_SERVER['ORIG_PATH_INFO'] ?? false) {
-            return $requestUri;
-        }
-
-        throw new InvalidConfigException('Can\'t determine the request URI');
     }
 }
