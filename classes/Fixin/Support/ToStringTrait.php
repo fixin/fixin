@@ -14,16 +14,18 @@ trait ToStringTrait {
      *
      * @return string
      */
-    public function __toString() {
-        $info = get_class($this) . " {\n";
-        $items = [];
+    public function __toString(): string {
+        return Ground::isConsole()
+        ? htmlspecialchars_decode(strip_tags(Ground::valueInfo($this)))
+        : '<div style="font-family: monospace; white-space: pre">' . Ground::valueInfo($this) . '</div>';
+    }
 
-        foreach (get_object_vars($this) as $key => $value) {
-            $items[] = Ground::valueInfo($key) . ': ' . strtr(Ground::valueInfo($value, '"'), ["\n" => "\n    "]);
-        }
-
-        $info .= $items ? "    " . implode(",\n    ", $items) . "\n}\n" : '';
-
-        return Ground::isConsole() ? $info : '<div style="font-family: monospace; white-space: pre">' . htmlspecialchars($info) . '</div>';
+    /**
+     * Debug info
+     *
+     * @return array
+     */
+    public function __debugInfo(): array {
+        return get_object_vars($this);
     }
 }
