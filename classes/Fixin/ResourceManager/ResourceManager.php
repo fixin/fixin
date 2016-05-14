@@ -55,7 +55,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      * Add abstract factory
      *
      * @param string|object $abstractFactory
-     * @return \Fixin\ResourceManager\ResourceManager
+     * @return self
      */
     public function addAbstractFactory($abstractFactory) {
         $this->setupAbstractFactories([$abstractFactory]);
@@ -143,6 +143,12 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
         return $definition;
     }
 
+    /**
+     * Produce resource
+     *
+     * @param string $name
+     * @return object
+     */
     protected function produceResource(string $name) {
         $instance = null;
 
@@ -166,7 +172,13 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
         return $instance;
     }
 
-    protected function produceResourceFromDefinition($name) {
+    /**
+     * Produce resource from definition
+     *
+     * @param string $name
+     * @return object
+     */
+    protected function produceResourceFromDefinition(string $name) {
         $definition = $this->preprocessDefinition($this->definitions[$name]);
 
         // Non-factory object
