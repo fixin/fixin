@@ -10,6 +10,14 @@ namespace Fixin\Base\Uri;
 class Uri implements UriInterface {
 
     /**
+     * @var array
+     */
+    protected $defaultSchemePorts = [
+        'http' => 80,
+        'https' => 443,
+    ];
+
+    /**
      * @var string|null
      */
     protected $fragment;
@@ -38,6 +46,70 @@ class Uri implements UriInterface {
      * @var string
      */
     protected $scheme = '';
+
+    /**
+     * @var string
+     */
+    protected $userInfo = '';
+
+    /**
+     * @return string
+     */
+    public function __toString() {
+        $uri = '';
+
+        // Scheme
+        if ($this->scheme) {
+            $uri .= $this->scheme . '://';
+        }
+
+        // Authority
+        $uri .= $this->getAuthority();
+
+        // Path
+        if ('' !== $path = $this->path) {
+            if ($path[0] !== '/') {
+                $path = '/' . $path;
+            }
+        }
+
+        // Query
+        if ($this->query !== '') {
+            $uri .= '?' . $this->query;
+        }
+
+        // Fragment
+        if ('' !== $fragment = $this->fragment ?? '') {
+            $uri .= '#' . $fragment;
+        }
+
+        return $uri;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Uri\UriInterface::getAuthority()
+     */
+    public function getAuthority(): string {
+        // Host
+        $authority = $this->host;
+
+        if ($authority === '') {
+            return '';
+        }
+
+        // User
+        if ($this->userInfo) {
+            $authority = $this->userInfo . '@' . $authority;
+        }
+
+        // Port
+        if (!$this->isStandardPort($this->port, $this->scheme)) {
+            $authority .= ':' . $this->port;
+        }
+
+        return $authority;
+    }
 
     /**
      * {@inheritDoc}
@@ -85,6 +157,25 @@ class Uri implements UriInterface {
      */
     public function getScheme(): string {
         return $this->scheme;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Uri\UriInterface::getUserInfo()
+     */
+    public function getUserInfo(): string {
+        return $this->userInfo;
+    }
+
+    /**
+     * Determine port is default for scheme
+     *
+     * @param int $port
+     * @param string $scheme
+     * @return bool
+     */
+    protected function isStandardPort(int $port, string $scheme): bool {
+        return $port === $this->defaultSchemePorts[$scheme] ?? null;
     }
 
     /**
@@ -143,6 +234,16 @@ class Uri implements UriInterface {
      */
     public function setScheme(string $scheme) {
         $this->scheme = $scheme;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Uri\UriInterface::setUserInfo($userInfo)
+     */
+    public function setUserInfo(string $userInfo) {
+        $this->userInfo = $userInfo;
 
         return $this;
     }
