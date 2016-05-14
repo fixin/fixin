@@ -19,6 +19,8 @@ abstract class Resource implements ResourceInterface {
     /**
      * @param ContainerInterface $container
      * @param array $options
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(ContainerInterface $container, array $options = []) {
         $this->container = $container;
