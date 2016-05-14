@@ -1,4 +1,9 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\Support;
 
@@ -10,7 +15,7 @@ class Ground extends DoNotCreate {
     protected static $isConsole;
 
     /**
-     * Checks if running in CLI mode
+     * Check if running in CLI mode
      *
      * @return boolean
      */
@@ -19,7 +24,7 @@ class Ground extends DoNotCreate {
     }
 
     /**
-     * Returns readable description of value
+     * Return readable description of value
      *
      * @param mixed $value
      * @param string $stringBorder

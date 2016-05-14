@@ -1,6 +1,7 @@
 <?php
 /**
- * @link       http://www.attilajenei.com
+ * Fixin Framework
+ *
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 

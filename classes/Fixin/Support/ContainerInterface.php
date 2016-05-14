@@ -1,11 +1,16 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\Support;
 
 interface ContainerInterface {
 
     /**
-     * Gets the registered instance
+     * Get the registered instance
      *
      * @param string $name
      * @return mixed
@@ -13,7 +18,7 @@ interface ContainerInterface {
     public function get(string $name);
 
     /**
-     * Checks if the name has been registered
+     * Check if the name has been registered
      *
      * @param string $name
      * @return bool

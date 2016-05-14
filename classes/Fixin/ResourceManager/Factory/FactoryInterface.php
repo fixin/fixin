@@ -1,4 +1,9 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\ResourceManager\Factory;
 
@@ -7,7 +12,7 @@ use Fixin\Support\ContainerInterface;
 interface FactoryInterface {
 
     /**
-     * Produces resource
+     * Produce resource
      *
      * @param ContainerInterface $container
      * @param string $name

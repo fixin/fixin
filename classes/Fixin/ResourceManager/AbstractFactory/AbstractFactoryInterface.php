@@ -1,4 +1,9 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\ResourceManager\AbstractFactory;
 
@@ -8,7 +13,7 @@ use Fixin\Support\ContainerInterface;
 interface AbstractFactoryInterface extends FactoryInterface {
 
     /**
-     * Determines if we can produce a resource by name
+     * Determine if we can produce a resource by name
      *
      * @param ContainerInterface $container
      * @param string $name

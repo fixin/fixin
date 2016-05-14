@@ -1,11 +1,16 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\Support;
 
 trait ToStringTrait {
 
     /**
-     * Returns readable list of variables of instance
+     * Return readable list of variables of instance
      *
      * @return string
      */

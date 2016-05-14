@@ -1,4 +1,9 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\ResourceManager\AbstractFactory;
 
@@ -10,15 +15,11 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
     const SEARCH_ORDER_KEY = 'searchOrder';
 
     /**
-     * Resolved names to class names
-     *
      * @var array
      */
     protected $map = [];
 
     /**
-     * Search order for fallback
-     *
      * @var array
      */
     protected $searchOrder = ['Fixin'];

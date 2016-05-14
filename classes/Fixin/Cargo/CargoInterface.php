@@ -1,18 +1,23 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\Cargo;
 
 interface CargoInterface {
 
     /**
-     * Gets content
+     * Get content
      *
      * @return mixed
      */
     public function getContent();
 
     /**
-     * Sets content
+     * Set content
      *
      * @param mixed $content
      * @return self

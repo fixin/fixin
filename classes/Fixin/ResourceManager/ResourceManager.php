@@ -1,4 +1,9 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\ResourceManager;
 
@@ -45,7 +50,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     }
 
     /**
-     * Adds abstract factory
+     * Add abstract factory
      *
      * @param string|object $abstractFactory
      * @return self
@@ -57,8 +62,8 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     }
 
     /**
-     * @param array $config
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Base\Configurable\ConfigurableInterface::configure()
      */
     public function configure(array $config) {
         // Abstract factories
@@ -116,7 +121,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     }
 
     /**
-     * Preprocesses definition
+     * Preprocess definition
      *
      * @param mixed $definition
      * @return boolean
@@ -140,7 +145,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     }
 
     /**
-     * Produces resource from definition or abstract factories
+     * Produce resource from definition or abstract factories
      *
      * @param string $name
      * @throws Exception\ResourceFaultException
@@ -178,10 +183,10 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     }
 
     /**
-     * Sets definition
+     * Set definition
      *
      * @param string $name
-     * @param unknown $definition
+     * @param mixed $definition
      * @throws Exception\OverrideNotAllowedException
      * @return self
      */
@@ -192,7 +197,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     }
 
     /**
-     * Sets resource
+     * Set resource
      *
      * @param string $name
      * @param object $resource
@@ -210,7 +215,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     }
 
     /**
-     * Sets abstract factories
+     * Set abstract factories
      *
      * @param array $abstractFactories
      * @throws InvalidParameterException

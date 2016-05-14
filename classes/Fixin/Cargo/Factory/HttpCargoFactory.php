@@ -1,4 +1,9 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\Cargo\Factory;
 
@@ -33,7 +38,7 @@ class HttpCargoFactory implements FactoryInterface {
     }
 
     /**
-     * Gets header values
+     * Get header values
      *
      * @return array
      */
@@ -53,7 +58,7 @@ class HttpCargoFactory implements FactoryInterface {
     }
 
     /**
-     * Gets method
+     * Get method
      *
      * @return string
      */
@@ -62,7 +67,7 @@ class HttpCargoFactory implements FactoryInterface {
     }
 
     /**
-     * Gets POST parameters
+     * Get POST parameters
      *
      * @return array
      */
@@ -80,7 +85,7 @@ class HttpCargoFactory implements FactoryInterface {
     }
 
     /**
-     * Gets protocol version
+     * Get protocol version
      *
      * @return string
      */
@@ -90,7 +95,7 @@ class HttpCargoFactory implements FactoryInterface {
     }
 
     /**
-     * Gets URI instance
+     * Get URI instance
      *
      * @return \stdClass
      */
@@ -106,7 +111,7 @@ class HttpCargoFactory implements FactoryInterface {
     }
 
     /**
-     * Gets URI string
+     * Get URI string
      *
      * @throws InvalidConfigException
      * @return string
