@@ -13,6 +13,8 @@ trait ToStringTrait {
      * Return readable list of variables of instance
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __toString(): string {
         return Ground::isConsole()
@@ -24,6 +26,8 @@ trait ToStringTrait {
      * Debug info
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     public function __debugInfo(): array {
         return get_object_vars($this);
