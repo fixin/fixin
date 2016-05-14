@@ -50,7 +50,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
     public function canProduce(ContainerInterface $container, string $name): bool {
         // Already resolved
         if (($result = $this->map[$name] ?? null) !== null) {
-            return $result;
+            return (bool) $result;
         }
 
         // Mapping
