@@ -24,61 +24,70 @@ class Ground extends DoNotCreate {
     }
 
     /**
-     * Return readable description of value
+     * Return readable description of scalar value
      *
-     * @param mixed $value
-     * @param string $stringBorder
+     * @param mixed $var
+     * @param bool $isValue
      * @return string
      */
-    public static function valueInfo($value, string $stringBorder = '') {
-        // Object
-        if (is_object($value)) {
-            if (method_exists($value, '__toString')) {
-                return (string) $value;
-            }
-
-            $items = [];
-
-            foreach (get_object_vars($value) as $subkey => $subvalue) {
-                $items[] = static::valueInfo($subkey) . ': ' . str_replace("\n", "\n    ", static::valueInfo($subvalue, '"'));
-            }
-
-            return $items ? get_class($value) . " {\n    " . implode(",\n    ", $items) . "\n}" : '{}';
+    public static function scalarValueInfo($var): string {
+        // Int
+        if (is_int($var)) {
+            return '<span style="color: #080">' . $var . '</span>';
         }
 
-        // Array
-        if (is_array($value)) {
-            $items = [];
-
-            foreach ($value as $subkey => $subvalue) {
-                $items[] = static::valueInfo($subkey, '"') . ' => ' . str_replace("\n", "\n    ", static::valueInfo($subvalue, '"'));
-            }
-
-            return $items ? "[\n    " . implode(",\n    ", $items) . "\n]" : '[]';
-        }
-
-        // Null
-        if (is_null($value)) {
-            return 'NULL';
+        // Float
+        if (is_float($var)) {
+            return '<span style="color: #c60">' . $var . '</span>';
         }
 
         // Bool
-        if (is_bool($value)) {
-            return $value ? 'true' : 'false';
-        }
-
-        // Int, float
-        if (is_int($value) || is_float($value)) {
-            return $value;
+        if (is_bool($var)) {
+            return '<span style="color: #0c0">' . ($var ? 'true' : 'false') . '</span>';
         }
 
         // String
-        $replaces = ['\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'];
+        return '<span style="color: #c00">"' . htmlspecialchars(strtr($var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"</span>';
+    }
 
-        if ($stringBorder) {
-            $replaces[$stringBorder] = "\\$stringBorder";
+    /**
+     * Return readable description of value
+     *
+     * @param mixed $var
+     * @return string
+     */
+    public static function valueInfo($var): string {
+        // Object
+        if (is_object($var)) {
+            $opening = get_class($var) . ' {';
+            $closing = '}';
+            $assigner = ': ';
+            $isArray = false;
+
+            $var = method_exists($var, '__debugInfo') ? $var->__debugInfo() : get_object_vars($var);
         }
 
-        return $stringBorder . strtr($value, $replaces) . $stringBorder;
+        // Array
+        if (is_array($var)) {
+            $assigner = $assigner ?? '';
+            $isArray = $isArray ?? true;
+
+            $items = [];
+
+            foreach ($var as $key => $value) {
+                $items[] = str_pad(htmlspecialchars($key . $assigner), 30) . ' ' . str_replace("\n", "\n    ", static::valueInfo($value));
+            }
+
+            return '<span style="font-weight: bold">' . ($opening ?? '[') . '</span>'
+                . ($items ? "\n    " . implode(",\n    ", $items) . "\n" : '')
+                . '<span style="font-weight: bold">' . ($closing ?? ']') . '</span>';
+        }
+
+        // Null
+        if (is_null($var)) {
+            return '<span style="color: #60c">NULL</span>';
+        }
+
+        return static::scalarValueInfo($var);
     }
 }
