@@ -10,9 +10,9 @@ namespace Fixin\Base\Uri;
 class Uri implements UriInterface {
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $fragment = '';
+    protected $fragment;
 
     /**
      * @var string
@@ -25,7 +25,7 @@ class Uri implements UriInterface {
     protected $path = '';
 
     /**
-     * @var unknown
+     * @var int|null
      */
     protected $port;
 
