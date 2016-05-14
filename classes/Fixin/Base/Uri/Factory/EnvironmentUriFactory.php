@@ -40,11 +40,11 @@ class EnvironmentUriFactory implements FactoryInterface {
         }
 
         if ($requestUri = $_SERVER['REQUEST_URI']) {
-            if ($requestUri[0] !== '/') {
-                $requestUri = preg_replace('/^(http|https):\/\/[^\/]+/i', '', $requestUri);
+            if ($requestUri[0] === '/') {
+                return $requestUri;
             }
 
-            return $requestUri;
+            return preg_replace('/^(http|https):\/\/[^\/]+/i', '', $requestUri);
         }
 
         if ($requestUri = $_SERVER['ORIG_PATH_INFO'] ?? false) {
