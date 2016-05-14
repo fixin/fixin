@@ -10,6 +10,13 @@ namespace Fixin\Base\Uri;
 interface UriInterface {
 
     /**
+     * Get authority part
+     *
+     * @return string
+     */
+    public function getAuthority(): string;
+
+    /**
      * Get fragment
      *
      * @return string|null
@@ -17,7 +24,7 @@ interface UriInterface {
     public function getFragment();
 
     /**
-     * Get host part
+     * Get host
      *
      * @return string
      */
@@ -50,6 +57,13 @@ interface UriInterface {
      * @return string
      */
     public function getScheme(): string;
+
+    /**
+     * Get user info
+     *
+     * @return string
+     */
+    public function getUserInfo(): string;
 
     /**
      * Set fragment
@@ -99,4 +113,11 @@ interface UriInterface {
      */
     public function setScheme(string $scheme);
 
+    /**
+     * Set user info
+     *
+     * @param string $userInfo
+     * @return self
+     */
+    public function setUserInfo(string $userInfo);
 }
