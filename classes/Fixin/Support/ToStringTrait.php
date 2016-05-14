@@ -30,6 +30,6 @@ trait ToStringTrait {
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
     public function __debugInfo(): array {
-        return get_object_vars($this);
+        return (array) $this;
     }
 }
