@@ -23,7 +23,7 @@ class Ground extends DoNotCreate {
      * @return string
      */
     public static function arrayInfo(array $var, string $opening = '[', string $closing = ']'): string {
-        $rowTemplate = $closing === ']' ? '<span style="color: #654">%s</span> %s' : '%s %s';
+        $rowTemplate = $closing === ']' ? '<span style="color: #754">%s</span> %s' : '%s %s';
         $items = [];
 
         foreach ($var as $key => $value) {
@@ -96,7 +96,7 @@ class Ground extends DoNotCreate {
                 return $opening . static::scalarValueInfo((string) $var) . '}';
             }
 
-            return static::arrayInfo(get_object_vars($var), $opening, '}');
+            return static::arrayInfo((array) $var, $opening, '}');
         }
 
         // Array
