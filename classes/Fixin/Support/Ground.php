@@ -15,6 +15,32 @@ class Ground extends DoNotCreate {
     protected static $isConsole;
 
     /**
+     * Return readable description of array
+     *
+     * @param array $var
+     * @return string
+     */
+    public static function arrayInfo(array $var): string {
+        $rowTemplate = isset($closing) ? '%s %s' : '<span style="color: #567">%s</span> %s';
+        $items = [];
+
+        foreach ($var as $key => $value) {
+            if (stripos($key, 'password') !== false) {
+                if (is_array($value)) {
+                    $value = array_fill_keys(array_keys($value), '*****');
+                }
+                elseif (is_scalar($value)) {
+                    $value = '*****';
+                }
+            }
+
+            $items[] = sprintf($rowTemplate, str_pad(htmlspecialchars($key), 30), str_replace("\n", "\n    ", static::valueInfo($value)));
+        }
+
+        return ($opening ?? '[') . ($items ? "\n    " . implode(",\n    ", $items) . "\n" : '') . ($closing ?? ']');
+    }
+
+    /**
      * Check if running in CLI mode
      *
      * @return boolean
@@ -75,25 +101,7 @@ class Ground extends DoNotCreate {
 
         // Array
         if (is_array($var)) {
-            $rowTemplate = isset($closing) ? '%s %s' : '<span style="color: #567">%s</span> %s';
-            $items = [];
-
-            foreach ($var as $key => $value) {
-                if (stripos($key, 'password') !== false) {
-                    if (is_array($value)) {
-                        $value = array_fill_keys(array_keys($value), '*****');
-                    }
-                    elseif (is_scalar($value)) {
-                        $value = '*****';
-                    }
-                }
-
-                $items[] = sprintf($rowTemplate, str_pad(htmlspecialchars($key), 30), str_replace("\n", "\n    ", static::valueInfo($value)));
-            }
-
-            return ($opening ?? '[')
-                . ($items ? "\n    " . implode(",\n    ", $items) . "\n" : '')
-                . ($closing ?? ']');
+            return static::arrayInfo($var);
         }
 
         // Null
