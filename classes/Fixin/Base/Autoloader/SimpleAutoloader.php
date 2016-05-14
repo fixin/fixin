@@ -1,4 +1,8 @@
 <?php
+/**
+ * @link       http://www.attilajenei.com
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\Base\Autoloader;
 
@@ -21,7 +25,7 @@ class SimpleAutoloader implements AutoloaderInterface {
     }
 
     /**
-     * Adds base path(s) for a prefix
+     * Add base path(s) for a prefix
      *
      * @param string $prefix
      * @param string|array $path
@@ -40,7 +44,7 @@ class SimpleAutoloader implements AutoloaderInterface {
     }
 
     /**
-     * Adds multiple prefixes
+     * Add multiple prefixes
      *
      * @param array $prefixes
      * @return self
