@@ -39,7 +39,7 @@ class EnvironmentUriFactory implements FactoryInterface {
             throw new InvalidConfigException('Can\'t determine the request URI');
         };
 
-        if (null === $index = strpos($path = $this->getUriString(), '?')) {
+        if (null === $index = strpos($uri, '?')) {
             return $uri;
         }
 
