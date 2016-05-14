@@ -3,7 +3,6 @@
  * Fixin Framework
  *
  * @copyright  Copyright (c) 2016 Attila Jenei
- * @SuppressWarnings(PHPMD.Superglobals)
  */
 
 namespace Fixin\Cargo\Factory;
@@ -18,6 +17,8 @@ class HttpCargoFactory implements FactoryInterface {
     /**
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __invoke(ContainerInterface $container, string $name = null) {
         $cargo = new HttpCargo();
@@ -42,6 +43,8 @@ class HttpCargoFactory implements FactoryInterface {
      * Get header values
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function getHeaders(): array {
         if (function_exists('getallheaders')) {
@@ -62,6 +65,8 @@ class HttpCargoFactory implements FactoryInterface {
      * Get method
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function getMethod(): string {
         return $_SERVER['REQUEST_METHOD'];
@@ -71,6 +76,8 @@ class HttpCargoFactory implements FactoryInterface {
      * Get POST parameters
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function getPostParameters(): array {
         $post = $_POST;
@@ -89,6 +96,8 @@ class HttpCargoFactory implements FactoryInterface {
      * Get protocol version
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function getProtocolVersion(): string {
         return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::PROTOCOL_VERSION_1_0)
