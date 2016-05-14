@@ -27,7 +27,6 @@ class Ground extends DoNotCreate {
      * Return readable description of scalar value
      *
      * @param mixed $var
-     * @param bool $isValue
      * @return string
      */
     public static function scalarValueInfo($var): string {
@@ -47,7 +46,7 @@ class Ground extends DoNotCreate {
         }
 
         // String
-        return '<span style="color: #c00">"' . htmlspecialchars(strtr($var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"</span>';
+        return '<span style="color: #c00">"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"</span>';
     }
 
     /**
