@@ -71,6 +71,8 @@ class Uri implements UriInterface {
             if ($path[0] !== '/') {
                 $path = '/' . $path;
             }
+
+            $uri .= $path;
         }
 
         // Query
