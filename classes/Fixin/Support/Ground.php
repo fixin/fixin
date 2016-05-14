@@ -23,7 +23,7 @@ class Ground extends DoNotCreate {
      * @return string
      */
     public static function arrayInfo(array $var, string $opening = '[', string $closing = ']'): string {
-        $rowTemplate = isset($closing) ? '%s %s' : '<span style="color: #567">%s</span> %s';
+        $rowTemplate = $closing === ']' ? '<span style="color: #654">%s</span> %s' : '%s %s';
         $items = [];
 
         foreach ($var as $key => $value) {
@@ -39,7 +39,7 @@ class Ground extends DoNotCreate {
             $items[] = sprintf($rowTemplate, str_pad(htmlspecialchars($key), 30), str_replace("\n", "\n    ", static::valueInfo($value)));
         }
 
-        return $opening . ($items ? "\n    " . implode(",\n    ", $items) . "\n" : '') . $closing;
+        return $opening . rtrim("\n    " . implode(",\n    ", $items)) . "\n" . $closing;
     }
 
     /**
