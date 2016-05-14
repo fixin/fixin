@@ -7,6 +7,7 @@
 
 namespace Fixin\Cargo\Factory;
 
+use Fixin\Base\Uri\Uri;
 use Fixin\Cargo\HttpCargo;
 use Fixin\ResourceManager\Factory\FactoryInterface;
 use Fixin\Support\ContainerInterface;
@@ -97,15 +98,15 @@ class HttpCargoFactory implements FactoryInterface {
     /**
      * Get URI instance
      *
-     * @return \stdClass
+     * @return Uri
      */
-    protected function getUri() {
-        $uri = new \stdClass;
-        $uri->scheme = ($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http';
-        $uri->host = $_SERVER['HTTP_HOST'];
-        $uri->port = $_SERVER['SERVER_PORT'];
-        $uri->path = ($index = strpos($path = $this->getUriString(), '?')) ? substr($path, 0, $index) : $path;
-        $uri->query = $_SERVER['QUERY_STRING'];
+    protected function getUri(): Uri {
+        $uri = new Uri();
+        $uri->setScheme(($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http')
+            ->setHost($_SERVER['HTTP_HOST'])
+            ->setPort($_SERVER['SERVER_PORT'])
+            ->setPath(($index = strpos($path = $this->getUriString(), '?')) ? substr($path, 0, $index) : $path)
+            ->setQuery($_SERVER['QUERY_STRING']);
 
         return $uri;
     }

@@ -1,10 +1,19 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 namespace Fixin\Cargo;
 
+use Fixin\Base\Uri\UriInterface;
 use Fixin\Support\Http;
+use Fixin\Support\ToStringTrait;
 
 class HttpCargo extends Cargo {
+
+    use ToStringTrait;
 
     /**
      * @var array
@@ -47,7 +56,7 @@ class HttpCargo extends Cargo {
     protected $requestProtocolVersion = Http::PROTOCOL_VERSION_1_1;
 
     /**
-     * @var \stdClass
+     * @var Uri
      */
     protected $requestUri;
 
@@ -166,7 +175,7 @@ class HttpCargo extends Cargo {
     /**
      * Gets request URI
      *
-     * @return string
+     * @return UriInterface
      */
     public function getRequestUri() {
         return $this->requestUri;
@@ -277,10 +286,10 @@ class HttpCargo extends Cargo {
     /**
      * Sets request URI
      *
-     * @param \stdClass $requestUri
+     * @param UriInterface $requestUri
      * @return self
      */
-    public function setRequestUri(\stdClass $requestUri) {
+    public function setRequestUri(UriInterface $requestUri) {
         $this->requestUri = $requestUri;
 
         return $this;
