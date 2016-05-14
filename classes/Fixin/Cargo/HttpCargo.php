@@ -56,7 +56,7 @@ class HttpCargo extends Cargo {
     protected $requestProtocolVersion = Http::PROTOCOL_VERSION_1_1;
 
     /**
-     * @var Uri
+     * @var UriInterface
      */
     protected $requestUri;
 
