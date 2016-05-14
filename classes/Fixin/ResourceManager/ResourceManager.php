@@ -21,6 +21,8 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     const DEFINITIONS_KEY = 'definitions';
     const RESOURCES_KEY = 'resources';
 
+    const CONFIG_INJECT_KEYS = [self::DEFINITIONS_KEY => 'Definition', self::RESOURCES_KEY => 'Resource'];
+
     /**
      * Abstract factories
      *
@@ -53,7 +55,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      * Add abstract factory
      *
      * @param string|object $abstractFactory
-     * @return self
+     * @return \Fixin\ResourceManager\ResourceManager
      */
     public function addAbstractFactory($abstractFactory) {
         $this->setupAbstractFactories([$abstractFactory]);
@@ -71,22 +73,17 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
             $this->setupAbstractFactories($config[static::ABSTRACT_FACTORIES_KEY]);
         }
 
-        // Definitions
-        if ($values = $config[static::DEFINITIONS_KEY] ?? false) {
-            if ($names = array_intersect_key($values, $this->definitions)) {
-                throw new Exception\OverrideNotAllowedException("Definition already defined for '" . implode("', '", array_keys($names)) . "'");
+        // Inject options
+        foreach (static::CONFIG_INJECT_KEYS as $key => $label) {
+            if (isset($config[$key])) {
+                $values = $config[$key];
+
+                if ($names = array_intersect_key($values, $this->{$key})) {
+                    throw new Exception\OverrideNotAllowedException("$label already defined for '" . implode("', '", array_keys($names)) . "'");
+                }
+
+                $this->$key = $values + $this->$key;
             }
-
-            $this->definitions = $values + $this->definitions;
-        }
-
-        // Resources
-        if ($values = $config[static::RESOURCES_KEY] ?? false) {
-            if ($names = array_intersect_key($values, $this->resources)) {
-                throw new Exception\OverrideNotAllowedException("Resource already defined for '" . implode("', '", array_keys($names)) . "'");
-            }
-
-            $this->resources = $values + $this->resources;
         }
 
         return $this;
@@ -97,7 +94,12 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      * @see \Fixin\Support\ContainerInterface::get($name)
      */
     public function get(string $name) {
-        return $this->resources[$name] ?? $this->resources[$name] = $this->produceResource($name);
+        $arr = $this->resources[$name] ?? $this->produceResource($name);
+
+        return $arr ?? function() {
+            // Not found
+            throw new Exception\ResourceNotFoundException("Resource is not registered with name '$name'");
+        };
     }
 
     /**
@@ -105,7 +107,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      * @see \Fixin\Support\ContainerInterface::has($name)
      */
     public function has(string $name): bool {
-        // Resource or definition
+        // Made or defined
         if (isset($this->resources[$name]) || isset($this->definitions[$name])) {
             return true;
         }
@@ -124,62 +126,59 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      * Preprocess definition
      *
      * @param mixed $definition
-     * @return boolean
-     */
-    protected function preprocessDefinition(&$definition) {
-        // Resolve class name
-        if (is_string($definition) && class_exists($definition)) {
-            $definition = new $definition($this);
-
-            return true;
-        }
-        // Resolve class array
-        elseif (($class = $definition[static::CLASS_KEY] ?? false) && class_exists($class)) {
-            unset($definition[static::CLASS_KEY]);
-            $definition = new $class($this, $definition);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Produce resource from definition or abstract factories
-     *
-     * @param string $name
-     * @throws Exception\ResourceFaultException
-     * @throws Exception\ResourceNotFoundException
      * @return mixed
      */
+    protected function preprocessDefinition($definition) {
+        // Resolve class name
+        if (is_string($definition) && class_exists($definition)) {
+            return new $definition($this);
+        }
+        // Resolve class array
+        elseif (isset($definition[static::CLASS_KEY]) && class_exists($class = $definition[static::CLASS_KEY])) {
+            unset($definition[static::CLASS_KEY]);
+
+            return new $class($this, $definition);
+        }
+
+        return $definition;
+    }
+
     protected function produceResource(string $name) {
-        // Definitions
-        if ($definition = $this->definitions[$name] ?? false) {
-            if ($this->preprocessDefinition($definition)) {
-                $this->definitions[$name] = $definition;
-            }
+        $instance = null;
 
-            // Non-factory object
-            if (is_object($definition) && !$definition instanceof FactoryInterface && !$definition instanceof Closure) {
-                return $definition;
-            }
-
-            if (is_callable($definition)) {
-                return $definition($this, $name);
-            }
-
-            throw new Exception\ResourceFaultException("Invalid definition registered for name '$name'");
+        if (isset($this->definitions[$name])) {
+            $instance = $this->produceResourceFromDefinition($name);
         }
 
         // Abstract factories
         foreach ($this->abstractFactories as $abstractFactory) {
             if ($abstractFactory->canProduce($this, $name)) {
-                return $abstractFactory->produce($this, $name);
+                $instance = $abstractFactory->produce($this, $name);
+
+                break;
             }
         }
 
-        // Not found
-        throw new Exception\ResourceNotFoundException("Resource is not registered with name '$name'");
+        if (isset($instance)) {
+            $this->resources[$name] = $instance;
+        }
+
+        return $instance;
+    }
+
+    protected function produceResourceFromDefinition($name) {
+        $definition = $this->preprocessDefinition($this->definitions[$name]);
+
+        // Non-factory object
+        if (is_object($definition) && !$definition instanceof FactoryInterface && !$definition instanceof Closure) {
+            return $definition;
+        }
+
+        if (is_callable($definition)) {
+            return $definition($this, $name);
+        }
+
+        throw new Exception\ResourceFaultException("Invalid definition registered for name '$name'");
     }
 
     /**
@@ -187,7 +186,6 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      *
      * @param string $name
      * @param mixed $definition
-     * @throws Exception\OverrideNotAllowedException
      * @return self
      */
     public function setDefinition(string $name, $definition) {
@@ -201,7 +199,7 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      *
      * @param string $name
      * @param object $resource
-     * @throws Exception\OverrideNotAllowedException
+     * @throws InvalidParameterException
      * @return self
      */
     public function setResource(string $name, $resource) {
@@ -222,21 +220,23 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
      */
     protected function setupAbstractFactories(array $abstractFactories) {
         foreach ($abstractFactories as $abstractFactory) {
-            $this->preprocessDefinition($abstractFactory);
+            $abstractFactory = $this->preprocessDefinition($abstractFactory);
 
             if ($abstractFactory instanceof AbstractFactoryInterface) {
                 $this->abstractFactories[] = $abstractFactory;
+
+                continue;
             }
+
             // Fault
-            elseif (is_string($abstractFactory)) {
+            if (is_string($abstractFactory)) {
                 throw new InvalidParameterException('Invalid abstract factory: ' . $abstractFactory);
             }
             elseif (is_array($abstractFactory)) {
                 throw new InvalidParameterException('Invalid abstract factory array data');
             }
-            else {
-                throw new InvalidParameterException('Invalid type for abstract factory: ' . gettype($abstractFactory));
-            }
+
+            throw new InvalidParameterException('Invalid type for abstract factory: ' . gettype($abstractFactory));
         }
     }
 }
