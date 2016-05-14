@@ -17,7 +17,7 @@ class EnvironmentUriFactory implements FactoryInterface {
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ContainerInterface $container, string $name) {
+    public function __invoke(ContainerInterface $container, string $name = null) {
         $uri = new Uri();
         $uri->setScheme(($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http')
         ->setHost($_SERVER['HTTP_HOST'])

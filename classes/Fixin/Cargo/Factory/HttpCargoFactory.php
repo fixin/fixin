@@ -20,7 +20,7 @@ class HttpCargoFactory implements FactoryInterface {
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function __invoke(ContainerInterface $container, string $name) {
+    public function __invoke(ContainerInterface $container, string $name = null) {
         $cargo = new HttpCargo();
         $cargo->setRequestProtocolVersion($this->getProtocolVersion())
             ->setRequestMethod($method = $this->getMethod())
