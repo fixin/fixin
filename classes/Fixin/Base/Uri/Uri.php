@@ -83,8 +83,8 @@ class Uri implements UriInterface, PrototypeInterface {
         }
 
         // Fragment
-        if ('' !== $fragment = $this->fragment ?? '') {
-            $uri .= '#' . $fragment;
+        if (strlen($this->fragment)) {
+            $uri .= '#' . $this->fragment;
         }
 
         return $uri;
