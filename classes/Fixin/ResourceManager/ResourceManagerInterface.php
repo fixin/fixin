@@ -7,7 +7,6 @@
 namespace Fixin\ResourceManager;
 
 use Fixin\Support\ContainerInterface;
-use Fixin\Support\PrototypeInterface;
 
 interface ResourceManagerInterface extends ContainerInterface {
 
@@ -15,7 +14,7 @@ interface ResourceManagerInterface extends ContainerInterface {
      * Clone the registered prototype
      *
      * @param string $name
-     * @return PrototypeInterface
+     * @return object
      */
     public function clonePrototype(string $name);
 }

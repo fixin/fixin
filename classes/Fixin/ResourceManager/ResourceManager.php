@@ -101,9 +101,7 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
      * @see \Fixin\Support\ContainerInterface::get($name)
      */
     public function get(string $name) {
-        $arr = $this->resources[$name] ?? $this->produceResource($name);
-
-        if (!$arr instanceof PrototypeInterface) {
+        if (!($arr = $this->resources[$name] ?? $this->produceResource($name)) instanceof PrototypeInterface) {
             return $arr;
         }
 
