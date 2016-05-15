@@ -5,6 +5,7 @@ return [
         'class' => 'Fixin\ResourceManager\ResourceManager',
         'definitions' => [
             'requestUri' => 'Fixin\Base\Uri\Factory\EnvironmentUriFactory',
+            'dispatcher' => 'Fixin\Delivery\Dispatcher\Dispatcher'
         ],
         'abstractFactories' => [
             'prefixFallback' => [
@@ -12,4 +13,7 @@ return [
             ]
         ]
     ],
+    'dispatcherConfig' => [
+
+    ]
 ];
