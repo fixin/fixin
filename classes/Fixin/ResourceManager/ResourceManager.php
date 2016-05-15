@@ -90,15 +90,7 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
 
         // Inject options
         foreach (static::CONFIG_INJECT_KEYS as $key => $label) {
-            if (isset($config[$key])) {
-                $values = $config[$key];
-
-                if ($names = array_intersect_key($values, $this->{$key})) {
-                    throw new Exception\OverrideNotAllowedException("$label already defined for '" . implode("', '", array_keys($names)) . "'");
-                }
-
-                $this->$key = $values + $this->$key;
-            }
+            isset($config[$key]) && $this->injectOptions($key, $config[$key]);
         }
 
         return $this;
@@ -137,6 +129,21 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
         }
 
         return false;
+    }
+
+    /**
+     * Inject options
+     *
+     * @param string $key
+     * @param array $values
+     * @throws Exception\OverrideNotAllowedException
+     */
+    protected function injectOptions(string $key, array $values) {
+        if ($names = array_intersect_key($values, $this->{$key})) {
+            throw new Exception\OverrideNotAllowedException("$label already defined for '" . implode("', '", array_keys($names)) . "'");
+        }
+
+        $this->$key = $values + $this->$key;
     }
 
     /**
