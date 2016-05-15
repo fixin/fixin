@@ -30,7 +30,7 @@ class VariableInspector extends DoNotCreate {
      * @return string
      */
     public static function arrayInfo(array $var): string {
-        return '[' . static::itemsInfo($var, '#754') . ']';
+        return '[' . ($var ? "\n" . static::itemsInfo($var, '#754') : '') . ']';
     }
 
     /**
@@ -41,10 +41,6 @@ class VariableInspector extends DoNotCreate {
      * @return string
      */
     protected static function itemsInfo(array $var, string $color): string {
-        if (empty($var)) {
-            return '';
-        }
-
         $info = '';
 
         foreach ($var as $key => $value) {
@@ -52,10 +48,10 @@ class VariableInspector extends DoNotCreate {
                 $value = '*****';
             }
 
-            $info .= "\n    " . sprintf(static::$valueTemplate, $color, htmlspecialchars(str_pad($key, 30))) . str_replace("\n", "\n    ", static::valueInfo($value));
+            $info .= "    " . sprintf(static::$valueTemplate, $color, htmlspecialchars(str_pad($key, 30))) . str_replace("\n", "\n    ", static::valueInfo($value)) . "\n";
         }
 
-        return $info . "\n";
+        return $info;
     }
 
     /**
@@ -77,7 +73,7 @@ class VariableInspector extends DoNotCreate {
             $var = (array) $var;
         }
 
-        return $opening . static::itemsInfo($var, '#444') . '}';
+        return $opening . ($var ? "\n" . static::itemsInfo($var, '#444') : '') . '}';
     }
 
     /**
