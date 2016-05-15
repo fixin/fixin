@@ -267,30 +267,14 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
      * @throws InvalidParameterException
      */
     protected function setupAbstractFactories(array $abstractFactories) {
-        foreach ($abstractFactories as $abstractFactory) {
+        foreach ($abstractFactories as $key => $abstractFactory) {
             $abstractFactory = $this->preprocessDefinition($abstractFactory);
 
             if (!$abstractFactory instanceof AbstractFactoryInterface) {
-                $this->setupAbstractFactoryFault($abstractFactory);
+                throw new InvalidParameterException("Invalid abstract factory definition '$key'");
             }
 
             $this->abstractFactories[] = $abstractFactory;
         }
-    }
-
-    /**
-     * @param mixed $abstractFactory
-     * @throws InvalidParameterException
-     */
-    protected function setupAbstractFactoryFault($abstractFactory) {
-        // Fault
-        if (is_string($abstractFactory)) {
-            throw new InvalidParameterException('Invalid abstract factory: ' . $abstractFactory);
-        }
-        elseif (is_array($abstractFactory)) {
-            throw new InvalidParameterException('Invalid abstract factory array data');
-        }
-
-        throw new InvalidParameterException('Invalid type for abstract factory: ' . gettype($abstractFactory));
     }
 }
