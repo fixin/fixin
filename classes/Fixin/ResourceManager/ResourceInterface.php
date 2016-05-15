@@ -12,8 +12,8 @@ use Fixin\Support\ContainerInterface;
 interface ResourceInterface {
 
     /**
-     * @param ContainerInterface $container
+     * @param ResourceManagerInterface $container
      * @param array $options
      */
-    public function __construct(ContainerInterface $container, array $options = []);
+    public function __construct(ResourceManagerInterface $container, array $options = []);
 }

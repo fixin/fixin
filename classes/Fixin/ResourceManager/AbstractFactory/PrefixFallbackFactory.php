@@ -7,7 +7,7 @@
 
 namespace Fixin\ResourceManager\AbstractFactory;
 
-use Fixin\Support\ContainerInterface;
+use Fixin\ResourceManager\ResourceManagerInterface;
 
 class PrefixFallbackFactory implements AbstractFactoryInterface {
 
@@ -28,7 +28,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      * @param ContainerInterface $container
      * @param array $options
      */
-    public function __construct(ContainerInterface $container, array $options = []) {
+    public function __construct(ResourceManagerInterface $container, array $options = []) {
         // Search order
         $this->searchOrder = $options[static::SEARCH_ORDER_KEY] ?? ['Fixin'];
     }
@@ -37,7 +37,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ContainerInterface $container, string $name = null) {
+    public function __invoke(ResourceManagerInterface $container, string $name = null) {
         $mapped = $this->map[$name];
 
         return $mapped ? new $mapped($container, [static::RESOURCE_NAME_KEY => $name]) : null;
@@ -47,7 +47,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface::canProduce($manager, $name)
      */
-    public function canProduce(ContainerInterface $container, string $name): bool {
+    public function canProduce(ResourceManagerInterface $container, string $name): bool {
         // Already resolved
         if (isset($this->map[$name])) {
             return (bool) $this->map[$name];

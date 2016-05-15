@@ -9,7 +9,7 @@ namespace Fixin\Cargo\Factory;
 
 use Fixin\Cargo\HttpCargo;
 use Fixin\ResourceManager\Factory\FactoryInterface;
-use Fixin\Support\ContainerInterface;
+use Fixin\ResourceManager\ResourceManagerInterface;
 use Fixin\Support\Http;
 
 class HttpCargoFactory implements FactoryInterface {
@@ -20,11 +20,11 @@ class HttpCargoFactory implements FactoryInterface {
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function __invoke(ContainerInterface $container, string $name = null) {
+    public function __invoke(ResourceManagerInterface $container, string $name = null) {
         $cargo = new HttpCargo();
         $cargo->setRequestProtocolVersion($this->getProtocolVersion())
             ->setRequestMethod($method = $this->getMethod())
-            ->setRequestUri($container->get('requestUri'))
+            ->setRequestUri($container->clonePrototype('requestUri'))
             ->setRequestParameters($_GET)
             ->setRequestHeaders($this->getHeaders())
             ->setCookies($_COOKIE)

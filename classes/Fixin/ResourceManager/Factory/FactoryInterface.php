@@ -7,16 +7,16 @@
 
 namespace Fixin\ResourceManager\Factory;
 
-use Fixin\Support\ContainerInterface;
+use Fixin\ResourceManager\ResourceManagerInterface;
 
 interface FactoryInterface {
 
     /**
      * Produce resource
      *
-     * @param ContainerInterface $container
+     * @param ResourceManagerInterface $container
      * @param string $name
      * @return mixed
      */
-    public function __invoke(ContainerInterface $container, string $name = null);
+    public function __invoke(ResourceManagerInterface $container, string $name = null);
 }

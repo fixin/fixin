@@ -12,7 +12,7 @@ use Fixin\Support\ContainerInterface;
 abstract class Resource implements ResourceInterface {
 
     /**
-     * @var ContainerInterface
+     * @var ResourceManagerInterface
      */
     protected $container;
 
@@ -22,7 +22,7 @@ abstract class Resource implements ResourceInterface {
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __construct(ContainerInterface $container, array $options = []) {
+    public function __construct(ResourceManagerInterface $container, array $options = []) {
         $this->container = $container;
     }
 }
