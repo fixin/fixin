@@ -7,7 +7,6 @@
 
 namespace Fixin\ResourceManager;
 
-use Closure;
 use Fixin\Base\Configurable\ConfigurableInterface;
 use Fixin\Base\Exception\InvalidParameterException;
 use Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface;
@@ -115,7 +114,7 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
      */
     public function has(string $name): bool {
         // Made or defined
-        if (isset($this->resources[$name]) || isset($this->definitions[$name])) {
+        if (isset($this->definitions[$name])) {
             return true;
         }
 
@@ -176,13 +175,21 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
      */
     protected function produceResource(string $name) {
         if (isset($this->definitions[$name])) {
-            return $this->resources[$name] = $this->produceResourceFromDefinition($name);
+            $resource =
+            $this->resources[$name] = $this->produceResourceFromDefinition($name);
+            $this->definitions[$name] = true;
+
+            return $resource;
         }
 
         // Abstract factories
         foreach ($this->abstractFactories as $abstractFactory) {
             if ($abstractFactory->canProduce($this, $name)) {
-                return $this->resources[$name] = $abstractFactory->produce($this, $name);
+                $resource =
+                $this->resources[$name] = $abstractFactory->produce($this, $name);
+                $this->definitions[$name] = true;
+
+                return $resource;
             }
         }
 
@@ -198,7 +205,7 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
     protected function produceResourceFromDefinition(string $name) {
         $definition = $this->preprocessDefinition($this->definitions[$name]);
 
-        if ($definition instanceof FactoryInterface || $definition instanceof Closure) {
+        if ($definition instanceof FactoryInterface || $definition instanceof \Closure) {
             return $definition($this, $name);
         }
 
@@ -237,6 +244,7 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
         }
 
         $this->configure([static::RESOURCES_KEY => [$name => $resource]]);
+        $this->definitions[$name] = true;
 
         return $this;
     }
