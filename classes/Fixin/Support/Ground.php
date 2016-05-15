@@ -52,6 +52,26 @@ class Ground extends DoNotCreate {
     }
 
     /**
+     * Return readable description of object
+     *
+     * @param mixed $var
+     * @return string
+     */
+    public static function objectValueInfo($var): string {
+        $opening = get_class($var) . ' {';
+
+        if (method_exists($var, '__debugInfo')) {
+            return static::arrayInfo($var->__debugInfo(), $opening, '}');
+        }
+
+        if (method_exists($var, '__toString')) {
+            return $opening . static::scalarValueInfo((string) $var) . '}';
+        }
+
+        return static::arrayInfo((array) $var, $opening, '}');
+    }
+
+    /**
      * Return readable description of scalar value
      *
      * @param mixed $var
@@ -86,17 +106,7 @@ class Ground extends DoNotCreate {
     public static function valueInfo($var): string {
         // Object
         if (is_object($var)) {
-            $opening = get_class($var) . ' {';
-
-            if (method_exists($var, '__debugInfo')) {
-                return static::arrayInfo($var->__debugInfo(), $opening, '}');
-            }
-
-            if (method_exists($var, '__toString')) {
-                return $opening . static::scalarValueInfo((string) $var) . '}';
-            }
-
-            return static::arrayInfo((array) $var, $opening, '}');
+            return static::objectValueInfo($var);
         }
 
         // Array
