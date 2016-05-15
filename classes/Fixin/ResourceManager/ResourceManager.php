@@ -152,8 +152,8 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
      */
     protected function preprocessDefinition($definition) {
         // Resolve class name
-        if (is_string($definition) && class_exists($definition)) {
-            return new $definition($this);
+        if (is_string($definition)) {
+            return class_exists($definition) ? new $definition($this) : $definition;
         }
         // Resolve class array
         elseif (isset($definition[static::CLASS_KEY]) && class_exists($class = $definition[static::CLASS_KEY])) {
