@@ -9,19 +9,13 @@ namespace Fixin\Support;
 
 class VariableInspector extends DoNotCreate {
 
-    /**
-     * @var array
-     */
-    static protected $scalarValueColors = [
+    const SCALAR_VALUE_COLORS = [
         'integer' => '#080',
         'double' => '#c60',
         'boolean' => '#0c0'
     ];
 
-    /**
-     * @var string
-     */
-    static protected $valueTemplate = '<span style="color: %s">%s</span>';
+    const VALUE_TEMPLATE = '<span style="color: %s">%s</span>';
 
     /**
      * Return array info
@@ -48,7 +42,7 @@ class VariableInspector extends DoNotCreate {
                 $value = '*****';
             }
 
-            $info .= "    " . sprintf(static::$valueTemplate, $color, htmlspecialchars(str_pad($key, 30))) . str_replace("\n", "\n    ", static::valueInfo($value)) . "\n";
+            $info .= "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . str_replace("\n", "\n    ", static::valueInfo($value)) . "\n";
         }
 
         return $info;
@@ -85,8 +79,8 @@ class VariableInspector extends DoNotCreate {
     public static function scalarInfo($var): string {
         $type = gettype($var);
 
-        if (isset(static::$scalarValueColors[$type])) {
-            $color = static::$scalarValueColors[$type];
+        if (isset(static::SCALAR_VALUE_COLORS[$type])) {
+            $color = static::SCALAR_VALUE_COLORS[$type];
 
             if (is_bool($var)) {
                 $var = $var ? 'true' : 'false';
@@ -97,7 +91,7 @@ class VariableInspector extends DoNotCreate {
             $var = '"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"';
         }
 
-        return sprintf(static::$valueTemplate, $color, $var);
+        return sprintf(static::VALUE_TEMPLATE, $color, $var);
     }
 
     /**
@@ -119,7 +113,7 @@ class VariableInspector extends DoNotCreate {
 
         // Null
         if (is_null($expression)) {
-            return sprintf(static::$valueTemplate, '#60c', 'NULL');
+            return sprintf(static::VALUE_TEMPLATE, '#60c', 'NULL');
         }
 
         return static::scalarInfo($expression);
