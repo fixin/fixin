@@ -58,28 +58,19 @@ class Uri implements UriInterface, PrototypeInterface {
      * @return string
      */
     public function __toString() {
-        $uri = '';
+        $uri = $this->getAuthority();
 
         // Scheme
         if ($this->scheme) {
-            $uri .= $this->scheme . '://';
+            $uri = $this->scheme . '://' . $uri;
         }
-
-        // Authority
-        $uri .= $this->getAuthority();
 
         // Path
         if ('' !== $this->path) {
             $uri .= '/' . ltrim($this->path, '/');
         }
 
-        // Query
-        $uri .= rtrim('?' . $this->query, '?');
-
-        // Fragment
-        $uri .= rtrim('#' . $this->fragment, '#');
-
-        return $uri;
+        return $uri . rtrim('?' . $this->query, '?') . rtrim('#' . $this->fragment, '#');
     }
 
     /**
