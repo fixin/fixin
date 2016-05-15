@@ -5,9 +5,9 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Cargo\Factory;
+namespace Fixin\Delivery\Cargo\Factory;
 
-use Fixin\Cargo\HttpCargo;
+use Fixin\Delivery\Cargo\HttpCargo;
 use Fixin\ResourceManager\Factory\FactoryInterface;
 use Fixin\ResourceManager\ResourceManagerInterface;
 use Fixin\Support\Http;
