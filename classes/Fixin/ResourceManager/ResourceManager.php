@@ -120,13 +120,16 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
         }
 
         // Abstract factories
+        $has = false;
+
         foreach ($this->abstractFactories as $abstractFactory) {
             if ($abstractFactory->canProduce($this, $name)) {
-                return true;
+                $has = true;
+                break;
             }
         }
 
-        return false;
+        return $has;
     }
 
     /**
