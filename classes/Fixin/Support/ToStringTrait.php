@@ -18,8 +18,8 @@ trait ToStringTrait {
      */
     public function __toString(): string {
         return Ground::isConsole()
-        ? htmlspecialchars_decode(strip_tags(Ground::valueInfo($this)))
-        : '<div style="font-family: monospace; white-space: pre; color: #000; line-height: 1.05">' . Ground::valueInfo($this) . '</div>';
+        ? htmlspecialchars_decode(strip_tags(VariableInspector::valueInfo($this)))
+        : '<div style="font-family: monospace; white-space: pre; color: #000; line-height: 1.05">' . VariableInspector::valueInfo($this) . '</div>';
     }
 
     /**
