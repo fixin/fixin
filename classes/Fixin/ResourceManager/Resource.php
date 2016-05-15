@@ -7,8 +7,6 @@
 
 namespace Fixin\ResourceManager;
 
-use Fixin\Support\ContainerInterface;
-
 abstract class Resource implements ResourceInterface {
 
     /**
@@ -17,7 +15,7 @@ abstract class Resource implements ResourceInterface {
     protected $container;
 
     /**
-     * @param ContainerInterface $container
+     * @param ResourceManagerInterface $container
      * @param array $options
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

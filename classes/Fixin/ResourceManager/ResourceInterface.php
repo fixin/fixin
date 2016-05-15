@@ -7,8 +7,6 @@
 
 namespace Fixin\ResourceManager;
 
-use Fixin\Support\ContainerInterface;
-
 interface ResourceInterface {
 
     /**

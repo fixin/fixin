@@ -61,10 +61,8 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
     }
 
     /**
-     * Clone the registered prototype
-     *
-     * @param string $name
-     * @return PrototypeInterface
+     * {@inheritDoc}
+     * @see \Fixin\ResourceManager\ResourceManagerInterface::clonePrototype()
      */
     public function clonePrototype(string $name) {
         $arr = $this->resources[$name] ?? $this->produceResource($name);

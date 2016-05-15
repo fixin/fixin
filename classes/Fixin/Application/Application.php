@@ -17,7 +17,7 @@ class Application implements ApplicationInterface {
     const RESOURCE_MANAGER_KEY = 'resourceManager';
 
     /**
-     * @var \Fixin\Support\ContainerInterface
+     * @var \Fixin\ResourceManager\ResourceManagerInterface
      */
     protected $container;
 

@@ -25,7 +25,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
     protected $searchOrder;
 
     /**
-     * @param ContainerInterface $container
+     * @param ResourceManagerInterface $container
      * @param array $options
      */
     public function __construct(ResourceManagerInterface $container, array $options = []) {
