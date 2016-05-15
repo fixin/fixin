@@ -158,7 +158,7 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
             return class_exists($definition) ? new $definition($this) : $definition;
         }
         // Resolve class array
-        elseif (isset($definition[static::CLASS_KEY]) && class_exists($class = $definition[static::CLASS_KEY])) {
+        elseif (class_exists($class = $definition[static::CLASS_KEY] ?? '')) {
             unset($definition[static::CLASS_KEY]);
 
             return new $class($this, $definition);
