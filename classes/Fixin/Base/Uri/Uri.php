@@ -69,23 +69,15 @@ class Uri implements UriInterface, PrototypeInterface {
         $uri .= $this->getAuthority();
 
         // Path
-        if ('' !== $path = $this->path) {
-            if ($path[0] !== '/') {
-                $path = '/' . $path;
-            }
-
-            $uri .= $path;
+        if ('' !== $this->path) {
+            $uri .= '/' . ltrim($this->path, '/');
         }
 
         // Query
-        if ($this->query !== '') {
-            $uri .= '?' . $this->query;
-        }
+        $uri .= rtrim('?' . $this->query, '?');
 
         // Fragment
-        if (strlen($this->fragment)) {
-            $uri .= '#' . $this->fragment;
-        }
+        $uri .= rtrim('#' . $this->fragment, '#');
 
         return $uri;
     }
