@@ -195,13 +195,13 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
     protected function produceResourceFromDefinition(string $name) {
         $definition = $this->preprocessDefinition($this->definitions[$name]);
 
-        // Non-factory object
-        if (is_object($definition) && !$definition instanceof FactoryInterface && !$definition instanceof Closure) {
-            return $definition;
+        if ($definition instanceof FactoryInterface || $definition instanceof Closure) {
+            return $definition($this, $name);
         }
 
-        if (is_callable($definition)) {
-            return $definition($this, $name);
+        // Object
+        if (is_object($definition)) {
+            return $definition;
         }
 
         throw new Exception\ResourceFaultException("Invalid definition registered for name '$name'");
