@@ -19,6 +19,9 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
     const ABSTRACT_FACTORIES_KEY = 'abstractFactories';
     const CLASS_KEY = 'class';
     const DEFINITIONS_KEY = 'definitions';
+    const RESOURCES_KEY = 'resources';
+
+    const CONFIG_INJECT_KEYS = [self::DEFINITIONS_KEY => 'Definition', self::RESOURCES_KEY => 'Resource'];
 
     /**
      * Abstract factories
@@ -67,12 +70,12 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
     public function clonePrototype(string $name) {
         $arr = $this->resources[$name] ?? $this->produceResource($name);
 
-        if (isset($arr[1])) {
-            return clone $arr[1];
+        if ($arr instanceof PrototypeInterface) {
+            return clone $arr;
         }
 
         // Not found
-        throw new Exception\ResourceNotFoundException((isset($arr[0]) ? 'Resource registered' : 'Prototype is not registered') . " with name '$name'");
+        throw new Exception\ResourceNotFoundException((isset($arr) ? 'Resource' : 'Prototype is not') . " registered with name '$name'");
     }
 
     /**
@@ -86,14 +89,16 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
         }
 
         // Inject options
-        if (isset($config[static::DEFINITIONS_KEY])) {
-            $values = $config[static::DEFINITIONS_KEY];
+        foreach (static::CONFIG_INJECT_KEYS as $key => $label) {
+            if (isset($config[$key])) {
+                $values = $config[$key];
 
-            if ($names = array_intersect_key($values, $this->definitions)) {
-                throw new Exception\OverrideNotAllowedException("Definition already defined for '" . implode("', '", array_keys($names)) . "'");
+                if ($names = array_intersect_key($values, $this->{$key})) {
+                    throw new Exception\OverrideNotAllowedException("$label already defined for '" . implode("', '", array_keys($names)) . "'");
+                }
+
+                $this->$key = $values + $this->$key;
             }
-
-            $this->definitions = $values + $this->definitions;
         }
 
         return $this;
@@ -106,12 +111,12 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
     public function get(string $name) {
         $arr = $this->resources[$name] ?? $this->produceResource($name);
 
-        if (isset($arr[0])) {
-            return $arr[0];
+        if ($arr instanceof PrototypeInterface) {
+            // Not found
+            throw new Exception\ResourceNotFoundException((isset($arr) ? 'Prototype' : 'Resource is not') . " registered with name '$name'");
         }
 
-        // Not found
-        throw new Exception\ResourceNotFoundException((isset($arr[1]) ? 'Prototype registered' : 'Resource is not registered') . " with name '$name'");
+        return $arr;
     }
 
     /**
@@ -178,8 +183,7 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
         }
 
         if (isset($instance)) {
-            $this->resources[$name] =
-            $instance = [$instance instanceof PrototypeInterface => $instance];
+            $this->resources[$name] = $instance;
         }
 
         return $instance;
@@ -232,11 +236,7 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
             throw new InvalidParameterException('Resource must be an object.');
         }
 
-        if (isset($this->resources[$name])) {
-            throw new Exception\OverrideNotAllowedException("Resource already defined for '$name'");
-        }
-
-        $this->resources[$name][$resource instanceof PrototypeInterface] = $resource;
+        $this->configure([static::RESOURCES_KEY => [$name => $resource]]);
 
         return $this;
     }
