@@ -174,26 +174,18 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
      * @return object
      */
     protected function produceResource(string $name) {
-        $instance = null;
-
         if (isset($this->definitions[$name])) {
-            $instance = $this->produceResourceFromDefinition($name);
+            return $this->resources[$name] = $this->produceResourceFromDefinition($name);
         }
 
         // Abstract factories
         foreach ($this->abstractFactories as $abstractFactory) {
             if ($abstractFactory->canProduce($this, $name)) {
-                $instance = $abstractFactory->produce($this, $name);
-
-                break;
+                return $this->resources[$name] = $abstractFactory->produce($this, $name);
             }
         }
 
-        if (isset($instance)) {
-            $this->resources[$name] = $instance;
-        }
-
-        return $instance;
+        return null;
     }
 
     /**
