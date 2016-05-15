@@ -19,6 +19,12 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
     const CLASS_KEY = 'class';
     const DEFINITIONS_KEY = 'definitions';
     const RESOURCES_KEY = 'resources';
+    const GET_ERRORS = [
+        'Resource not',
+        'Prototype not',
+        'Prototype',
+        'Resource',
+    ];
 
     const CONFIG_INJECT_KEYS = [self::DEFINITIONS_KEY => 'Definition', self::RESOURCES_KEY => 'Resource'];
 
@@ -67,14 +73,7 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
      * @see \Fixin\ResourceManager\ResourceManagerInterface::clonePrototype()
      */
     public function clonePrototype(string $name) {
-        $arr = $this->resources[$name] ?? $this->produceResource($name);
-
-        if ($arr instanceof PrototypeInterface) {
-            return clone $arr;
-        }
-
-        // Not found
-        throw new Exception\ResourceNotFoundException((isset($arr) ? 'Resource' : 'Prototype is not') . " registered with name '$name'");
+        return clone $this->getResource($name, true);
     }
 
     /**
@@ -100,12 +99,25 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
      * @see \Fixin\Support\ContainerInterface::get($name)
      */
     public function get(string $name) {
-        if (!($arr = $this->resources[$name] ?? $this->produceResource($name)) instanceof PrototypeInterface) {
+        return $this->getResource($name, false);
+    }
+
+    /**
+     * Get resource or prototype
+     *
+     * @param string $name
+     * @param bool $prototype
+     * @throws Exception\ResourceNotFoundException
+     * @return object
+     */
+    protected function getResource(string $name, bool $prototype) {
+        $arr = $this->resources[$name] ?? $this->produceResource($name);
+        if ($arr && $arr instanceof PrototypeInterface === $prototype) {
             return $arr;
         }
 
         // Not found
-        throw new Exception\ResourceNotFoundException((isset($arr) ? 'Prototype' : 'Resource is not') . " registered with name '$name'");
+        throw new Exception\ResourceNotFoundException(static::GET_ERRORS[isset($arr) * 2 + $prototype] . " registered with name '$name'");
     }
 
     /**
