@@ -103,12 +103,12 @@ class ResourceManager implements ResourceManagerInterface, ConfigurableInterface
     public function get(string $name) {
         $arr = $this->resources[$name] ?? $this->produceResource($name);
 
-        if ($arr instanceof PrototypeInterface) {
-            // Not found
-            throw new Exception\ResourceNotFoundException((isset($arr) ? 'Prototype' : 'Resource is not') . " registered with name '$name'");
+        if (!$arr instanceof PrototypeInterface) {
+            return $arr;
         }
 
-        return $arr;
+        // Not found
+        throw new Exception\ResourceNotFoundException((isset($arr) ? 'Prototype' : 'Resource is not') . " registered with name '$name'");
     }
 
     /**
