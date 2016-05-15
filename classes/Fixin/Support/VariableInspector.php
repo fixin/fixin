@@ -41,7 +41,7 @@ class VariableInspector extends DoNotCreate {
      * @return string
      */
     protected static function itemsInfo(array $var, string $color): string {
-        if (!$var) {
+        if (empty($var)) {
             return '';
         }
 
@@ -97,10 +97,11 @@ class VariableInspector extends DoNotCreate {
             }
         }
         else {
+            $color = '#c00';
             $var = '"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"';
         }
 
-        return sprintf(static::$valueTemplate, $color ?? '#c00', $var);
+        return sprintf(static::$valueTemplate, $color, $var);
     }
 
     /**
