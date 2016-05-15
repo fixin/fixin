@@ -74,19 +74,23 @@ class SimpleAutoloader implements AutoloaderInterface {
 
             // Prefix found
             if (isset($this->paths[$prefix])) {
-                $relativeName = substr($class, $length + 1) . '.php';
+                $this->autoloadPrefixSearch(substr($class, $length + 1) . '.php', $prefix);
 
-                // Walking through the possible paths
-                foreach ($this->paths[$prefix] as $path) {
-                    $filename = $path . $relativeName;
+                return;
+            }
+        }
+    }
 
-                    // Source file found
-                    if (file_exists($filename)) {
-                        include $filename;
-
-                        return;
-                    }
-                }
+    /**
+     * Search through the paths
+     *
+     * @param string $relativeName
+     * @param string $prefix
+     */
+    protected function autoloadPrefixSearch(string $relativeName, string $prefix) {
+        foreach ($this->paths[$prefix] as $path) {
+            if (file_exists($filename = $path . $relativeName)) {
+                include $filename;
 
                 return;
             }
