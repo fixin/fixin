@@ -12,16 +12,13 @@ use Fixin\Base\Configurable\ConfigurableInterface;
 use Fixin\Base\Exception\InvalidParameterException;
 use Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface;
 use Fixin\ResourceManager\Factory\FactoryInterface;
-use Fixin\Support\ContainerInterface;
+use Fixin\Support\PrototypeInterface;
 
-class ResourceManager implements ContainerInterface, ConfigurableInterface {
+class ResourceManager implements ResourceManagerInterface, ConfigurableInterface {
 
     const ABSTRACT_FACTORIES_KEY = 'abstractFactories';
     const CLASS_KEY = 'class';
     const DEFINITIONS_KEY = 'definitions';
-    const RESOURCES_KEY = 'resources';
-
-    const CONFIG_INJECT_KEYS = [self::DEFINITIONS_KEY => 'Definition', self::RESOURCES_KEY => 'Resource'];
 
     /**
      * Abstract factories
@@ -64,6 +61,23 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     }
 
     /**
+     * Clone the registered prototype
+     *
+     * @param string $name
+     * @return PrototypeInterface
+     */
+    public function clonePrototype(string $name) {
+        $arr = $this->resources[$name] ?? $this->produceResource($name);
+
+        if (isset($arr[1])) {
+            return clone $arr[1];
+        }
+
+        // Not found
+        throw new Exception\ResourceNotFoundException((isset($arr[0]) ? 'Resource registered' : 'Prototype is not registered') . " with name '$name'");
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Base\Configurable\ConfigurableInterface::configure()
      */
@@ -74,16 +88,14 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
         }
 
         // Inject options
-        foreach (static::CONFIG_INJECT_KEYS as $key => $label) {
-            if (isset($config[$key])) {
-                $values = $config[$key];
+        if (isset($config[static::DEFINITIONS_KEY])) {
+            $values = $config[static::DEFINITIONS_KEY];
 
-                if ($names = array_intersect_key($values, $this->{$key})) {
-                    throw new Exception\OverrideNotAllowedException("$label already defined for '" . implode("', '", array_keys($names)) . "'");
-                }
-
-                $this->$key = $values + $this->$key;
+            if ($names = array_intersect_key($values, $this->definitions)) {
+                throw new Exception\OverrideNotAllowedException("Definition already defined for '" . implode("', '", array_keys($names)) . "'");
             }
+
+            $this->definitions = $values + $this->definitions;
         }
 
         return $this;
@@ -96,10 +108,12 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
     public function get(string $name) {
         $arr = $this->resources[$name] ?? $this->produceResource($name);
 
-        return $arr ?? function() {
-            // Not found
-            throw new Exception\ResourceNotFoundException("Resource is not registered with name '$name'");
-        };
+        if (isset($arr[0])) {
+            return $arr[0];
+        }
+
+        // Not found
+        throw new Exception\ResourceNotFoundException((isset($arr[1]) ? 'Prototype registered' : 'Resource is not registered') . " with name '$name'");
     }
 
     /**
@@ -166,7 +180,8 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
         }
 
         if (isset($instance)) {
-            $this->resources[$name] = $instance;
+            $this->resources[$name] =
+            $instance = [$instance instanceof PrototypeInterface => $instance];
         }
 
         return $instance;
@@ -219,7 +234,11 @@ class ResourceManager implements ContainerInterface, ConfigurableInterface {
             throw new InvalidParameterException('Resource must be an object.');
         }
 
-        $this->configure([static::RESOURCES_KEY => [$name => $resource]]);
+        if (isset($this->resources[$name])) {
+            throw new Exception\OverrideNotAllowedException("Resource already defined for '$name'");
+        }
+
+        $this->resources[$name][$resource instanceof PrototypeInterface] = $resource;
 
         return $this;
     }
