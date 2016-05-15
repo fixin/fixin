@@ -22,8 +22,8 @@ class Ground extends DoNotCreate {
      * @param string $closing
      * @return string
      */
-    public static function arrayInfo(array $var, string $opening = '[', string $closing = ']'): string {
-        $rowTemplate = $closing === ']' ? '<span style="color: #754">%s</span> %s' : '%s %s';
+    public static function arrayInfo(array $var, string $opening = '[', string $closing = ']', $color = '#444'): string {
+        $rowTemplate = "<span style=\"color: $color\">%s</span> %s";
         $items = [];
 
         foreach ($var as $key => $value) {
@@ -61,14 +61,14 @@ class Ground extends DoNotCreate {
         $opening = get_class($var) . ' {';
 
         if (method_exists($var, '__debugInfo')) {
-            return static::arrayInfo($var->__debugInfo(), $opening, '}');
+            return static::arrayInfo($var->__debugInfo(), $opening, '}', '#754');
         }
 
         if (method_exists($var, '__toString')) {
             return $opening . static::scalarValueInfo((string) $var) . '}';
         }
 
-        return static::arrayInfo((array) $var, $opening, '}');
+        return static::arrayInfo((array) $var, $opening, '}', '#754');
     }
 
     /**
