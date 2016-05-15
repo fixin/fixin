@@ -27,13 +27,8 @@ class Ground extends DoNotCreate {
         $items = [];
 
         foreach ($var as $key => $value) {
-            if (stripos($key, 'password') !== false) {
-                if (is_array($value)) {
-                    $value = array_fill_keys(array_keys($value), '*****');
-                }
-                elseif (is_scalar($value)) {
-                    $value = '*****';
-                }
+            if (is_scalar($value) && stripos($key, 'password') !== false) {
+                $value = '*****';
             }
 
             $items[] = sprintf($rowTemplate, str_pad(htmlspecialchars($key), 30), str_replace("\n", "\n    ", static::valueInfo($value)));
@@ -78,23 +73,27 @@ class Ground extends DoNotCreate {
      * @return string
      */
     public static function scalarValueInfo($var): string {
-        // Int
-        if (is_int($var)) {
-            return '<span style="color: #080">' . $var . '</span>';
-        }
+        switch (gettype($var)) {
+            case 'int':
+                $color = '080';
+                break;
 
-        // Float
-        if (is_float($var)) {
-            return '<span style="color: #c60">' . $var . '</span>';
-        }
+            case 'float':
+                $color = 'c60';
+                break;
 
-        // Bool
-        if (is_bool($var)) {
-            return '<span style="color: #0c0">' . ($var ? 'true' : 'false') . '</span>';
+            case 'bool':
+                $color = '0c0';
+                $var = $var ? 'true' : 'false';
+                break;
+
+            default:
+                $color = 'c00';
+                $var = '"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"';
         }
 
         // String
-        return '<span style="color: #c00">"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"</span>';
+        return "<span style=\"color: #$color\">$var</span>";
     }
 
     /**
