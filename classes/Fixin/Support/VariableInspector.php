@@ -12,7 +12,7 @@ class VariableInspector extends DoNotCreate {
     const SCALAR_VALUE_COLORS = [
         'integer' => '#080',
         'double' => '#c60',
-        'boolean' => '#0c0'
+        'boolean' => '#0ac'
     ];
 
     const VALUE_TEMPLATE = '<span style="color: %s">%s</span>';
