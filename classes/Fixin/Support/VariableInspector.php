@@ -63,9 +63,8 @@ class VariableInspector extends DoNotCreate {
         elseif (method_exists($var, '__toString')) {
             return $opening . static::scalarInfo((string) $var) . '}';
         }
-        else {
-            $var = (array) $var;
-        }
+
+        $var = (array) $var;
 
         return $opening . ($var ? "\n" . static::itemsInfo($var, '#444') : '') . '}';
     }
@@ -85,13 +84,11 @@ class VariableInspector extends DoNotCreate {
             if (is_bool($var)) {
                 $var = $var ? 'true' : 'false';
             }
-        }
-        else {
-            $color = '#c00';
-            $var = '"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"';
+
+            return sprintf(static::VALUE_TEMPLATE, $color, $var);
         }
 
-        return sprintf(static::VALUE_TEMPLATE, $color, $var);
+        return sprintf(static::VALUE_TEMPLATE, '#c00', '"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"');
     }
 
     /**
