@@ -9,12 +9,24 @@ $topDir = dirname(__DIR__, 2);
 $application = include "$topDir/cheats/web.php";
 
 // Functions
-function reflectionLink($reflection) {
+function reflectionLink($reflection): string {
     $name = $reflection->getName();
 
     return strncmp($name, 'Fixin\\', 6)
     ? '\\' . htmlspecialchars($name)
-    : '<a href="#' . htmlspecialchars($reflection->getName()) . '">' . htmlspecialchars($reflection->getShortName()) . '</a>';
+    : '<a href="#' . htmlspecialchars($reflection->name) . '">' . htmlspecialchars($reflection->getShortName()) . '</a>';
+}
+
+function orderedReflectionList(array $reflections): array {
+    $list = [];
+
+    foreach ($reflections as $reflection) {
+        $list[$reflection->getName()] = $reflection;
+    }
+
+    ksort($list);
+
+    return $list;
 }
 
 // Include all PHP files under classes/
@@ -48,7 +60,7 @@ $showProperties = empty($_GET['nonPublic'])
 	<head>
 		<style>
 body {
-    font-size: 10pt;
+    font-size: 9pt;
     font-family: monospace;
 }
 
@@ -64,21 +76,24 @@ table {
 	border: 1px solid #ddd;
 }
 
-td {
-    padding: 0.4em 0.8em;
-    vertical-align: top;
-}
-
-table table tr td {
-    border-top: 1px solid #ddd;
-}
-
 tr.Element > td {
     padding-top: 2em;
 }
 
 tr.Element > td:first-child {
 	padding-left: 2em;
+}
+
+td {
+    padding: 0.4em 0.8em;
+}
+
+tr.ElementList table tr td {
+    border-top: 1px solid #ddd;
+}
+
+tr.ElementList table tr:first-child td {
+    border-top: none;
 }
 
 tr.ElementDetails > td:first-child,
@@ -92,23 +107,38 @@ pre {
 
 .Name {
     font-weight: bold;
+    min-wi2dth: 200px;
+}
+
+.Type {
+    min-wid2th: 200px;
+}
+
+.Prefix {
+    min-wid2th: 200px;
+    text-align: right;
+}
+
+.Method .Prefix {
+}
+.Method > td > table {
+    display: inline-block;
+    vertical-align: middle;
 }
 		</style>
 	</head>
 	<body>
 		<table>
 			<?php foreach ($namespaces as $namespace => $elements): ?>
-				<?php ksort($elements); ?>
+				<?php ksort($elements) ?>
 				<tr>
 					<td><h2><?= htmlspecialchars($namespace) ?></h2></td>
 				</tr>
-        		<?php foreach($elements as $name): ?>
-        			<?php
-                        $reflection = new ReflectionClass("$namespace\\$name");
-        			?>
+        		<?php foreach ($elements as $name): ?>
+        			<?php $reflection = new ReflectionClass("$namespace\\$name"); ?>
         			<tr class="Element">
         				<td>
-    						<span class="Name"><a name="<?= htmlspecialchars($reflection->getName()) ?>"><?= htmlspecialchars($reflection->getName()) ?></a></span>
+    						<span class="Name"><a name="<?= htmlspecialchars($reflection->name) ?>"><?= htmlspecialchars($reflection->name) ?></a></span>
 						</td>
 					</tr>
 					<tr class="ElementDetails">
@@ -125,7 +155,7 @@ pre {
 
 							<?php if ($parent = $reflection->getParentClass()): ?>
         						extends <?= reflectionLink($parent) ?>
-        					<?php endif; ?>
+        					<?php endif ?>
 
         					<?php if ($interfaces = $reflection->getInterfaces()): ?>
         						implements <?= implode(', ', array_map('reflectionLink', $interfaces)) ?>
@@ -140,48 +170,74 @@ pre {
 						<td>
 							<table>
 			    				<?php if ($constants = $reflection->getConstants()): ?>
+			    					<?php ksort($constants) ?>
     								<?php foreach ($constants as $key => $value): ?>
-    									<tr>
-    										<td>const</td>
-    										<td><?= htmlspecialchars($key) ?></td>
-    										<td colspan="2"><pre><?= VariableInspector::valueInfo($value) ?></pre></td>
+    									<tr class="Const">
+    										<td class="Prefix">const</td>
+    										<td class="Name"><?= htmlspecialchars($key) ?></td>
+    										<td colspan="3"><pre><?= VariableInspector::valueInfo($value) ?></pre></td>
     									</tr>
     								<?php endforeach ?>
     							<?php endif ?>
 			    				<?php if (($properties = $reflection->getProperties($showProperties))): ?>
 			    					<?php $defaultValues = $reflection->getDefaultProperties() ?>
-    								<?php foreach ($properties as $property): ?>
-    									<tr>
-    										<td>
-    											<?= $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : 'private') ?>
-    											<?= $property->isStatic() ? 'static' : '' ?>
-    										</td>
-											<td>$<?= htmlspecialchars($property->getName()) ?></td>
-											<td><?= VariableInspector::valueInfo($defaultValues[$property->getName()] ?? null) ?></td>
-											<td><?= htmlspecialchars($property->getDocComment()) ?></td>
-    									</tr>
+    								<?php foreach (orderedReflectionList($properties) as $property): ?>
+    									<?php if ($property->getDeclaringClass() == $reflection): ?>
+        									<tr class="Property">
+        										<td class="Prefix">
+        											<?= $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : 'private') ?>
+        											<?= $property->isStatic() ? 'static' : '' ?>
+        										</td>
+    											<td class="Name">$<?= htmlspecialchars($property->getName()) ?></td>
+    											<td><?= VariableInspector::valueInfo($defaultValues[$property->getName()] ?? null) ?></td>
+    											<td><?= htmlspecialchars($property->getDocComment()) ?></td>
+    											<td></td>
+        									</tr>
+    									<?php endif ?>
     								<?php endforeach ?>
 			    				<?php endif ?>
 			    				<?php if (($methods = $reflection->getMethods())): ?>
-			    					<?php
-			    					    $ordered = [];
-			    					    foreach ($methods as $method) {
-
-			    					    }
-			    					    ksort($ordered)
-			    					?>
-			    					<?php foreach ($methods as $method): ?>
+			    					<?php foreach (orderedReflectionList($methods) as $method): ?>
 			    						<?php if ($method->getDeclaringClass() == $reflection): ?>
-    			    						<tr>
-    			    							<td>
+    			    						<tr class="Method">
+    			    							<td class="Prefix">
     			    								<?= $method->isFinal() ? 'final' : '' ?>
     			    								<?= $method->isAbstract() ? 'abstract' : '' ?>
         											<?= $method->isPublic() ? 'public' : ($method->isProtected() ? 'protected' : 'private') ?>
         											<?= $method->isStatic() ? 'static' : '' ?>
         											function
         										</td>
-        										<td><?= htmlspecialchars($method->getName()) ?></td>
-        										<td></td>
+        										<td class="Name"><?= htmlspecialchars($method->name) ?></td>
+        										<td colspan="2">
+        											(<?php if ($parameters = $method->getParameters()): ?>
+        												<table>
+                											<?php foreach ($parameters as $parameter): ?>
+                												<tr class="Parameter">
+                													<td class="Type">
+                														<?php if ($class = $parameter->getClass()): ?>
+    																		<?= reflectionLink($class) ?>
+    																	<?php else: ?>
+    																		<?= $parameter->getType() ?>
+                														<?php endif ?>
+                													</td>
+                													<td class="Name">
+                														<?= $parameter->isVariadic() ? '...' : ''
+                														?><?= $parameter->isPassedByReference() ? '&' : ''
+                														?>$<?= htmlspecialchars($parameter->getName()) ?>
+            															<?php if ($parameter->isOptional()): ?>
+            																=
+            																<?php if ($parameter->isDefaultValueConstant()): ?>
+            																	<?= htmlspecialchars($parameter->getDefaultValueConstantName()) ?>
+            																<?php else: ?>
+            																	<?= VariableInspector::valueInfo($parameter->getDefaultValue()) ?>
+            																<?php endif ?>
+            															<?php endif ?>
+            														</td>
+                												</tr>
+                											<?php endforeach ?>
+        												</table>
+        											<?php endif ?>)
+        										</td>
         										<td><?= $method->getReturnType() ?></td>
     										</tr>
 										<?php endif ?>
@@ -190,8 +246,8 @@ pre {
 							</table>
 						</td>
 					</tr>
-        		<?php endforeach; ?>
-			<?php endforeach; ?>
+        		<?php endforeach ?>
+			<?php endforeach ?>
 		</table>
 	</body>
 </html>
