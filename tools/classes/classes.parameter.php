@@ -11,7 +11,7 @@ use \Fixin\Support\VariableInspector;
 	<?php if ($class = $parameter->getClass()): ?>
 		<?= reflectionLink($class) ?>
 	<?php else: ?>
-		<?= $parameter->getType() ?>
+		<?= $parameter->getType() ?? $docParameters[$parameter->getName()] ?? '' ?>
 	<?php endif ?>
 </td>
 <td class="Parameter Name">
