@@ -13,9 +13,9 @@ $application = include "$topDir/cheats/web.php";
 use \Fixin\Support\VariableInspector;
 
 // Functions
-include 'ClassesHelper.php';
+include 'Helper.php';
 
-$classes = new ClassesHelper($topDir);
+$classes = new \Classes\Helper($topDir);
 
 $showProperties = empty($_GET['all'])
     ? ReflectionProperty::IS_PUBLIC

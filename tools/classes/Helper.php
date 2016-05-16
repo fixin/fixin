@@ -6,14 +6,16 @@
  *
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
-class ClassesHelper {
+namespace Classes;
+
+class Helper {
 
     public $namespaces = [];
     protected $shortNameResolve = [];
 
     public function __construct(string $topDir, array $rootNamespaces = ['Fixin']) {
         // Include all PHP files under classes/
-        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator("$topDir/classes"));
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator("$topDir/classes"));
         foreach ($iterator as $item) {
             if ($item->isFile() && strtolower($item->getExtension()) === 'php') {
                 include_once $item;
