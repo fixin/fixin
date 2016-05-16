@@ -11,9 +11,12 @@ use Fixin\Delivery\Cargo\Factory\HttpCargoFactory;
 
 class Application implements ApplicationInterface {
 
+    const CARGO_KEY = 'cargo';
     const CLASS_KEY = 'class';
     const CONFIG_CLASS_KEY = 'configClass';
     const CONFIG_KEY = 'config';
+    const DISPATCHER_KEY = 'dispatcher';
+    const ERROR_DISPATCHER_KEY = 'errorDispatcher';
     const RESOURCE_MANAGER_KEY = 'resourceManager';
 
     /**
@@ -47,23 +50,34 @@ class Application implements ApplicationInterface {
      * @see \Fixin\Application\ApplicationInterface::run()
      */
     public function run() {
+        $container = $this->container;
+
         try {
-            $cargo = (new HttpCargoFactory())($this->container);
-
-            try {
-                $cargo = $this->container->get('dispatcher')->dispatch($cargo);
-            }
-            catch (\Throwable $t) {
-                $cargo->setContent($t);
-                $cargo = $this->container->get('errorDispatcher')->dispatch($cargo);
-            }
-
+            // Normal dispatch
+            $cargo = $container->clonePrototype(static::CARGO_KEY);
+            $cargo = $container->get(static::DISPATCHER_KEY)->dispatch($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {
-            header('HTTP/' . $cargo->getRequestProtocolVersion() . ' 500 Internal Server Error', true, 500);
-            echo '500 Internal server error';
-            exit;
+            try {
+                if (!isset($cargo)) {
+                    throw $t;
+                }
+
+                // Error dispatch
+                $cargo->setContent($t);
+                $cargo = $container->get(static::ERROR_DISPATCHER_KEY)->dispatch($cargo);
+                $cargo->unpack();
+            }
+            catch (\Throwable $t) {
+                throw $t;
+
+                // Double error
+                $protocol = 'HTTP/' . ($cargo->getRequestProtocolVersion());
+                header("$protocol 500 Internal Server Error", true, 500);
+                echo '500 Internal server error';
+                exit;
+            }
         }
     }
 }

@@ -4,11 +4,11 @@ return [
     'resourceManager' => [
         'class' => 'Fixin\ResourceManager\ResourceManager',
         'definitions' => [
-            'requestUri' => 'Fixin\Base\Uri\Factory\EnvironmentUriFactory',
+            'cargo' => 'Fixin\Delivery\Cargo\Factory\RuntimeCargoFactory',
             'dispatcher' => [
                 'class' => 'Fixin\Delivery\Dispatcher\Dispatcher',
                 'stations' => [
-
+                    'Fixin\Delivery\Station\JsonToArrayFacility',
                 ]
             ],
             'errorDispatcher' => [
@@ -16,7 +16,8 @@ return [
                 'stations' => [
 
                 ]
-            ]
+            ],
+            'requestUri' => 'Fixin\Base\Uri\Factory\EnvironmentUriFactory',
         ],
         'abstractFactories' => [
             'prefixFallback' => [
