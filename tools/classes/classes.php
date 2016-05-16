@@ -32,10 +32,10 @@ ksort($namespaces);
 
 use \Fixin\Support\VariableInspector;
 
-$showProperties = empty($_GET['nonPublic'])
+$showProperties = empty($_GET['all'])
     ? ReflectionProperty::IS_PUBLIC
     : (ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
-$showMethods = empty($_GET['nonPublic'])
+$showMethods = empty($_GET['all'])
     ? ReflectionMethod::IS_PUBLIC
     : (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED | ReflectionMethod::IS_PRIVATE);
 
@@ -209,13 +209,12 @@ td.Tab {
                         <td class="Tab"></td>
                         <td class="Tab"></td>
                         <td colspan="7">
-                            <?php if ($reflection->isInterface()): ?>
-                                interface
-                            <?php elseif ($reflection->isTrait()): ?>
-                                trait
-                            <?php else: ?>
-                                <?= ($reflection->isFinal() ? 'final ' : '') . ($reflection->isAbstract() ? 'abstract ' : '') . 'class'; ?>
-                            <?php endif ?>
+                        	<?= $reflection->isInterface()
+                                ? 'interface'
+                                : ($reflection->isTrait()
+                                    ? 'trait'
+                                    : (($reflection->isFinal() ? 'final ' : '') . ($reflection->isAbstract() ? 'abstract ' : '') . 'class'));
+                        	?>
 
                             <?php if ($parent = $reflection->getParentClass()): ?>
                                 extends <?= reflectionLink($parent) ?>
