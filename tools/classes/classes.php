@@ -214,7 +214,7 @@ td.Tab {
                                 : ($reflection->isTrait()
                                     ? 'trait'
                                     : (($reflection->isFinal() ? 'final ' : '') . ($reflection->isAbstract() ? 'abstract ' : '') . 'class'));
-                        	?>
+                            ?>
 
                             <?php if ($parent = $reflection->getParentClass()): ?>
                                 extends <?= reflectionLink($parent) ?>
