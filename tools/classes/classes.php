@@ -20,14 +20,20 @@ function classLink($name): string {
     : '<a href="#' . htmlspecialchars($name) . '">' . htmlspecialchars(classShortName($name)) . '</a>';
 }
 
-function commentText($comment) {
-    return preg_match_all('/^\s*\*\s*([^@\s*].+)$/m', $comment, $matches) ? nl2br(htmlspecialchars(implode("\n", $matches[1]))) : '';
+function commentText($reflection) {
+    if (preg_match_all('/^\s*\*\s*([^@\s*].+)$/m', $reflection->getDocComment(), $matches)) {
+        if ($matches[1][0] === '{@inheritDoc}' && ($parent = $reflection->getPrototype())) {
+            return '{@inheritDoc} ' . commentText($parent);
+        }
+    }
+
+    return nl2br(htmlspecialchars(implode("\n", $matches[1])));
 }
 
-function commentParameters($comment) {
+function commentParameters($reflection) {
     $parameters = [];
 
-    preg_match_all('/^\s*\*\s*@param\s+([^\s]+)\s+\$([^\s]+)$/m', $comment, $matches);
+    preg_match_all('/^\s*\*\s*@param\s+([^\s]+)\s+\$([^\s]+)$/m', $reflection->getDocComment(), $matches);
 
     foreach ($matches[1] as $index => $type) {
         $parameters[$matches[2][$index]] = implode('|', array_map('classLink', (explode('|', $type))));
@@ -36,8 +42,8 @@ function commentParameters($comment) {
     return $parameters;
 }
 
-function commentVar($comment) {
-    if (preg_match_all('(@var\s+([^\s]+))', $comment, $matches)) {
+function commentVar($reflection) {
+    if (preg_match_all('(@var\s+([^\s]+))', $reflection->getDocComment(), $matches)) {
         return implode('|', array_map('classLink', (explode('|', $matches[1][0]))));
     }
 
@@ -321,9 +327,9 @@ td.Tab {
 										<?= $property->isStatic() ? 'static' : '' ?>
 									</td>
 									<td class="Name" colspan="2">$<?= htmlspecialchars($property->getName()) ?></td>
-									<td colspan="2"><?= commentVar($property->getDocComment()) ?></td>
+									<td colspan="2"><?= commentVar($property) ?></td>
 									<td class="Value"><?= VariableInspector::valueInfo($defaultValues[$property->getName()] ?? null) ?></td>
-									<td class="Comment"><?= commentText($property->getDocComment()) ?></td>
+									<td class="Comment"><?= commentText($property) ?></td>
 								</tr>
 							<?php endif ?>
 						<?php endforeach ?>
@@ -334,7 +340,7 @@ td.Tab {
     							<?php
                                     $parameters = $method->getParameters();
                                     $parameterCount = max(1, count($parameters));
-                                    $docParameters = commentParameters($method->getDocComment());
+                                    $docParameters = commentParameters($method);
     							?>
     							<tr class="Element Method <?= $oddEvenStyle = evenStyle() ?>">
     								<td class="Tab" rowspan="<?= $parameterCount ?>"></td>
@@ -356,7 +362,7 @@ td.Tab {
 										<td colspan="3"></td>
 									<?php endif ?>
 									<td class="ReturnType" rowspan="<?= $parameterCount ?>">: <?= $method->getReturnType() ?? 'void' ?></td>
-									<td class="Comment" rowspan="<?= $parameterCount ?>"><?= commentText($method->getDocComment()) ?></td>
+									<td class="Comment" rowspan="<?= $parameterCount ?>"><?= commentText($method) ?></td>
 								</tr>
 								<?php foreach ($parameters as $parameter): ?>
 									<tr class="Element Parameter <?= $oddEvenStyle ?>">
