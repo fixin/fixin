@@ -8,10 +8,10 @@
 use \Fixin\Support\VariableInspector;
 
 ?><td class="Parameter Type">
-	<?= ($class = $parameter->getClass()) ? reflectionLink($class) : ($parameter->getType() ?? $docParameters[$parameter->getName()] ?? '') ?>
+    <?= ($class = $parameter->getClass()) ? reflectionLink($class) : ($parameter->getType() ?? $docParameters[$parameter->getName()] ?? '') ?>
 </td>
 <td class="Parameter Name">
-	<?= ($parameter->isVariadic() ? '...' : '') . ($parameter->isPassedByReference() ? '&' : '') . htmlspecialchars('$' . $parameter->getName()) ?>
+    <?= ($parameter->isVariadic() ? '...' : '') . ($parameter->isPassedByReference() ? '&' : '') . htmlspecialchars('$' . $parameter->getName()) ?>
 </td>
 <td class="Parameter Value"><?=
 $parameter->isOptional()

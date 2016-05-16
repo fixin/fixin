@@ -41,8 +41,8 @@ $showMethods = empty($_GET['nonPublic'])
 
 ?><!DOCTYPE html>
 <html>
-	<head>
-		<style>
+    <head>
+        <style>
 body {
     font-size: 9pt;
     font-family: monospace;
@@ -70,8 +70,8 @@ a[href] {
 
 table {
     border-collapse: separate;
-	border-spacing: 0;
-	empty-cells: show;
+    border-spacing: 0;
+    empty-cells: show;
 }
 
 td {
@@ -188,128 +188,127 @@ td.Tab {
 .Parameter.Name {
     color: #750;
 }
-		</style>
-	</head>
-	<body>
-		<table>
-			<?php foreach ($namespaces as $namespace => $elements): ?>
-				<?php ksort($elements) ?>
-				<tr class="Namespace">
-					<td colspan="9"><h2><?= htmlspecialchars($namespace) ?></h2></td>
-				</tr>
-        		<?php foreach ($elements as $name): ?>
-        			<?php $reflection = new ReflectionClass("$namespace\\$name"); ?>
-        			<tr class="Header">
-        				<td class="Tab"></td>
-        				<td colspan="8">
-    						<h3><a name="<?= htmlspecialchars($reflection->name) ?>"><?= htmlspecialchars($reflection->name) ?></a></h3>
-						</td>
-					</tr>
-					<tr class="Details">
-						<td class="Tab"></td>
-						<td class="Tab"></td>
-        				<td colspan="7">
-    						<?php if ($reflection->isInterface()): ?>
-        						interface
-        					<?php elseif ($reflection->isTrait()): ?>
-        						trait
-        					<?php else: ?>
-        						<?= $reflection->isFinal() ? 'final' : '' ?>
-        						<?= $reflection->isAbstract() ? 'abstract' : '' ?>
-        						class
-        					<?php endif ?>
+        </style>
+    </head>
+    <body>
+        <table>
+            <?php foreach ($namespaces as $namespace => $elements): ?>
+                <?php ksort($elements) ?>
+                <tr class="Namespace">
+                    <td colspan="9"><h2><?= htmlspecialchars($namespace) ?></h2></td>
+                </tr>
+                <?php foreach ($elements as $name): ?>
+                    <?php $reflection = new ReflectionClass("$namespace\\$name"); ?>
+                    <tr class="Header">
+                        <td class="Tab"></td>
+                        <td colspan="8">
+                            <h3><a name="<?= htmlspecialchars($reflection->name) ?>"><?= htmlspecialchars($reflection->name) ?></a></h3>
+                        </td>
+                    </tr>
+                    <tr class="Details">
+                        <td class="Tab"></td>
+                        <td class="Tab"></td>
+                        <td colspan="7">
+                            <?php if ($reflection->isInterface()): ?>
+                                interface
+                            <?php elseif ($reflection->isTrait()): ?>
+                                trait
+                            <?php else: ?>
+                                <?= ($reflection->isFinal() ? 'final ' : '') . ($reflection->isAbstract() ? 'abstract' : '') ?>
+                                class
+                            <?php endif ?>
 
-							<?php if ($parent = $reflection->getParentClass()): ?>
-        						extends <?= reflectionLink($parent) ?>
-        					<?php endif ?>
+                            <?php if ($parent = $reflection->getParentClass()): ?>
+                                extends <?= reflectionLink($parent) ?>
+                            <?php endif ?>
 
-        					<?php if ($interfaces = $reflection->getInterfaces()): ?>
-        						implements <?= implode(', ', array_map('reflectionLink', $interfaces)) ?>
-        					<?php endif ?>
+                            <?php if ($interfaces = $reflection->getInterfaces()): ?>
+                                implements <?= implode(', ', array_map('reflectionLink', $interfaces)) ?>
+                            <?php endif ?>
 
-        					<?php if ($traits = $reflection->getTraits()): ?>
-        						uses <?= implode(', ', array_map('reflectionLink', $traits)) ?>
-        					<?php endif ?>
-						</td>
-    				</tr>
-    				<?php if ($constants = $reflection->getConstants()): ?>
-						<?php
+                            <?php if ($traits = $reflection->getTraits()): ?>
+                                uses <?= implode(', ', array_map('reflectionLink', $traits)) ?>
+                            <?php endif ?>
+                        </td>
+                    </tr>
+                    <?php if ($constants = $reflection->getConstants()): ?>
+                        <?php
                             ksort($constants);
                         ?>
-						<?php foreach ($constants as $key => $value): ?>
-							<tr class="Element Const <?= evenStyle() ?>">
-								<td class="Tab"></td>
-								<td class="Tab"></td>
-								<td>const</td>
-								<td class="Name" colspan="4"><?= htmlspecialchars($key) ?></td>
-								<td class="Value" colspan="2"><?= VariableInspector::valueInfo($value) ?></td>
-							</tr>
-						<?php endforeach ?>
-					<?php endif ?>
-					<?php if (($properties = $reflection->getProperties($showProperties))): ?>
-    					<?php $defaultValues = $reflection->getDefaultProperties() ?>
-						<?php foreach (orderedReflectionList($properties) as $property): ?>
-							<?php if ($property->getDeclaringClass() == $reflection): ?>
-								<tr class="Element Property <?= evenStyle() ?>">
-									<td class="Tab"></td>
-									<td class="Tab"></td>
-									<td>
-										<?= $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : 'private') ?>
-										<?= $property->isStatic() ? 'static' : '' ?>
-									</td>
-									<td class="Name" colspan="2">$<?= htmlspecialchars($property->getName()) ?></td>
-									<td colspan="2"><?= commentVar($property) ?></td>
-									<td class="Value"><?= VariableInspector::valueInfo($defaultValues[$property->getName()] ?? null) ?></td>
-									<td class="Comment"><?= commentText($property) ?></td>
-								</tr>
-							<?php endif ?>
-						<?php endforeach ?>
-    				<?php endif ?>
-    				<?php if (($methods = $reflection->getMethods($showMethods))): ?>
-    					<?php foreach (orderedReflectionList($methods) as $method): ?>
-    						<?php if ($method->getDeclaringClass() == $reflection): ?>
-    							<?php
+                        <?php foreach ($constants as $key => $value): ?>
+                            <tr class="Element Const <?= evenStyle() ?>">
+                                <td class="Tab"></td>
+                                <td class="Tab"></td>
+                                <td>const</td>
+                                <td class="Name" colspan="4"><?= htmlspecialchars($key) ?></td>
+                                <td class="Value" colspan="2"><?= VariableInspector::valueInfo($value) ?></td>
+                            </tr>
+                        <?php endforeach ?>
+                    <?php endif ?>
+                    <?php if (($properties = $reflection->getProperties($showProperties))): ?>
+                        <?php $defaultValues = $reflection->getDefaultProperties() ?>
+                        <?php foreach (orderedReflectionList($properties) as $property): ?>
+                            <?php if ($property->getDeclaringClass() == $reflection): ?>
+                                <tr class="Element Property <?= evenStyle() ?>">
+                                    <td class="Tab"></td>
+                                    <td class="Tab"></td>
+                                    <td>
+                                        <?= $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : 'private') ?>
+                                        <?= $property->isStatic() ? 'static' : '' ?>
+                                    </td>
+                                    <td class="Name" colspan="2">$<?= htmlspecialchars($property->getName()) ?></td>
+                                    <td colspan="2"><?= commentVar($property) ?></td>
+                                    <td class="Value"><?= VariableInspector::valueInfo($defaultValues[$property->getName()] ?? null) ?></td>
+                                    <td class="Comment"><?= commentText($property) ?></td>
+                                </tr>
+                            <?php endif ?>
+                        <?php endforeach ?>
+                    <?php endif ?>
+                    <?php if (($methods = $reflection->getMethods($showMethods))): ?>
+                        <?php foreach (orderedReflectionList($methods) as $method): ?>
+                            <?php if ($method->getDeclaringClass() == $reflection): ?>
+                                <?php
                                     $parameters = $method->getParameters();
                                     $parameterCount = max(1, count($parameters));
                                     $docParameters = commentParameters($method);
-    							?>
-    							<tr class="Element Method <?= $oddEvenStyle = evenStyle() ?>">
-    								<td class="Tab" rowspan="<?= $parameterCount ?>"></td>
-    								<td class="Tab" rowspan="<?= $parameterCount ?>"></td>
-	    							<td rowspan="<?= $parameterCount ?>">
-	    								<?= $method->isFinal() ? 'final' : '' ?>
-	    								<?= $method->isAbstract() ? 'abstract' : '' ?>
-										<?= $method->isPublic() ? 'public' : ($method->isProtected() ? 'protected' : 'private') ?>
-										<?= $method->isStatic() ? 'static' : '' ?>
-										function
-									</td>
-									<td class="Name" rowspan="<?= $parameterCount ?>"><?= htmlspecialchars($method->name) ?></td>
-									<?php if ($parameters): ?>
-										<?php
-										  $parameter = array_shift($parameters);
-										  include 'classes.parameter.php';
+                                ?>
+                                <tr class="Element Method <?= $oddEvenStyle = evenStyle() ?>">
+                                    <td class="Tab" rowspan="<?= $parameterCount ?>"></td>
+                                    <td class="Tab" rowspan="<?= $parameterCount ?>"></td>
+                                    <td rowspan="<?= $parameterCount ?>">
+                                        <?= $method->isFinal() ? 'final' : '' ?>
+                                        <?= $method->isAbstract() ? 'abstract' : '' ?>
+                                        <?= $method->isPublic() ? 'public' : ($method->isProtected() ? 'protected' : 'private') ?>
+                                        <?= $method->isStatic() ? 'static' : '' ?>
+                                        function
+                                    </td>
+                                    <td class="Name" rowspan="<?= $parameterCount ?>"><?= htmlspecialchars($method->name) ?></td>
+                                    <?php if ($parameters): ?>
+                                        <?php
+                                          $parameter = array_shift($parameters);
+                                          include 'classes.parameter.php';
                                         ?>
-									<?php else: ?>
-										<td colspan="3"></td>
-									<?php endif ?>
-									<td class="ReturnType" rowspan="<?= $parameterCount ?>">: <?= $method->getReturnType() ?? 'void' ?></td>
-									<td class="Comment" rowspan="<?= $parameterCount ?>"><?= commentText($method) ?></td>
-								</tr>
-								<?php foreach ($parameters as $parameter): ?>
-									<tr class="Element Parameter <?= $oddEvenStyle ?>">
-										<?php include 'classes.parameter.php' ?>
-									</tr>
-								<?php endforeach ?>
-    						<?php endif ?>
-						<?php endforeach ?>
-					<?php endif ?>
-					<tr class="Separator">
-						<td class="Tab"></td>
-						<td class="Tab"></td>
-						<td colspan="7"></td>
-					</tr>
-        		<?php endforeach ?>
-			<?php endforeach ?>
-		</table>
-	</body>
+                                    <?php else: ?>
+                                        <td colspan="3"></td>
+                                    <?php endif ?>
+                                    <td class="ReturnType" rowspan="<?= $parameterCount ?>">: <?= $method->getReturnType() ?? 'void' ?></td>
+                                    <td class="Comment" rowspan="<?= $parameterCount ?>"><?= commentText($method) ?></td>
+                                </tr>
+                                <?php foreach ($parameters as $parameter): ?>
+                                    <tr class="Element Parameter <?= $oddEvenStyle ?>">
+                                        <?php include 'classes.parameter.php' ?>
+                                    </tr>
+                                <?php endforeach ?>
+                            <?php endif ?>
+                        <?php endforeach ?>
+                    <?php endif ?>
+                    <tr class="Separator">
+                        <td class="Tab"></td>
+                        <td class="Tab"></td>
+                        <td colspan="7"></td>
+                    </tr>
+                <?php endforeach ?>
+            <?php endforeach ?>
+        </table>
+    </body>
 </html>
