@@ -70,12 +70,12 @@ class Application implements ApplicationInterface {
                 $cargo->unpack();
             }
             catch (\Throwable $t) {
-                throw $t;
-
                 // Double error
                 $protocol = 'HTTP/' . ($cargo->getRequestProtocolVersion());
                 header("$protocol 500 Internal Server Error", true, 500);
                 echo '500 Internal server error';
+
+                echo $t->getMessage();
                 exit;
             }
         }
