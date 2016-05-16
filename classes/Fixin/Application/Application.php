@@ -7,7 +7,7 @@
 
 namespace Fixin\Application;
 
-use Fixin\Cargo\Factory\HttpCargoFactory;
+use Fixin\Delivery\Cargo\Factory\HttpCargoFactory;
 
 class Application implements ApplicationInterface {
 
@@ -47,8 +47,23 @@ class Application implements ApplicationInterface {
      * @see \Fixin\Application\ApplicationInterface::run()
      */
     public function run() {
-        $cargo = (new HttpCargoFactory())($this->container);
+        try {
+            $cargo = (new HttpCargoFactory())($this->container);
 
-        echo $cargo;
+            try {
+                $cargo = $this->container->get('dispatcher')->dispatch($cargo);
+            }
+            catch (\Throwable $t) {
+                $cargo->setContent($t);
+                $cargo = $this->container->get('errorDispatcher')->dispatch($cargo);
+            }
+
+            $cargo->unpack();
+        }
+        catch (\Throwable $t) {
+            header('HTTP/' . $cargo->getRequestProtocolVersion() . ' 500 Internal Server Error', true, 500);
+            echo '500 Internal server error';
+            exit;
+        }
     }
 }

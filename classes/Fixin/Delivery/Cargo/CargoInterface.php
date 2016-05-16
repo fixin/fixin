@@ -38,4 +38,11 @@ interface CargoInterface {
      * @return self
      */
     public function setDelivered(bool $delivered);
+
+    /**
+     * Unpack cargo
+     *
+     * @return mixed
+     */
+    public function unpack();
 }

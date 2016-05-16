@@ -54,4 +54,12 @@ class Cargo implements CargoInterface {
 
         return $this;
     }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\CargoInterface::unpack()
+     */
+    public function unpack() {
+        return $this->content;
+    }
 }
