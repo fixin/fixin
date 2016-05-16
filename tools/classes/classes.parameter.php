@@ -7,24 +7,22 @@
 
 use \Fixin\Support\VariableInspector;
 
-?><td>
+?><td class="Parameter Type">
 	<?php if ($class = $parameter->getClass()): ?>
 		<?= reflectionLink($class) ?>
 	<?php else: ?>
 		<?= $parameter->getType() ?>
 	<?php endif ?>
 </td>
-<td class="Name">
+<td class="Parameter Name">
 	<?= $parameter->isVariadic() ? '...' : ''
 	?><?= $parameter->isPassedByReference() ? '&' : ''
 	?>$<?= htmlspecialchars($parameter->getName()) ?>
 </td>
-<td>
-	<?php if ($parameter->isOptional()): ?>
-		<?php if ($parameter->isDefaultValueConstant()): ?>
-			<?= htmlspecialchars($parameter->getDefaultValueConstantName()) ?>
-		<?php else: ?>
-			<?= VariableInspector::valueInfo($parameter->getDefaultValue()) ?>
-		<?php endif ?>
-	<?php endif ?>
-</td>
+<td class="Parameter Value"><?=
+$parameter->isOptional()
+    ? ($parameter->isDefaultValueConstant()
+        ? htmlspecialchars($parameter->getDefaultValueConstantName())
+        : VariableInspector::valueInfo($parameter->getDefaultValue()))
+    : '';
+?></td>

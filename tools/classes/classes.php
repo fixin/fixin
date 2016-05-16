@@ -71,7 +71,67 @@ table {
 }
 
 td {
-	border: 1px solid #ddd;
+    padding: 0.4em 0.4em;
+}
+
+td.Tab {
+    padding-left: 2em;
+}
+
+.Name {
+    font-weight: bold;
+}
+
+.Value {
+    white-space: pre;
+    font-family: monospace;
+}
+
+.Method .ReturnType,
+.Method .Name {
+    position: relative;
+}
+
+.Method .ReturnType:after,
+.Method .Name:after {
+    content: " ";
+
+    border-width: 0;
+    border-color: #000;
+    border-style: solid;
+
+    position: absolute;
+    top: 0.4em;
+    bottom: 0.4em;
+    width: 1em;
+}
+
+.Method .Name:after {
+    border-left-width: 0.2em;
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+
+    left: 100%;
+}
+
+.Method .ReturnType:after {
+    border-right-width: 0.2em;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+
+    right: 100%;
+}
+
+.Parameter.Type {
+    padding-left: 1em;
+}
+
+.Parameter.Name:after {
+    content: none;
+}
+
+.Parameter.Value {
+    padding-right: 1em;
 }
 
 		</style>
@@ -80,17 +140,20 @@ td {
 		<table>
 			<?php foreach ($namespaces as $namespace => $elements): ?>
 				<?php ksort($elements) ?>
-				<tr>
-					<td colspan="6"><h2><?= htmlspecialchars($namespace) ?></h2></td>
+				<tr class="Namespace">
+					<td colspan="7"><h2><?= htmlspecialchars($namespace) ?></h2></td>
 				</tr>
         		<?php foreach ($elements as $name): ?>
         			<?php $reflection = new ReflectionClass("$namespace\\$name"); ?>
-        			<tr class="Element">
-        				<td colspan="6">
+        			<tr class="Element Header">
+        				<td class="Tab"></td>
+        				<td colspan="7">
     						<h3><a name="<?= htmlspecialchars($reflection->name) ?>"><?= htmlspecialchars($reflection->name) ?></a></h3>
 						</td>
 					</tr>
-					<tr class="ElementDetails">
+					<tr class="Element Details">
+						<td class="Tab"></td>
+						<td class="Tab"></td>
         				<td colspan="6">
     						<?php if ($reflection->isInterface()): ?>
         						interface
@@ -118,10 +181,12 @@ td {
     				<?php if ($constants = $reflection->getConstants()): ?>
     					<?php ksort($constants) ?>
 						<?php foreach ($constants as $key => $value): ?>
-							<tr class="Const">
+							<tr class="Element Const">
+								<td class="Tab"></td>
+								<td class="Tab"></td>
 								<td>const</td>
-								<td colspan="4" class="Name"><?= htmlspecialchars($key) ?></td>
-								<td><?= VariableInspector::valueInfo($value) ?></td>
+								<td class="Name" colspan="4"><?= htmlspecialchars($key) ?></td>
+								<td class="Value"><?= VariableInspector::valueInfo($value) ?></td>
 							</tr>
 						<?php endforeach ?>
 					<?php endif ?>
@@ -129,12 +194,14 @@ td {
     					<?php $defaultValues = $reflection->getDefaultProperties() ?>
 						<?php foreach (orderedReflectionList($properties) as $property): ?>
 							<?php if ($property->getDeclaringClass() == $reflection): ?>
-								<tr class="Property">
+								<tr class="Element Property">
+									<td class="Tab"></td>
+									<td class="Tab"></td>
 									<td>
 										<?= $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : 'private') ?>
 										<?= $property->isStatic() ? 'static' : '' ?>
 									</td>
-									<td colspan="4" class="Name">$<?= htmlspecialchars($property->getName()) ?></td>
+									<td class="Name" colspan="4">$<?= htmlspecialchars($property->getName()) ?></td>
 									<td><?= VariableInspector::valueInfo($defaultValues[$property->getName()] ?? null) ?></td>
 								</tr>
 							<?php endif ?>
@@ -147,7 +214,9 @@ td {
                                     $parameters = $method->getParameters();
                                     $parameterCount = max(1, count($parameters));
     							?>
-    							<tr class="Method">
+    							<tr class="Element Method">
+    								<td class="Tab" rowspan="<?= $parameterCount ?>"></td>
+    								<td class="Tab" rowspan="<?= $parameterCount ?>"></td>
 	    							<td rowspan="<?= $parameterCount ?>">
 	    								<?= $method->isFinal() ? 'final' : '' ?>
 	    								<?= $method->isAbstract() ? 'abstract' : '' ?>
@@ -161,16 +230,16 @@ td {
 										  $parameter = array_shift($parameters);
 										  include 'classes.parameter.php';
                                         ?>
-                                        <td rowspan="<?= $parameterCount ?>"><?= $method->getReturnType() ?></td>
 									<?php else: ?>
-										<td colspan="4"></td>
+										<td colspan="3"></td>
 									<?php endif ?>
+									<td class="ReturnType" rowspan="<?= $parameterCount ?>"><?= $method->getReturnType() ?></td>
 								</tr>
-								<?php
-								    foreach ($parameters as $parameter) {
-								        include 'classes.parameter.php';
-								    }
-								?>
+								<?php foreach ($parameters as $parameter): ?>
+									<tr>
+										<?php include 'classes.parameter.php' ?>
+									</tr>
+								<?php endforeach ?>
     						<?php endif ?>
 						<?php endforeach ?>
 					<?php endif ?>
