@@ -9,11 +9,14 @@ namespace Fixin\Base\Configurable;
 
 use Fixin\Base\Exception\InvalidParameterException;
 
-class SetterConfigurable implements ConfigurableInterface {
+trait SetterConfigureTrait {
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Configurable\ConfigurableInterface::configure()
+     * Configure by setters
+     *
+     * @param array $config
+     * @throws InvalidParameterException
+     * @return self
      */
     public function configure(array $config) {
         foreach ($config as $key => $value) {
