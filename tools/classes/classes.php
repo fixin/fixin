@@ -214,8 +214,7 @@ td.Tab {
                             <?php elseif ($reflection->isTrait()): ?>
                                 trait
                             <?php else: ?>
-                                <?= ($reflection->isFinal() ? 'final ' : '') . ($reflection->isAbstract() ? 'abstract' : '') ?>
-                                class
+                                <?= ($reflection->isFinal() ? 'final ' : '') . ($reflection->isAbstract() ? 'abstract ' : '') . 'class'; ?>
                             <?php endif ?>
 
                             <?php if ($parent = $reflection->getParentClass()): ?>
@@ -232,9 +231,7 @@ td.Tab {
                         </td>
                     </tr>
                     <?php if ($constants = $reflection->getConstants()): ?>
-                        <?php
-                            ksort($constants);
-                        ?>
+                        <?php ksort($constants); ?>
                         <?php foreach ($constants as $key => $value): ?>
                             <tr class="Element Const <?= evenStyle() ?>">
                                 <td class="Tab"></td>
@@ -285,8 +282,8 @@ td.Tab {
                                     <td class="Name" rowspan="<?= $parameterCount ?>"><?= htmlspecialchars($method->name) ?></td>
                                     <?php if ($parameters): ?>
                                         <?php
-                                          $parameter = array_shift($parameters);
-                                          include 'classes.parameter.php';
+                                            $parameter = array_shift($parameters);
+                                            include 'classes.parameter.php';
                                         ?>
                                     <?php else: ?>
                                         <td colspan="3"></td>
