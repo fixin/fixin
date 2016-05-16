@@ -22,4 +22,4 @@ It is under development, and should not be used in production.
 
 ## License
 
-Fixin framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+Fixin Framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
