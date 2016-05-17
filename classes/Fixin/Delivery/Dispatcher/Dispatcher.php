@@ -28,7 +28,7 @@ class Dispatcher extends Resource implements DispatcherInterface {
     public function __construct(ResourceManagerInterface $container, array $options = []) {
         parent::__construct($container, $options);
 
-        // Facilities
+        // Nodes
         if (isset($options[static::NODES_KEY])) {
             $this->setupNodes($options[static::NODES_KEY]);
         }
@@ -64,7 +64,7 @@ class Dispatcher extends Resource implements DispatcherInterface {
             $node = $this->container->get($node);
 
             if (!$node instanceof NodeInterface) {
-                throw new InvalidParameterException("Invalid facility resource '$key'");
+                throw new InvalidParameterException("Invalid node resource '$key'");
             }
 
             $this->nodes[] = $node;
