@@ -34,8 +34,8 @@ class VariableInspector extends DoNotCreate {
      * @param string $color
      * @return string
      */
-    protected static function itemsInfo(array $var, string $color): string {
-        $info = '';
+    public static function itemsInfo(array $var, string $color): string {
+        $info = "\n";
 
         foreach ($var as $key => $value) {
             if (is_scalar($value) && stripos($key, 'password') !== false) {
