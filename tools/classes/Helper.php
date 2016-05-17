@@ -69,7 +69,7 @@ class Helper {
         preg_match_all('/^\s*\*\s*@param\s+([^\s]+)\s+\$([^\s]+)$/m', $reflection->getDocComment(), $matches);
 
         foreach ($matches[1] as $index => $type) {
-            $parameters[$matches[2][$index]] = implode('|', array_map([$this, 'classLink'], (explode('|', $type))));
+            $parameters[$matches[2][$index]] = '<span class="FromComment">' . implode('|', array_map([$this, 'classLink'], (explode('|', $type)))) . '</span>';
         }
 
         return $parameters;
@@ -77,7 +77,7 @@ class Helper {
 
     public function commentVar($reflection) {
         if (preg_match_all('(@var\s+([^\s]+))', $reflection->getDocComment(), $matches)) {
-            return implode('|', array_map([$this, 'classLink'], (explode('|', $matches[1][0]))));
+            return '<span class="FromComment">' . implode('|', array_map([$this, 'classLink'], (explode('|', $matches[1][0])))) . '</span>';
         }
 
         return '';

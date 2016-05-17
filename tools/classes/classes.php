@@ -80,9 +80,16 @@ td.Tab {
 }
 
 .Comment {
-    color: #579;
     max-width: 40em;
+
+    color: #579;
     line-height: 1.5;
+    font-style: italic;
+}
+
+.FromComment {
+    color: #999;
+    font-style: italic;
 }
 
 .Parameter.Odd,
