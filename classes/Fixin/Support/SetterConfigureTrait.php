@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\Configurable;
+namespace Fixin\Support;
 
 use Fixin\Base\Exception\InvalidParameterException;
 
@@ -14,11 +14,11 @@ trait SetterConfigureTrait {
     /**
      * Configure by setters
      *
-     * @param array $config
+     * @param \Traversable $config
      * @throws InvalidParameterException
      * @return self
      */
-    public function configure(array $config) {
+    public function configure(\Traversable $config) {
         foreach ($config as $key => $value) {
             $method = 'set' . $key;
 
