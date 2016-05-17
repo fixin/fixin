@@ -14,19 +14,23 @@ use Fixin\Support\Http;
 
 class HttpCargoFactory implements FactoryInterface {
 
+    const DEFAULT_POST_CONTENT_TYPE = 'text/html';
+
     /**
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function __invoke(ResourceManagerInterface $container, string $name = null) {
+    public function __invoke(ResourceManagerInterface $container, array $options = NULL, string $name = NULL) {
+        $headers = $this->getHeaders();
+
         $cargo = new HttpCargo();
         $cargo->setRequestProtocolVersion($this->getProtocolVersion())
             ->setRequestMethod($method = $this->getMethod())
             ->setRequestUri($container->clonePrototype('requestUri'))
             ->setRequestParameters($_GET)
-            ->setRequestHeaders($this->getHeaders())
+            ->setRequestHeaders($headers)
             ->setCookies($_COOKIE)
             ->setEnvironmentParameters($_ENV)
             ->setServerParameters($_SERVER);
@@ -34,6 +38,11 @@ class HttpCargoFactory implements FactoryInterface {
         // POST
         if ($method === Http::METHOD_POST) {
             $cargo->setContent($this->getPostParameters());
+
+            // Content type
+            if (isset($headers[Http::HEADER_CONTENT_TYPE])) {
+                $cargo->setContentType($headers[Http::HEADER_CONTENT_TYPE]);
+            }
         }
 
         return $cargo;
