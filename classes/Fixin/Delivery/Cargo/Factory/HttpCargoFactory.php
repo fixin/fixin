@@ -23,7 +23,8 @@ class HttpCargoFactory implements FactoryInterface {
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __invoke(ResourceManagerInterface $container, array $options = NULL, string $name = NULL) {
-        $cargo = new HttpCargo();
+        $cargo = $container->clonePrototype('Delivery\Cargo\HttpCargo');
+
         $cargo->setRequestProtocolVersion($this->getProtocolVersion())
             ->setRequestMethod($method = $this->getMethod())
             ->setRequestUri($container->clonePrototype('requestUri'))
