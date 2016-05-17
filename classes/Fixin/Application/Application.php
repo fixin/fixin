@@ -8,6 +8,7 @@
 namespace Fixin\Application;
 
 use Fixin\Delivery\Cargo\CargoInterface;
+use Fixin\Delivery\Cargo\Cargo;
 
 class Application implements ApplicationInterface {
 
@@ -57,7 +58,7 @@ class Application implements ApplicationInterface {
     protected function errorRoute($cargo) {
         try {
             if ($cargo instanceof \Throwable) {
-                throw $cargo;
+                $cargo = (new Cargo())->setContent($cargo);
             }
 
             // Error dispatch
