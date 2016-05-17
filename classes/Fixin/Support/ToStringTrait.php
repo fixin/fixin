@@ -17,19 +17,11 @@ trait ToStringTrait {
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __toString(): string {
-        return Ground::isConsole()
-        ? htmlspecialchars_decode(strip_tags(VariableInspector::valueInfo($this)))
-        : '<div style="font-family: monospace; white-space: pre; color: #000; line-height: 1.05">' . VariableInspector::valueInfo($this) . '</div>';
-    }
+        $items = method_exists($this, '__debugInfo') ? $this->__debugInfo() : (array) $this;
+        $description = get_class($this) . ' {' . ($items ? "\n" . VariableInspector::itemsInfo($items, '#444') : '') . '}';
 
-    /**
-     * Debug info
-     *
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     */
-    public function __debugInfo(): array {
-        return (array) $this;
+        return Ground::isConsole()
+            ? htmlspecialchars_decode(strip_tags($description))
+            : '<div style="font-family: monospace; white-space: pre; color: #000; line-height: 1.05">' . $description . '</div>';
     }
 }
