@@ -7,7 +7,7 @@
 
 namespace Fixin\Delivery\Cargo\Factory;
 
-use Fixin\Delivery\Cargo\HttpCargo;
+use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\ResourceManager\Factory\FactoryInterface;
 use Fixin\ResourceManager\ResourceManagerInterface;
 use Fixin\Support\Http;
@@ -110,9 +110,9 @@ class HttpCargoFactory implements FactoryInterface {
     /**
      * Setup POST data
      *
-     * @param HttpCargo $cargo
+     * @param HttpCargoInterface $cargo
      */
-    protected function setupPost(HttpCargo $cargo) {
+    protected function setupPost(HttpCargoInterface $cargo) {
         $cargo->setContent($this->getPostParameters());
 
         // Content type
