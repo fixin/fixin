@@ -17,9 +17,9 @@ class RuntimeCargoFactory implements FactoryInterface {
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ResourceManagerInterface $container, string $name = null) {
+    public function __invoke(ResourceManagerInterface $container, array $options = null, string $name = null) {
         $factory = new HttpCargoFactory();
 
-        return $factory($container, $name);
+        return $factory($container, $options, $name);
     }
 }

@@ -37,10 +37,10 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ResourceManagerInterface $container, string $name = null) {
+    public function __invoke(ResourceManagerInterface $container, array $options = null, string $name = null) {
         $mapped = $this->map[$name];
 
-        return $mapped ? new $mapped($container, [static::RESOURCE_NAME_KEY => $name]) : null;
+        return $mapped ? new $mapped($container, $options, $name) : null;
     }
 
     /**

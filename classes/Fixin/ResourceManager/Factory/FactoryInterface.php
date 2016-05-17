@@ -15,8 +15,9 @@ interface FactoryInterface {
      * Produce resource
      *
      * @param ResourceManagerInterface $container
+     * @param array $options
      * @param string $name
      * @return mixed
      */
-    public function __invoke(ResourceManagerInterface $container, string $name = null);
+    public function __invoke(ResourceManagerInterface $container, array $options = null, string $name = null);
 }
