@@ -22,6 +22,8 @@ class Application implements ApplicationInterface {
 
     const DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\ResourceManager\ResourceManager';
     const DEFAULT_RESOURCE_MANAGER_CONFIG_CLASS = 'Fixin\Base\Config\Config';
+    const INTERNAL_SERVER_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error';
+    const INTERNAL_SERVER_ERROR_HTML = '<h1>500 Internal server error</h1>';
 
     /**
      * @var \Fixin\ResourceManager\ResourceManagerInterface
@@ -95,8 +97,8 @@ class Application implements ApplicationInterface {
      * @param string $text
      */
     protected function internalServerError(string $text) {
-        header("HTTP/1.1 500 Internal Server Error", true, 500);
-        echo '<h1>500 Internal server error</h1>';
+        header(static::INTERNAL_SERVER_ERROR_HEADER, true, 500);
+        echo static::INTERNAL_SERVER_ERROR_HTML;
 
         echo $text;
         exit;
