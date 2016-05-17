@@ -168,13 +168,7 @@ class ResourceManager implements ResourceManagerInterface {
      * @return object
      */
     protected function produceResource(string $name) {
-        $definition = $this->resolveDefinition($name);
-        $resource = is_array($definition) ? $this->produceResourceFromDefinition($definition) : $definition;
-
-        // Factory or Closure
-        if ($resource instanceof FactoryInterface || $resource instanceof \Closure) {
-            $resource = $resource($this, $definition[static::OPTIONS_KEY], $name);
-        }
+        $resource = $this->produceResourceFromDefinition($name, $this->resolveDefinition($name));
 
         // Object
         if (is_object($resource)) {
@@ -192,11 +186,25 @@ class ResourceManager implements ResourceManagerInterface {
 
     /**
      * Produce resource from definition
-     * @param array $definition
-     * @return mixed|null
+     *
+     * @param string $name
+     * @param mixed $definition
+     * @return mixed
      */
-    protected function produceResourceFromDefinition(array $definition) {
-        return $this->createFromDefinition($definition) ?? $this->produceResourceFromAbstractFactories($definition[static::CLASS_KEY], $definition[static::OPTIONS_KEY]);
+    protected function produceResourceFromDefinition(string $name, $definition) {
+        $options = null;
+
+        if (is_array($definition)) {
+            $options = $definition[static::OPTIONS_KEY] ?? [];
+            $definition = $this->createFromDefinition($definition) ?? $this->produceResourceFromAbstractFactories($definition[static::CLASS_KEY], $options);
+        }
+
+        // Factory or Closure
+        if ($definition instanceof FactoryInterface || $definition instanceof \Closure) {
+            $definition = $definition($this, $options, $name);
+        }
+
+        return $definition;
     }
 
     /**
@@ -225,23 +233,11 @@ class ResourceManager implements ResourceManagerInterface {
     protected function resolveDefinition($definition) {
         // String
         if (is_string($definition)) {
-            if (isset($this->definitions[$definition])) {
-                return $this->resolveDefinition($this->definitions[$definition]);
-            }
-
-            return [static::CLASS_KEY => $definition, static::OPTIONS_KEY => []];
+            return isset($this->definitions[$definition]) ? $this->resolveDefinition($this->definitions[$definition]) : [static::CLASS_KEY => $definition];
         }
 
         // Array
-        if (isset($definition[static::CLASS_KEY])) {
-            if (!isset($definition[static::OPTIONS_KEY])) {
-                $definition[static::OPTIONS_KEY] = [];
-            }
-
-            return $this->resolveArrayDefinition($definition);
-        }
-
-        return $definition;
+        return isset($definition[static::CLASS_KEY]) ? $this->resolveArrayDefinition($definition) : $definition;
     }
 
     /**
