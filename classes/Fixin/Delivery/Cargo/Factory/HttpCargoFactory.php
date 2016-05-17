@@ -23,26 +23,19 @@ class HttpCargoFactory implements FactoryInterface {
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __invoke(ResourceManagerInterface $container, array $options = NULL, string $name = NULL) {
-        $headers = $this->getHeaders();
-
         $cargo = new HttpCargo();
         $cargo->setRequestProtocolVersion($this->getProtocolVersion())
             ->setRequestMethod($method = $this->getMethod())
             ->setRequestUri($container->clonePrototype('requestUri'))
             ->setRequestParameters($_GET)
-            ->setRequestHeaders($headers)
+            ->setRequestHeaders($this->getHeaders())
             ->setCookies($_COOKIE)
             ->setEnvironmentParameters($_ENV)
             ->setServerParameters($_SERVER);
 
         // POST
         if ($method === Http::METHOD_POST) {
-            $cargo->setContent($this->getPostParameters());
-
-            // Content type
-            if (isset($headers[Http::HEADER_CONTENT_TYPE])) {
-                $cargo->setContentType($headers[Http::HEADER_CONTENT_TYPE]);
-            }
+            $this->setupPost($cargo);
         }
 
         return $cargo;
@@ -111,5 +104,19 @@ class HttpCargoFactory implements FactoryInterface {
     protected function getProtocolVersion(): string {
         return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::PROTOCOL_VERSION_1_0)
             ? Http::PROTOCOL_VERSION_1_0 : Http::PROTOCOL_VERSION_1_1;
+    }
+
+    /**
+     * Setup POST data
+     *
+     * @param HttpCargo $cargo
+     */
+    protected function setupPost(HttpCargo $cargo) {
+        $cargo->setContent($this->getPostParameters());
+
+        // Content type
+        if ($contentType = $cargo->getRequestHeader(Http::HEADER_CONTENT_TYPE)) {
+            $cargo->setContentType($contentType);
+        }
     }
 }
