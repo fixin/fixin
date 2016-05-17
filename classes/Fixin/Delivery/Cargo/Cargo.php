@@ -60,6 +60,6 @@ class Cargo implements CargoInterface {
      * @see \Fixin\Delivery\Cargo\CargoInterface::unpack()
      */
     public function unpack() {
-        return $this->content;
+        echo $this->content;
     }
 }

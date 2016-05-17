@@ -43,8 +43,6 @@ interface CargoInterface extends PrototypeInterface {
 
     /**
      * Unpack cargo
-     *
-     * @return mixed
      */
     public function unpack();
 }
