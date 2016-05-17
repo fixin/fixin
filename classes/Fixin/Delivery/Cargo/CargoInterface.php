@@ -19,6 +19,13 @@ interface CargoInterface extends PrototypeInterface {
     public function getContent();
 
     /**
+     * Get content type
+     *
+     * @return string
+     */
+    public function getContentType(): string;
+
+    /**
      * Is delivered
      *
      * @return bool
@@ -32,6 +39,14 @@ interface CargoInterface extends PrototypeInterface {
      * @return self
      */
     public function setContent($content);
+
+    /**
+     * Set content type
+     *
+     * @param string $contentType
+     * @return self
+     */
+    public function setContentType(string $contentType);
 
     /**
      * Set delivered state
