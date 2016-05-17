@@ -18,6 +18,7 @@ return [
                 return new Fixin\ResourceManager\Test($container);
             },
             'byFactory' => 'Fixin\ResourceManager\Factory\RequestFactory',
+            'byPrefixFallback' => 'ResourceManager\Test'
         ],
         'abstractFactories' => [
             'prefixFallback' => 'Fixin\ResourceManager\AbstractFactory\PrefixFallbackAbstractFactory'
