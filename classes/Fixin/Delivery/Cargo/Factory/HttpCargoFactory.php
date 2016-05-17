@@ -14,8 +14,6 @@ use Fixin\Support\Http;
 
 class HttpCargoFactory implements FactoryInterface {
 
-    const DEFAULT_POST_CONTENT_TYPE = 'text/html';
-
     /**
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
