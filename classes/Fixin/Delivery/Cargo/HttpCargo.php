@@ -28,7 +28,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     /**
      * @var array
      */
-    protected $headers = [Http::HEADER_CONTENT_TYPE => 'text/html'];
+    protected $headers = [Http::HEADER_CONTENT_TYPE => ['text/html']];
 
     /**
      * @var string
