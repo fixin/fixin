@@ -15,6 +15,11 @@ class Cargo implements CargoInterface {
     protected $content;
 
     /**
+     * @var string
+     */
+    protected $contentType;
+
+    /**
      * @var bool
      */
     protected $delivered = false;
@@ -25,6 +30,14 @@ class Cargo implements CargoInterface {
      */
     public function getContent() {
         return $this->content;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\CargoInterface::getContentType()
+     */
+    public function getContentType() {
+        return $this->contentType;
     }
 
     /**
@@ -41,6 +54,16 @@ class Cargo implements CargoInterface {
      */
     public function setContent($content) {
         $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\CargoInterface::setContentType($contentType)
+     */
+    public function setContentType($contentType) {
+        $this->contentType = $contentType;
 
         return $this;
     }
