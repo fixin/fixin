@@ -10,16 +10,16 @@ namespace Fixin\Delivery\Dispatcher;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\ResourceManager\Resource;
 use Fixin\ResourceManager\ResourceManagerInterface;
-use Fixin\Delivery\Facility\FacilityInterface;
+use Fixin\Delivery\Node\NodeInterface;
 
 class Dispatcher extends Resource implements DispatcherInterface {
 
-    const FACILITIES_KEY = 'facilities';
+    const NODES_KEY = 'nodes';
 
     /**
-     * @var FacilityInterface[]
+     * @var NodeInterface[]
      */
-    protected $facilities = [];
+    protected $nodes = [];
 
     /**
      * @param ResourceManagerInterface $container
@@ -29,8 +29,8 @@ class Dispatcher extends Resource implements DispatcherInterface {
         parent::__construct($container, $options);
 
         // Facilities
-        if (isset($options[static::FACILITIES_KEY])) {
-            $this->setupFacilities($options[static::FACILITIES_KEY]);
+        if (isset($options[static::NODES_KEY])) {
+            $this->setupNodes($options[static::NODES_KEY]);
         }
     }
 
@@ -40,10 +40,10 @@ class Dispatcher extends Resource implements DispatcherInterface {
      */
     public function dispatch(CargoInterface $cargo) {
         $cargo->setDelivered(false);
-        $plan = $this->facilities;
+        $plan = $this->nodes;
 
         while (!empty($plan)) {
-            $cargo = array_shift($plan)->dispatch($cargo);
+            $cargo = array_shift($plan)->handle($cargo);
 
             if ($cargo->isDelivered()) {
                 break;
@@ -54,20 +54,20 @@ class Dispatcher extends Resource implements DispatcherInterface {
     }
 
     /**
-     * Setup facilities
+     * Setup nodes
      *
-     * @param array $facilities
+     * @param array $nodes
      * @throws InvalidParameterException
      */
-    protected function setupFacilities(array $facilities) {
-        foreach ($facilities as $key => $facility) {
-            $facility = $this->container->get($facility);
+    protected function setupNodes(array $nodes) {
+        foreach ($nodes as $key => $node) {
+            $node = $this->container->get($node);
 
-            if (!$facility instanceof FacilityInterface) {
+            if (!$node instanceof NodeInterface) {
                 throw new InvalidParameterException("Invalid facility resource '$key'");
             }
 
-            $this->facilities[] = $facility;
+            $this->nodes[] = $node;
         }
     }
 }

@@ -5,9 +5,11 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Delivery\Facility;
+namespace Fixin\Delivery\Node;
 
-interface FacilityInterface {
+use Fixin\Delivery\Cargo\CargoInterface;
+
+interface NodeInterface {
 
     /**
      * Handle cargo
