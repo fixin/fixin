@@ -7,6 +7,8 @@
 
 namespace Fixin\Application;
 
+use Fixin\Delivery\Cargo\CargoInterface;
+
 class Application implements ApplicationInterface {
 
     const CARGO_KEY = 'cargo';
@@ -47,6 +49,28 @@ class Application implements ApplicationInterface {
     }
 
     /**
+     * Error route
+     *
+     * @param \Throwable|CargoInterface $cargo
+     * @throws \Throwable
+     */
+    protected function errorRoute($cargo) {
+        try {
+            if ($cargo instanceof \Throwable) {
+                throw $cargo;
+            }
+
+            // Error dispatch
+            $cargo = $container->get(static::ERROR_DISPATCHER_KEY)->dispatch($cargo);
+            $cargo->unpack();
+        }
+        catch (\Throwable $t) {
+            // Double error
+            $this->internalServerError($protocolVersion, $t->getMessage());
+        }
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Application\ApplicationInterface::run()
      */
@@ -62,25 +86,13 @@ class Application implements ApplicationInterface {
             $cargo->unpack();
         }
         catch (\Throwable $t) {
-            try {
-                if (!isset($cargo)) {
-                    throw $t;
-                }
-
-                // Error dispatch
-                $cargo->setContent($t);
-                $cargo = $container->get(static::ERROR_DISPATCHER_KEY)->dispatch($cargo);
-                $cargo->unpack();
-            }
-            catch (\Throwable $t) {
-                // Double error
-                $this->internalServerError($protocolVersion, $t->getMessage());
-            }
+            $this->errorRoute(isset($cargo) ? $cargo->setContent($t) : $t);
         }
     }
 
     /**
      * Internal Server Error
+     *
      * @param string $protocolVersion
      */
     protected function internalServerError(string $protocolVersion, string $text) {
