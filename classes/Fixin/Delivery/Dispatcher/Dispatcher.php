@@ -29,7 +29,7 @@ class Dispatcher extends Resource implements DispatcherInterface {
         parent::__construct($container, $options);
 
         // Facilities
-        if (isset($config[static::FACILITIES_KEY])) {
+        if (isset($options[static::FACILITIES_KEY])) {
             $this->setupFacilities($options[static::FACILITIES_KEY]);
         }
     }
@@ -42,7 +42,7 @@ class Dispatcher extends Resource implements DispatcherInterface {
         $cargo->setDelivered(false);
         $plan = $this->facilities;
 
-        while ($plan) {
+        while (!empty($plan)) {
             $cargo = array_shift($plan)->dispatch($cargo);
 
             if ($cargo->isDelivered()) {
@@ -67,7 +67,7 @@ class Dispatcher extends Resource implements DispatcherInterface {
                 throw new InvalidParameterException("Invalid facility resource '$key'");
             }
 
-            $this->facilities[] = $this->container->get($facility);
+            $this->facilities[] = $facility;
         }
     }
 }
