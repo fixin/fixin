@@ -7,14 +7,18 @@ return [
             'cargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
             'dispatcher' => [
                 'class' => 'Delivery\Dispatcher\Dispatcher',
-                'facilities' => [
-                    'Delivery\Station\JsonToArrayFacility',
+                'options' => [
+                    'nodes' => [
+                        'Delivery\Node\JsonToArrayNode',
+                    ]
                 ]
             ],
             'errorDispatcher' => [
                 'class' => 'Delivery\Dispatcher\Dispatcher',
-                'facilities' => [
+                'options' => [
+                    'nodes' => [
 
+                    ]
                 ]
             ],
             'requestUri' => 'Base\Uri\Factory\EnvironmentUriFactory',
