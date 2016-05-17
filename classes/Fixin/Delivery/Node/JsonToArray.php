@@ -8,7 +8,6 @@
 namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\Delivery\Cargo\HttpCargo;
 
 class JsonToArray implements NodeInterface {
 
