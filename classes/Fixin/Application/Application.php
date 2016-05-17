@@ -55,10 +55,15 @@ class Application implements ApplicationInterface {
      * @throws \Throwable
      */
     protected function errorRoute($cargo) {
+        $protocolVersion = '1.1';
+
         try {
             if ($cargo instanceof \Throwable) {
                 throw $cargo;
             }
+
+            // Protocol
+            $protocolVersion = $cargo->getProtocolVersion();
 
             // Error dispatch
             $cargo = $this->container->get(static::ERROR_DISPATCHER_KEY)->dispatch($cargo);
@@ -76,12 +81,10 @@ class Application implements ApplicationInterface {
      */
     public function run() {
         $container = $this->container;
-        $protocolVersion = '1.1';
 
         try {
             // Normal dispatch
             $cargo = $container->clonePrototype(static::CARGO_KEY);
-            $protocolVersion = $cargo->getRequestProtocolVersion();
             $cargo = $container->get(static::DISPATCHER_KEY)->dispatch($cargo);
             $cargo->unpack();
         }
