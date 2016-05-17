@@ -72,7 +72,7 @@ class Application implements ApplicationInterface {
             }
             catch (\Throwable $t) {
                 // Double error
-                $this->internalServerError('HTTP/' . ($cargo->getRequestProtocolVersion()), $t->getMessage());
+                $this->internalServerError('HTTP/' . (isset($cargo) ? $cargo->getRequestProtocolVersion() : '1.1'), $t->getMessage());
             }
         }
     }
