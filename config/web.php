@@ -4,20 +4,20 @@ return [
     'resourceManager' => [
         'class' => 'Fixin\ResourceManager\ResourceManager',
         'definitions' => [
-            'cargo' => 'Fixin\Delivery\Cargo\Factory\RuntimeCargoFactory',
+            'cargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
             'dispatcher' => [
-                'class' => 'Fixin\Delivery\Dispatcher\Dispatcher',
-                'stations' => [
-                    'Fixin\Delivery\Station\JsonToArrayFacility',
+                'class' => 'Delivery\Dispatcher\Dispatcher',
+                'facilities' => [
+                    'Delivery\Station\JsonToArrayFacility',
                 ]
             ],
             'errorDispatcher' => [
-                'class' => 'Fixin\Delivery\Dispatcher\Dispatcher',
-                'stations' => [
+                'class' => 'Delivery\Dispatcher\Dispatcher',
+                'facilities' => [
 
                 ]
             ],
-            'requestUri' => 'Fixin\Base\Uri\Factory\EnvironmentUriFactory',
+            'requestUri' => 'Base\Uri\Factory\EnvironmentUriFactory',
         ],
         'abstractFactories' => [
             'prefixFallback' => [
