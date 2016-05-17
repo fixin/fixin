@@ -7,8 +7,6 @@
 
 namespace Fixin\Application;
 
-use Fixin\Delivery\Cargo\Factory\HttpCargoFactory;
-
 class Application implements ApplicationInterface {
 
     const CARGO_KEY = 'cargo';
@@ -18,6 +16,9 @@ class Application implements ApplicationInterface {
     const DISPATCHER_KEY = 'dispatcher';
     const ERROR_DISPATCHER_KEY = 'errorDispatcher';
     const RESOURCE_MANAGER_KEY = 'resourceManager';
+
+    const DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\ResourceManager\ResourceManager';
+    const DEFAULT_RESOURCE_MANAGER_CONFIG_CLASS = 'Fixin\Base\Config\Config';
 
     /**
      * @var \Fixin\ResourceManager\ResourceManagerInterface
@@ -33,10 +34,10 @@ class Application implements ApplicationInterface {
         unset($config[static::RESOURCE_MANAGER_KEY]);
 
         // Classes
-        $containerClass = $containerConfig[static::CLASS_KEY] ?? 'Fixin\ResourceManager\ResourceManager';
+        $containerClass = $containerConfig[static::CLASS_KEY] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
         unset($containerConfig[static::CLASS_KEY]);
 
-        $configClass = $containerConfig[static::CONFIG_CLASS_KEY] ?? 'Fixin\Base\Config\Config';
+        $configClass = $containerConfig[static::CONFIG_CLASS_KEY] ?? static::DEFAULT_RESOURCE_MANAGER_CONFIG_CLASS;
         unset($containerConfig[static::CONFIG_CLASS_KEY]);
 
         // Resoure Manager init
