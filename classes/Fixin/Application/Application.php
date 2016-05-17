@@ -61,7 +61,7 @@ class Application implements ApplicationInterface {
             }
 
             // Error dispatch
-            $cargo = $container->get(static::ERROR_DISPATCHER_KEY)->dispatch($cargo);
+            $cargo = $this->container->get(static::ERROR_DISPATCHER_KEY)->dispatch($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {
