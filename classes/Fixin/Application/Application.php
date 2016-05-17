@@ -52,10 +52,12 @@ class Application implements ApplicationInterface {
      */
     public function run() {
         $container = $this->container;
+        $protocolVersion = '1.1';
 
         try {
             // Normal dispatch
             $cargo = $container->clonePrototype(static::CARGO_KEY);
+            $protocolVersion = $cargo->getRequestProtocolVersion();
             $cargo = $container->get(static::DISPATCHER_KEY)->dispatch($cargo);
             $cargo->unpack();
         }
@@ -72,7 +74,7 @@ class Application implements ApplicationInterface {
             }
             catch (\Throwable $t) {
                 // Double error
-                $this->internalServerError('HTTP/' . (isset($cargo) ? $cargo->getRequestProtocolVersion() : '1.1'), $t->getMessage());
+                $this->internalServerError($protocolVersion, $t->getMessage());
             }
         }
     }
