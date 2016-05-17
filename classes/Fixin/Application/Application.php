@@ -55,15 +55,10 @@ class Application implements ApplicationInterface {
      * @throws \Throwable
      */
     protected function errorRoute($cargo) {
-        $protocolVersion = '1.1';
-
         try {
             if ($cargo instanceof \Throwable) {
                 throw $cargo;
             }
-
-            // Protocol
-            $protocolVersion = $cargo->getProtocolVersion();
 
             // Error dispatch
             $cargo = $this->container->get(static::ERROR_DISPATCHER_KEY)->dispatch($cargo);
@@ -71,7 +66,7 @@ class Application implements ApplicationInterface {
         }
         catch (\Throwable $t) {
             // Double error
-            $this->internalServerError($protocolVersion, $t->getMessage());
+            $this->internalServerError($t->getMessage());
         }
     }
 
@@ -96,10 +91,10 @@ class Application implements ApplicationInterface {
     /**
      * Internal Server Error
      *
-     * @param string $protocolVersion
+     * @param string $text
      */
-    protected function internalServerError(string $protocolVersion, string $text) {
-        header("HTTP/$protocolVersion 500 Internal Server Error", true, 500);
+    protected function internalServerError(string $text) {
+        header("HTTP/1.1 500 Internal Server Error", true, 500);
         echo '<h1>500 Internal server error</h1>';
 
         echo $text;
