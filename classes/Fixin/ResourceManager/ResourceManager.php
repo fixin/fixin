@@ -88,7 +88,7 @@ class ResourceManager implements ResourceManagerInterface {
      * @return object|NULL
      */
     protected function createFromDefinition(array $definition) {
-        if (class_exists($class = $definition[static::CLASS_KEY] ?? '')) {
+        if (class_exists($class = $definition[static::CLASS_KEY])) {
             return new $class($this, $definition[static::OPTIONS_KEY]);
         }
 
@@ -169,18 +169,11 @@ class ResourceManager implements ResourceManagerInterface {
      */
     protected function produceResource(string $name) {
         $definition = $this->resolveDefinition($name);
-        $resource = $definition;
-        $options = null;
-
-        // By definition
-        if (is_array($definition)) {
-            $options = $definition[static::OPTIONS_KEY] ?? [];
-            $resource = $this->createFromDefinition($definition) ?? $this->produceResourceFromAbstractFactories($definition[static::CLASS_KEY], $options);
-        }
+        $resource = is_array($definition) ? $this->produceResourceFromDefinition($definition) : $definition;
 
         // Factory or Closure
         if ($resource instanceof FactoryInterface || $resource instanceof \Closure) {
-            $resource = $resource($this, $options, $name);
+            $resource = $resource($this, $definition[static::OPTIONS_KEY], $name);
         }
 
         // Object
@@ -195,6 +188,15 @@ class ResourceManager implements ResourceManagerInterface {
         $this->definitions[$name] = false;
 
         throw new Exception\ResourceFaultException("Invalid definition registered for name '$name'");
+    }
+
+    /**
+     * Produce resource from definition
+     * @param array $definition
+     * @return mixed|null
+     */
+    protected function produceResourceFromDefinition(array $definition) {
+        return $this->createFromDefinition($definition) ?? $this->produceResourceFromAbstractFactories($definition[static::CLASS_KEY], $definition[static::OPTIONS_KEY]);
     }
 
     /**
@@ -223,11 +225,23 @@ class ResourceManager implements ResourceManagerInterface {
     protected function resolveDefinition($definition) {
         // String
         if (is_string($definition)) {
-            return isset($this->definitions[$definition]) ? $this->resolveDefinition($this->definitions[$definition]) : [static::CLASS_KEY => $definition];
+            if (isset($this->definitions[$definition])) {
+                return $this->resolveDefinition($this->definitions[$definition]);
+            }
+
+            return [static::CLASS_KEY => $definition, static::OPTIONS_KEY => []];
         }
 
         // Array
-        return isset($definition[static::CLASS_KEY]) ? $this->resolveArrayDefinition($definition) : $definition;
+        if (isset($definition[static::CLASS_KEY])) {
+            if (!isset($definition[static::OPTIONS_KEY])) {
+                $definition[static::OPTIONS_KEY] = [];
+            }
+
+            return $this->resolveArrayDefinition($definition);
+        }
+
+        return $definition;
     }
 
     /**
