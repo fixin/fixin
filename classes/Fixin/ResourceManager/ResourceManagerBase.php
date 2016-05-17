@@ -74,7 +74,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      */
     protected function createFromDefinition(array $definition) {
         if (class_exists($class = $definition[static::CLASS_KEY])) {
-            return new $class($this, $definition[static::OPTIONS_KEY]);
+            return new $class($this, $definition[static::OPTIONS_KEY] ?? []);
         }
 
         return null;
