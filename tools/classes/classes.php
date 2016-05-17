@@ -280,7 +280,7 @@ td.Tab {
                                     <td class="Tab" rowspan="<?= $parameterCount ?>"></td>
                                     <td rowspan="<?= $parameterCount ?>">
                                         <?= $method->isFinal() ? 'final' : '' ?>
-                                        <?= $method->isAbstract() ? 'abstract' : '' ?>
+                                        <?= !$reflection->isInterface() && $method->isAbstract() ? 'abstract' : '' ?>
                                         <?= $method->isPublic() ? 'public' : ($method->isProtected() ? 'protected' : 'private') ?>
                                         <?= $method->isStatic() ? 'static' : '' ?>
                                     </td>
