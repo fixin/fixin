@@ -119,7 +119,7 @@ class ResourceManager implements ResourceManagerInterface {
             return $resource;
         }
 
-        throw new Exception\ResourceNotFoundException(static::GET_ERRORS[isset($arr) * 2 + $prototype] . " registered with name '$name'");
+        throw new Exception\ResourceNotFoundException(static::GET_ERRORS[isset($resource) * 2 + $prototype] . " accessible with name '$name'");
     }
 
     /**
