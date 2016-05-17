@@ -11,7 +11,7 @@ use Fixin\Base\Uri\UriInterface;
 use Fixin\Support\Http;
 use Fixin\Support\ToStringTrait;
 
-class HttpCargo extends Cargo {
+class HttpCargo extends Cargo implements HttpCargoInterface {
 
     use ToStringTrait;
 
@@ -28,7 +28,7 @@ class HttpCargo extends Cargo {
     /**
      * @var array
      */
-    protected $headers = [];
+    protected $headers = [Http::HEADER_CONTENT_TYPE => 'text/html'];
 
     /**
      * @var string
@@ -71,11 +71,8 @@ class HttpCargo extends Cargo {
     protected $statusCode = Http::STATUS_OK_200;
 
     /**
-     * Adds header value
-     *
-     * @param string $name
-     * @param string $value
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::addHeader($name, $value)
      */
     public function addHeader(string $name, string $value) {
         $this->headers[$name][] = $value;
@@ -84,9 +81,8 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Clears all headers
-     *
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::clearHeaders()
      */
     public function clearHeaders() {
         $this->headers = [];
@@ -95,117 +91,104 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Gets cookie value
-     *
-     * @param string $name
-     * @return string|null
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\Cargo::getContentType()
+     */
+    public function getContentType() {
+        return $this->headers[Http::HEADER_CONTENT_TYPE][0] ?? [];
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getCookie($name)
      */
     public function getCookie(string $name) {
         return $this->cookies[$name] ?? null;
     }
 
     /**
-     * Gets environment parameter or returns default value when the parameter is missing
-     *
-     * @param string $name
-     * @param string $default
-     * @return string|null
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getEnvironmentParameter($name, $default)
      */
     public function getEnvironmentParameter(string $name, string $default = null) {
         return $this->environmentParameters[$name] ?? $default;
     }
 
     /**
-     * Gets header values
-     *
-     * @return array
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getHeaders()
      */
     public function getHeaders(): array {
         return $this->headers;
     }
 
     /**
-     * Gets protocol version
-     *
-     * @return string
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getProtocolVersion()
      */
     public function getProtocolVersion(): string {
         return $this->protocolVersion;
     }
 
     /**
-     * Gets request header value
-     *
-     * @param string $name
-     * @return string|null
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getRequestHeader($name)
      */
-    public function getRequestHeader(string $name) {
+    public function getRequestHeader(string $name): string {
         return $this->requestHeaders[$name] ?? null;
     }
 
     /**
-     * Gets request method
-     *
-     * @return string
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getRequestMethod()
      */
     public function getRequestMethod(): string {
         return $this->requestMethod;
     }
 
     /**
-     * Gets server parameter or returns default value when the parameter is missing
-     *
-     * @param string $name
-     * @param string $default
-     * @return string|null
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getRequestParameter($name, $default)
      */
     public function getRequestParameter(string $name, string $default = null) {
         return $this->requestParameters[$name] ?? $default;
     }
 
     /**
-     * Gets request protocol version
-     *
-     * @return string
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getRequestProtocolVersion()
      */
     public function getRequestProtocolVersion(): string {
         return $this->requestProtocolVersion;
     }
 
     /**
-     * Gets request URI
-     *
-     * @return UriInterface
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getRequestUri()
      */
     public function getRequestUri() {
         return $this->requestUri;
     }
 
     /**
-     * Gets server parameter or returns default value when the parameter is missing
-     *
-     * @param string $name
-     * @param string $default
-     * @return string
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getServerParameter($name, $default)
      */
     public function getServerParameter(string $name, string $default = null) {
         return $this->serverParameters[$name] ?? $default;
     }
 
     /**
-     * Gets status code
-     *
-     * @return number
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getStatusCode()
      */
     public function getStatusCode() {
         return $this->statusCode;
     }
 
     /**
-     * Sets cookies
-     *
-     * @param array $cookies
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setCookies($cookies)
      */
     public function setCookies(array $cookies) {
         $this->cookies = $cookies;
@@ -214,10 +197,18 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Sets environment parameters
-     *
-     * @param array $parameters
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\Cargo::setContentType()
+     */
+    public function setContentType($contentType) {
+        $this->headers[Http::HEADER_CONTENT_TYPE] = [$contentType];
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setEnvironmentParameters($parameters)
      */
     public function setEnvironmentParameters(array $parameters) {
         $this->environmentParameters = $parameters;
@@ -226,10 +217,18 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Sets protocol version
-     *
-     * @param string $protocolVersion
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setHeader($name, $value)
+     */
+    public function setHeader(string $name, $value) {
+        $this->headers[$name] = is_scalar($value) ? [$value] : $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setProtocolVersion($protocolVersion)
      */
     public function setProtocolVersion(string $protocolVersion) {
         $this->protocolVersion = $protocolVersion;
@@ -238,21 +237,18 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Sets request header values
-     *
-     * @param array $headers
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestHeaders($headers)
      */
     public function setRequestHeaders(array $headers) {
         $this->requestHeaders = $headers;
 
         return $this;
     }
+
     /**
-     * Sets request method
-     *
-     * @param string $method
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestMethod($method)
      */
     public function setRequestMethod(string $method) {
         $this->requestMethod = $method;
@@ -260,10 +256,8 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Sets request parameters
-     *
-     * @param array $parameters
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestParameters($parameters)
      */
     public function setRequestParameters(array $parameters) {
         $this->requestParameters = $parameters;
@@ -272,10 +266,8 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Sets request protocol version
-     *
-     * @param string $protocolVersion
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestProtocolVersion($protocolVersion)
      */
     public function setRequestProtocolVersion(string $protocolVersion) {
         $this->requestProtocolVersion = $protocolVersion;
@@ -284,10 +276,8 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Sets request URI
-     *
-     * @param UriInterface $requestUri
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestUri($requestUri)
      */
     public function setRequestUri(UriInterface $requestUri) {
         $this->requestUri = $requestUri;
@@ -296,10 +286,8 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Sets server parameters
-     *
-     * @param array $parameters
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setServerParameters($parameters)
      */
     public function setServerParameters(array $parameters) {
         $this->serverParameters = $parameters;
@@ -308,10 +296,8 @@ class HttpCargo extends Cargo {
     }
 
     /**
-     * Sets status code
-     *
-     * @param int $statusCode
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setStatusCode($statusCode)
      */
     public function setStatusCode(int $statusCode) {
         $this->statusCode = $statusCode;
