@@ -71,13 +71,20 @@ class Application implements ApplicationInterface {
             }
             catch (\Throwable $t) {
                 // Double error
-                $protocol = 'HTTP/' . ($cargo->getRequestProtocolVersion());
-                header("$protocol 500 Internal Server Error", true, 500);
-                echo '500 Internal server error';
-
-                echo $t->getMessage();
-                exit;
+                $this->internalServerError('HTTP/' . ($cargo->getRequestProtocolVersion()), $t->getMessage());
             }
         }
+    }
+
+    /**
+     * Internal Server Error
+     * @param string $protocolVersion
+     */
+    protected function internalServerError(string $protocolVersion, string $text) {
+        header("HTTP/$protocolVersion 500 Internal Server Error", true, 500);
+        echo '<h1>500 Internal server error</h1>';
+
+        echo $text;
+        exit;
     }
 }
