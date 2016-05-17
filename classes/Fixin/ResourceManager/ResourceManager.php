@@ -82,6 +82,20 @@ class ResourceManager implements ResourceManagerInterface {
     }
 
     /**
+     * Create object from definition
+     *
+     * @param array $definition
+     * @return object|NULL
+     */
+    protected function createFromDefinition(array $definition) {
+        if (class_exists($class = $definition[static::CLASS_KEY] ?? '')) {
+            return new $class($this, $definition[static::OPTIONS_KEY]);
+        }
+
+        return null;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Support\ContainerInterface::get($name)
      */
@@ -147,20 +161,6 @@ class ResourceManager implements ResourceManagerInterface {
     }
 
     /**
-     * Create object from definition
-     *
-     * @param array $definition
-     * @return object|NULL
-     */
-    protected function createFromDefinition(array $definition) {
-        if (class_exists($class = $definition[static::CLASS_KEY] ?? '')) {
-            return new $class($this, $definition[static::OPTIONS_KEY]);
-        }
-
-        return null;
-    }
-
-    /**
      * Produce resource
      *
      * @param string $name
@@ -197,13 +197,13 @@ class ResourceManager implements ResourceManagerInterface {
         if (is_object($resource)) {
             $this->resources[$name] = $resource;
             $this->definitions[$name] = true;
-            
+
             return $resource;
         }
-        
+
         // Store result
         $this->definitions[$name] = false;
-        
+
         throw new Exception\ResourceFaultException("Invalid definition registered for name '$name'");
     }
 
@@ -220,7 +220,7 @@ class ResourceManager implements ResourceManagerInterface {
         }
 
         // Array
-        if (is_array($definition) && isset($definition[static::CLASS_KEY])) {
+        if (isset($definition[static::CLASS_KEY])) {
             $inherited = $this->resolveDefinition($definition[static::CLASS_KEY]);
 
             if (is_array($inherited)) {
