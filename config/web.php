@@ -9,7 +9,7 @@ return [
                 'class' => 'Delivery\Dispatcher\Dispatcher',
                 'options' => [
                     'nodes' => [
-                        'Delivery\Node\JsonToArrayNode',
+                        'Delivery\Node\JsonToArray',
                     ]
                 ]
             ],
