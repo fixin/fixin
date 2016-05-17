@@ -9,6 +9,8 @@ namespace Fixin\Support;
 
 class Http extends DoNotCreate {
 
+    const HEADER_CONTENT_TYPE = 'Content-Type';
+
     const METHOD_DELETE = 'DELETE';
     const METHOD_GET = 'GET';
     const METHOD_HEAD = 'HEAD';
