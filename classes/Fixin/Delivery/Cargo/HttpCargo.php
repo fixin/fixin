@@ -8,8 +8,7 @@
 namespace Fixin\Delivery\Cargo;
 
 use Fixin\Base\Uri\UriInterface;
-use Fixin\Support\Http;
-use Fixin\Support\ToStringTrait;
+use Fixin\Support\{Http, ToStringTrait};
 
 class HttpCargo extends Cargo implements HttpCargoInterface {
 

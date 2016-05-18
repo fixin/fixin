@@ -8,8 +8,7 @@ namespace Fixin\Base\Config;
  */
 
 use Fixin\Base\Exception\InvalidKeyException;
-use Fixin\Support\ContainerInterface;
-use Fixin\Support\ToStringTrait;
+use Fixin\Support\{ContainerInterface, ToStringTrait};
 
 class Config implements ContainerInterface, \Iterator {
 

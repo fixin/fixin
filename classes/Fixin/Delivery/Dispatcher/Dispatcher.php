@@ -8,8 +8,7 @@
 namespace Fixin\Delivery\Dispatcher;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\ResourceManager\Resource;
-use Fixin\ResourceManager\ResourceManagerInterface;
+use Fixin\ResourceManager\{Resource, ResourceManagerInterface};
 use Fixin\Delivery\Node\NodeInterface;
 
 class Dispatcher extends Resource implements DispatcherInterface {
