@@ -11,7 +11,7 @@ use Fixin\Base\Exception\InvalidKeyException;
 use Fixin\Support\ContainerInterface;
 use Fixin\Support\ToStringTrait;
 
-class Config implements ContainerInterface {
+class Config implements ContainerInterface, \Iterator {
 
     use ToStringTrait;
 
@@ -27,6 +27,14 @@ class Config implements ContainerInterface {
      */
     public function __construct(array $config) {
         $this->config = $config;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Iterator::current()
+     */
+    public function current() {
+        return current($this->config);
     }
 
     /**
@@ -52,5 +60,37 @@ class Config implements ContainerInterface {
      */
     public function has(string $name): bool {
         return isset($this->config[$name]);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Iterator::key()
+     */
+    public function key() {
+        return key($this->config);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Iterator::next()
+     */
+    public function next() {
+        next($this->config);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Iterator::rewind()
+     */
+    public function rewind() {
+        reset($this->config);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Iterator::valid()
+     */
+    public function valid() {
+        return key($this->config) !== null;
     }
 }
