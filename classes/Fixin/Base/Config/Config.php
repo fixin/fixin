@@ -15,6 +15,8 @@ class Config implements ContainerInterface {
 
     use ToStringTrait;
 
+    const EXCEPTION_NOT_DEFINED = "Value for '%s' is not defined";
+
     /**
      * @var array
      */
@@ -39,7 +41,7 @@ class Config implements ContainerInterface {
             return $this->config[$name];
         }
 
-        throw new InvalidParameterException("Value for '$name' is not defined");
+        throw new InvalidParameterException(sprintf(static::EXCEPTION_NOT_DEFINED, $name));
     }
 
     /**

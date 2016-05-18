@@ -9,12 +9,14 @@ namespace Fixin\Support;
 
 abstract class DoNotCreate {
 
+    const EXCEPTION_DO_NOT_CREATE = "Do not create instance for %s";
+
     /**
      * Block creation
      *
      * @throws Exception\DoNotCreateException
      */
     final public function __construct() {
-        throw new Exception\DoNotCreateException("Do not create instance for " . __CLASS__);
+        throw new Exception\DoNotCreateException(sprintf(static::EXCEPTION_DO_NOT_CREATE, __CLASS__));
     }
 }

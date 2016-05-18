@@ -16,6 +16,8 @@ class Dispatcher extends Resource implements DispatcherInterface {
 
     const NODES_KEY = 'nodes';
 
+    const EXCEPTION_INVALID_NODE = "Invalid node resource '%s'";
+
     /**
      * @var NodeInterface[]
      */
@@ -64,7 +66,7 @@ class Dispatcher extends Resource implements DispatcherInterface {
             $node = $this->container->get($node);
 
             if (!$node instanceof NodeInterface) {
-                throw new InvalidParameterException("Invalid node resource '$key'");
+                throw new InvalidParameterException(sprintf(static::EXCEPTION_INVALID_NODE, $key));
             }
 
             $this->nodes[] = $node;

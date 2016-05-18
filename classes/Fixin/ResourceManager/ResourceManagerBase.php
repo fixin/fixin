@@ -17,16 +17,20 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     const ABSTRACT_FACTORIES_KEY = 'abstractFactories';
     const CLASS_KEY = 'class';
     const DEFINITIONS_KEY = 'definitions';
-    const GET_ERRORS = [
-        'Resource not',
-        'Prototype not',
-        'Prototype',
-        'Resource',
-    ];
     const OPTIONS_KEY = 'options';
     const RESOURCES_KEY = 'resources';
 
     const CONFIG_INJECT_KEYS = [self::DEFINITIONS_KEY => 'Definition', self::RESOURCES_KEY => 'Resource'];
+
+    const EXCEPTION_ALREADY_DEFINED = "%s already defined for '%'";
+    const EXCEPTION_GET_ERRORS = [
+        "Resource not accessible by name '%s'",
+        "Prototype not accessible by name '%s'",
+        "A prototype accessible by name '%s'",
+        "A resource accessible by name '%s'",
+    ];
+    const EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION = "Invalid abstract factory definition '%s'";
+    const EXCEPTION_INVALID_DEFINITION = "Invalid definition registered for name '%s'";
 
     /**
      * Abstract factories
@@ -96,7 +100,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
             return $resource;
         }
 
-        throw new Exception\ResourceNotFoundException(static::GET_ERRORS[isset($resource) * 2 + $prototype] . " accessible with name '$name'");
+        throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_GET_ERRORS[isset($resource) * 2 + $prototype], $name));
     }
 
     /**
@@ -108,7 +112,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      */
     protected function injectOptions(string $key, array $values) {
         if ($names = array_intersect_key($values, $this->{$key})) {
-            throw new Exception\OverrideNotAllowedException("$label already defined for '" . implode("', '", array_keys($names)) . "'");
+            throw new Exception\OverrideNotAllowedException(sprintf(static::EXCEPTION_ALREADY_DEFINED, $label, implode("', '", array_keys($names))));
         }
 
         $this->$key = $values + $this->$key;
@@ -135,7 +139,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
         // Store result
         $this->definitions[$name] = false;
 
-        throw new Exception\ResourceFaultException("Invalid definition registered for name '$name'");
+        throw new Exception\ResourceFaultException(sprintf(static::EXCEPTION_INVALID_DEFINITION, $name));
     }
 
     /**
@@ -223,7 +227,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
             $abstractFactory = $this->createFromDefinition($this->resolveDefinition($abstractFactory));
 
             if (!$abstractFactory instanceof AbstractFactoryInterface) {
-                throw new InvalidParameterException("Invalid abstract factory definition '$key'");
+                throw new InvalidParameterException(sprintf(static::EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION, $key));
             }
 
             $this->abstractFactories[] = $abstractFactory;

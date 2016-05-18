@@ -13,6 +13,8 @@ use Fixin\ResourceManager\ResourceManagerInterface;
 
 class EnvironmentUriFactory implements FactoryInterface {
 
+    const EXCEPTION_CAN_T_DETERMINE = 'Can\'t determine the request URI';
+
     /**
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
@@ -37,7 +39,7 @@ class EnvironmentUriFactory implements FactoryInterface {
      */
     protected function getPath(): string {
         $uri = $_SERVER['HTTP_X_REWRITE_URL'] ?? $_SERVER['REQUEST_URI'] ?? $_SERVER['ORIG_PATH_INFO'] ?? (function() {
-            throw new InvalidConfigException('Can\'t determine the request URI');
+            throw new InvalidConfigException(static::EXCEPTION_CAN_T_DETERMINE);
         })();
 
         if (null === $index = strpos($uri, '?')) {

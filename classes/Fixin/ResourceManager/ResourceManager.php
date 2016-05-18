@@ -11,6 +11,8 @@ use Fixin\Base\Exception\InvalidParameterException;
 
 class ResourceManager extends ResourceManagerBase {
 
+    const EXCEPTION_MUST_BE_OBJECT = 'Resource must be an object.';
+
     /**
      * @param array $config
      */
@@ -67,7 +69,7 @@ class ResourceManager extends ResourceManagerBase {
      */
     public function setResource(string $name, $resource) {
         if (!is_object($resource)) {
-            throw new InvalidParameterException('Resource must be an object.');
+            throw new InvalidParameterException(static::EXCEPTION_MUST_BE_OBJECT);
         }
 
         $this->configure([static::RESOURCES_KEY => [$name => $resource]]);
