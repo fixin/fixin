@@ -56,7 +56,7 @@ class Helper {
     public function commentText($reflection) {
         if (preg_match_all('/^\s*\*\s*([^@\s*].+)$/m', $reflection->getDocComment(), $matches)) {
             if ($matches[1][0] === '{@inheritDoc}' && ($parent = $reflection->getPrototype())) {
-                return '{@inheritDoc} ' . $this->commentText($parent);
+                return '<span class="Inherited">' . $this->commentText($parent) . '</span>';
             }
         }
 

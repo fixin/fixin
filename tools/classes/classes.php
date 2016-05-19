@@ -29,7 +29,7 @@ $showMethods = empty($_GET['all'])
     <head>
         <style>
 body {
-    font-size: 9pt;
+    font-size: 8pt;
     font-family: monospace;
 }
 
@@ -90,6 +90,10 @@ td.Tab {
 .FromComment {
     color: #999;
     font-style: italic;
+}
+
+.Inherited {
+    color: #aaa;
 }
 
 .Parameter.Odd,
@@ -225,8 +229,24 @@ td.Tab {
                             <?php endif ?>
                         </td>
                     </tr>
-                    <?php if ($constants = $reflection->getConstants()): ?>
-                        <?php ksort($constants); ?>
+                    <?php
+                        if ($constants = $reflection->getConstants()) {
+                            $inheriteds = [];
+                            $parent = $reflection;
+
+                            while ($parent = $parent->getParentClass()) {
+                                $inheriteds += $parent->getConstants();
+                            }
+
+                            $constants = array_filter($constants, function($value, $key) use ($inheriteds) {
+                                return !isset($inheriteds[$key]) || $inheriteds[$key] !== $value;
+                            }, ARRAY_FILTER_USE_BOTH);
+
+                            ksort($constants);
+                        }
+                    ?>
+                    <?php if ($constants): ?>
+
                         <?php foreach ($constants as $key => $value): ?>
                             <tr class="Element Const <?= $classes->evenStyle() ?>">
                                 <td class="Tab"></td>
