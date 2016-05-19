@@ -11,8 +11,6 @@ use Fixin\Base\Exception\InvalidParameterException;
 
 trait SetterConfigureTrait {
 
-    const EXCEPTION_INVALID_OPTION = "Invalid option: '%s'";
-
     /**
      * Configure by setters
      *
@@ -30,7 +28,7 @@ trait SetterConfigureTrait {
                 continue;
             }
 
-            throw new InvalidParameterException(sprintf(static::EXCEPTION_INVALID_OPTION, $key));
+            throw new InvalidParameterException(sprintf("Invalid option: '%s'", $key));
         }
 
         return $this;
