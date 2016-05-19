@@ -12,7 +12,9 @@ return [
             'byClassName' => 'Fixin\ResourceManager\Test',
             'byArray' => [
                 'class' => 'Fixin\ResourceManager\Test',
-                'param1' => 'test'
+                'options' => [
+                    'param1' => 'test'
+                ]
             ],
             'byClosure' => function($container) {
                 return new Fixin\ResourceManager\Test($container);
