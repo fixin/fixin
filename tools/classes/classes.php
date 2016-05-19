@@ -245,7 +245,7 @@ td.Tab {
                             ksort($constants);
                         }
                     ?>
-                    <?php if ($constants): ?>
+                    <?php if (!empty($constants)): ?>
 
                         <?php foreach ($constants as $key => $value): ?>
                             <tr class="Element Const <?= $classes->evenStyle() ?>">
