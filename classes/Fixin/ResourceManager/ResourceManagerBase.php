@@ -131,13 +131,9 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
         // Object
         if (is_object($resource)) {
             $this->resources[$name] = $resource;
-            $this->definitions[$name] = true;
 
             return $resource;
         }
-
-        // Store result
-        $this->definitions[$name] = false;
 
         throw new Exception\ResourceFaultException(sprintf(static::EXCEPTION_INVALID_DEFINITION, $name));
     }
