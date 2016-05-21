@@ -5,7 +5,7 @@ return [
         'class' => 'Fixin\ResourceManager\ResourceManager',
         'definitions' => [
             'cargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
-            'dispatcher' => [
+            'applicationDispatcher' => [
                 'class' => 'Delivery\Dispatcher\Dispatcher',
                 'options' => [
                     'nodes' => [
@@ -17,7 +17,6 @@ return [
                 'class' => 'Delivery\Dispatcher\Dispatcher',
                 'options' => [
                     'nodes' => [
-
                     ]
                 ]
             ],

@@ -10,13 +10,15 @@ namespace Fixin\Application;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\Cargo;
 
+use Fixin\View\View;
+
 class Application implements ApplicationInterface {
 
     const CARGO_KEY = 'cargo';
     const CLASS_KEY = 'class';
     const CONFIG_CLASS_KEY = 'configClass';
     const CONFIG_KEY = 'config';
-    const DISPATCHER_KEY = 'dispatcher';
+    const APPLICATION_DISPATCHER_KEY = 'applicationDispatcher';
     const ERROR_DISPATCHER_KEY = 'errorDispatcher';
     const RESOURCE_MANAGER_KEY = 'resourceManager';
 
@@ -83,7 +85,7 @@ class Application implements ApplicationInterface {
         try {
             // Normal dispatch
             $cargo = $container->clonePrototype(static::CARGO_KEY);
-            $cargo = $container->clonePrototype(static::DISPATCHER_KEY)->dispatch($cargo);
+            $cargo = $container->clonePrototype(static::APPLICATION_DISPATCHER_KEY)->dispatch($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {
