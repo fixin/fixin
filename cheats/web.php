@@ -1,14 +1,17 @@
 <?php
-$fixinPath = dirname(__DIR__);
 
-// Autoloader
-$classesPath = "{$fixinPath}/classes";
-require "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
-$autoloader = new \Fixin\Base\Autoloader\SimpleAutoloader(['Fixin' => "{$classesPath}/Fixin"]);
-$autoloader->register();
+return (function() {
+    $fixinPath = dirname(__DIR__);
 
-// Config
-$config = require "{$fixinPath}/config/web.php";
+    // Autoloader
+    $classesPath = "{$fixinPath}/classes";
+    require "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
+    $autoloader = new \Fixin\Base\Autoloader\SimpleAutoloader(['Fixin' => "{$classesPath}/Fixin"]);
+    $autoloader->register();
 
-// Application
-return new \Fixin\Application\Application($config);
+    // Config
+    $config = require "{$fixinPath}/config/web.php";
+
+    // Application
+    return new \Fixin\Application\Application($config);
+})();
