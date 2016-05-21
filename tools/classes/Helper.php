@@ -62,20 +62,6 @@ class Helper {
 
     /**
      * @param Reflector $reflection
-     * @return string
-     */
-    public function commentText(Reflector $reflection) {
-        if (preg_match_all('/^\s*\*\s*([^@\s*].+)$/m', $reflection->getDocComment(), $matches)) {
-            if ($matches[1][0] === '{@inheritDoc}' && ($parent = $reflection->getPrototype())) {
-                return '<span class="Inherited">' . $this->commentText($parent) . '</span>';
-            }
-        }
-
-        return nl2br(htmlspecialchars(implode("\n", $matches[1])));
-    }
-
-    /**
-     * @param Reflector $reflection
      * @return string[]
      */
     public function commentParameters(Reflector $reflection) {
@@ -88,6 +74,20 @@ class Helper {
         }
 
         return $parameters;
+    }
+
+    /**
+     * @param Reflector $reflection
+     * @return string
+     */
+    public function commentText(Reflector $reflection) {
+        if (preg_match_all('/^\s*\*\s*([^@\s*].+)$/m', $reflection->getDocComment(), $matches)) {
+            if ($matches[1][0] === '{@inheritDoc}' && ($parent = $reflection->getPrototype())) {
+                return '<span class="Inherited">' . $this->commentText($parent) . '</span>';
+            }
+        }
+
+        return nl2br(htmlspecialchars(implode("\n", $matches[1])));
     }
 
     /**
@@ -129,18 +129,6 @@ class Helper {
     }
 
     /**
-     * @param Reflector $reflection
-     * @return string
-     */
-    public function reflectionLink(Reflector $reflection): string {
-        $name = $reflection->getName();
-
-        return strncmp($name, 'Fixin\\', 6)
-        ? '\\' . htmlspecialchars($name)
-        : '<a href="#' . htmlspecialchars($name) . '">' . htmlspecialchars($reflection->getShortName()) . '</a>';
-    }
-
-    /**
      * @param array $rootNamespaces
      */
     protected function processElements(array $rootNamespaces) {
@@ -155,5 +143,17 @@ class Helper {
         };
 
         ksort($this->namespaces);
+    }
+
+    /**
+     * @param Reflector $reflection
+     * @return string
+     */
+    public function reflectionLink(Reflector $reflection): string {
+        $name = $reflection->getName();
+
+        return strncmp($name, 'Fixin\\', 6)
+        ? '\\' . htmlspecialchars($name)
+        : '<a href="#' . htmlspecialchars($name) . '">' . htmlspecialchars($reflection->getShortName()) . '</a>';
     }
 }
