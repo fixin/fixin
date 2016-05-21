@@ -17,6 +17,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     const ABSTRACT_FACTORIES_KEY = 'abstractFactories';
     const CLASS_KEY = 'class';
     const DEFINITIONS_KEY = 'definitions';
+    const FINAL_KEY = 'final';
     const OPTIONS_KEY = 'options';
     const RESOURCES_KEY = 'resources';
 
@@ -126,7 +127,12 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      * @return object
      */
     protected function produceResource(string $name) {
-        $resource = $this->produceResourceFromDefinition($name, $this->resolveDefinition($name));
+        $resource = $this->produceResourceFromDefinition(
+            $name,
+            isset($this->definitions[$name][static::FINAL_KEY])
+                ? $this->definitions[$name]
+                : $this->resolveDefinition($name)
+        );
 
         // Object
         if (is_object($resource)) {
@@ -159,57 +165,64 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      * Produce resource from definition
      *
      * @param string $name
-     * @param mixed $definition
-     * @return mixed
-     */
-    protected function produceResourceFromDefinition(string $name, $definition) {
-        $options = null;
-
-        if (is_array($definition)) {
-            $options = $definition[static::OPTIONS_KEY] ?? [];
-            $definition = $this->createFromDefinition($definition) ?? $this->produceResourceFromAbstractFactories($definition[static::CLASS_KEY], $options);
-        }
-
-        // Factory or Closure
-        if ($definition instanceof FactoryInterface || $definition instanceof \Closure) {
-            $definition = $definition($this, $options, $name);
-        }
-
-        return $definition;
-    }
-
-    /**
-     * Resolve array definition
-     *
      * @param array $definition
      * @return mixed
      */
-    protected function resolveArrayDefinition(array $definition) {
-        $inherited = $this->resolveDefinition($definition[static::CLASS_KEY]);
+    protected function produceResourceFromDefinition(string $name, array $definition) {
+        $class = $definition[static::CLASS_KEY];
 
-        if (is_array($inherited)) {
-            unset($definition[static::CLASS_KEY]);
-
-            return array_replace_recursive($inherited, $definition);
+        if (is_string($class)) {
+            $class = $this->createFromDefinition($definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::OPTIONS_KEY] ?? []);
         }
 
-        return $inherited;
+        // Factory or Closure
+        if ($class instanceof FactoryInterface || $class instanceof \Closure) {
+            return $class($this, $definition[static::OPTIONS_KEY] ?? [], $name);
+        }
+
+        return $class;
     }
 
     /**
      * Resolve recursive definitions
      *
      * @param mixed $definition
-     * @return mixed
+     * @return array
      */
-    protected function resolveDefinition($definition) {
+    protected function resolveDefinition($definition): array {
         // String
         if (is_string($definition)) {
-            return isset($this->definitions[$definition]) ? $this->resolveDefinition($this->definitions[$definition]) : [static::CLASS_KEY => $definition];
+            $definition = [
+                static::CLASS_KEY => $definition,
+            ];
         }
 
-        // Array
-        return isset($definition[static::CLASS_KEY]) ? $this->resolveArrayDefinition($definition) : $definition;
+        // Final definitions
+        elseif (!isset($definition[static::CLASS_KEY])) {
+            return [
+                static::CLASS_KEY => $definition,
+                static::FINAL_KEY => true
+            ];
+        }
+
+        // Resolving recursion
+        $class = $definition[static::CLASS_KEY];
+
+        if (isset($this->definitions[$class])) {
+            $inherited = $this->definitions[$class];
+
+            if (!isset($inherited[static::FINAL_KEY])) {
+                $inherited = $this->definitions[$class] = $this->resolveDefinition($inherited);
+            }
+
+            unset($definition[static::CLASS_KEY]);
+
+            return array_replace_recursive($inherited, $definition);
+        }
+
+        $definition[static::FINAL_KEY] = true;
+
+        return $definition;
     }
 
     /**
