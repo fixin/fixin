@@ -28,7 +28,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      * @param ResourceManagerInterface $container
      * @param array $options
      */
-    public function __construct(ResourceManagerInterface $container, array $options = []) {
+    public function __construct(ResourceManagerInterface $container, array $options = null) {
         // Search order
         $this->searchOrder = $options[static::SEARCH_ORDER_KEY] ?? ['Fixin'];
     }
