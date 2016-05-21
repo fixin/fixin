@@ -8,8 +8,9 @@
 namespace Fixin\Delivery\Dispatcher;
 
 use Fixin\Delivery\Cargo\CargoInterface;
+use Fixin\Support\PrototypeInterface;
 
-interface DispatcherInterface {
+interface DispatcherInterface extends PrototypeInterface {
 
     /**
      * Dispatch cargo
