@@ -8,8 +8,6 @@
  */
 namespace Classes;
 
-use \Reflector;
-
 class Helper {
 
     /**
@@ -61,10 +59,10 @@ class Helper {
     }
 
     /**
-     * @param Reflector $reflection
+     * @param mixed $reflection
      * @return string[]
      */
-    public function commentParameters(Reflector $reflection) {
+    public function commentParameters($reflection) {
         $parameters = [];
 
         preg_match_all('/^\s*\*\s*@param\s+([^\s]+)\s+\$([^\s]+)$/m', $reflection->getDocComment(), $matches);
@@ -77,10 +75,10 @@ class Helper {
     }
 
     /**
-     * @param Reflector $reflection
+     * @param mixed $reflection
      * @return string
      */
-    public function commentText(Reflector $reflection) {
+    public function commentText($reflection) {
         if (preg_match_all('/^\s*\*\s*([^@\s*].+)$/m', $reflection->getDocComment(), $matches)) {
             if ($matches[1][0] === '{@inheritDoc}' && ($parent = $reflection->getPrototype())) {
                 return '<span class="Inherited">' . $this->commentText($parent) . '</span>';
@@ -91,10 +89,10 @@ class Helper {
     }
 
     /**
-     * @param Reflector $reflection
+     * @param mixed $reflection
      * @return string
      */
-    public function commentVar(Reflector $reflection) {
+    public function commentVar($reflection) {
         if (preg_match_all('(@var\s+([^\s]+))', $reflection->getDocComment(), $matches)) {
             return '<span class="FromComment">' . implode('|', array_map([$this, 'classLink'], (explode('|', $matches[1][0])))) . '</span>';
         }
@@ -146,10 +144,10 @@ class Helper {
     }
 
     /**
-     * @param Reflector $reflection
+     * @param mixed $reflection
      * @return string
      */
-    public function reflectionLink(Reflector $reflection): string {
+    public function reflectionLink($reflection): string {
         $name = $reflection->getName();
 
         return strncmp($name, 'Fixin\\', 6)
