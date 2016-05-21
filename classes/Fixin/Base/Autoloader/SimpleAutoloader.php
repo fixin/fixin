@@ -69,7 +69,7 @@ class SimpleAutoloader implements AutoloaderInterface {
         // Searching for prefix
         $length = 0;
 
-        while (($length = strpos($class, DIRECTORY_SEPARATOR, $length + 1)) !== false) {
+        while ($length = strpos($class, DIRECTORY_SEPARATOR, $length + 1)) {
             $prefix = substr($class, 0, $length);
 
             // Prefix found
