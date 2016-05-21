@@ -21,6 +21,7 @@ class Http extends DoNotCreate {
 
     const PROTOCOL_VERSION_1_0 = '1.0';
     const PROTOCOL_VERSION_1_1 = '1.1';
+    const PROTOCOL_VERSION_2_0 = '2.0';
 
     const STATUS_CONTINUE_100 = 100;
     const STATUS_SWITCHING_PROTOCOLS_101 = 101;
