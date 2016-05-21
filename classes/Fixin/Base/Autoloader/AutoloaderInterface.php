@@ -23,3 +23,11 @@ interface AutoloaderInterface {
      */
     public function register();
 }
+
+/**
+ * Encapsulated include
+ * @param string $filename
+ */
+function fixinBaseAutoloaderEncapsulatedInclude(string $filename) {
+    include $filename;
+}
