@@ -74,12 +74,13 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     /**
      * Create object from definition
      *
+     * @param string $name
      * @param array $definition
      * @return object|NULL
      */
-    protected function createFromDefinition(array $definition) {
+    protected function createFromDefinition(string $name, array $definition) {
         if (class_exists($class = $definition[static::CLASS_KEY])) {
-            return new $class($this, $definition[static::OPTIONS_KEY] ?? []);
+            return new $class($this, $definition[static::OPTIONS_KEY] ?? null, $name);
         }
 
         return null;
@@ -146,7 +147,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      * @param array $options
      * @return mixed|NULL
      */
-    protected function produceResourceFromAbstractFactories(string $name, array $options) {
+    protected function produceResourceFromAbstractFactories(string $name, array $options = null) {
         foreach ($this->abstractFactories as $abstractFactory) {
             if ($abstractFactory->canProduce($this, $name)) {
                 return $abstractFactory($this, $options, $name);
@@ -167,12 +168,12 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
         $class = $definition[static::CLASS_KEY];
 
         if (is_string($class)) {
-            $class = $this->createFromDefinition($definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::OPTIONS_KEY] ?? []);
+            $class = $this->createFromDefinition($name, $definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::OPTIONS_KEY] ?? null);
         }
 
         // Factory or Closure
         if ($class instanceof FactoryInterface || $class instanceof \Closure) {
-            return $class($this, $definition[static::OPTIONS_KEY] ?? [], $name);
+            return $class($this, $definition[static::OPTIONS_KEY] ?? null, $name);
         }
 
         return $class;
@@ -234,7 +235,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      */
     protected function setupAbstractFactories(array $abstractFactories) {
         foreach ($abstractFactories as $key => $abstractFactory) {
-            $abstractFactory = $this->createFromDefinition($this->resolveDefinition($abstractFactory));
+            $abstractFactory = $this->createFromDefinition($key, $this->resolveDefinition($abstractFactory));
 
             if (!$abstractFactory instanceof AbstractFactoryInterface) {
                 throw new InvalidParameterException(sprintf(static::EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION, $key));

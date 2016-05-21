@@ -20,7 +20,7 @@ abstract class Resource implements ResourceInterface {
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __construct(ResourceManagerInterface $container, array $options = []) {
+    public function __construct(ResourceManagerInterface $container, array $options = null, $name = null) {
         $this->container = $container;
     }
 }
