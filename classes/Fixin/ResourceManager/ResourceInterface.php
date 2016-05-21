@@ -12,6 +12,7 @@ interface ResourceInterface {
     /**
      * @param ResourceManagerInterface $container
      * @param array $options
+     * @param string $name
      */
-    public function __construct(ResourceManagerInterface $container, array $options = []);
+    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null);
 }

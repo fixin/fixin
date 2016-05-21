@@ -7,7 +7,7 @@
 
 namespace Fixin\Support;
 
-interface ContainerInterface {
+interface ContainerInterface extends PrototypeInterface {
 
     /**
      * Get the registered instance

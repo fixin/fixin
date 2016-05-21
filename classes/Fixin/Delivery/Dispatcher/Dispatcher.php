@@ -26,8 +26,8 @@ class Dispatcher extends Resource implements DispatcherInterface {
      * @param ResourceManagerInterface $container
      * @param array $options
      */
-    public function __construct(ResourceManagerInterface $container, array $options = []) {
-        parent::__construct($container, $options);
+    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
+        parent::__construct($container, $options, $name);
 
         // Nodes
         if (isset($options[static::NODES_KEY])) {
