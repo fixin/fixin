@@ -7,7 +7,9 @@
 
 namespace Fixin\Base\Uri;
 
-interface UriInterface {
+use Fixin\Support\PrototypeInterface;
+
+interface UriInterface extends PrototypeInterface {
 
     /**
      * Get authority part
