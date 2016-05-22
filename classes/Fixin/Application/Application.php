@@ -9,7 +9,6 @@ namespace Fixin\Application;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\Cargo;
-
 use Fixin\View\View;
 
 class Application implements ApplicationInterface {
@@ -52,8 +51,7 @@ class Application implements ApplicationInterface {
         $containerConfig['resources'][static::KEY_CONFIG] = new $configClass($config);
 
         // Resoure Manager init
-        $this->container =
-        $rm = new $containerClass($containerConfig);
+        $this->container = new $containerClass($containerConfig);
     }
 
     /**
@@ -87,7 +85,10 @@ class Application implements ApplicationInterface {
 
         $view = $container->clonePrototype('View\View');
         $view['test'] = 'dual';
+        $view->setTemplate('/Web/Portals/Fixin-Dev/views/layout/default.phtml');
         $view->setChild('child1', $container->clonePrototype('View\View'));
+
+        echo $view;
 
         try {
             // Normal dispatch
