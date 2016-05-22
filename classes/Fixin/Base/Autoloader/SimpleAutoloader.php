@@ -100,8 +100,9 @@ class SimpleAutoloader implements AutoloaderInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Autoloader\AutoloaderInterface::register()
+     * Register autoload function
+     *
+     * @return self
      */
     protected function register() {
         spl_autoload_register([$this, 'autoload']);
