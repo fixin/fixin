@@ -66,7 +66,9 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
 
         // Inject options
         foreach (static::OPTIONS_INJECT_KEYS as $key => $label) {
-            isset($options[$key]) && $this->injectOptions($key, $options[$key]);
+            if (isset($options[$key])) {
+                $this->$key = $options[$key];
+            }
         }
     }
 
@@ -102,21 +104,6 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
         }
 
         throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_GET_ERRORS[isset($resource) * 2 + $prototype], $name));
-    }
-
-    /**
-     * Inject options
-     *
-     * @param string $key
-     * @param array $values
-     * @throws Exception\OverrideNotAllowedException
-     */
-    protected function injectOptions(string $key, array $values) {
-        if ($names = array_intersect_key($values, $this->{$key})) {
-            throw new Exception\OverrideNotAllowedException(sprintf(static::EXCEPTION_ALREADY_DEFINED, $label, implode("', '", array_keys($names))));
-        }
-
-        $this->$key = $values + $this->$key;
     }
 
     /**
