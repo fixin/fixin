@@ -29,8 +29,8 @@ class View extends Resource implements ViewInterface {
      * @var array
      */
     protected $extensions = [
-        '.php' => 'php',
-        '.phtml' => 'php'
+        '.php' => 'View\Engine\PhpEngine',
+        '.phtml' => 'View\Engine\PhpEngine'
     ];
 
     /**
@@ -152,30 +152,27 @@ class View extends Resource implements ViewInterface {
     }
 
     /**
-     * Prepare engine
-     *
-     * @return \Fixin\View\View
-     */
-    public function prepareEngine() {
-        $engine = $this->engine ?? static::DEFAULT_ENGINE;
-
-        if (is_string($engine)) {
-            $this->engine = $this->container->get($engine);
-        }
-
-        return $this;
-    }
-
-    /**
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::render()
      */
     public function render() {
-        if (!$this->engine instanceof EngineInterface) {
-            $this->prepareEngine();
+        // Resolving file
+        $resolvedFile = $this->template;
+
+        // Engine
+        $engine = $this->engine;
+
+        if (is_null($engine)) {
+            $engine = $this->extensions[strrchr($resolvedFile, '.')] ?? static::DEFAULT_ENGINE;
         }
 
-        return $this->engine->render($this);
+        if (is_string($engine)) {
+            $engine =
+            $this->engine = $this->container->get($engine);
+        }
+
+        // Render with engine
+        return $engine->render($this);
     }
 
     /**
