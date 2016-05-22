@@ -35,14 +35,7 @@ class Engine extends Resource implements EngineInterface {
         $dataByObject = new \SplObjectStorage();
 
         foreach ($view->getChildren() as $name => $child) {
-            if (isset($dataByObject[$child])) {
-                $data[$name] = $dataByObject[$child];
-
-                continue;
-            }
-
-            $data[$name] =
-            $dataByObject[$child] = $this->renderChain($child);
+            $data[$name] = $dataByObject[$child] ?? ($dataByObject[$child] = $this->renderChain($child));
         }
 
         // Variables
