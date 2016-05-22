@@ -78,6 +78,19 @@ class Helper {
      * @param mixed $reflection
      * @return string
      */
+    public function commentReturnType($reflection) {
+        $matches = $this->commentTypeFetch($reflection, 'return');
+        if ($matches[0]) {
+            return '<span class="FromComment">' . implode('|', array_map([$this, 'classLink'], (explode('|', $matches[1][0])))) . '</span>';
+        }
+
+        return '';
+    }
+
+    /**
+     * @param mixed $reflection
+     * @return string
+     */
     public function commentText($reflection) {
         if (preg_match_all('/^\s*\*\s*([^@\s*].+)$/m', $reflection->getDocComment(), $matches)) {
             if ($matches[1][0] === '{@inheritDoc}' && ($parent = $reflection->getPrototype())) {
@@ -90,10 +103,22 @@ class Helper {
 
     /**
      * @param mixed $reflection
+     * @param string $name
+     * @return array
+     */
+    protected function commentTypeFetch($reflection, string $name): array {
+        preg_match_all('(@' . $name . '\s+([^\s]+))', $reflection->getDocComment(), $matches);
+
+        return $matches;
+    }
+
+    /**
+     * @param mixed $reflection
      * @return string
      */
     public function commentVar($reflection) {
-        if (preg_match_all('(@var\s+([^\s]+))', $reflection->getDocComment(), $matches)) {
+        $matches = $this->commentTypeFetch($reflection, 'var');
+        if ($matches[0]) {
             return '<span class="FromComment">' . implode('|', array_map([$this, 'classLink'], (explode('|', $matches[1][0])))) . '</span>';
         }
 

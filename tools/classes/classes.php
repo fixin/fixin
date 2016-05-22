@@ -314,7 +314,7 @@ td.Tab {
                                     <?php else: ?>
                                         <td colspan="3"></td>
                                     <?php endif ?>
-                                    <td class="ReturnType" rowspan="<?= $parameterCount ?>">: <?= $method->getReturnType() ?? 'void' ?></td>
+                                    <td class="ReturnType" rowspan="<?= $parameterCount ?>"><?= rtrim(': ' . ($method->getReturnType() ?? $classes->commentReturnType($method) ?? ''), ': ') ?></td>
                                     <td class="Comment" rowspan="<?= $parameterCount ?>"><?= $classes->commentText($method) ?></td>
                                 </tr>
                                 <?php foreach ($parameters as $parameter): ?>
