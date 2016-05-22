@@ -266,7 +266,7 @@ td.Tab {
                     <?php if (($properties = $reflection->getProperties($showProperties))): ?>
                         <?php $defaultValues = $reflection->getDefaultProperties() ?>
                         <?php foreach ($classes->orderedReflectionList($properties) as $property): ?>
-                            <?php if ($property->getDeclaringClass() == $reflection): ?>
+                            <?php if ($property->getDeclaringClass() === $reflection): ?>
                                 <tr class="Element Property <?= $classes->evenStyle() ?>">
                                     <td class="Tab"></td>
                                     <td class="Tab"></td>
@@ -289,7 +289,7 @@ td.Tab {
                     <?php endif ?>
                     <?php if (($methods = $reflection->getMethods($showMethods))): ?>
                         <?php foreach ($classes->orderedReflectionList($methods) as $method): ?>
-                            <?php if ($method->getDeclaringClass() == $reflection): ?>
+                            <?php if ($method->getDeclaringClass() === $reflection): ?>
                                 <?php
                                     $parameters = $method->getParameters();
                                     $parameterCount = max(1, count($parameters));
