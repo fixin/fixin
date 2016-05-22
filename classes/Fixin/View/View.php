@@ -194,7 +194,7 @@ class View extends Resource implements ViewInterface {
      */
     public function setEngine($engine) {
         if (isset($engine) && !is_string($engine) && !$engine instanceof EngineInterface) {
-            throw new InvalidParameterException(static::INVALID_ENGINE_PARAMETER);
+            throw new InvalidArgumentException(static::INVALID_ENGINE_PARAMETER);
         }
 
         $this->engine = $engine;
