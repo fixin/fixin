@@ -14,18 +14,19 @@ use Fixin\View\View;
 
 class Application implements ApplicationInterface {
 
-    const CARGO_KEY = 'cargo';
-    const CLASS_KEY = 'class';
-    const CONFIG_CLASS_KEY = 'configClass';
-    const CONFIG_KEY = 'config';
-    const APPLICATION_DISPATCHER_KEY = 'applicationDispatcher';
-    const ERROR_DISPATCHER_KEY = 'errorDispatcher';
-    const RESOURCE_MANAGER_KEY = 'resourceManager';
-
     const DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\ResourceManager\ResourceManager';
     const DEFAULT_RESOURCE_MANAGER_CONFIG_CLASS = 'Fixin\Base\Config\Config';
+
     const INTERNAL_SERVER_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error';
     const INTERNAL_SERVER_ERROR_HTML = '<h1>500 Internal server error</h1>';
+
+    const KEY_APPLICATION_DISPATCHER = 'applicationDispatcher';
+    const KEY_CARGO = 'cargo';
+    const KEY_CLASS = 'class';
+    const KEY_CONFIG = 'config';
+    const KEY_CONFIG_CLASS = 'configClass';
+    const KEY_ERROR_DISPATCHER = 'errorDispatcher';
+    const KEY_RESOURCE_MANAGER = 'resourceManager';
 
     /**
      * @var \Fixin\ResourceManager\ResourceManagerInterface
@@ -37,20 +38,22 @@ class Application implements ApplicationInterface {
      */
     public function __construct(array $config) {
         // Resource Manager config
-        $containerConfig = $config[static::RESOURCE_MANAGER_KEY];
-        unset($config[static::RESOURCE_MANAGER_KEY]);
+        $containerConfig = $config[static::KEY_RESOURCE_MANAGER];
+        unset($config[static::KEY_RESOURCE_MANAGER]);
 
         // Classes
-        $containerClass = $containerConfig[static::CLASS_KEY] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
-        unset($containerConfig[static::CLASS_KEY]);
+        $containerClass = $containerConfig[static::KEY_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
+        unset($containerConfig[static::KEY_CLASS]);
 
-        $configClass = $containerConfig[static::CONFIG_CLASS_KEY] ?? static::DEFAULT_RESOURCE_MANAGER_CONFIG_CLASS;
-        unset($containerConfig[static::CONFIG_CLASS_KEY]);
+        $configClass = $containerConfig[static::KEY_CONFIG_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CONFIG_CLASS;
+        unset($containerConfig[static::KEY_CONFIG_CLASS]);
+
+        // Config
+        $containerConfig['resources'][static::KEY_CONFIG] = new $configClass($config);
 
         // Resoure Manager init
         $this->container =
         $rm = new $containerClass($containerConfig);
-        $rm->setResource(static::CONFIG_KEY, new $configClass($config));
     }
 
     /**
@@ -66,7 +69,7 @@ class Application implements ApplicationInterface {
             }
 
             // Error dispatch
-            $cargo = $this->container->clonePrototype(static::ERROR_DISPATCHER_KEY)->dispatch($cargo);
+            $cargo = $this->container->clonePrototype(static::KEY_ERROR_DISPATCHER)->dispatch($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {
@@ -82,10 +85,14 @@ class Application implements ApplicationInterface {
     public function run() {
         $container = $this->container;
 
+        $view = $container->clonePrototype('View\View');
+        $view['test'] = 'dual';
+        $view->setChild('child1', $container->clonePrototype('View\View'));
+
         try {
             // Normal dispatch
-            $cargo = $container->clonePrototype(static::CARGO_KEY);
-            $cargo = $container->clonePrototype(static::APPLICATION_DISPATCHER_KEY)->dispatch($cargo);
+            $cargo = $container->clonePrototype(static::KEY_CARGO);
+            $cargo = $container->clonePrototype(static::KEY_APPLICATION_DISPATCHER)->dispatch($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {

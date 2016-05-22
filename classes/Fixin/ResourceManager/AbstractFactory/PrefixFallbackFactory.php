@@ -11,8 +11,7 @@ use Fixin\ResourceManager\ResourceManagerInterface;
 
 class PrefixFallbackFactory implements AbstractFactoryInterface {
 
-    const RESOURCE_NAME_KEY = 'resourceName';
-    const SEARCH_ORDER_KEY = 'searchOrder';
+    const KEY_SEARCH_ORDER = 'searchOrder';
 
     /**
      * @var array
@@ -30,7 +29,7 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
      */
     public function __construct(ResourceManagerInterface $container, array $options = null) {
         // Search order
-        $this->searchOrder = $options[static::SEARCH_ORDER_KEY] ?? ['Fixin'];
+        $this->searchOrder = $options[static::KEY_SEARCH_ORDER] ?? ['Fixin'];
     }
 
     /**
