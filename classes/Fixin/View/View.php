@@ -124,7 +124,7 @@ class View extends Resource implements ViewInterface {
      * @see ArrayAccess::offsetGet()
      */
     public function &offsetGet($offset) {
-        $ret =& $this->storage[$offset];
+        $ret = & $this->variables[$offset];
 
         return $ret;
     }
@@ -197,7 +197,7 @@ class View extends Resource implements ViewInterface {
             throw new InvalidParameterException(static::INVALID_ENGINE_PARAMETER);
         }
 
-        $this->engine = $setEngine;
+        $this->engine = $engine;
 
         return $this;
     }

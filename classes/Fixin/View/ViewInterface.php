@@ -96,7 +96,6 @@ interface ViewInterface extends PrototypeInterface, \ArrayAccess {
      * Set template name
      *
      * @param string $template
-     * @param bool|string $setEngine
      * @return self
      */
     public function setTemplate(string $template);
