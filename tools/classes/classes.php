@@ -15,7 +15,7 @@ use \Fixin\Support\VariableInspector;
 // Functions
 include 'Helper.php';
 
-$classes = new \Classes\Helper($topDir);
+$helper = new \Classes\Helper($topDir);
 
 $showProperties = empty($_GET['all'])
     ? ReflectionProperty::IS_PUBLIC
@@ -192,7 +192,7 @@ td.Tab {
     </head>
     <body>
         <table>
-            <?php foreach ($classes->namespaces as $namespace => $elements): ?>
+            <?php foreach ($helper->namespaces as $namespace => $elements): ?>
                 <?php ksort($elements) ?>
                 <tr class="Namespace">
                     <td colspan="10"><h2><?= htmlspecialchars($namespace) ?></h2></td>
@@ -217,15 +217,15 @@ td.Tab {
                             ?>
 
                             <?php if ($parent = $reflection->getParentClass()): ?>
-                                extends <?= $classes->reflectionLink($parent) ?>
+                                extends <?= $helper->reflectionLink($parent) ?>
                             <?php endif ?>
 
                             <?php if ($interfaces = $reflection->getInterfaces()): ?>
-                                implements <?= implode(', ', array_map([$classes, 'reflectionLink'], $interfaces)) ?>
+                                implements <?= implode(', ', array_map([$helper, 'reflectionLink'], $interfaces)) ?>
                             <?php endif ?>
 
                             <?php if ($traits = $reflection->getTraits()): ?>
-                                uses <?= implode(', ', array_map([$classes, 'reflectionLink'], $traits)) ?>
+                                uses <?= implode(', ', array_map([$helper, 'reflectionLink'], $traits)) ?>
                             <?php endif ?>
                         </td>
                     </tr>
@@ -248,7 +248,7 @@ td.Tab {
                     <?php if (!empty($constants)): ?>
 
                         <?php foreach ($constants as $key => $value): ?>
-                            <tr class="Element Const <?= $classes->evenStyle() ?>">
+                            <tr class="Element Const <?= $helper->evenStyle() ?>">
                                 <td class="Tab"></td>
                                 <td class="Tab"></td>
                                 <td></td>
@@ -265,19 +265,19 @@ td.Tab {
                     <?php endif ?>
                     <?php if (($properties = $reflection->getProperties($showProperties))): ?>
                         <?php $defaultValues = $reflection->getDefaultProperties() ?>
-                        <?php foreach ($classes->orderedReflectionList($properties) as $property): ?>
-                            <?php if ($property->getDeclaringClass() === $reflection): ?>
-                                <tr class="Element Property <?= $classes->evenStyle() ?>">
+                        <?php foreach ($helper->orderedReflectionList($properties) as $property): ?>
+                            <?php if ($property->getDeclaringClass() == $reflection): ?>
+                                <tr class="Element Property <?= $helper->evenStyle() ?>">
                                     <td class="Tab"></td>
                                     <td class="Tab"></td>
                                     <td>
                                         <?= $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : 'private') ?>
                                         <?= $property->isStatic() ? 'static' : '' ?>
                                     </td>
-                                    <td><?= $classes->commentVar($property) ?></td>
+                                    <td><?= $helper->commentVar($property) ?></td>
                                     <td class="Name" colspan="4">$<?= htmlspecialchars($property->getName()) ?></td>
                                     <td class="Value"><?= VariableInspector::valueInfo($defaultValues[$property->getName()] ?? null) ?></td>
-                                    <td class="Comment"><?= $classes->commentText($property) ?></td>
+                                    <td class="Comment"><?= $helper->commentText($property) ?></td>
                                 </tr>
                             <?php endif ?>
                         <?php endforeach ?>
@@ -288,14 +288,14 @@ td.Tab {
                         </tr>
                     <?php endif ?>
                     <?php if (($methods = $reflection->getMethods($showMethods))): ?>
-                        <?php foreach ($classes->orderedReflectionList($methods) as $method): ?>
-                            <?php if ($method->getDeclaringClass() === $reflection): ?>
+                        <?php foreach ($helper->orderedReflectionList($methods) as $method): ?>
+                            <?php if ($method->getDeclaringClass() == $reflection): ?>
                                 <?php
                                     $parameters = $method->getParameters();
                                     $parameterCount = max(1, count($parameters));
-                                    $docParameters = $classes->commentParameters($method);
+                                    $docParameters = $helper->commentParameters($method);
                                 ?>
-                                <tr class="Element Method <?= $oddEvenStyle = $classes->evenStyle() ?>">
+                                <tr class="Element Method <?= $oddEvenStyle = $helper->evenStyle() ?>">
                                     <td class="Tab" rowspan="<?= $parameterCount ?>"></td>
                                     <td class="Tab" rowspan="<?= $parameterCount ?>"></td>
                                     <td rowspan="<?= $parameterCount ?>">
@@ -314,8 +314,8 @@ td.Tab {
                                     <?php else: ?>
                                         <td colspan="3"></td>
                                     <?php endif ?>
-                                    <td class="ReturnType" rowspan="<?= $parameterCount ?>"><?= rtrim(': ' . ($method->getReturnType() ?? $classes->commentReturnType($method) ?? ''), ': ') ?></td>
-                                    <td class="Comment" rowspan="<?= $parameterCount ?>"><?= $classes->commentText($method) ?></td>
+                                    <td class="ReturnType" rowspan="<?= $parameterCount ?>"><?= rtrim(': ' . ($method->getReturnType() ?? $helper->commentReturnType($method) ?? ''), ': ') ?></td>
+                                    <td class="Comment" rowspan="<?= $parameterCount ?>"><?= $helper->commentText($method) ?></td>
                                 </tr>
                                 <?php foreach ($parameters as $parameter): ?>
                                     <tr class="Element Parameter <?= $oddEvenStyle ?>">

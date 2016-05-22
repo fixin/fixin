@@ -10,7 +10,7 @@
 use \Fixin\Support\VariableInspector;
 
 ?><td class="Parameter Type">
-    <?= ($class = $parameter->getClass()) ? $classes->reflectionLink($class) : ($parameter->getType() ?? $docParameters[$parameter->getName()] ?? '') ?>
+    <?= ($class = $parameter->getClass()) ? $helper->reflectionLink($class) : ($parameter->getType() ?? $docParameters[$parameter->getName()] ?? '') ?>
 </td>
 <td class="Parameter Name">
     <?= ($parameter->isVariadic() ? '...' : '') . ($parameter->isPassedByReference() ? '&' : '') . htmlspecialchars('$' . $parameter->getName()) ?>
