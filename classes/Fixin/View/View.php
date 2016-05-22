@@ -13,7 +13,7 @@ use Fixin\View\Engine\EngineInterface;
 class View extends Resource implements ViewInterface {
 
     const DEFAULT_ENGINE = 'View\Engine\JsonEngine';
-    const INVALID_ENGINE_PARAMETER = "Invalid engine parameter: string or EngineInterface allowed";
+    const EXCEPTION_INVALID_ENGINE_ARGUMENT = "Invalid engine argument: string or EngineInterface allowed";
 
     /**
      * @var ViewInterface[]
@@ -194,7 +194,7 @@ class View extends Resource implements ViewInterface {
      */
     public function setEngine($engine) {
         if (isset($engine) && !is_string($engine) && !$engine instanceof EngineInterface) {
-            throw new InvalidArgumentException(static::INVALID_ENGINE_PARAMETER);
+            throw new InvalidArgumentException(static::EXCEPTION_INVALID_ENGINE_ARGUMENT);
         }
 
         $this->engine = $engine;

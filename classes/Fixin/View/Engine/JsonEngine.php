@@ -41,7 +41,7 @@ class JsonEngine extends Resource implements EngineInterface {
             }
 
             $data[$name] =
-            $dataByObject[$child] = $this->renderArray($child, false);
+            $dataByObject[$child] = $this->renderArray($child);
         }
 
         // Variables
