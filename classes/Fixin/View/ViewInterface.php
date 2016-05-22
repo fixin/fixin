@@ -18,6 +18,20 @@ interface ViewInterface extends PrototypeInterface, \ArrayAccess {
     public function __toString();
 
     /**
+     * Clear children
+     *
+     * @return self
+     */
+    public function clearChildren();
+
+    /**
+     * Clear variables
+     *
+     * @return self
+     */
+    public function clearVariables();
+
+    /**
      * Get named child
      *
      * @param string $name
@@ -26,11 +40,11 @@ interface ViewInterface extends PrototypeInterface, \ArrayAccess {
     public function getChild(string $name);
 
     /**
-     * Get data
+     * Get children
      *
-     * @return array
+     * @return ViewInterface[]
      */
-    public function getData();
+    public function getChildren();
 
     /**
      * Get engine name or instance
@@ -38,6 +52,21 @@ interface ViewInterface extends PrototypeInterface, \ArrayAccess {
      * @return string|EngineInterface|NULL
      */
     public function getEngine();
+
+    /**
+     * Get variable value
+     *
+     * @param string $name
+     * @return mixed|null
+     */
+    public function getVariable(string $name);
+
+    /**
+     * Get variables
+     *
+     * @return array
+     */
+    public function getVariables();
 
     /**
      * Render
@@ -71,4 +100,21 @@ interface ViewInterface extends PrototypeInterface, \ArrayAccess {
      * @return self
      */
     public function setTemplate(string $template);
+
+    /**
+     * Set variable value
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return self
+     */
+    public function setVariable(string $key, $value);
+
+    /**
+     * Set variables
+     *
+     * @param array $variables
+     * @return self
+     */
+    public function setVariables(array $variables);
 }
