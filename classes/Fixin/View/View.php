@@ -157,13 +157,16 @@ class View extends Resource implements ViewInterface {
      */
     public function render() {
         // Resolving file
-        $resolvedFile = $this->template;
+        $template = $this->template;
+        if (!file_exists($template)) {
+            $this->template = $template;
+        }
 
         // Engine
         $engine = $this->engine;
 
         if (is_null($engine)) {
-            $engine = $this->extensions[strrchr($resolvedFile, '.')] ?? static::DEFAULT_ENGINE;
+            $engine = $this->extensions[strrchr($template, '.')] ?? static::DEFAULT_ENGINE;
         }
 
         if (is_string($engine)) {
