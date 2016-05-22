@@ -14,16 +14,8 @@ use Fixin\Support\PrototypeInterface;
 
 abstract class ResourceManagerBase implements ResourceManagerInterface {
 
-    const ABSTRACT_FACTORIES_KEY = 'abstractFactories';
-    const CLASS_KEY = 'class';
-    const DEFINITIONS_KEY = 'definitions';
-    const OPTIONS_KEY = 'options';
-    const RESOLVED_KEY = 'resolved';
-    const RESOURCES_KEY = 'resources';
-
-    const CONFIG_INJECT_KEYS = [self::DEFINITIONS_KEY => 'Definition', self::RESOURCES_KEY => 'Resource'];
-
     const EXCEPTION_ALREADY_DEFINED = "%s already defined for '%'";
+    const EXCEPTION_CLASS_NOT_FOUND_FOR = "Class not found for '%s'";
     const EXCEPTION_GET_ERRORS = [
         "Resource not accessible by name '%s'",
         "Prototype not accessible by name '%s'",
@@ -32,7 +24,15 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     ];
     const EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION = "Invalid abstract factory definition '%s'";
     const EXCEPTION_INVALID_DEFINITION = "Invalid definition registered for name '%s'";
-    const EXCEPTION_CLASS_NOT_FOUND_FOR = "Class not found for '%s'";
+
+    const KEY_ABSTRACT_FACTORIES = 'abstractFactories';
+    const KEY_CLASS = 'class';
+    const KEY_DEFINITIONS = 'definitions';
+    const KEY_OPTIONS = 'options';
+    const KEY_RESOLVED = 'resolved';
+    const KEY_RESOURCES = 'resources';
+
+    const OPTIONS_INJECT_KEYS = [self::KEY_DEFINITIONS => 'Definition', self::KEY_RESOURCES => 'Resource'];
 
     /**
      * Abstract factories
@@ -56,19 +56,17 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     protected $resources = [];
 
     /**
-     * Configure
-     *
-     * @param array $config
+     * @param array $options
      */
-    protected function configure(array $config) {
+    public function __construct(array $options) {
         // Abstract factories
-        if (isset($config[static::ABSTRACT_FACTORIES_KEY])) {
-            $this->setupAbstractFactories($config[static::ABSTRACT_FACTORIES_KEY]);
+        if (isset($options[static::KEY_ABSTRACT_FACTORIES])) {
+            $this->setupAbstractFactories($options[static::KEY_ABSTRACT_FACTORIES]);
         }
 
         // Inject options
-        foreach (static::CONFIG_INJECT_KEYS as $key => $label) {
-            isset($config[$key]) && $this->injectOptions($key, $config[$key]);
+        foreach (static::OPTIONS_INJECT_KEYS as $key => $label) {
+            isset($options[$key]) && $this->injectOptions($key, $options[$key]);
         }
     }
 
@@ -80,8 +78,8 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      * @return object|null
      */
     protected function createFromDefinition(string $name, array $definition) {
-        if (class_exists($class = $definition[static::CLASS_KEY])) {
-            return new $class($this, $definition[static::OPTIONS_KEY], $name);
+        if (class_exists($class = $definition[static::KEY_CLASS])) {
+            return new $class($this, $definition[static::KEY_OPTIONS], $name);
         }
 
         return null;
@@ -171,15 +169,15 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      * @return mixed
      */
     protected function produceResourceFromDefinition(string $name, array $definition) {
-        $class = $definition[static::CLASS_KEY];
+        $class = $definition[static::KEY_CLASS];
 
         if (is_string($class)) {
-            $class = $this->createFromDefinition($name, $definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::OPTIONS_KEY]);
+            $class = $this->createFromDefinition($name, $definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::KEY_OPTIONS]);
         }
 
         // Factory or Closure
         if ($class instanceof FactoryInterface || $class instanceof \Closure) {
-            return $class($this, $definition[static::OPTIONS_KEY], $name);
+            return $class($this, $definition[static::KEY_OPTIONS], $name);
         }
 
         return $class;
@@ -197,17 +195,17 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
             return $this->resolveDefinitionFromName($definition);
         }
         // Array
-        elseif (is_array($definition) && isset($definition[static::CLASS_KEY])) {
-            $inherited = $this->resolveDefinitionFromName($definition[static::CLASS_KEY]);
-            unset($definition[static::CLASS_KEY]);
+        elseif (is_array($definition) && isset($definition[static::KEY_CLASS])) {
+            $inherited = $this->resolveDefinitionFromName($definition[static::KEY_CLASS]);
+            unset($definition[static::KEY_CLASS]);
 
             return array_replace_recursive($inherited, $definition);
         }
 
         return [
-            static::CLASS_KEY => $definition,
-            static::OPTIONS_KEY => null,
-            static::RESOLVED_KEY => true
+            static::KEY_CLASS => $definition,
+            static::KEY_OPTIONS => null,
+            static::KEY_RESOLVED => true
         ];
     }
 
@@ -221,7 +219,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
         if (isset($this->definitions[$name])) {
             $definition = $this->definitions[$name];
 
-            if (is_array($definition) && isset($definition[static::RESOLVED_KEY])) {
+            if (is_array($definition) && isset($definition[static::KEY_RESOLVED])) {
                 return $definition;
             }
 
@@ -229,9 +227,9 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
         }
 
         return [
-            static::CLASS_KEY => $name,
-            static::OPTIONS_KEY => null,
-            static::RESOLVED_KEY => true
+            static::KEY_CLASS => $name,
+            static::KEY_OPTIONS => null,
+            static::KEY_RESOLVED => true
         ];
     }
 

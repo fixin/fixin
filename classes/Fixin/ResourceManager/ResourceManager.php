@@ -7,18 +7,9 @@
 
 namespace Fixin\ResourceManager;
 
-use Fixin\Base\Exception\InvalidArgumentException;
-
 class ResourceManager extends ResourceManagerBase {
 
     const EXCEPTION_MUST_BE_OBJECT = 'Resource must be an object.';
-
-    /**
-     * @param array $config
-     */
-    public function __construct(array $config = []) {
-        $this->configure($config);
-    }
 
     /**
      * {@inheritDoc}
@@ -57,24 +48,5 @@ class ResourceManager extends ResourceManagerBase {
         }
 
         return $has;
-    }
-
-    /**
-     * Set resource
-     *
-     * @param string $name
-     * @param object $resource
-     * @throws InvalidArgumentException
-     * @return self
-     */
-    public function setResource(string $name, $resource) {
-        if (!is_object($resource)) {
-            throw new InvalidArgumentException(static::EXCEPTION_MUST_BE_OBJECT);
-        }
-
-        $this->configure([static::RESOURCES_KEY => [$name => $resource]]);
-        $this->definitions[$name] = true;
-
-        return $this;
     }
 }
