@@ -34,7 +34,7 @@ abstract class Resource implements ResourceInterface {
         }
 
         foreach ($options as $key => $value) {
-            $method = 'setup' . $key;
+            $method = '_setup' . $key;
 
             if (method_exists($this, $method)) {
                 $this->$method($value);
