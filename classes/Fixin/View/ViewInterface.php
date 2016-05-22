@@ -15,7 +15,7 @@ interface ViewInterface extends PrototypeInterface, \ArrayAccess {
     /**
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 
     /**
      * Clear children
@@ -44,7 +44,7 @@ interface ViewInterface extends PrototypeInterface, \ArrayAccess {
      *
      * @return ViewInterface[]
      */
-    public function getChildren();
+    public function getChildren(): array;
 
     /**
      * Get engine name or instance

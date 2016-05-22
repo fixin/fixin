@@ -8,23 +8,17 @@
 namespace Fixin\View;
 
 use Fixin\ResourceManager\Resource;
-use Fixin\Base\Exception\InvalidParameterException;
 use Fixin\View\Engine\EngineInterface;
 
 class View extends Resource implements ViewInterface {
 
-    const DEFAULT_ENGINE = 'View\Engine\Json';
-    const INVALID_ENGINE_PARAMETER = 'Invalid engine parameter';
+    const DEFAULT_ENGINE = 'View\Engine\JsonEngine';
+    const INVALID_ENGINE_PARAMETER = "Invalid engine parameter type '%s'";
 
     /**
      * @var ViewInterface[]
      */
     protected $children = [];
-
-    /**
-     * @var array
-     */
-    protected $data = [];
 
     /**
      * @var string|EngineInterface|null
@@ -45,11 +39,37 @@ class View extends Resource implements ViewInterface {
     protected $template;
 
     /**
+     * @var array
+     */
+    protected $variables = [];
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::__toString()
      */
-    public function __toString() {
-        return $this->render();
+    public function __toString(): string {
+        $result = $this->render();
+        return is_null($result) || is_array($result) ? 'View' : $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\ViewInterface::clearChildren()
+     */
+    public function clearChildren() {
+        $this->children = [];
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\ViewInterface::clearVariables()
+     */
+    public function clearVariables() {
+        $this->variables = [];
+
+        return $this;
     }
 
     /**
@@ -62,12 +82,11 @@ class View extends Resource implements ViewInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getData()
+     * @see \Fixin\View\ViewInterface::getChildren()
      */
-    public function getData() {
-        return $this->data;
+    public function getChildren(): array {
+        return $this->children;
     }
-
     /**
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::getEngine()
@@ -78,10 +97,26 @@ class View extends Resource implements ViewInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\View\ViewInterface::getVariable()
+     */
+    public function getVariable(string $name) {
+        return $this->variables[$name] ?? null;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\ViewInterface::getData()
+     */
+    public function getVariables(): array {
+        return $this->variables;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see ArrayAccess::offsetExists()
      */
     public function offsetExists($offset) {
-        return isset($this->data[$offset]);
+        return isset($this->variables[$offset]);
     }
 
     /**
@@ -99,13 +134,13 @@ class View extends Resource implements ViewInterface {
      * @see ArrayAccess::offsetSet()
      */
     public function offsetSet($offset, $value) {
-        if ($offset === null) {
-            $this->data[] = $value;
+        if (is_null($offset)) {
+            $this->variables[] = $value;
 
             return;
         }
 
-        $this->data[$offset] = $value;
+        $this->variables[$offset] = $value;
     }
 
     /**
@@ -113,7 +148,22 @@ class View extends Resource implements ViewInterface {
      * @see ArrayAccess::offsetUnset()
      */
     public function offsetUnset($offset) {
-        unset($this->data[$offset]);
+        unset($this->variables[$offset]);
+    }
+
+    /**
+     * Prepare engine
+     *
+     * @return \Fixin\View\View
+     */
+    public function prepareEngine() {
+        $engine = $this->engine ?? static::DEFAULT_ENGINE;
+
+        if (is_string($engine)) {
+            $this->engine = $this->container->get($engine);
+        }
+
+        return $this;
     }
 
     /**
@@ -121,35 +171,11 @@ class View extends Resource implements ViewInterface {
      * @see \Fixin\View\ViewInterface::render()
      */
     public function render() {
-
-        /*$engine = $this->engie;
-
-        if (is_string($engine)) {
-            $engine = $this->container->get($engine);
+        if (!$this->engine instanceof EngineInterface) {
+            $this->prepareEngine();
         }
 
-        if (is_string($this->engine)) {
-
-        }
-
-        return $this->en
-/*
-
-        $renders = [];
-        $rendersByObject = new \SplObjectStorage();
-
-        foreach ($this->children as $name => $child) {
-            if (isset($rendersByObject[$child])) {
-                $renders[$name] = $rendersByObject[$child];
-
-                continue;
-            }
-
-            $renders[$name] =
-            $rendersByObject[$child] = $child->render();
-        }
-
-        return $renders + $this->data;*/
+        return $this->engine->render($this);
     }
 
     /**
@@ -168,7 +194,7 @@ class View extends Resource implements ViewInterface {
      */
     public function setEngine($engine) {
         if (isset($engine) && !is_string($engine) && !$engine instanceof EngineInterface) {
-            throw new InvalidParameterException(static::INVALID_ENGINE_PARAMETER);
+            throw new InvalidParameterException(static::INVALID_ENGINE_PARAMETER, is_object($engine) ? get_class($engine) : gettype($engine));
         }
 
         $this->engine = $setEngine;
@@ -182,6 +208,26 @@ class View extends Resource implements ViewInterface {
      */
     public function setTemplate(string $template) {
         $this->template = $template;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\ViewInterface::setVariable()
+     */
+    public function setVariable(string $key, $value) {
+        $this->variables[$key] = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\ViewInterface::setVariables()
+     */
+    public function setVariables(array $variables) {
+        $this->variables = $variables + $this->variables;
 
         return $this;
     }
