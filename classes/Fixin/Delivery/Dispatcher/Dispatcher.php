@@ -13,14 +13,30 @@ use Fixin\Delivery\Node\NodeInterface;
 
 class Dispatcher extends Resource implements DispatcherInterface {
 
-    const NODES_KEY = 'nodes';
-
     const EXCEPTION_INVALID_NODE = "Invalid node resource '%s'";
 
     /**
      * @var NodeInterface[]
      */
     protected $nodes = [];
+
+    /**
+     * Setup nodes
+     *
+     * @param array $nodes
+     * @throws InvalidArgumentException
+     */
+    protected function _setupNodes(array $nodes) {
+        foreach ($nodes as $key => $node) {
+            $node = $this->container->get($node);
+
+            if (!$node instanceof NodeInterface) {
+                throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NODE, $key));
+            }
+
+            $this->nodes[] = $node;
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -39,23 +55,5 @@ class Dispatcher extends Resource implements DispatcherInterface {
         }
 
         return $cargo;
-    }
-
-    /**
-     * Setup nodes
-     *
-     * @param array $nodes
-     * @throws InvalidArgumentException
-     */
-    protected function setupNodes(array $nodes) {
-        foreach ($nodes as $key => $node) {
-            $node = $this->container->get($node);
-
-            if (!$node instanceof NodeInterface) {
-                throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NODE, $key));
-            }
-
-            $this->nodes[] = $node;
-        }
     }
 }
