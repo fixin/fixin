@@ -8,8 +8,9 @@
 namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
+use Fixin\ResourceManager\Resource;
 
-class JsonToArray implements NodeInterface {
+class JsonToArray extends Resource implements NodeInterface {
 
     const JSON_TYPES = ['application/json', 'application/jsonml+json'];
 
@@ -19,7 +20,7 @@ class JsonToArray implements NodeInterface {
      */
     public function handle(CargoInterface $cargo) {
         if (in_array($cargo->getContentType(), static::JSON_TYPES)) {
-            $cargo->setContent(json_decode($cargo->getContent(), true, 512, JSON_BIGINT_AS_STRING));
+            $cargo->setContent($this->container->get('Base\Json\Json')->decode($cargo->getContent()));
         }
 
         return $cargo;
