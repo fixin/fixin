@@ -7,7 +7,11 @@
 
 namespace Fixin\ResourceManager;
 
+use Fixin\Base\Exception\InvalidArgumentException;
+
 abstract class Resource implements ResourceInterface {
+
+    const EXCEPTION_INVALID_OPTION = "Invalid option name '%s'";
 
     /**
      * @var ResourceManagerInterface
@@ -23,5 +27,22 @@ abstract class Resource implements ResourceInterface {
      */
     public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
         $this->container = $container;
+
+        // Options
+        if (empty($options)) {
+            return;
+        }
+
+        foreach ($options as $key => $value) {
+            $method = 'setup' . $key;
+
+            if (method_exists($this, $method)) {
+                $this->$method($value);
+
+                continue;
+            }
+
+            throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_OPTION, $key));
+        }
     }
 }
