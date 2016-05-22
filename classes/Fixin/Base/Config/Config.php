@@ -48,7 +48,7 @@ class Config implements ContainerInterface, \Iterator {
             return $this->config[$name];
         }
 
-        throw new InvalidParameterException(sprintf(static::EXCEPTION_NOT_DEFINED, $name));
+        throw new InvalidArgumentException(sprintf(static::EXCEPTION_NOT_DEFINED, $name));
     }
 
     /**
