@@ -32,34 +32,6 @@ class Json extends Resource implements JsonInterface {
     protected $encodingMaxDepth = 512;
 
     /**
-     * @param int $decodingMaxDepth
-     */
-    protected function _setupDecodingMaxDepth(int $decodingMaxDepth) {
-        $this->decodingMaxDepth = $decodingMaxDepth;
-    }
-
-    /**
-     * @param int $decodingOptions
-     */
-    protected function _setupDecodingOptions(int $decodingOptions) {
-        $this->decodingOptions = $decodingOptions;
-    }
-
-    /**
-     * @param int $encodingMaxDepth
-     */
-    protected function _setupEncodingMaxDepth(int $encodingMaxDepth) {
-        $this->encodingMaxDepth = $encodingMaxDepth;
-    }
-
-    /**
-     * @param int $encodingOptions
-     */
-    protected function _setupEncodingOptions(int $encodingOptions) {
-        $this->encodingOptions = $encodingOptions;
-    }
-
-    /**
      * {@inheritDoc}
      * @see \Fixin\Base\Json\JsonInterface::decode($json)
      */
@@ -91,5 +63,33 @@ class Json extends Resource implements JsonInterface {
      */
     public function getEncodingOptions(): int {
         return $this->encodingOptions;
+    }
+
+    /**
+     * @param int $decodingMaxDepth
+     */
+    protected function setDecodingMaxDepth(int $decodingMaxDepth) {
+        $this->decodingMaxDepth = $decodingMaxDepth;
+    }
+
+    /**
+     * @param int $decodingOptions
+     */
+    protected function setDecodingOptions(int $decodingOptions) {
+        $this->decodingOptions = $decodingOptions;
+    }
+
+    /**
+     * @param int $encodingMaxDepth
+     */
+    protected function setEncodingMaxDepth(int $encodingMaxDepth) {
+        $this->encodingMaxDepth = $encodingMaxDepth;
+    }
+
+    /**
+     * @param int $encodingOptions
+     */
+    protected function setEncodingOptions(int $encodingOptions) {
+        $this->encodingOptions = $encodingOptions;
     }
 }
