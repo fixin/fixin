@@ -27,11 +27,12 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     const EXCEPTION_GET_ERRORS = [
         "Resource not accessible by name '%s'",
         "Prototype not accessible by name '%s'",
-        "A prototype accessible by name '%s'",
-        "A resource accessible by name '%s'",
+        "Can't access prototype as normal resource '%s'",
+        "Can't access normal resource as prototype '%s'",
     ];
     const EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION = "Invalid abstract factory definition '%s'";
     const EXCEPTION_INVALID_DEFINITION = "Invalid definition registered for name '%s'";
+    const EXCEPTION_CLASS_NOT_FOUND_FOR = "Class not found for '%s'";
 
     /**
      * Abstract factories
@@ -76,7 +77,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      *
      * @param string $name
      * @param array $definition
-     * @return object|NULL
+     * @return object|null
      */
     protected function createFromDefinition(string $name, array $definition) {
         if (class_exists($class = $definition[static::CLASS_KEY])) {
@@ -169,6 +170,10 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
 
         if (is_string($class)) {
             $class = $this->createFromDefinition($name, $definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::OPTIONS_KEY] ?? null);
+
+            if (is_null($class)) {
+                throw new Exception\ClassNotFoundException(sprintf(static::EXCEPTION_CLASS_NOT_FOUND_FOR, $name));
+            }
         }
 
         // Factory or Closure
