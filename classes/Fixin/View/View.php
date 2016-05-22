@@ -156,26 +156,49 @@ class View extends Resource implements ViewInterface {
      * @see \Fixin\View\ViewInterface::render()
      */
     public function render() {
-        // Resolving file
-        $template = $this->template;
-        if (!file_exists($template)) {
-            $this->template = $template;
+        // Resolvings
+        $this
+        ->resolveTemplate()
+        ->resolveEngine();
+
+        // Render with engine
+        return $this->engine->render($this);
+    }
+
+    /**
+     * Resolve engine to EngineInterface
+     *
+     * @return self
+     */
+    public function resolveEngine() {
+        if ($this->engine instanceof EngineInterface) {
+            return $this;
         }
 
-        // Engine
         $engine = $this->engine;
 
         if (is_null($engine)) {
-            $engine = $this->extensions[strrchr($template, '.')] ?? static::DEFAULT_ENGINE;
+            $this->resolveTemplate();
+
+            $engine = $this->extensions[strrchr($this->template, '.')] ?? static::DEFAULT_ENGINE;
         }
 
-        if (is_string($engine)) {
-            $engine =
-            $this->engine = $this->container->get($engine);
+        $this->engine = $this->container->get($engine);
+
+        return $this;
+    }
+
+    /**
+     * Resolve template name to filename
+     *
+     * @return self
+     */
+    public function resolveTemplate() {
+        if (file_exists($this->template)) {
+            return $this;
         }
 
-        // Render with engine
-        return $engine->render($this);
+        return $this;
     }
 
     /**
