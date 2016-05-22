@@ -15,13 +15,6 @@ interface AutoloaderInterface {
      * @param string $class
      */
     public function autoload(string $class);
-
-    /**
-     * Register to autoloader stack
-     *
-     * @return self
-     */
-    public function register();
 }
 
 /**

@@ -22,7 +22,9 @@ class SimpleAutoloader implements AutoloaderInterface {
      * @param array $prefixes
      */
     public function __construct(array $prefixes = []) {
-        $this->addPrefixes($prefixes);
+        $this
+        ->addPrefixes($prefixes)
+        ->register();
     }
 
     /**
@@ -32,7 +34,7 @@ class SimpleAutoloader implements AutoloaderInterface {
      * @param string|array $path
      * @return self
      */
-    public function addPrefixPath(string $prefix, $path) {
+    protected function addPrefixPath(string $prefix, $path) {
         // Prepare prefix
         $prefix = strtr(trim($prefix, '\\'), '\\', DIRECTORY_SEPARATOR);
 
@@ -50,7 +52,7 @@ class SimpleAutoloader implements AutoloaderInterface {
      * @param array $prefixes
      * @return self
      */
-    public function addPrefixes(array $prefixes) {
+    protected function addPrefixes(array $prefixes) {
         foreach ($prefixes as $prefix => $path) {
             $this->addPrefixPath($prefix, $path);
         }
@@ -101,7 +103,7 @@ class SimpleAutoloader implements AutoloaderInterface {
      * {@inheritDoc}
      * @see \Fixin\Base\Autoloader\AutoloaderInterface::register()
      */
-    public function register() {
+    protected function register() {
         spl_autoload_register([$this, 'autoload']);
 
         return $this;
