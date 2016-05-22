@@ -51,6 +51,6 @@ class JsonEngine extends Resource implements EngineInterface {
             throw new KeyCollisionException(sprintf(static::EXCEPTION_NAME_COLLISION, implode("', '", array_keys($names))));
         }
 
-        return $data + $view->getVariables();
+        return $data + $variables;
     }
 }
