@@ -7,6 +7,6 @@
 
 namespace Fixin\Base\Exception;
 
-class InvalidParameterException extends \BadMethodCallException {
+class InvalidArgumentException extends \BadMethodCallException {
 
 }

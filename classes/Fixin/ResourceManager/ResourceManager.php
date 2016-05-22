@@ -7,7 +7,7 @@
 
 namespace Fixin\ResourceManager;
 
-use Fixin\Base\Exception\InvalidParameterException;
+use Fixin\Base\Exception\InvalidArgumentException;
 
 class ResourceManager extends ResourceManagerBase {
 
@@ -64,12 +64,12 @@ class ResourceManager extends ResourceManagerBase {
      *
      * @param string $name
      * @param object $resource
-     * @throws InvalidParameterException
+     * @throws InvalidArgumentException
      * @return self
      */
     public function setResource(string $name, $resource) {
         if (!is_object($resource)) {
-            throw new InvalidParameterException(static::EXCEPTION_MUST_BE_OBJECT);
+            throw new InvalidArgumentException(static::EXCEPTION_MUST_BE_OBJECT);
         }
 
         $this->configure([static::RESOURCES_KEY => [$name => $resource]]);

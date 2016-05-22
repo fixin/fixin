@@ -23,19 +23,6 @@ class Dispatcher extends Resource implements DispatcherInterface {
     protected $nodes = [];
 
     /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     */
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
-        parent::__construct($container, $options, $name);
-
-        // Nodes
-        if (isset($options[static::NODES_KEY])) {
-            $this->setupNodes($options[static::NODES_KEY]);
-        }
-    }
-
-    /**
      * {@inheritDoc}
      * @see \Fixin\Delivery\Dispatcher\DispatcherInterface::dispatch()
      */
@@ -58,14 +45,14 @@ class Dispatcher extends Resource implements DispatcherInterface {
      * Setup nodes
      *
      * @param array $nodes
-     * @throws InvalidParameterException
+     * @throws InvalidArgumentException
      */
     protected function setupNodes(array $nodes) {
         foreach ($nodes as $key => $node) {
             $node = $this->container->get($node);
 
             if (!$node instanceof NodeInterface) {
-                throw new InvalidParameterException(sprintf(static::EXCEPTION_INVALID_NODE, $key));
+                throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NODE, $key));
             }
 
             $this->nodes[] = $node;

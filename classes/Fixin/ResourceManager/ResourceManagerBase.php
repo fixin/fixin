@@ -7,7 +7,7 @@
 
 namespace Fixin\ResourceManager;
 
-use Fixin\Base\Exception\InvalidParameterException;
+use Fixin\Base\Exception\InvalidArgumentException;
 use Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface;
 use Fixin\ResourceManager\Factory\FactoryInterface;
 use Fixin\Support\PrototypeInterface;
@@ -138,6 +138,11 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
             return $resource;
         }
 
+        // Null
+        if (is_null($resource)) {
+            throw new Exception\ClassNotFoundException(sprintf(static::EXCEPTION_CLASS_NOT_FOUND_FOR, $name));
+        }
+
         throw new Exception\ResourceFaultException(sprintf(static::EXCEPTION_INVALID_DEFINITION, $name));
     }
 
@@ -170,10 +175,6 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
 
         if (is_string($class)) {
             $class = $this->createFromDefinition($name, $definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::OPTIONS_KEY]);
-
-            if (is_null($class)) {
-                throw new Exception\ClassNotFoundException(sprintf(static::EXCEPTION_CLASS_NOT_FOUND_FOR, $name));
-            }
         }
 
         // Factory or Closure
@@ -238,14 +239,14 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      * Set abstract factories
      *
      * @param array $abstractFactories
-     * @throws InvalidParameterException
+     * @throws InvalidArgumentException
      */
     protected function setupAbstractFactories(array $abstractFactories) {
         foreach ($abstractFactories as $key => $abstractFactory) {
             $abstractFactory = $this->createFromDefinition($key, $this->resolveDefinition($abstractFactory));
 
             if (!$abstractFactory instanceof AbstractFactoryInterface) {
-                throw new InvalidParameterException(sprintf(static::EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION, $key));
+                throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION, $key));
             }
 
             $this->abstractFactories[] = $abstractFactory;
