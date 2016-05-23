@@ -25,7 +25,7 @@ class HttpCargoFactory implements FactoryInterface {
 
         $cargo->setRequestProtocolVersion($this->getProtocolVersion())
             ->setRequestMethod($method = $this->getMethod())
-            ->setRequestUri($container->clonePrototype('requestUri'))
+            ->setRequestUri($container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
             ->setRequestParameters($_GET)
             ->setRequestHeaders($this->getHeaders())
             ->setCookies($_COOKIE)

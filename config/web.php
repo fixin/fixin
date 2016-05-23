@@ -20,7 +20,6 @@ return [
                     ]
                 ]
             ],
-            'requestUri' => 'Base\Uri\Factory\EnvironmentUriFactory',
         ],
         'abstractFactories' => [
             'prefixFallback' => [
