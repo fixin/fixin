@@ -11,8 +11,8 @@ use Fixin\View\ViewInterface;
 
 class PhpEngine extends Engine {
 
-    protected function renderChain(ViewInterface $view) {
-        $__data = parent::renderChain($view);
+    protected function renderChained(ViewInterface $view) {
+        $__data = parent::renderView($view);
 
         // Template
         $__template = $view->getResolvedTemplate();
