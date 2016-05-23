@@ -22,9 +22,8 @@ class Helper {
 
     /**
      * @param string $topDir
-     * @param array $rootNamespaces
      */
-    public function __construct(string $topDir, array $rootNamespaces = ['Fixin']) {
+    public function __construct(string $topDir) {
         // Include all PHP files under classes/
         $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator("$topDir/classes"));
         foreach ($iterator as $item) {
@@ -33,7 +32,7 @@ class Helper {
             }
         }
 
-        $this->processElements($rootNamespaces);
+        $this->processElements();
     }
 
     /**
@@ -144,18 +143,21 @@ class Helper {
     }
 
     /**
-     * @param array $rootNamespaces
+     * Process declared elements
      */
-    protected function processElements(array $rootNamespaces) {
+    protected function processElements() {
         foreach (array_merge(get_declared_classes(), get_declared_interfaces(), get_declared_traits()) as $name) {
-            if (($root = strstr($name, '\\', true)) && array_search($root, $rootNamespaces) !== false) {
-                $namespace = substr($name, 0, strrpos($name, '\\'));
-                $shortName = $this->classShortName($name);
-
-                $this->namespaces[$namespace][] = $shortName;
-                $this->shortNameResolve[$shortName] = $name;
+            $reflection = new \ReflectionClass($name);
+            if ($reflection->isInternal() || $name === 'Classes\Helper') {
+                continue;
             }
-        };
+
+            $namespace = substr($name, 0, strrpos($name, '\\'));
+            $shortName = $this->classShortName($name);
+
+            $this->namespaces[$namespace][$shortName] = $reflection;
+            $this->shortNameResolve[$shortName] = $name;
+        }
 
         ksort($this->namespaces);
     }

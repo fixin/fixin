@@ -197,8 +197,7 @@ td.Tab {
                 <tr class="Namespace">
                     <td colspan="10"><h2><?= htmlspecialchars($namespace) ?></h2></td>
                 </tr>
-                <?php foreach ($elements as $name): ?>
-                    <?php $reflection = new ReflectionClass("$namespace\\$name"); ?>
+                <?php foreach ($elements as $name => $reflection): ?>
                     <tr class="Header">
                         <td class="Tab"></td>
                         <td colspan="9">
