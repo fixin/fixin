@@ -97,6 +97,29 @@ class View extends Resource implements ViewInterface {
     }
 
     /**
+     * Get engine name for the template
+     *
+     * @return string
+     */
+    protected function getEngineNameForTemplate(): string {
+        $template = $this->getResolvedTemplate();
+
+        $start =
+        $max = mb_strlen($template);
+
+        do {
+            $start = mb_strrpos($template, '.', $start - $max - 1);
+            $postfix = mb_substr($template, $start);
+
+            if (isset($this->engineByPostfix[$postfix])) {
+                return $this->engineByPostfix[$postfix];
+            }
+        } while ($start);
+
+        return static::DEFAULT_ENGINE;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::getResolvedEngine()
      */
@@ -108,27 +131,7 @@ class View extends Resource implements ViewInterface {
             return $engine;
         }
 
-        // By postfix
-        if (is_null($engine)) {
-            $template = $this->getResolvedTemplate();
-            $engine = static::DEFAULT_ENGINE;
-
-            $start =
-            $max = mb_strlen($template);
-
-            do {
-                $start = mb_strrpos($template, '.', $start - $max - 1);
-                $postfix = mb_substr($template, $start);
-
-                if (isset($this->engineByPostfix[$postfix])) {
-                    $engine = $this->engineByPostfix[$postfix];
-
-                    break;
-                }
-            } while ($start);
-        }
-
-        return $this->engine = $this->container->get($engine);
+        return $this->engine = $this->container->get($engine ?? $this->getEngineNameForTemplate());
     }
 
     /**
