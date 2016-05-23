@@ -12,21 +12,19 @@ final class EncapsulatedInclude {
     /**
      * Include file with own scope
      *
-     * @param EngineInterface $this
-     * @param string $filename
-     * @param array $data
+     * @param AssistantInterface $_
+     * @param string $__filename
+     * @param array $__data
      * @return mixed
      */
-    public static function include(EngineInterface $this, string $filename, array $data) {
+    public static function include(AssistantInterface $_, string $__filename, array $__data) {
         // Extract data
-        $__data = $data;
-        $__filename = $filename;
-        unset($data, $__data['this'], $filename);
+        unset($__data['_']);
 
         extract($__data);
         unset($__data);
 
         // Include
-        return include $__filename;
+        include $__filename;
     }
 }
