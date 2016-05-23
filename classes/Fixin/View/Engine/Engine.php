@@ -27,7 +27,7 @@ class Engine extends Resource implements EngineInterface {
      *
      * @param ViewInterface $view
      * @throws KeyCollisionException
-     * @return mixed
+     * @return array|string
      */
     protected function renderChain(ViewInterface $view) {
         // Children
