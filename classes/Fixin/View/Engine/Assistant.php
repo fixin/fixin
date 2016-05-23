@@ -13,11 +13,15 @@ class Assistant implements AssistantInterface {
 
     /**
      * @var EngineInterface
+     *
+     * @SuppressWarnings(PHPMD.CamelCasePropertyName)
      */
     protected $__engine;
 
     /**
      * @var Assistant
+     *
+     * @SuppressWarnings(PHPMD.CamelCasePropertyName)
      */
     protected $__prototype;
 
