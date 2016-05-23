@@ -19,6 +19,10 @@ class PhpEngine extends Engine {
         return $this->renderInner($view);
     }
 
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\Engine\Engine::renderInner($view)
+     */
     protected function renderInner(ViewInterface $view) {
         $data = $this->fetchData($view);
 
@@ -31,7 +35,7 @@ class PhpEngine extends Engine {
         // Include
         try {
             ob_start();
-            $return = EncapsulatedInclude::include($this, $filename, $data);
+            EncapsulatedInclude::include($this, $filename, $data);
         }
         catch (\Throwable $t) {
             ob_end_clean();

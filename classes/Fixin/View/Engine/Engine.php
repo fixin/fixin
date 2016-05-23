@@ -14,6 +14,13 @@ abstract class Engine extends Resource implements EngineInterface {
 
     const EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'";
 
+    /**
+     * Fetch data for view
+     *
+     * @param ViewInterface $view
+     * @throws KeyCollisionException
+     * @return array
+     */
     protected function fetchData(ViewInterface $view): array {
         // Children
         $data = [];
@@ -32,4 +39,12 @@ abstract class Engine extends Resource implements EngineInterface {
 
         return $data + $variables;
     }
+
+    /**
+     * Render chain
+     *
+     * @param ViewInterface $view
+     * @return mixed
+     */
+    abstract protected function renderInner(ViewInterface $view);
 }

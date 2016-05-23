@@ -19,6 +19,10 @@ class JsonEngine extends Engine {
         return $this->container->get('Base\Json\Json')->encode($this->fetchData($view));
     }
 
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\Engine\Engine::renderInner($view)
+     */
     protected function renderInner(ViewInterface $view) {
         return $this->fetchData($view);
     }
