@@ -10,25 +10,32 @@ namespace Fixin\View\Engine;
 use Fixin\ResourceManager\Resource;
 use Fixin\View\ViewInterface;
 
-abstract class Engine extends Resource implements EngineInterface {
+class Engine extends Resource implements EngineInterface {
 
     const EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'";
 
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\Engine\EngineInterface::render()
+     */
     public function render(ViewInterface $view) {
-        return $this->renderChained($view);
+        return $this->renderChain($view);
     }
 
-    protected function renderChained(ViewInterface $view) {
-        return $this->renderView($view);
-    }
-
-    protected function renderView(ViewInterface $view) {
+    /**
+     * Render chain method
+     *
+     * @param ViewInterface $view
+     * @throws KeyCollisionException
+     * @return mixed
+     */
+    protected function renderChain(ViewInterface $view) {
         // Children
         $data = [];
         $dataByObject = new \SplObjectStorage();
 
         foreach ($view->getChildren() as $name => $child) {
-            $data[$name] = $dataByObject[$child] ?? ($dataByObject[$child] = $this->renderChained($child));
+            $data[$name] = $dataByObject[$child] ?? ($dataByObject[$child] = $this->renderChain($child));
         }
 
         // Variables
@@ -38,6 +45,10 @@ abstract class Engine extends Resource implements EngineInterface {
             throw new KeyCollisionException(sprintf(static::EXCEPTION_NAME_COLLISION, implode("', '", array_keys($names))));
         }
 
-        return $data + $variables;
+        return $this->renderChainProcess($view, $data + $variables);
+    }
+
+    protected function renderChainProcess(ViewInterface $view, array $data) {
+        return $data;
     }
 }

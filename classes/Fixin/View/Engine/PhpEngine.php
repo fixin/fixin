@@ -11,17 +11,16 @@ use Fixin\View\ViewInterface;
 
 class PhpEngine extends Engine {
 
-    protected function renderChained(ViewInterface $view) {
-        $__data = parent::renderView($view);
-
+    protected function renderChainProcess(ViewInterface $view, array $data) {
         // Template
         $__template = $view->getResolvedTemplate();
         if (is_null($__template)) {
-            return $__data;
+            return $data;
         }
 
         // Extract data
-        unset($view, $__data['this']);
+        $__data = $data;
+        unset($view, $data, $__data['this']);
         extract($__data);
         unset($__data);
 

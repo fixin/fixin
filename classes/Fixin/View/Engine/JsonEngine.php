@@ -13,7 +13,11 @@ class JsonEngine extends Engine {
 
     const EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'";
 
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\Engine\Engine::render()
+     */
     public function render(ViewInterface $view) {
-        return $this->container->get('Base\Json\Json')->encode($this->renderChained($view));
+        return $this->container->get('Base\Json\Json')->encode($this->renderChain($view));
     }
 }
