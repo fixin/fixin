@@ -10,32 +10,17 @@ namespace Fixin\View\Engine;
 use Fixin\ResourceManager\Resource;
 use Fixin\View\ViewInterface;
 
-class Engine extends Resource implements EngineInterface {
+abstract class Engine extends Resource implements EngineInterface {
 
     const EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'";
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Engine\EngineInterface::render()
-     */
-    public function render(ViewInterface $view) {
-        return $this->renderChain($view);
-    }
-
-    /**
-     * Render chain method
-     *
-     * @param ViewInterface $view
-     * @throws KeyCollisionException
-     * @return mixed
-     */
-    protected function renderChain(ViewInterface $view) {
+    protected function fetchData(ViewInterface $view): array {
         // Children
         $data = [];
         $dataByObject = new \SplObjectStorage();
 
         foreach ($view->getChildren() as $name => $child) {
-            $data[$name] = $dataByObject[$child] ?? ($dataByObject[$child] = $this->renderChain($child));
+            $data[$name] = $dataByObject[$child] ?? ($dataByObject[$child] = $this->renderInner($child));
         }
 
         // Variables

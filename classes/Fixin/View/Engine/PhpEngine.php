@@ -13,27 +13,25 @@ class PhpEngine extends Engine {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\Engine\Engine::renderChain()
+     * @see \Fixin\View\Engine\EngineInterface::render()
      */
-    protected function renderChain(ViewInterface $view) {
-        $__data = parent::renderChain($view);
+    public function render(ViewInterface $view) {
+        return $this->renderInner($view);
+    }
+
+    protected function renderInner(ViewInterface $view) {
+        $data = $this->fetchData($view);
 
         // Template
-        $__template = $view->getResolvedTemplate();
-        if (is_null($__template)) {
-            return $__data;
+        $filename = $view->getResolvedTemplate();
+        if (is_null($filename)) {
+            return $data;
         }
-
-        // Extract data
-        unset($view, $__data['this']);
-        extract($__data);
-        unset($__data);
 
         // Include
         try {
             ob_start();
-            include $__template;
-            $content = ob_get_clean();
+            $return = EncapsulatedInclude::include($this, $filename, $data);
         }
         catch (\Throwable $t) {
             ob_end_clean();
@@ -41,6 +39,6 @@ class PhpEngine extends Engine {
             throw $t;
         }
 
-        return $content;
+        return ob_get_clean();
     }
 }

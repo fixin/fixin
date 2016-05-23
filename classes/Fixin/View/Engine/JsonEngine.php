@@ -11,13 +11,15 @@ use Fixin\View\ViewInterface;
 
 class JsonEngine extends Engine {
 
-    const EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'";
-
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\Engine\Engine::render()
+     * @see \Fixin\View\Engine\EngineInterface::render()
      */
     public function render(ViewInterface $view) {
-        return $this->container->get('Base\Json\Json')->encode($this->renderChain($view));
+        return $this->container->get('Base\Json\Json')->encode($this->fetchData($view));
+    }
+
+    protected function renderInner(ViewInterface $view) {
+        return $this->fetchData($view);
     }
 }
