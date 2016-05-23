@@ -51,14 +51,10 @@ class PhpEngine extends Engine {
             return static::NO_TEMPLATE;
         }
 
-        // Clone assistant
-        $assistant = clone $this->assistant;
-
-        ob_start();
-
         // Include
         try {
-            EncapsulatedInclude::include($assistant, $filename, $data);
+            ob_start();
+            EncapsulatedInclude::include(clone $this->assistant, $filename, $data);
         }
         catch (\Throwable $t) {
             ob_end_clean();
