@@ -56,7 +56,7 @@ class PhpEngine extends Engine {
 
         // Include
         try {
-            EncapsulatedInclude::include($assistant, $filename, $data);
+            fixinViewEngineEncapsulatedInclude($assistant, $filename, $data);
         }
         catch (\Throwable $t) {
             ob_end_clean();
