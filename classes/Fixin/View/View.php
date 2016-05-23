@@ -28,7 +28,7 @@ class View extends Resource implements ViewInterface {
     /**
      * @var array
      */
-    protected $extensions = [
+    protected $engineByPostfix = [
         '.php' => 'View\Engine\PhpEngine',
         '.phtml' => 'View\Engine\PhpEngine'
     ];
@@ -87,12 +87,70 @@ class View extends Resource implements ViewInterface {
     public function getChildren(): array {
         return $this->children;
     }
+
     /**
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::getEngine()
      */
     public function getEngine() {
         return $this->engine;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\ViewInterface::getResolvedEngine()
+     */
+    public function getResolvedEngine(): EngineInterface {
+        $engine = $this->engine;
+
+        // Resolved
+        if ($engine instanceof EngineInterface) {
+            return $engine;
+        }
+
+        // By postfix
+        if (is_null($engine)) {
+            $template = $this->getResolvedTemplate();
+            $engine = static::DEFAULT_ENGINE;
+
+            $start =
+            $max = mb_strlen($template);
+
+            do {
+                $start = mb_strrpos($template, '.', $start - $max - 1);
+                $postfix = mb_substr($template, $start);
+
+                if (isset($this->engineByPostfix[$postfix])) {
+                    $engine = $this->engineByPostfix[$postfix];
+
+                    break;
+                }
+            } while ($start);
+        }
+
+        return $this->engine = $this->container->get($engine);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\ViewInterface::getResolvedTemplate()
+     */
+    public function getResolvedTemplate() {
+        $template = $this->template;
+
+        if (file_exists($template)) {
+            return $template;
+        }
+
+        return $template;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\ViewInterface::getTemplate()
+     */
+    public function getTemplate() {
+        return $this->template;
     }
 
     /**
@@ -156,49 +214,7 @@ class View extends Resource implements ViewInterface {
      * @see \Fixin\View\ViewInterface::render()
      */
     public function render() {
-        // Resolvings
-        $this
-        ->resolveTemplate()
-        ->resolveEngine();
-
-        // Render with engine
-        return $this->engine->render($this);
-    }
-
-    /**
-     * Resolve engine to EngineInterface
-     *
-     * @return self
-     */
-    public function resolveEngine() {
-        if ($this->engine instanceof EngineInterface) {
-            return $this;
-        }
-
-        $engine = $this->engine;
-
-        if (is_null($engine)) {
-            $this->resolveTemplate();
-
-            $engine = $this->extensions[strrchr($this->template, '.')] ?? static::DEFAULT_ENGINE;
-        }
-
-        $this->engine = $this->container->get($engine);
-
-        return $this;
-    }
-
-    /**
-     * Resolve template name to filename
-     *
-     * @return self
-     */
-    public function resolveTemplate() {
-        if (file_exists($this->template)) {
-            return $this;
-        }
-
-        return $this;
+        return $this->getResolvedEngine()->render($this);
     }
 
     /**

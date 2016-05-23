@@ -54,6 +54,27 @@ interface ViewInterface extends PrototypeInterface, \ArrayAccess {
     public function getEngine();
 
     /**
+     * Get resolved engine
+     *
+     * @return EngineInterface
+     */
+    public function getResolvedEngine(): EngineInterface;
+
+    /**
+     * Get resolved template filename
+     *
+     * @return string|null
+     */
+    public function getResolvedTemplate();
+
+    /**
+     * Get template
+     *
+     * @return string|null
+     */
+    public function getTemplate();
+
+    /**
      * Get variable value
      *
      * @param string $name
