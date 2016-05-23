@@ -16,6 +16,8 @@ class RuntimeCargoFactory implements FactoryInterface {
     /**
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __invoke(ResourceManagerInterface $container, array $options = null, string $name = null) {
         $factory = 'Delivery\Cargo\Factory\\' . (Ground::isConsole() ? 'ConsoleCargoFactory' : 'HttpCargoFactory');
