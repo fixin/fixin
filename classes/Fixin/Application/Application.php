@@ -83,13 +83,6 @@ class Application implements ApplicationInterface {
     public function run() {
         $container = $this->container;
 
-        $view = $container->clonePrototype('View\View');
-        $view['test'] = 'dual';
-        $view->setTemplate('/Web/Portals/Fixin-Dev/views/layout/default.phtml');
-        $view->setChild('child1', $container->clonePrototype('View\View'));
-
-        echo $view;
-
         try {
             // Normal dispatch
             $cargo = $container->clonePrototype(static::KEY_CARGO);
