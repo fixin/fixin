@@ -43,8 +43,6 @@ class PhpEngine extends Engine {
      * @see \Fixin\View\Engine\Engine::renderInner()
      */
     protected function renderInner(ViewInterface $view) {
-        $data = $this->fetchData($view);
-
         // Template
         $filename = $view->getResolvedTemplate();
         if (is_null($filename)) {
@@ -54,7 +52,7 @@ class PhpEngine extends Engine {
         // Include
         try {
             ob_start();
-            EncapsulatedInclude::include(clone $this->assistant, $filename, $data);
+            EncapsulatedInclude::include(clone $this->assistant, $filename, $this->fetchData($view));
         }
         catch (\Throwable $t) {
             ob_end_clean();
