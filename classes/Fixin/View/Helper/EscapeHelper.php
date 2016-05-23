@@ -47,5 +47,5 @@ abstract class EscapeHelper extends Helper {
      * @param string $value
      * @return string
      */
-    abstract function escape(string $value): string;
+    abstract public function escape(string $value): string;
 }
