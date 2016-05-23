@@ -7,6 +7,7 @@
 
 namespace Fixin\View\Helper;
 
+use Fixin\Base\Escaper\EscaperInterface;
 use Fixin\ResourceManager\ResourceManagerInterface;
 
 abstract class EscapeHelper extends Helper {
@@ -44,8 +45,8 @@ abstract class EscapeHelper extends Helper {
     /**
      * Escape value
      *
-     * @param string $value
+     * @param mixed $value
      * @return string
      */
-    abstract public function escape(string $value): string;
+    abstract public function escape($value): string;
 }

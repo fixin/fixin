@@ -13,7 +13,7 @@ class EscapeHtml extends EscapeHelper {
      * {@inheritDoc}
      * @see \Fixin\View\Helper\EscapeHelper::escape($value)
      */
-    public function escape(string $value): string {
+    public function escape($value): string {
         return $this->escaper->escapeHtml($value);
     }
 }
