@@ -45,10 +45,6 @@ class Engine extends Resource implements EngineInterface {
             throw new KeyCollisionException(sprintf(static::EXCEPTION_NAME_COLLISION, implode("', '", array_keys($names))));
         }
 
-        return $this->renderChainProcess($view, $data + $variables);
-    }
-
-    protected function renderChainProcess(ViewInterface $view, array $data) {
-        return $data;
+        return $data + $variables;
     }
 }
