@@ -19,6 +19,7 @@ interface AutoloaderInterface {
 
 /**
  * Encapsulated include
+ *
  * @param string $filename
  */
 function fixinBaseAutoloaderEncapsulatedInclude(string $filename) {
