@@ -12,6 +12,8 @@ use Fixin\View\ViewInterface;
 
 class PhpEngine extends Engine {
 
+    const NO_TEMPLATE = 'No template';
+
     /**
      * @var AssistantInterface
      */
@@ -46,7 +48,7 @@ class PhpEngine extends Engine {
         // Template
         $filename = $view->getResolvedTemplate();
         if (is_null($filename)) {
-            return $data;
+            return static::NO_TEMPLATE;
         }
 
         // Clone assistant
@@ -56,7 +58,7 @@ class PhpEngine extends Engine {
 
         // Include
         try {
-            fixinViewEngineEncapsulatedInclude($assistant, $filename, $data);
+            EncapsulatedInclude::include($assistant, $filename, $data);
         }
         catch (\Throwable $t) {
             ob_end_clean();
