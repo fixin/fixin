@@ -16,7 +16,7 @@ use \Fixin\Support\VariableInspector;
     <?= ($parameter->isVariadic() ? '...' : '') . ($parameter->isPassedByReference() ? '&' : '') . htmlspecialchars('$' . $parameter->getName()) ?>
 </td>
 <td class="Parameter Value"><?=
-$parameter->isOptional()
+$parameter->isOptional() && $parameter->isDefaultValueAvailable()
     ? ($parameter->isDefaultValueConstant()
         ? htmlspecialchars($parameter->getDefaultValueConstantName())
         : VariableInspector::valueInfo($parameter->getDefaultValue()))
