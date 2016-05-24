@@ -7,6 +7,7 @@
 
 namespace Fixin\Base\Json;
 
+use Fixin\Base\Exception\RuntimeException;
 use Fixin\ResourceManager\Resource;
 
 class Json extends Resource implements JsonInterface {
@@ -24,7 +25,7 @@ class Json extends Resource implements JsonInterface {
     /**
      * @var int
      */
-    protected $encodingOptions = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+    protected $encodingOptions = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
 
     /**
      * @var int
@@ -36,7 +37,13 @@ class Json extends Resource implements JsonInterface {
      * @see \Fixin\Base\Json\JsonInterface::decode($json)
      */
     public function decode(string $json) {
-        return json_decode($json, true, $this->decodingMaxDepth, $this->decodingOptions);
+        $result = json_decode($json, true, $this->decodingMaxDepth, $this->decodingOptions);
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $result;
+        }
+
+        throw new RuntimeException(json_last_error_msg());
     }
 
     /**
