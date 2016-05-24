@@ -14,6 +14,6 @@ class EscapeJs extends EscapeHelper {
      * @see \Fixin\View\Helper\EscapeHelper::escape($value)
      */
     public function escape($value): string {
-        return $this->escaper->escapeJs($value);
+        return $this->escaper->escapeJs((string) $value);
     }
 }

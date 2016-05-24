@@ -14,6 +14,6 @@ class EscapeHtml extends EscapeHelper {
      * @see \Fixin\View\Helper\EscapeHelper::escape($value)
      */
     public function escape($value): string {
-        return $this->escaper->escapeHtml($value);
+        return $this->escaper->escapeHtml((string) $value);
     }
 }
