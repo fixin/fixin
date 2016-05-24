@@ -28,7 +28,7 @@ interface EscaperInterface {
     /**
      * Escape a string for URI
      *
-     * @param string $string
+     * @param string $url
      * @return string
      */
     public function escapeUrl(string $url): string;
