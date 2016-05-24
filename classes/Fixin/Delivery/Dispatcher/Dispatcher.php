@@ -14,9 +14,9 @@ use Fixin\Delivery\Node\NodeInterface;
 class Dispatcher extends Resource implements DispatcherInterface {
 
     const EXCEPTION_INVALID_NODE = "Invalid node resource '%s'";
-    
+
     const KEY_NODES = 'nodes';
-    
+
     /**
      * @var NodeInterface[]
      */
@@ -48,6 +48,8 @@ class Dispatcher extends Resource implements DispatcherInterface {
      * @throws InvalidArgumentException
      */
     protected function setNodes(array $nodes) {
+        $this->nodes = [];
+
         foreach ($nodes as $key => $node) {
             $node = $this->container->get($node);
 
