@@ -7,31 +7,20 @@
 
 namespace Fixin\Base\Escaper;
 
-use Fixin\Base\Json\Json;
 use Fixin\ResourceManager\Resource;
-use Fixin\ResourceManager\ResourceManagerInterface;
 
 class Escaper extends Resource implements EscaperInterface {
 
-    /**
-     * @var int
-     */
-    protected $htmlEncodingOptions = ENT_COMPAT | ENT_HTML5 | ENT_SUBSTITUTE;
+    const HTML_ENCODING_OPTIONS = ENT_COMPAT | ENT_HTML5 | ENT_SUBSTITUTE;
+    const JS_ENCODING_OPTIONS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
+    const JS_REPLACES = ['"' => "'", ' ' => '\x20'];
 
     /**
-     * @var Json
+     * {@inheritDoc}
+     * @see \Fixin\Base\Escaper\EscaperInterface::encodeJsVariable($string)
      */
-    protected $json;
-
-    /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     * @param string $name
-     */
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
-        parent::__construct($container, $options, $name);
-
-        $this->json = $container->get('Base\Json\Json');
+    public function encodeJsVariable($var): string {
+        return strtr(json_encode($var, static::JS_ENCODING_OPTIONS), static::JS_REPLACES);
     }
 
     /**
@@ -39,7 +28,7 @@ class Escaper extends Resource implements EscaperInterface {
      * @see \Fixin\Base\Escaper\EscaperInterface::escapeHtml($string)
      */
     public function escapeHtml(string $string): string {
-        return htmlspecialchars($string, $this->htmlEncodingOptions);
+        return htmlspecialchars($string, static::HTML_ENCODING_OPTIONS);
     }
 
     /**
@@ -47,7 +36,7 @@ class Escaper extends Resource implements EscaperInterface {
      * @see \Fixin\Base\Escaper\EscaperInterface::escapeJs($string)
      */
     public function escapeJs(string $string): string {
-        return $this->escapeHtml($this->json->encode($string));
+        return mb_substr($this->encodeJsVariable($string), 1, -1);
     }
 
     /**
