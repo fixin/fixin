@@ -9,13 +9,21 @@ namespace Fixin\Support;
 
 class Performance extends DoNotCreate {
 
-    const MEASURE_FORMAT = "\nElapsed time:       %12s ms\n"
-        . "Memory change:      %12s bytes\n"
-        . "Memory peak:        %12s bytes\n"
-        . "Memory system peak: %12s bytes\n\n";
+    const MEASURE_FORMAT = "\n[Performance Measurement point]\n"
+        . "    Elapsed time:       %12s ms\n"
+        . "    Memory change:      %12s bytes\n"
+        . "    Memory peak:        %12s bytes\n"
+        . "    Memory system peak: %12s bytes\n\n";
 
-    static $lastTime = null;
-    static $lastMemoryUsage;
+    /**
+     * @var int
+     */
+    protected static $lastTime = null;
+
+    /**
+     * @var int
+     */
+    protected static $lastMemoryUsage;
 
     /**
      * Measurement for performance tests
