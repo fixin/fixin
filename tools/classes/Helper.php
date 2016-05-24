@@ -40,7 +40,8 @@ class Helper {
      * @return string
      */
     public function classShortName(string $name): string {
-        return substr(strrchr($name, '\\'), 1);
+        $result = substr(strrchr($name, '\\'), 1);
+        return strlen($result) ? $result : $name;
     }
 
     /**
@@ -152,7 +153,7 @@ class Helper {
                 continue;
             }
 
-            $namespace = substr($name, 0, strrpos($name, '\\'));
+            $namespace = implode('\\', explode('\\', $name, -1));
             $shortName = $this->classShortName($name);
 
             $this->namespaces[$namespace][$shortName] = $reflection;
