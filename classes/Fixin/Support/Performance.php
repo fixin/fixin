@@ -23,7 +23,7 @@ class Performance extends DoNotCreate {
 
         // Start
         if (is_null($lastTime)) {
-            echo static::debugText("[Performance Measurement start]\n");
+            echo Ground::debugText("[Performance Measurement start]\n");
 
             $lastTime = microtime(true);
             $lastMemoryUsage = memory_get_usage();
@@ -37,7 +37,7 @@ class Performance extends DoNotCreate {
             . 'Memory peak:         ' . number_format(memory_get_peak_usage()) . "\n"
             . 'Memory system peak:  ' . number_format(memory_get_peak_usage(true)) . "\n\n";
 
-        echo static::debugText($info);
+        echo Ground::debugText($info);
 
         // Store current
         $lastTime = microtime(true);
