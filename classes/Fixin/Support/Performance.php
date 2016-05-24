@@ -9,6 +9,11 @@ namespace Fixin\Support;
 
 class Performance extends DoNotCreate {
 
+    const MEASURE_FORMAT = "\nElapsed time:       %10s ms\n"
+        . "Memory change:      %10s\n"
+        . "Memory peak:        %10s\n"
+        . "Memory system peak: %10s\n\n";
+
     /**
      * Measurement for performance tests
      *
@@ -30,6 +35,13 @@ class Performance extends DoNotCreate {
 
             return;
         }
+
+        // Info
+        echo Ground::debugText(sprintf(static::MEASURE_FORMAT,
+            number_format((microtime(true) - $lastTime) * 1000, 4),
+            number_format($memoryUsage - $lastMemoryUsage),
+            number_format(memory_get_peak_usage()),
+            number_format(memory_get_peak_usage(true))));
 
         // Store current
         $lastTime = microtime(true);
