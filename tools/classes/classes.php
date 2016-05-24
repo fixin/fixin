@@ -198,10 +198,10 @@ td.Tab {
                     <td colspan="10"><h2><?= htmlspecialchars($namespace) ?></h2></td>
                 </tr>
                 <?php foreach ($elements as $name => $reflection): ?>
-                    <tr class="Header">
+                    <tr class="Header" id=""<?= htmlspecialchars($reflection->name) ?>">
                         <td class="Tab"></td>
                         <td colspan="9">
-                            <h3><a name="<?= htmlspecialchars($reflection->name) ?>"><?= htmlspecialchars($reflection->name) ?></a></h3>
+                            <h3><?= htmlspecialchars($reflection->name) ?></h3>
                         </td>
                     </tr>
                     <tr class="Details">
