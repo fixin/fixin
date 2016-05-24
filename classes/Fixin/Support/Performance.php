@@ -9,10 +9,13 @@ namespace Fixin\Support;
 
 class Performance extends DoNotCreate {
 
-    const MEASURE_FORMAT = "\nElapsed time:       %10s ms\n"
-        . "Memory change:      %10s\n"
-        . "Memory peak:        %10s\n"
-        . "Memory system peak: %10s\n\n";
+    const MEASURE_FORMAT = "\nElapsed time:       %12s ms\n"
+        . "Memory change:      %12s bytes\n"
+        . "Memory peak:        %12s bytes\n"
+        . "Memory system peak: %12s bytes\n\n";
+
+    static $lastTime = null;
+    static $lastMemoryUsage;
 
     /**
      * Measurement for performance tests
@@ -22,29 +25,36 @@ class Performance extends DoNotCreate {
     public static function measure() {
         $memoryUsage = memory_get_usage();
 
-        // Previous values
-        static $lastTime = null;
-        static $lastMemoryUsage = null;
-
         // Start
-        if (is_null($lastTime)) {
+        if (is_null(static::$lastTime)) {
             echo Ground::debugText("[Performance Measurement start]\n");
 
-            $lastTime = microtime(true);
-            $lastMemoryUsage = $memoryUsage;
+            static::$lastTime = microtime(true);
+            static::$lastMemoryUsage = $memoryUsage;
 
             return;
         }
 
         // Info
-        echo Ground::debugText(sprintf(static::MEASURE_FORMAT,
-            number_format((microtime(true) - $lastTime) * 1000, 4),
-            number_format($memoryUsage - $lastMemoryUsage),
-            number_format(memory_get_peak_usage()),
-            number_format(memory_get_peak_usage(true))));
+        static::measureInfo(microtime(true), $memoryUsage);
 
         // Store current
-        $lastTime = microtime(true);
-        $lastMemoryUsage = $memoryUsage;
+        static::$lastTime = microtime(true);
+        static::$lastMemoryUsage = $memoryUsage;
+    }
+
+    /**
+     * Display info
+     *
+     * @param int $time
+     * @param int $memoryUsage
+     */
+    protected static function measureInfo($time, $memoryUsage) {
+        $data = [
+            $memoryUsage - static::$lastMemoryUsage,
+            memory_get_peak_usage(),
+            memory_get_peak_usage(true)
+        ];
+        echo Ground::debugText(vsprintf(static::MEASURE_FORMAT, array_merge([number_format(($time - static::$lastTime) * 1000, 4)], array_map('number_format', $data))));
     }
 }
