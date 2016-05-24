@@ -29,10 +29,18 @@ abstract class Resource implements ResourceInterface {
         $this->container = $container;
 
         // Options
-        if (empty($options)) {
-            return;
+        if (count($options)) {
+            $this->configureWithOptions($options);
         }
+    }
 
+    /**
+     * Configure
+     *
+     * @param array $options
+     * @throws InvalidArgumentException
+     */
+    private function configureWithOptions(array $options) {
         foreach ($options as $key => $value) {
             $method = 'set' . $key;
 
