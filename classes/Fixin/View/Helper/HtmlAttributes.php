@@ -32,12 +32,7 @@ class HtmlAttributes extends EscapeHelper {
 
             if (is_array($item)) {
                 if ($item) {
-                    $list = [];
-                    foreach ($item as $subkey => $subvalue) {
-                        $list[] = $escaper->escapeHtml($subkey) . ': ' . $escaper->escapeHtml($subvalue);
-                    }
-
-                    $html[] = $escaper->escapeHtml($key) . '="' . implode('; ', $list) . '"';
+                    $html[] = $escaper->escapeHtml($key) . '="' . $this->escapeArray($item) . '"';
                 }
 
                 continue;
@@ -47,5 +42,22 @@ class HtmlAttributes extends EscapeHelper {
         }
 
         return implode(' ', $html);
+    }
+
+    /**
+     * Escape array item like "width: 80px; height: 20em"
+     *
+     * @param array $value
+     * @return string
+     */
+    protected function escapeArray(array $value): string {
+        $escaper = $this->escaper;
+
+        $list = [];
+        foreach ($value as $subkey => $subvalue) {
+            $list[] = $escaper->escapeHtml($subkey) . ': ' . $escaper->escapeHtml($subvalue);
+        }
+
+        return implode('; ', $list);
     }
 }
