@@ -31,7 +31,7 @@ class HtmlAttributes extends EscapeHelper {
             }
 
             if (is_array($item)) {
-                if ($item) {
+                if (empty($item)) {
                     $html[] = $escaper->escapeHtml($key) . '="' . $this->escapeArray($item) . '"';
                 }
 
