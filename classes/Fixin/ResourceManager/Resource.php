@@ -29,7 +29,7 @@ abstract class Resource implements ResourceInterface {
         $this->container = $container;
 
         // Options
-        if (count($options)) {
+        if (!empty($options)) {
             $this->configureWithOptions($options);
         }
     }
