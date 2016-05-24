@@ -16,7 +16,7 @@ class Performance extends DoNotCreate {
         . "    Memory system peak: %12s bytes\n\n";
 
     /**
-     * @var int
+     * @var number
      */
     protected static $lastTime = null;
 
@@ -29,6 +29,8 @@ class Performance extends DoNotCreate {
      * Measurement for performance tests
      *
      * Elapsed time, memory change, memory peak, memory system peak
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public static function measure() {
         $memoryUsage = memory_get_usage();
@@ -54,8 +56,10 @@ class Performance extends DoNotCreate {
     /**
      * Display info
      *
-     * @param int $time
+     * @param number $time
      * @param int $memoryUsage
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected static function measureInfo($time, $memoryUsage) {
         $data = [
