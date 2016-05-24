@@ -7,57 +7,78 @@
 
 namespace Fixin\View\Helper;
 
-class HtmlAttributes extends EscapeHelper {
+use Fixin\ResourceManager\ResourceManagerInterface;
+
+class HtmlAttributes extends Helper {
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Helper\EscapeHelper::__invoke($value)
+     * @var EscaperInterface
      */
-    public function __invoke($value) {
-        return $this->escape($value);
+    protected $escaper;
+
+    /**
+     * @param ResourceManagerInterface $container
+     * @param array $options
+     * @param string $name
+     */
+    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
+        parent::__construct($container, $options, $name);
+
+        $this->escaper = $container->get('Base\Escaper\Escaper');
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Helper\EscapeHelper::escape($value)
+     * Escape
+     *
+     * @param array $var
+     * @return \Fixin\View\Helper\string
      */
-    public function escape($value): string {
-        $html = [];
+    public function __invoke(array $var) {
+        return $this->escape($var);
+    }
+
+    /**
+     * Escape array
+     *
+     * @param array $var
+     * @return string
+     */
+    public function escape(array $var): string {
         $escaper = $this->escaper;
 
-        foreach ($value as $key => $item) {
-            if (is_null($value)) {
-                continue;
+        $html = [];
+
+        foreach ($var as $key => $value) {
+            if ('' !== $result = $this->escapeValue($value)) {
+                $html[] = "{$escaper->escapeHtml($key)}=\"$result\"";
             }
-
-            if (is_array($item)) {
-                if (empty($item)) {
-                    $html[] = $escaper->escapeHtml($key) . '="' . $this->escapeArray($item) . '"';
-                }
-
-                continue;
-            }
-
-            $html[] = $escaper->escapeHtml($key) . '="' . $escaper->escapeHtml($item) . '"';
         }
 
         return implode(' ', $html);
     }
 
     /**
-     * Escape array item like "width: 80px; height: 20em"
+     * Escape single value
      *
-     * @param array $value
+     * @param mixed $var
      * @return string
      */
-    protected function escapeArray(array $value): string {
-        $escaper = $this->escaper;
-
-        $list = [];
-        foreach ($value as $subkey => $subvalue) {
-            $list[] = $escaper->escapeHtml($subkey) . ': ' . $escaper->escapeHtml($subvalue);
+    protected function escapeValue($var): string {
+        if (is_null($var)) {
+            return '';
         }
 
-        return implode('; ', $list);
+        $escaper = $this->escaper;
+
+        if (is_array($var)) {
+            $list = [];
+            foreach ($var as $key => $value) {
+                $list[] = $escaper->escapeHtml($key) . ': ' . $escaper->escapeHtml($value);
+            }
+
+            return implode('; ', $list);
+        }
+
+        return $escaper->escapeHtml($var);
     }
 }
