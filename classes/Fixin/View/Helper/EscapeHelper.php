@@ -29,7 +29,7 @@ abstract class EscapeHelper extends Helper {
     }
 
     /**
-     * Escape invoke
+     * Normal escape or iterated for arrays
      *
      * @param mixed $value
      * @return string
