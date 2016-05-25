@@ -31,7 +31,7 @@ class HtmlAttributes extends Helper {
      * Escape
      *
      * @param array $var
-     * @return \Fixin\View\Helper\string
+     * @return string
      */
     public function __invoke(array $var) {
         return $this->escape($var);
