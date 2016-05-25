@@ -25,7 +25,6 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     ];
     const EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION = "Invalid abstract factory definition '%s'";
     const EXCEPTION_INVALID_DEFINITION = "Invalid definition registered for name '%s'";
-    const EXCEPTION_UNABLE_TO_CREATE_RESOURCE = "Unable to create resource for name '%s'";
 
     const KEY_ABSTRACT_FACTORIES = 'abstractFactories';
     const KEY_CLASS = 'class';
@@ -116,12 +115,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      * @return object
      */
     protected function produceResource(string $name) {
-        try {
-            $resource = $this->produceResourceFromDefinition($name, $this->resolveDefinitionFromName($name));
-        }
-        catch (\Throwable $t) {
-            throw new RuntimeException(sprintf(static::EXCEPTION_UNABLE_TO_CREATE_RESOURCE, $name), $t->getCode(), $t);
-        }
+        $resource = $this->produceResourceFromDefinition($name, $this->resolveDefinitionFromName($name));
 
         // Object
         if (is_object($resource)) {
