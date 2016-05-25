@@ -151,7 +151,7 @@ class View extends Resource implements ViewInterface {
         }
 
         // Resolving
-        $resolved = ($this->resolver ?? ($this->resolver = $this->container->get('View\View\FileResolver')))->resolve($this->template);
+        $resolved = ($this->fileResolver ?? ($this->fileResolver = $this->container->get('View\View\FileResolver')))->resolve($this->template);
 
         if (isset($resolved)) {
             // Store resolved filename
