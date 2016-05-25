@@ -11,7 +11,7 @@ use Fixin\Base\Exception\InvalidArgumentException;
 
 abstract class Resource implements ResourceInterface {
 
-    const EXCEPTION_INVALID_OPTION = "Invalid option name '%s'";
+    const EXCEPTION_INVALID_OPTION = "Invalid option name '%s' for '%s'";
 
     /**
      * @var ResourceManagerInterface
@@ -50,7 +50,7 @@ abstract class Resource implements ResourceInterface {
                 continue;
             }
 
-            throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_OPTION, $key));
+            throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_OPTION, $key, get_class($this)));
         }
     }
 }
