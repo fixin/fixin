@@ -9,19 +9,20 @@ namespace Fixin\View\Engine;
 
 use Fixin\View\Helper\HelperInterface;
 
+/**
+ * @author attilajenei
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ */
 class Assistant implements AssistantInterface {
 
     /**
      * @var EngineInterface
-     *
-     * @SuppressWarnings(PHPMD.CamelCasePropertyName)
      */
     protected $__engine;
 
     /**
      * @var Assistant
-     *
-     * @SuppressWarnings(PHPMD.CamelCasePropertyName)
      */
     protected $__prototype;
 
