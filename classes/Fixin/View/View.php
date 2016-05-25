@@ -119,6 +119,15 @@ class View extends Resource implements ViewInterface {
     }
 
     /**
+     * FileResolver instance
+     *
+     * @return FileResolverInterface
+     */
+    protected function getFileResolver() {
+        return $this->fileResolver ?? ($this->fileResolver = $this->container->get('View\View\FileResolver'));
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::getResolvedEngine()
      */
@@ -140,18 +149,13 @@ class View extends Resource implements ViewInterface {
     public function getResolvedTemplate() {
         $template = $this->template;
 
-        // No template
-        if (mb_strlen($template) === 0) {
-            return null;
-        }
-
-        // Accessible file
-        if (is_file($template)) {
+        // No template or accessible file
+        if (mb_strlen($template) === 0 || is_file($template)) {
             return $template;
         }
 
         // Resolving
-        $resolved = ($this->fileResolver ?? ($this->fileResolver = $this->container->get('View\View\FileResolver')))->resolve($this->template);
+        $resolved = $this->getFileResolver()->resolve($this->template);
 
         if (isset($resolved)) {
             // Store resolved filename
