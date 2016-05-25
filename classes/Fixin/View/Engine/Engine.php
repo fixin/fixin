@@ -23,36 +23,8 @@ abstract class Engine extends Resource implements EngineInterface {
     protected $helpers = [];
 
     /**
-     * Fetch data for view
-     *
-     * @param ViewInterface $view
-     * @throws KeyCollisionException
-     * @return array
-     */
-    protected function fetchData(ViewInterface $view): array {
-        // Children
-        $data = [];
-        $dataByObject = new \SplObjectStorage();
-
-        foreach ($view->getChildren() as $name => $child) {
-            $data[$name] = $dataByObject[$child] ?? ($dataByObject[$child] = $this->renderInner($child));
-        }
-
-        // Variables
-        $variables = $view->getVariables();
-
-        if ($names = array_intersect_key($data, $variables)) {
-            throw new KeyCollisionException(sprintf(static::EXCEPTION_NAME_COLLISION, implode("', '", array_keys($names))));
-        }
-
-        return $data + $variables;
-    }
-
-    /**
-     * Get helper
-     *
-     * @param string $name
-     * @return HelperInterface
+     * {@inheritDoc}
+     * @see \Fixin\View\Engine\EngineInterface::getHelper($name)
      */
     public function getHelper(string $name): HelperInterface {
         return $this->helpers[$name] ?? ($this->helpers[$name] = $this->produceHelper($name));
@@ -74,10 +46,25 @@ abstract class Engine extends Resource implements EngineInterface {
     }
 
     /**
-     * Render chain
+     * Render children
      *
-     * @param ViewInterface $view
-     * @return mixed
+     * @return array
      */
-    abstract protected function renderInner(ViewInterface $view);
+    protected function renderChildren(ViewInterface $view): array {
+        $data = [];
+        $dataByObject = new \SplObjectStorage();
+
+        foreach ($view->getChildren() as $name => $child) {
+            $data[$name] = $dataByObject[$child] ?? ($dataByObject[$child] = $child->render());
+        }
+
+        // Test name collision
+        $variables = $view->getVariables();
+
+        if ($names = array_intersect_key($data, $variables)) {
+            throw new KeyCollisionException(sprintf(static::EXCEPTION_NAME_COLLISION, implode("', '", array_keys($names))));
+        }
+
+        return $data;
+    }
 }

@@ -32,27 +32,22 @@ class PhpEngine extends Engine {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\Engine\EngineInterface::render()
+     * @see \Fixin\View\Engine\EngineInterface::render($view)
      */
     public function render(ViewInterface $view) {
-        return $this->renderInner($view);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Engine\Engine::renderInner()
-     */
-    protected function renderInner(ViewInterface $view) {
         // Template
         $filename = $view->getResolvedTemplate();
         if (is_null($filename)) {
             return static::NO_TEMPLATE;
         }
 
+        // Data
+        $data = $this->renderChildren($view) + $view->getVariables();
+
         // Include
         try {
             ob_start();
-            EncapsulatedInclude::include(clone $this->assistant, $filename, $this->fetchData($view));
+            EncapsulatedInclude::include(clone $this->assistant, $filename, $data);
         }
         catch (\Throwable $t) {
             ob_end_clean();
