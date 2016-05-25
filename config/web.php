@@ -20,6 +20,12 @@ return [
                     ]
                 ]
             ],
+            'View\View\FileResolver' => [
+                'class' => 'Base\FileResolver\FileResolver',
+                'options' => [
+                    'defaultExtension' => '.phtml'
+                ]
+            ]
         ],
         'abstractFactories' => [
             'prefixFallback' => [

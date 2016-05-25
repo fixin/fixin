@@ -13,11 +13,6 @@ use Fixin\View\Engine\EngineInterface;
 interface ViewInterface extends PrototypeInterface, \ArrayAccess {
 
     /**
-     * @return string
-     */
-    public function __toString(): string;
-
-    /**
      * Clear children
      *
      * @return self

@@ -7,6 +7,8 @@
 
 namespace Fixin\View;
 
+use Fixin\Base\Exception\RuntimeException;
+use Fixin\Base\FileResolver\FileResolverInterface;
 use Fixin\ResourceManager\Resource;
 use Fixin\View\Engine\EngineInterface;
 
@@ -14,6 +16,7 @@ class View extends Resource implements ViewInterface {
 
     const DEFAULT_ENGINE = 'View\Engine\JsonEngine';
     const EXCEPTION_INVALID_ENGINE_ARGUMENT = "Invalid engine argument: string or EngineInterface allowed";
+    const EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE = "Unable to resolve template '%s'";
 
     /**
      * @var ViewInterface[]
@@ -34,6 +37,11 @@ class View extends Resource implements ViewInterface {
     ];
 
     /**
+     * @var FileResolverInterface
+     */
+    protected $fileResolver;
+
+    /**
      * @var string|null
      */
     protected $template;
@@ -42,15 +50,6 @@ class View extends Resource implements ViewInterface {
      * @var array
      */
     protected $variables = [];
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::__toString()
-     */
-    public function __toString(): string {
-        $result = $this->render();
-        return is_null($result) || is_array($result) ? 'View' : $result;
-    }
 
     /**
      * {@inheritDoc}
@@ -107,14 +106,14 @@ class View extends Resource implements ViewInterface {
         $start =
         $max = mb_strlen($template);
 
-        do {
+        while ($start) {
             $start = mb_strrpos($template, '.', $start - $max - 1);
             $postfix = mb_substr($template, $start);
 
             if (isset($this->engineByPostfix[$postfix])) {
                 return $this->engineByPostfix[$postfix];
             }
-        } while ($start);
+        };
 
         return static::DEFAULT_ENGINE;
     }
@@ -141,11 +140,27 @@ class View extends Resource implements ViewInterface {
     public function getResolvedTemplate() {
         $template = $this->template;
 
-        if (file_exists($template)) {
+        // No template
+        if (mb_strlen($template) === 0) {
+            return null;
+        }
+
+        // Accessible file
+        if (is_file($template)) {
             return $template;
         }
 
-        return $template;
+        // Resolving
+        $resolved = ($this->resolver ?? ($this->resolver = $this->container->get('View\View\FileResolver')))->resolve($this->template);
+
+        if (isset($resolved)) {
+            // Store resolved filename
+            $this->template = $resolved;
+
+            return $resolved;
+        }
+
+        throw new RuntimeException(sprintf(static::EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE, $template));
     }
 
     /**
