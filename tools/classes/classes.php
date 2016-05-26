@@ -69,7 +69,7 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
 }
 
 #classes .Value {
-    white-space: pre;
+    white-space: pre-wrap;
     font-family: monospace;
 }
 
