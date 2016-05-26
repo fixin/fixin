@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Stream;
 
-interface StreamInterface extends PrototypeInterface {
+interface StreamInterface {
 
     /**
      * Return all data
@@ -17,16 +17,16 @@ interface StreamInterface extends PrototypeInterface {
     public function __toString(): string;
 
     /**
-     * Close the stream
+     * Close stream
      *
      * @return self
      */
     public function close();
 
     /**
-     * Detach resources
+     * Detach resource from Stream, return resource, if any
      *
-     * @return self
+     * @return resource|null
      */
     public function detach();
 
@@ -60,32 +60,25 @@ interface StreamInterface extends PrototypeInterface {
     public function getSize();
 
     /**
-     * Return current position
-     *
-     * @return int
-     */
-    public function tell(): int;
-
-    /**
      * Is the stream readable
      *
      * @return boolean
      */
-    public function isReadable(): boolean;
+    public function isReadable(): bool;
 
     /**
      * Is the stream seekable
      *
      * @return boolean
      */
-    public function isSeekable(): boolean;
+    public function isSeekable(): bool;
 
     /**
      * Is the stream writable
      *
      * @return boolean
      */
-    public function isWritable(): boolean;
+    public function isWritable(): bool;
 
     /**
      * Read data
@@ -110,6 +103,13 @@ interface StreamInterface extends PrototypeInterface {
      * @return self
      */
     public function seek(int $offset, int $whence = SEEK_SET);
+
+    /**
+     * Return current position
+     *
+     * @return int
+     */
+    public function tell(): int;
 
     /**
      * Write data
