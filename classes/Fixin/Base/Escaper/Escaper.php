@@ -7,9 +7,7 @@
 
 namespace Fixin\Base\Escaper;
 
-use Fixin\ResourceManager\Resource;
-
-class Escaper extends Resource implements EscaperInterface {
+class Escaper implements EscaperInterface {
 
     const HTML_ENCODING_OPTIONS = ENT_COMPAT | ENT_HTML5 | ENT_SUBSTITUTE;
     const JS_ENCODING_OPTIONS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION;
