@@ -16,13 +16,10 @@ use \Fixin\Support\VariableInspector;
 include 'Helper.php';
 
 $helper = new \Classes\Helper($topDir);
+$showAll = !empty($_GET['all']);
 
-$showProperties = empty($_GET['all'])
-    ? ReflectionProperty::IS_PUBLIC
-    : (ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
-$showMethods = empty($_GET['all'])
-    ? ReflectionMethod::IS_PUBLIC
-    : (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED | ReflectionMethod::IS_PRIVATE);
+$showProperties = $showAll ? (ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE) : ReflectionProperty::IS_PUBLIC;
+$showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED | ReflectionMethod::IS_PRIVATE) : ReflectionMethod::IS_PUBLIC;
 
 ?><!DOCTYPE html>
 <html>
@@ -187,6 +184,11 @@ $showMethods = empty($_GET['all'])
 }
         </style>
         <div id="classes">
+            <?php if ($showAll): ?>
+                <a href="classes-public-members">Public members</a> | All members
+            <?php else: ?>
+                Public members | <a href="classes-all-members">All members</a>
+            <?php endif ?>
             <table>
                 <?php foreach ($helper->namespaces as $namespace => $elements): ?>
                     <?php ksort($elements) ?>
