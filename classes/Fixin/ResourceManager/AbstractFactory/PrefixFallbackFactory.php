@@ -7,9 +7,7 @@
 
 namespace Fixin\ResourceManager\AbstractFactory;
 
-use Fixin\ResourceManager\ResourceManagerInterface;
-
-class PrefixFallbackFactory implements AbstractFactoryInterface {
+class PrefixFallbackFactory extends AbstractFactory {
 
     const KEY_SEARCH_ORDER = 'searchOrder';
 
@@ -24,29 +22,20 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
     protected $searchOrder;
 
     /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     */
-    public function __construct(ResourceManagerInterface $container, array $options = null) {
-        // Search order
-        $this->searchOrder = $options[static::KEY_SEARCH_ORDER] ?? ['Fixin'];
-    }
-
-    /**
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ResourceManagerInterface $container, array $options = null, string $name = null) {
+    public function __invoke(array $options = null, string $name = null) {
         $mapped = $this->map[$name];
 
-        return $mapped ? new $mapped($container, $options, $name) : null;
+        return $mapped ? new $mapped($this->container, $options, $name) : null;
     }
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface::canProduce($manager, $name)
+     * @see \Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface::canProduce($name)
      */
-    public function canProduce(ResourceManagerInterface $container, string $name): bool {
+    public function canProduce(string $name): bool {
         // Already resolved
         if (isset($this->map[$name])) {
             return (bool) $this->map[$name];
@@ -65,5 +54,14 @@ class PrefixFallbackFactory implements AbstractFactoryInterface {
 
         // Not found
         return $this->map[$name] = false;
+    }
+
+    /**
+     * Set search order
+     *
+     * @param array $searchOrder
+     */
+    protected function setSearchOrder(array $searchOrder) {
+        $this->searchOrder = $searchOrder;
     }
 }

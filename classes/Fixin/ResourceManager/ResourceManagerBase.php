@@ -141,8 +141,8 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      */
     protected function produceResourceFromAbstractFactories(string $name, array $options = null) {
         foreach ($this->abstractFactories as $abstractFactory) {
-            if ($abstractFactory->canProduce($this, $name)) {
-                return $abstractFactory($this, $options, $name);
+            if ($abstractFactory->canProduce($name)) {
+                return $abstractFactory($options, $name);
             }
         }
 
@@ -163,8 +163,13 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
             $class = $this->createFromDefinition($name, $definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::KEY_OPTIONS]);
         }
 
-        // Factory or Closure
-        if ($class instanceof FactoryInterface || $class instanceof \Closure) {
+        // Factory
+        if ($class instanceof FactoryInterface) {
+            return $class($definition[static::KEY_OPTIONS], $name);
+        }
+
+        // Closure
+        if ($class instanceof \Closure) {
             return $class($this, $definition[static::KEY_OPTIONS], $name);
         }
 
