@@ -34,7 +34,7 @@ class Stream implements StreamInterface {
     public function __construct($stream, string $mode = 'r') {
         // By reference
         if (is_string($stream)) {
-            $resource = $this->resourceByReference($reference, $mode);
+            $stream = $this->resourceByReference($stream, $mode);
         }
 
         // Stream
@@ -277,7 +277,7 @@ class Stream implements StreamInterface {
 
             return $result;
         }
-        
+
         throw new RuntimeException(static::EXCEPTION_NOT_WRITABLE);
     }
 }
