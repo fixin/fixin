@@ -34,21 +34,7 @@ class Stream implements StreamInterface {
     public function __construct($stream, string $mode = 'r') {
         // By reference
         if (is_string($stream)) {
-            $error = null;
-
-            // Suppress warnings
-            set_error_handler(function ($e) use (&$error) {
-                $error = $e;
-            });
-
-            // Open
-            $stream = fopen($stream, $mode);
-
-            restore_error_handler();
-
-            if ($error) {
-                throw new InvalidArgumentException(static::EXCEPTION_INVALID_STREAM_REFERENCE);
-            }
+            $resource = $this->resourceByReference($reference, $mode);
         }
 
         // Stream
@@ -200,6 +186,34 @@ class Stream implements StreamInterface {
         }
 
         throw new RuntimeException(static::EXCEPTION_RESOURCE_IS_NOT_AVAILABLE);
+    }
+
+    /**
+     * Open resource
+     *
+     * @param string $reference
+     * @param string $mode
+     * @throws InvalidArgumentException
+     * @return resource
+     */
+    protected function resourceByReference(string $reference, $mode) {
+        $error = null;
+
+        // Suppress warnings
+        set_error_handler(function ($e) use (&$error) {
+            $error = $e;
+        });
+
+            // Open
+            $stream = fopen($reference, $mode);
+
+            restore_error_handler();
+
+            if ($error) {
+                throw new InvalidArgumentException(static::EXCEPTION_INVALID_STREAM_REFERENCE);
+            }
+
+            return $stream;
     }
 
     /**
