@@ -101,16 +101,15 @@ class Stream implements StreamInterface {
      * @see \Fixin\Base\Stream\StreamInterface::getContents()
      */
     public function getContents(): string {
-        if ($this->isReadable()) {
-            $result = stream_get_contents($this->resource);
-            if ($result === false) {
-                throw new RuntimeException(static::EXCEPTION_READ_ERROR);
-            }
+        if (!$this->isReadable()) {
+            throw new RuntimeException(static::EXCEPTION_NOT_READABLE);
+        }
 
+        if (false !== $result = stream_get_contents($this->resource)) {
             return $result;
         }
 
-        throw new RuntimeException(static::EXCEPTION_NOT_READABLE);
+        throw new RuntimeException(static::EXCEPTION_READ_ERROR);
     }
 
     /**
@@ -169,11 +168,11 @@ class Stream implements StreamInterface {
      * Need resource
      *
      * @throws RuntimeException
-     * @return boolean
+     * @return self
      */
-    protected function needResource(): boolean {
+    protected function needResource() {
         if ($this->resource) {
-            return true;
+            return $this;
         }
 
         throw new RuntimeException(static::EXCEPTION_RESOURCE_IS_NOT_AVAILABLE);
@@ -184,12 +183,12 @@ class Stream implements StreamInterface {
      * @see \Fixin\Base\Stream\StreamInterface::read($length)
      */
     public function read(int $length): string {
-        if ($this->needResource() && $this->isReadable()) {
-            $result = fread($this->resource, $length);
-            if ($result === false) {
-                throw new RuntimeException(static::EXCEPTION_READ_ERROR);
-            }
+        if (!$this->needResource()->isReadable()) {
+            throw new RuntimeException(static::EXCEPTION_READ_ERROR);
+        }
 
+        $result = fread($this->resource, $length);
+        if ($result !== false) {
             return $result;
         }
 
@@ -237,15 +236,15 @@ class Stream implements StreamInterface {
      * @see \Fixin\Base\Stream\StreamInterface::seek($offset, $whence)
      */
     public function seek(int $offset, int $whence = SEEK_SET) {
-        if ($this->needResource() && $this->isSeekable()) {
-            if (fseek($this->resource, $offset, $whence) === -1) {
-                throw new RuntimeException(static::EXCEPTION_SEEK_ERROR);
-            }
+        if (!$this->needResource()->isSeekable()) {
+            throw new RuntimeException(static::EXCEPTION_NOT_SEEKABLE);
+        }
 
+        if (fseek($this->resource, $offset, $whence) === 0) {
             return $this;
         }
 
-        throw new RuntimeException(static::EXCEPTION_NOT_SEEKABLE);
+        throw new RuntimeException(static::EXCEPTION_SEEK_ERROR);
     }
 
     /**
@@ -269,15 +268,15 @@ class Stream implements StreamInterface {
      * @see \Fixin\Base\Stream\StreamInterface::write($string)
      */
     public function write(string $string): int {
-        if ($this->needResource() && $this->isWritable()) {
-            $result = fwrite($this->resource, $string);
-            if ($result === false) {
-                throw new RuntimeException(static::EXCEPTION_WRITE_ERROR);
-            }
+        if (!$this->needResource()->isWritable()) {
+            throw new RuntimeException(static::EXCEPTION_NOT_WRITABLE);
+        }
 
+        $result = fwrite($this->resource, $string);
+        if ($result !== false) {
             return $result;
         }
 
-        throw new RuntimeException(static::EXCEPTION_NOT_WRITABLE);
+        throw new RuntimeException(static::EXCEPTION_WRITE_ERROR);
     }
 }
