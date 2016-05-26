@@ -184,11 +184,6 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
 }
         </style>
         <div id="classes">
-            <?php if ($showAll): ?>
-                <a href="classes-public-members">Public members</a> | All members
-            <?php else: ?>
-                Public members | <a href="classes-all-members">All members</a>
-            <?php endif ?>
             <table>
                 <?php foreach ($helper->namespaces as $namespace => $elements): ?>
                     <?php ksort($elements) ?>
