@@ -8,24 +8,21 @@
 namespace Fixin\Delivery\Cargo\Factory;
 
 use Fixin\Delivery\Cargo\HttpCargoInterface;
-use Fixin\ResourceManager\Factory\FactoryInterface;
-use Fixin\ResourceManager\ResourceManagerInterface;
+use Fixin\ResourceManager\Factory\Factory;
 use Fixin\Support\Http;
 
-class HttpCargoFactory implements FactoryInterface {
+class HttpCargoFactory extends Factory {
 
     /**
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function __invoke(ResourceManagerInterface $container, array $options = NULL, string $name = NULL) {
-        $cargo = $container->clonePrototype('Delivery\Cargo\HttpCargo');
+    public function __invoke(array $options = NULL, string $name = NULL) {
+        $cargo = $this->container->clonePrototype('Delivery\Cargo\HttpCargo');
 
         $cargo->setRequestProtocolVersion($this->getProtocolVersion())
             ->setRequestMethod($method = $this->getMethod())
-            ->setRequestUri($container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
+            ->setRequestUri($this->container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
             ->setRequestParameters($_GET)
             ->setRequestHeaders($this->getHeaders())
             ->setCookies($_COOKIE)

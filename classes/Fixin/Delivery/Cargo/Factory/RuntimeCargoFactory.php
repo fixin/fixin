@@ -7,21 +7,18 @@
 
 namespace Fixin\Delivery\Cargo\Factory;
 
-use Fixin\ResourceManager\Factory\FactoryInterface;
-use Fixin\ResourceManager\ResourceManagerInterface;
+use Fixin\ResourceManager\Factory\Factory;
 use Fixin\Support\Ground;
 
-class RuntimeCargoFactory implements FactoryInterface {
+class RuntimeCargoFactory extends Factory {
 
     /**
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function __invoke(ResourceManagerInterface $container, array $options = null, string $name = null) {
+    public function __invoke(array $options = null, string $name = null) {
         $factory = 'Delivery\Cargo\Factory\\' . (Ground::isConsole() ? 'ConsoleCargoFactory' : 'HttpCargoFactory');
 
-        return $container->clonePrototype($factory);
+        return $this->container->clonePrototype($factory);
     }
 }

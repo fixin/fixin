@@ -7,11 +7,9 @@
 
 namespace Fixin\Base\Uri\Factory;
 
-use Fixin\Base\Uri\Uri;
-use Fixin\ResourceManager\Factory\FactoryInterface;
-use Fixin\ResourceManager\ResourceManagerInterface;
+use Fixin\ResourceManager\Factory\Factory;
 
-class EnvironmentUriFactory implements FactoryInterface {
+class EnvironmentUriFactory extends Factory {
 
     const EXCEPTION_CAN_T_DETERMINE = 'Can\'t determine the request URI';
 
@@ -19,8 +17,8 @@ class EnvironmentUriFactory implements FactoryInterface {
      * {@inheritDoc}
      * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
      */
-    public function __invoke(ResourceManagerInterface $container, array $options = NULL, string $name = null) {
-        $uri = $container->clonePrototype('Base\Uri\Uri');
+    public function __invoke(array $options = NULL, string $name = null) {
+        $uri = $this->container->clonePrototype('Base\Uri\Uri');
 
         $uri->setScheme(($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http')
         ->setHost($_SERVER['HTTP_HOST'])
