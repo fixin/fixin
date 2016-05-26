@@ -47,7 +47,7 @@ class Stream implements StreamInterface {
     }
 
     public function __destruct() {
-        fclose($this->detach());
+        fclose($this->resource);
     }
 
     /**
