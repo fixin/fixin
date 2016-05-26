@@ -38,8 +38,8 @@ class JsonEngine extends Engine {
         $result = [];
 
         // Children
-        foreach ($this->renderChildren($view) as $key => $value) {
-            $result[] = $json->encode($key) . ':' . $value;
+        foreach ($this->renderChildren($view) as $key => $rendered) {
+            $result[] = "{$json->encode($key)}:{$rendered}";
         }
 
         // Variables
