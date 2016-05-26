@@ -194,7 +194,7 @@ $showMethods = empty($_GET['all'])
                         <td colspan="10"><h2><?= htmlspecialchars($namespace) ?></h2></td>
                     </tr>
                     <?php foreach ($elements as $name => $reflection): ?>
-                        <tr class="Header" id=""<?= htmlspecialchars($reflection->name) ?>">
+                        <tr class="Header" id=""<?= htmlspecialchars(strtr($reflection->name, '\\', '-')) ?>">
                             <td class="Tab"></td>
                             <td colspan="9">
                                 <h3><?= htmlspecialchars($reflection->name) ?></h3>

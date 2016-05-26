@@ -55,7 +55,7 @@ class Helper {
 
         return strncmp($name, 'Fixin\\', 6)
         ? htmlspecialchars($name)
-        : '<a href="#' . htmlspecialchars($name) . '">' . htmlspecialchars($this->classShortName($name)) . '</a>';
+        : '<a href="#' . htmlspecialchars(strtr($name, '\\', '-')) . '">' . htmlspecialchars($this->classShortName($name)) . '</a>';
     }
 
     /**
