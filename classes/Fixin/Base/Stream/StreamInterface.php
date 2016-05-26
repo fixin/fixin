@@ -17,20 +17,6 @@ interface StreamInterface {
     public function __toString(): string;
 
     /**
-     * Close stream
-     *
-     * @return self
-     */
-    public function close();
-
-    /**
-     * Detach resource from Stream, return resource, if any
-     *
-     * @return resource|null
-     */
-    public function detach();
-
-    /**
      * Is at the end of the stream
      *
      * @return boolean
