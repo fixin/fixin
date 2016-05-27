@@ -27,6 +27,7 @@ class CodeInspector extends DoNotCreate {
 
         // Indents
         $source = [];
+        $max = null;
 
         foreach ($lines as $line) {
             if (mb_strlen($line) === $indent = strspn($line, " \t")) {
