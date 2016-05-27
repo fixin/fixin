@@ -12,7 +12,7 @@ class CodeInspector extends DoNotCreate {
     const SOURCE_REPLACE = ["\t" => '    '];
 
     /**
-     * @param unknown $function
+     * @param \Closure $function
      * @return mixed
      */
     public static function source($function) {
