@@ -5,6 +5,8 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
+namespace Tools;
+
 use Fixin\Support\Performance;
 
 class Test {
@@ -42,21 +44,21 @@ class TestB extends Test {
     // __call
     Performance::measureCode(function() use ($object) {
         for ($i = 0; $i < LOOPS; $i++) {
-            $value = $object->escapeHtml('test');
+            $object->escapeHtml('test');
         }
     });
 
     // __get
     Performance::measureCode(function() use ($object) {
         for ($i = 0; $i < LOOPS; $i++) {
-            $value = ($object->escapeHtml)('test');
+            ($object->escapeHtml)('test');
         }
     });
 
     // __get w/ public var
     Performance::measureCode(function() use ($objectB) {
         for ($i = 0; $i < LOOPS; $i++) {
-            $value = ($objectB->escapeHtml)('test');
+            ($objectB->escapeHtml)('test');
         }
     });
 })();
