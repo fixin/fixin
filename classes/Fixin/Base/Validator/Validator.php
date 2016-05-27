@@ -7,7 +7,9 @@
 
 namespace Fixin\Base\Validator;
 
-abstract class Validator implements ValidatorInterface {
+use Fixin\ResourceManager\Resource;
+
+abstract class Validator extends Resource implements ValidatorInterface {
 
     /**
      * @var array
@@ -18,6 +20,16 @@ abstract class Validator implements ValidatorInterface {
      * @var array
      */
     protected $errors = [];
+
+    /**
+     * Invoke isValid()
+     *
+     * @param mixed $value
+     * @return boolean
+     */
+    public function __invoke($value) {
+        return $this->isValid($value);
+    }
 
     /**
      * Add error

@@ -7,7 +7,9 @@
 
 namespace Fixin\Base\Validator;
 
-interface ValidatorInterface {
+use Fixin\ResourceManager\ResourceInterface;
+
+interface ValidatorInterface extends ResourceInterface {
 
     /**
      * Get errors of last validation
