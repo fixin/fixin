@@ -9,7 +9,7 @@ namespace Fixin\Support;
 
 class Performance extends DoNotCreate {
 
-    const MEASURE_FORMAT = "\n[Performance Measurement point]\n"
+    const MEASURE_FORMAT = "\n"
         . "    Elapsed time:       %12s ms\n"
         . "    Memory change:      %12s bytes\n"
         . "    Memory peak:        %12s bytes\n"
@@ -51,6 +51,24 @@ class Performance extends DoNotCreate {
         // Store current
         static::$lastTime = microtime(true);
         static::$lastMemoryUsage = $memoryUsage;
+    }
+
+    /**
+     * Measurement for code
+     *
+     * @param \Closure $function
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
+    public static function measureCode(\Closure $function) {
+        echo "\n" . CodeInspector::source($function);
+
+        static::$lastTime = microtime(true);
+        static::$lastMemoryUsage = memory_get_usage();
+
+        $function();
+
+        static::measure();
     }
 
     /**
