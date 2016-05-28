@@ -19,25 +19,26 @@ class CodeInspector extends DoNotCreate {
      */
     protected static function removeIndent(array $lines) {
         // Indents
-        $source = [];
-        $max = null;
+        $left = PHP_INT_MAX;
 
-        foreach ($lines as $line) {
+        foreach ($lines as &$line) {
             if (trim($line) === '') {
-                $source[] = "\n";
+                $line = "\n";
 
                 continue;
             }
 
             $indent = strspn($line, " \t");
             $leading = strtr(substr($line, 0, $indent), static::SOURCE_REPLACE);
-            $source[] = $leading . mb_substr($line, $indent);
-            $max = isset($max) ? min($max, strlen($leading)) : strlen($leading);
+            $line = $leading . mb_substr($line, $indent);
+            $left = min($left, strlen($leading));
         }
 
-        return implode('', array_map(function($item) use ($max) {
-            return mb_substr($item, $max);
-        }, $source));
+        foreach ($lines as &$line) {
+            $line = mb_substr($line, $left);
+        }
+
+        return implode('', $lines);
     }
 
     /**
