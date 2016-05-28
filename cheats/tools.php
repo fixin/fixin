@@ -11,5 +11,5 @@ return (function() {
     // Autoloader
     $classesPath = "{$fixinPath}/classes";
     require "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
-    new \Fixin\Base\Autoloader\SimpleAutoloader(['Fixin' => "{$classesPath}/Fixin"]);
+    new \Fixin\Base\Autoloader\SimpleAutoloader(['Fixin' => "{$classesPath}/Fixin", 'FixinTools' => "{$fixinPath}/tools/classes/FixinTools"]);
 })();
