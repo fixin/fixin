@@ -7,6 +7,12 @@
 
 namespace FixinTools\Performance\Magic;
 
+/**
+ * @property callable summary
+ * @property callable summary1
+ * @property callable summary2
+ * @property callable summary3
+ */
 class VariablesA implements \ArrayAccess {
 
     /**
