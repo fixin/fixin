@@ -12,19 +12,12 @@ class CodeInspector extends DoNotCreate {
     const SOURCE_REPLACE = ["\t" => '    '];
 
     /**
-     * @param \Closure $function
+     * Remove indent from lines
+     *
+     * @param array $lines
      * @return mixed
      */
-    public static function source($function) {
-        // File content
-        $reflection = new \ReflectionFunction($function);
-        $file = file($reflection->getFileName());
-        $lines = array_slice($file, $startLine = $reflection->getStartLine(), $reflection->getEndLine() - $startLine);
-
-        // Last row
-        $last = array_pop($lines);
-        array_push($lines, rtrim(mb_substr($last, 0, mb_strrpos($last, '}'))));
-
+    protected static function removeIndent(array $lines) {
         // Indents
         $source = [];
         $max = null;
@@ -45,5 +38,24 @@ class CodeInspector extends DoNotCreate {
         return array_reduce($source, function($result, $item) use ($max) {
             return $result . mb_substr($item, $max);
         }, '');
+    }
+
+    /**
+     * Get source code of function
+     *
+     * @param string|\Closure $function
+     * @return mixed
+     */
+    public static function functionSource($function) {
+        // File content
+        $reflection = new \ReflectionFunction($function);
+        $file = file($reflection->getFileName());
+        $lines = array_slice($file, $startLine = $reflection->getStartLine(), $reflection->getEndLine() - $startLine);
+
+        // Last row
+        $last = array_pop($lines);
+        array_push($lines, rtrim(mb_substr($last, 0, mb_strrpos($last, '}'))));
+
+        return static::removeIndent($lines);
     }
 }

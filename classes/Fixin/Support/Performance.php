@@ -61,7 +61,7 @@ class Performance extends DoNotCreate {
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public static function measureCode(\Closure $function) {
-        echo "\n" . CodeInspector::source($function);
+        echo "\n" . CodeInspector::functionSource($function);
 
         static::$lastTime = microtime(true);
         static::$lastMemoryUsage = memory_get_usage();
