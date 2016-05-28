@@ -9,28 +9,58 @@ namespace Tools;
 
 use Fixin\Support\Performance;
 
+/**
+ * @author attilajenei
+ *
+ * @method escapeHtml
+ * @property escapeHtml
+ */
 class Test {
 
     protected $helpers = [];
 
+    /**
+     * Helper
+     */
     public function __construct() {
         $this->helpers['escapeHtml'] = function($text) {
             return htmlspecialchars($text);
         };
     }
 
+    /**
+     * Non-accessible method
+     *
+     * @param string $name
+     * @param array $args
+     * @return mixed
+     */
     public function __call(string $name, $args) {
-        return call_user_func_array($this->helpers[$name], $args);
+        if (isset($this->helpers[$name])) {
+            return call_user_func_array($this->helpers[$name], $args);
+        }
+
+        return null;
     }
 
+    /**
+     * Non-accessible property
+     *
+     * @param string $name
+     * @return mixed
+     */
     public function __get(string $name) {
-        return $this->helpers[$name];
+        return $this->helpers[$name] ?? null;
     }
 }
 
+/**
+ * @author attilajenei
+ *
+ */
 class TestB extends Test {
     public function __get(string $name) {
-        return $this->$name = $this->helpers[$name];
+        return $this->$name = $this->helpers[$name] ?? null;
     }
 }
 
@@ -41,22 +71,22 @@ class TestB extends Test {
     $object = new Test();
     $objectB = new TestB();
 
-    // __call
     Performance::measureCode(function() use ($object) {
+        // __call
         for ($i = 0; $i < LOOPS; $i++) {
             $object->escapeHtml('test');
         }
     });
 
-    // __get
     Performance::measureCode(function() use ($object) {
+        // __get
         for ($i = 0; $i < LOOPS; $i++) {
             ($object->escapeHtml)('test');
         }
     });
 
-    // __get w/ public var
     Performance::measureCode(function() use ($objectB) {
+        // __get w/ public var
         for ($i = 0; $i < LOOPS; $i++) {
             ($objectB->escapeHtml)('test');
         }
