@@ -20,28 +20,28 @@ use FixinTools\Performance\Magic\VariablesB;
     Performance::measureCode(function() use ($loops, $objectA) {
         // Get: __get
         for ($i = 0; $i < $loops; $i++) {
-            $objectA->summary;
+            $a = $objectA->summary;
         }
     });
 
     Performance::measureCode(function() use ($loops, $objectA) {
         // Get: offsetGet
         for ($i = 0; $i < $loops; $i++) {
-            $objectA['summary'];
+            $a = $objectA['summary'];
         }
     });
 
     Performance::measureCode(function() use ($loops, $objectA) {
         // Get: getter
         for ($i = 0; $i < $loops; $i++) {
-            $objectA->getVariable('summary');
+            $a = $objectA->getVariable('summary');
         }
     });
 
     Performance::measureCode(function() use ($loops, $objectB) {
         // Get: __get w/ public var
         for ($i = 0; $i < $loops; $i++) {
-            $objectB->summary;
+            $a = $objectB->summary;
         }
     });
 
@@ -49,28 +49,28 @@ use FixinTools\Performance\Magic\VariablesB;
     Performance::measureCode(function() use ($loops, $objectA) {
         // Is set: __isset
         for ($i = 0; $i < $loops; $i++) {
-            isset($objectA->summary);
+            $a = isset($objectA->summary);
         }
     });
 
     Performance::measureCode(function() use ($loops, $objectA) {
         // Is set: offsetExists
         for ($i = 0; $i < $loops; $i++) {
-            isset($objectA['summary']);
+            $a = isset($objectA['summary']);
         }
     });
 
     Performance::measureCode(function() use ($loops, $objectA) {
         // Is set: has
         for ($i = 0; $i < $loops; $i++) {
-            $objectA->hasVariable('summary');
+            $a = $objectA->hasVariable('summary');
         }
     });
 
     Performance::measureCode(function() use ($loops, $objectB) {
         // Is set: __isset + __get w/ public var
         for ($i = 0; $i < $loops; $i++) {
-            isset($objectB->summary);
+            $a = isset($objectB->summary);
         }
     });
 
