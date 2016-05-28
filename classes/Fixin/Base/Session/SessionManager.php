@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Session;
 
-use Fixin\Base\Model\RepositoryInterface;
+use Fixin\Base\Model\Repository\RepositoryInterface;
 use Fixin\ResourceManager\Resource;
 
 class SessionManager extends Resource implements SessionManagerInterface {
@@ -22,7 +22,7 @@ class SessionManager extends Resource implements SessionManagerInterface {
      *
      * @param string $name
      */
-    protected function setRepositoryName(string $name) {
+    protected function setRepositoryResource(string $name) {
         $this->repository = $this->container->get($name);
     }
 }
