@@ -15,62 +15,63 @@ use FixinTools\Performance\Magic\VariablesB;
     $loops = 2000000;
     $objectA = new VariablesA();
     $objectB = new VariablesB();
+    $result = null;
 
     // Get
-    Performance::measureCode(function() use ($loops, $objectA) {
+    Performance::measureCode(function() use ($loops, &$result, $objectA) {
         // Get: __get
         for ($i = 0; $i < $loops; $i++) {
-            $a = $objectA->summary;
+            $result = $objectA->summary;
         }
     });
 
-    Performance::measureCode(function() use ($loops, $objectA) {
+    Performance::measureCode(function() use ($loops, &$result, $objectA) {
         // Get: offsetGet
         for ($i = 0; $i < $loops; $i++) {
-            $a = $objectA['summary'];
+            $result = $objectA['summary'];
         }
     });
 
-    Performance::measureCode(function() use ($loops, $objectA) {
+    Performance::measureCode(function() use ($loops, &$result, $objectA) {
         // Get: getter
         for ($i = 0; $i < $loops; $i++) {
-            $a = $objectA->getVariable('summary');
+            $result = $objectA->getVariable('summary');
         }
     });
 
-    Performance::measureCode(function() use ($loops, $objectB) {
+    Performance::measureCode(function() use ($loops, &$result, $objectB) {
         // Get: __get w/ public var
         for ($i = 0; $i < $loops; $i++) {
-            $a = $objectB->summary;
+            $result = $objectB->summary;
         }
     });
 
     // Is set
-    Performance::measureCode(function() use ($loops, $objectA) {
+    Performance::measureCode(function() use ($loops, &$result, $objectA) {
         // Is set: __isset
         for ($i = 0; $i < $loops; $i++) {
-            $a = isset($objectA->summary);
+            $result = isset($objectA->summary);
         }
     });
 
-    Performance::measureCode(function() use ($loops, $objectA) {
+    Performance::measureCode(function() use ($loops, &$result, $objectA) {
         // Is set: offsetExists
         for ($i = 0; $i < $loops; $i++) {
-            $a = isset($objectA['summary']);
+            $result = isset($objectA['summary']);
         }
     });
 
-    Performance::measureCode(function() use ($loops, $objectA) {
+    Performance::measureCode(function() use ($loops, &$result, $objectA) {
         // Is set: has
         for ($i = 0; $i < $loops; $i++) {
-            $a = $objectA->hasVariable('summary');
+            $result = $objectA->hasVariable('summary');
         }
     });
 
-    Performance::measureCode(function() use ($loops, $objectB) {
+    Performance::measureCode(function() use ($loops, &$result, $objectB) {
         // Is set: __isset + __get w/ public var
         for ($i = 0; $i < $loops; $i++) {
-            $a = isset($objectB->summary);
+            $result = isset($objectB->summary);
         }
     });
 
