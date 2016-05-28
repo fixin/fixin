@@ -9,8 +9,9 @@ namespace Fixin\View;
 
 use Fixin\Support\PrototypeInterface;
 use Fixin\View\Engine\EngineInterface;
+use Fixin\ResourceManager\ResourceInterface;
 
-interface ViewInterface extends PrototypeInterface, \ArrayAccess {
+interface ViewInterface extends ResourceInterface, PrototypeInterface, \ArrayAccess {
 
     /**
      * Clear children

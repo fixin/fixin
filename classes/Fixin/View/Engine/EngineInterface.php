@@ -9,8 +9,9 @@ namespace Fixin\View\Engine;
 
 use Fixin\View\Helper\HelperInterface;
 use Fixin\View\ViewInterface;
+use Fixin\ResourceManager\ResourceInterface;
 
-interface EngineInterface {
+interface EngineInterface extends ResourceInterface {
 
     /**
      * Get helper

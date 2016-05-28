@@ -7,7 +7,9 @@
 
 namespace Fixin\Base\FileResolver;
 
-interface FileResolverInterface {
+use Fixin\ResourceManager\ResourceInterface;
+
+interface FileResolverInterface extends ResourceInterface {
 
     /**
      * Resolve filename to fullpath

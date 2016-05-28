@@ -8,8 +8,9 @@
 namespace Fixin\View\Helper;
 
 use Fixin\View\Engine\EngineInterface;
+use Fixin\ResourceManager\ResourceInterface;
 
-interface HelperInterface {
+interface HelperInterface extends ResourceInterface {
 
     /**
      * New instance for engine

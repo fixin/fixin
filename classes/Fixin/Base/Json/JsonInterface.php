@@ -7,7 +7,9 @@
 
 namespace Fixin\Base\Json;
 
-interface JsonInterface {
+use Fixin\ResourceManager\ResourceInterface;
+
+interface JsonInterface extends ResourceInterface {
 
     /**
      * Decode JSON string

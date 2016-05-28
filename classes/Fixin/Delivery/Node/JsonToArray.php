@@ -8,9 +8,8 @@
 namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\ResourceManager\Resource;
 
-class JsonToArray extends Resource implements NodeInterface {
+class JsonToArray extends Node implements NodeInterface {
 
     const JSON_TYPES = ['application/json', 'application/jsonml+json'];
 
