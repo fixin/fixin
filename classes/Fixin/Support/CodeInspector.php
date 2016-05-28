@@ -24,7 +24,7 @@ class CodeInspector extends DoNotCreate {
 
         foreach ($lines as $line) {
             if (trim($line) === '') {
-                $source[] = "";
+                $source[] = "\n";
 
                 continue;
             }
@@ -35,9 +35,9 @@ class CodeInspector extends DoNotCreate {
             $max = isset($max) ? min($max, strlen($leading)) : strlen($leading);
         }
 
-        return array_reduce($source, function($result, $item) use ($max) {
-            return $result . mb_substr($item, $max);
-        }, '');
+        return implode('', array_map(function($item) use ($max) {
+            return mb_substr($item, $max);
+        }, $source));
     }
 
     /**
