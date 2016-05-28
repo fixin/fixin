@@ -9,7 +9,6 @@ namespace Fixin\Support;
 
 class CodeInspector extends DoNotCreate {
 
-    const SOURCE_REPLACE = ["\t" => '    '];
 
     /**
      * Remove indent from lines
@@ -23,15 +22,11 @@ class CodeInspector extends DoNotCreate {
 
         foreach ($lines as &$line) {
             if (trim($line) === '') {
-                $line = "\n";
-
                 continue;
             }
 
-            $indent = strspn($line, " \t");
-            $leading = strtr(substr($line, 0, $indent), static::SOURCE_REPLACE);
-            $line = $leading . mb_substr($line, $indent);
-            $left = min($left, strlen($leading));
+            $line = Strings::normalizeLeading($line);
+            $left = min($left, strspn($line, ' '));
         }
 
         foreach ($lines as &$line) {
