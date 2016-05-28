@@ -13,9 +13,9 @@ $application = include "$topDir/cheats/web.php";
 use \Fixin\Support\VariableInspector;
 
 // Functions
-include 'Helper.php';
+include "{$topDir}/tools/classes/FixinTools/Base/ClassHelper.php";
 
-$helper = new \Classes\Helper($topDir);
+$helper = new \FixinTools\Base\ClassHelper($topDir);
 $showAll = !empty($_GET['all']);
 
 $showProperties = $showAll ? (ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE) : ReflectionProperty::IS_PUBLIC;
@@ -301,7 +301,7 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
                                         <?php if ($parameters): ?>
                                             <?php
                                                 $parameter = array_shift($parameters);
-                                                include 'classes.parameter.php';
+                                                include 'includes/classes.parameter.php';
                                             ?>
                                         <?php else: ?>
                                             <td colspan="3"></td>
@@ -311,7 +311,7 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
                                     </tr>
                                     <?php foreach ($parameters as $parameter): ?>
                                         <tr class="Element Parameter <?= $oddEvenStyle ?>">
-                                            <?php include 'classes.parameter.php' ?>
+                                            <?php include 'includes/classes.parameter.php' ?>
                                         </tr>
                                     <?php endforeach ?>
                                 <?php endif ?>

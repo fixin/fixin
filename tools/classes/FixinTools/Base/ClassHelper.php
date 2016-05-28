@@ -6,9 +6,9 @@
  *
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
-namespace Classes;
+namespace FixinTools\Base;
 
-class Helper {
+class ClassHelper {
 
     /**
      * @var array
@@ -149,7 +149,7 @@ class Helper {
     protected function processElements() {
         foreach (array_merge(get_declared_classes(), get_declared_interfaces(), get_declared_traits()) as $name) {
             $reflection = new \ReflectionClass($name);
-            if ($reflection->isInternal() || $name === 'Classes\Helper') {
+            if ($reflection->isInternal() || $name === 'Classes\ClassHelper') {
                 continue;
             }
 

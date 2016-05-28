@@ -5,15 +5,13 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Tools;
+namespace FixinTools\Performance\Magic;
 
 /**
- * @author attilajenei
- *
  * @method escapeHtml($string)
  * @property callable escapeHtml
  */
-class Test {
+class ClassA {
 
     protected $helpers = [];
 

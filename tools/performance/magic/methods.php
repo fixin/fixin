@@ -5,31 +5,28 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Tools;
-
 use Fixin\Support\Performance;
-
-include 'Test.php';
-include 'TestB.php';
+use FixinTools\Performance\Magic\ClassA;
+use FixinTools\Performance\Magic\ClassB;
 
 (function() {
-    include dirname(__DIR__, 3) . '/cheats/minimal.php';
+    include dirname(__DIR__, 3) . '/cheats/tools.php';
 
-    define('LOOPS', 100000);
-    $object = new Test();
-    $objectB = new TestB();
+    define('LOOPS', 500000);
+    $objectA = new ClassA();
+    $objectB = new ClassB();
 
-    Performance::measureCode(function() use ($object) {
+    Performance::measureCode(function() use ($objectA) {
         // __call
         for ($i = 0; $i < LOOPS; $i++) {
-            $object->escapeHtml('test');
+            $objectA->escapeHtml('test');
         }
     });
 
-    Performance::measureCode(function() use ($object) {
+    Performance::measureCode(function() use ($objectA) {
         // __get
         for ($i = 0; $i < LOOPS; $i++) {
-            ($object->escapeHtml)('test');
+            ($objectA->escapeHtml)('test');
         }
     });
 

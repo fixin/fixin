@@ -5,14 +5,12 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Tools;
+namespace FixinTools\Performance\Magic;
 
 /**
- * @author attilajenei
- *
  * @property callable escapeHtml
  */
-class TestB extends Test {
+class ClassB extends ClassA {
     public function __get(string $name) {
         return $this->$name = $this->helpers[$name] ?? null;
     }
