@@ -5,12 +5,12 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Delivery\Dispatcher;
+namespace Fixin\Delivery\Route;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\Support\PrototypeInterface;
+use Fixin\ResourceManager\ResourceInterface;
 
-interface DispatcherInterface extends PrototypeInterface {
+interface RouteInterface extends ResourceInterface {
 
     /**
      * Dispatch cargo

@@ -5,13 +5,13 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Delivery\Dispatcher;
+namespace Fixin\Delivery\Route;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\ResourceManager\{Resource, ResourceManagerInterface};
 use Fixin\Delivery\Node\NodeInterface;
+use Fixin\Delivery\Route\RouteInterface;
 
-class Dispatcher extends Resource implements DispatcherInterface {
+class Route extends Resource implements RouteInterface {
 
     const EXCEPTION_INVALID_NODE = "Invalid node resource '%s'";
 
@@ -24,7 +24,7 @@ class Dispatcher extends Resource implements DispatcherInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Delivery\Dispatcher\DispatcherInterface::dispatch()
+     * @see \Fixin\Delivery\Route\RouteInterface::dispatch()
      */
     public function dispatch(CargoInterface $cargo) {
         $cargo->setDelivered(false);
