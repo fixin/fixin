@@ -15,6 +15,8 @@ class CodeInspector extends DoNotCreate {
      *
      * @param array $lines
      * @return mixed
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected static function removeIndent(array $lines) {
         // Indents
