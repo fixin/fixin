@@ -11,7 +11,7 @@ namespace FixinTools\Performance\Magic;
  * @method escapeHtml($string)
  * @property callable escapeHtml
  */
-class ClassA {
+class MethodsA {
 
     protected $helpers = [];
 

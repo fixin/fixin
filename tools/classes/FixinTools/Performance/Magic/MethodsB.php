@@ -10,7 +10,7 @@ namespace FixinTools\Performance\Magic;
 /**
  * @property callable escapeHtml
  */
-class ClassB extends ClassA {
+class MethodsB extends MethodsA {
     public function __get(string $name) {
         return $this->$name = $this->helpers[$name] ?? null;
     }
