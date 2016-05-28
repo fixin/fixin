@@ -9,7 +9,7 @@ namespace Fixin\Delivery\Route;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Node\NodeInterface;
-use Fixin\Delivery\Route\RouteInterface;
+use Fixin\ResourceManager\Resource;
 
 class Route extends Resource implements RouteInterface {
 
