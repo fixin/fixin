@@ -11,7 +11,7 @@ use Fixin\Support\PrototypeInterface;
 use Fixin\View\Engine\EngineInterface;
 use Fixin\ResourceManager\ResourceInterface;
 
-interface ViewInterface extends ResourceInterface, PrototypeInterface, \ArrayAccess {
+interface ViewInterface extends ResourceInterface, PrototypeInterface {
 
     /**
      * Clear children
@@ -120,11 +120,11 @@ interface ViewInterface extends ResourceInterface, PrototypeInterface, \ArrayAcc
     /**
      * Set variable value
      *
-     * @param string $key
+     * @param string $name
      * @param mixed $value
      * @return self
      */
-    public function setVariable(string $key, $value);
+    public function setVariable(string $name, $value);
 
     /**
      * Set variables

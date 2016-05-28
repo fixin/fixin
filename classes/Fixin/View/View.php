@@ -193,46 +193,6 @@ class View extends Resource implements ViewInterface {
 
     /**
      * {@inheritDoc}
-     * @see ArrayAccess::offsetExists()
-     */
-    public function offsetExists($offset) {
-        return isset($this->variables[$offset]);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see ArrayAccess::offsetGet()
-     */
-    public function &offsetGet($offset) {
-        $ret = & $this->variables[$offset];
-
-        return $ret;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see ArrayAccess::offsetSet()
-     */
-    public function offsetSet($offset, $value) {
-        if (is_null($offset)) {
-            $this->variables[] = $value;
-
-            return;
-        }
-
-        $this->variables[$offset] = $value;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see ArrayAccess::offsetUnset()
-     */
-    public function offsetUnset($offset) {
-        unset($this->variables[$offset]);
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::render()
      */
     public function render() {
@@ -277,8 +237,8 @@ class View extends Resource implements ViewInterface {
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::setVariable()
      */
-    public function setVariable(string $key, $value) {
-        $this->variables[$key] = $value;
+    public function setVariable(string $name, $value) {
+        $this->variables[$name] = $value;
 
         return $this;
     }
