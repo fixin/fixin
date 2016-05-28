@@ -10,6 +10,7 @@ namespace Tools;
 use Fixin\Support\Performance;
 
 include 'Test.php';
+include 'TestB.php';
 
 (function() {
     include dirname(__DIR__, 3) . '/cheats/minimal.php';

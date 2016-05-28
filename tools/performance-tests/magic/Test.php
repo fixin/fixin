@@ -10,10 +10,8 @@ namespace Tools;
 /**
  * @author attilajenei
  *
- * @method escapeHtml
- * @property escapeHtml
- *
- * @method escapeHtml
+ * @method escapeHtml($string)
+ * @property callable escapeHtml
  */
 class Test {
 
@@ -51,16 +49,5 @@ class Test {
      */
     public function __get(string $name) {
         return $this->helpers[$name] ?? null;
-    }
-}
-
-/**
- * @author attilajenei
- *
- * @property escapeHtml
- */
-class TestB extends Test {
-    public function __get(string $name) {
-        return $this->$name = $this->helpers[$name] ?? null;
     }
 }
