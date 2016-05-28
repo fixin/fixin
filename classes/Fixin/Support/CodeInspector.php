@@ -30,12 +30,13 @@ class CodeInspector extends DoNotCreate {
         $max = null;
 
         foreach ($lines as $line) {
-            if (mb_strlen($line) === $indent = strspn($line, " \t")) {
+            if (trim($line) === '') {
                 $source[] = "";
 
                 continue;
             }
 
+            $indent = strspn($line, " \t");
             $leading = strtr(substr($line, 0, $indent), static::SOURCE_REPLACE);
             $source[] = $leading . mb_substr($line, $indent);
             $max = isset($max) ? min($max, strlen($leading)) : strlen($leading);
