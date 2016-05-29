@@ -9,10 +9,9 @@ namespace Fixin\Base\Storage\Directory;
 
 use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\FileSystem\FileSystemInterface;
-use Fixin\Resource\Resource;
-use Fixin\Support\PrototypeInterface;
+use Fixin\Resource\Prototype;
 
-class Index extends Resource implements PrototypeInterface {
+class Index extends Prototype {
 
     const EXCEPTION_FILENAME_NOT_SET = 'Filename not set';
     const EXCEPTION_INVALID_DATA = 'Invalid data';
