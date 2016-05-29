@@ -9,6 +9,13 @@ return [
     'resourceManager' => [
         'class' => 'Fixin\Resource\ResourceManager',
         'definitions' => [
+            'errorRoute' => [
+                'class' => 'Delivery\Route\Route',
+                'options' => [
+                    'nodes' => [
+                    ]
+                ]
+            ],
             'mainRoute' => [
                 'class' => 'Delivery\Route\Route',
                 'options' => [
@@ -17,16 +24,11 @@ return [
                     ]
                 ]
             ],
-            'errorRoute' => [
-                'class' => 'Delivery\Route\Route',
+            'Base\Session\SessionRepository' => [
+                'class' => 'Base\Model\Repository',
                 'options' => [
-                    'nodes' => [
-                    ]
-                ]
-            ],
-            'Base\Session\SessionManager' => [
-                'options' => [
-                    'repository' => 'Base\Session\SessionRepository'
+                    'name' => 'sessions',
+                    'storage' => 'Base\Storage\Directory\DirectoryStorage'
                 ]
             ],
             'View\View\FileResolver' => [
