@@ -9,7 +9,7 @@ namespace Fixin\Base\Storage\Directory;
 
 use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\FileSystem\FileSystemInterface;
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 use Fixin\Support\PrototypeInterface;
 
 class Index extends Resource implements PrototypeInterface {
@@ -36,11 +36,6 @@ class Index extends Resource implements PrototypeInterface {
     protected $filename;
 
     /**
-     * @var bool
-     */
-    protected $prepared = false;
-
-    /**
      * @var array
      */
     protected $primaryKeys = [];
@@ -57,25 +52,50 @@ class Index extends Resource implements PrototypeInterface {
     /**
      * Clear all values
      *
-     * @return \Fixin\Base\Storage\Directory\Index
+     * @return self
      */
     public function clear() {
         $this->primaryKeys = [];
         $this->values = [];
 
+        $this->dirty = true;
+
         return $this;
+    }
+
+    /**
+     * Find before greater index
+     *
+     * @param mixed $value
+     * @return int
+     */
+    protected function findBeforeGreaterIndex($value): int {
+        $begin = 0;
+        $end = count($this->values) - 1;
+
+        while ($begin < $end) {
+            $middle = intdiv($begin + $end, 2);
+
+            if ($this->values[$middle] <= $value) {
+                $begin = $middle + 1;
+
+                continue;
+            }
+
+            $end = $middle;
+        }
+
+        return $begin;
     }
 
     /**
      * Write data if dirty
      *
-     * @return \Fixin\Base\Storage\Directory\Index
+     * @return self
      */
     public function flush() {
         if ($this->dirty) {
             $this->save();
-
-            $this->dirty = false;
         }
 
         return $this;
@@ -86,23 +106,24 @@ class Index extends Resource implements PrototypeInterface {
      *
      * @param string $primaryKey
      * @param mixed $value
-     * @return \Fixin\Base\Storage\Directory\Index
+     * @return self
      */
     public function insert(string $primaryKey, $value) {
-        $index = $this->findBefore($value);
+        $index = $this->findBeforeGreaterIndex($value);
 
         array_splice($this->primaryKeys, $index, 0, [$primaryKey]);
         array_splice($this->values, $index, 0, [$value]);
+
         $this->dirty = true;
 
         return $this;
     }
 
     /**
-     * Load data
+     * Load data from the file
      *
      * @throws RuntimeException
-     * @return \Fixin\Base\Storage\Directory\Index
+     * @return self
      */
     protected function load() {
         if (!$this->filename) {
@@ -110,25 +131,66 @@ class Index extends Resource implements PrototypeInterface {
         }
 
         $data = unserialize($this->fileSystem->get($this->filename), ['allowed_classes' => false]);
-        if (!isset($data[static::KEY_VALUES]) || !isset($data[static::KEY_PRIMARY_KEYS])) {
+        if (!is_array($data) || !$this->loadArray($data)) {
             throw new RuntimeException(static::EXCEPTION_INVALID_DATA);
         }
 
+        $this->dirty = false;
+
         return $this;
+    }
+
+    /**
+     * Load data from array
+     *
+     * @param array $data
+     * @return bool
+     */
+    protected function loadArray(array $data): bool {
+        // Key check
+        if (array_keys($data) != [static::KEY_VALUES, static::KEY_PRIMARY_KEYS]) {
+            return false;
+        }
+
+        // Value check
+        $primaryKeys = $data[static::KEY_PRIMARY_KEYS];
+        $values = $data[static::KEY_VALUES];
+
+        if (!is_array($primaryKeys) || !is_array($values) || count($primaryKeys) !== count($values)) {
+            return false;
+        }
+
+        // Load
+        $this->primaryKeys = $primaryKeys;
+        $this->values = $values;
+
+        return true;
     }
 
     /**
      * Remove primary key
      *
      * @param string $primaryKey
-     * @return \Fixin\Base\Storage\Directory\Index
+     * @return self
      */
     public function remove(string $primaryKey) {
         if (false !== $index = array_search($primaryKey, $this->primaryKeys)) {
             array_splice($this->primaryKeys, $index, 1);
             array_splice($this->values, $index, 1);
+
             $this->dirty = true;
         }
+
+        return $this;
+    }
+
+    /**
+     * Rollback modifications to the last saved state
+     *
+     * @return self
+     */
+    public function rollback() {
+        $this->load();
 
         return $this;
     }
@@ -137,7 +199,7 @@ class Index extends Resource implements PrototypeInterface {
      * Save data
      *
      * @throws RuntimeException
-     * @return \Fixin\Base\Storage\Directory\Index
+     * @return self
      */
     protected function save() {
         if (!$this->filename) {
@@ -150,6 +212,8 @@ class Index extends Resource implements PrototypeInterface {
         ];
 
         $this->fileSystem->put($this->filename, serialize($data));
+
+        $this->dirty = false;
 
         return $this;
     }
