@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\ResourceManager\AbstractFactory;
+namespace Fixin\Resource\AbstractFactory;
 
 class PrefixFallbackFactory extends AbstractFactory {
 
@@ -23,7 +23,7 @@ class PrefixFallbackFactory extends AbstractFactory {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
+     * @see \Fixin\Resource\Factory\FactoryInterface::__invoke()
      */
     public function __invoke(array $options = null, string $name = null) {
         $mapped = $this->map[$name];
@@ -33,7 +33,7 @@ class PrefixFallbackFactory extends AbstractFactory {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface::canProduce($name)
+     * @see \Fixin\Resource\AbstractFactory\AbstractFactoryInterface::canProduce($name)
      */
     public function canProduce(string $name): bool {
         // Already resolved

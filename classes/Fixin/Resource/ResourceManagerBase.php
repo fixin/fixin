@@ -5,13 +5,11 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\ResourceManager;
+namespace Fixin\Resource;
 
 use Fixin\Base\Exception\InvalidArgumentException;
-use Fixin\Base\Exception\RuntimeException;
-use Fixin\ResourceManager\AbstractFactory\AbstractFactoryInterface;
-use Fixin\ResourceManager\Factory\FactoryInterface;
-use Fixin\Support\PrototypeInterface;
+use Fixin\Resource\AbstractFactory\AbstractFactoryInterface;
+use Fixin\Resource\Factory\FactoryInterface;
 
 abstract class ResourceManagerBase implements ResourceManagerInterface {
 

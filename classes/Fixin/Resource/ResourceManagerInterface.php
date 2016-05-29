@@ -4,7 +4,7 @@
  *
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
-namespace Fixin\ResourceManager;
+namespace Fixin\Resource;
 
 use Fixin\Support\ContainerInterface;
 

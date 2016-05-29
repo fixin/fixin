@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\ResourceManager\Factory;
+namespace Fixin\Resource\Factory;
 
 use Fixin\Resource\Resource;
 

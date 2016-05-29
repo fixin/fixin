@@ -5,9 +5,9 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\ResourceManager\AbstractFactory;
+namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\ResourceManager\Factory\Factory;
+use Fixin\Resource\Factory\Factory;
 
 abstract class AbstractFactory extends Factory implements AbstractFactoryInterface {
 

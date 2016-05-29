@@ -5,11 +5,9 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\ResourceManager;
+namespace Fixin\Resource;
 
 class ResourceManager extends ResourceManagerBase {
-
-    const EXCEPTION_MUST_BE_OBJECT = 'Resource must be an object.';
 
     /**
      * {@inheritDoc}
