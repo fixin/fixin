@@ -58,7 +58,7 @@ interface FileSystemInterface extends ResourceInterface {
      * @param bool $lock
      * @return self
      */
-    public function put(string $filename, string $contents, bool $lock = false): int {
+    public function put(string $filename, string $contents, bool $lock = false): int;
 
     /**
      * Get file size

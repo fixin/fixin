@@ -29,13 +29,9 @@ class Local extends FileSystem {
         return file_exists($path);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::get($filename)
-     */
-    public function get(string $filename): string {
+    public function get(string $filename, bool $lock = false): string {
         if ($this->isFile($filename)) {
-            return file_get_contents($filename);
+            return $lock ? $this->lockedGet($filename) : file_get_contents($filename);
         }
 
         throw new FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
@@ -55,6 +51,32 @@ class Local extends FileSystem {
      */
     public function isFile(string $path): bool {
         return is_file($path);
+    }
+
+    /**
+     * Get contents with lock
+     *
+     * @param string $filename
+     * @return string
+     */
+    protected function lockedGet(string $filename): string {
+        $contents = '';
+
+        if ($handle = fopen($filename, 'r')) {
+            if (flock($handle, LOCK_SH)) {
+                while (!feof($handle)) {
+                    $contents .= fread($handle, 1048576);
+                }
+            }
+
+            fclose($handle);
+        }
+
+        return $contents;
+    }
+
+    public function put(string $filename, string $contents, bool $lock = false): int {
+        return file_put_contents($filename, $contents, $lock * LOCK_EX);
     }
 
     /**
