@@ -7,9 +7,7 @@
 
 namespace Fixin\View\Engine;
 
-use Fixin\Support\PrototypeInterface;
-
-interface AssistantInterface extends PrototypeInterface {
+interface AssistantInterface {
 
     /**
      * New instance for engine

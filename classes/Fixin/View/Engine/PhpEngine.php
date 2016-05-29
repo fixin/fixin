@@ -7,7 +7,6 @@
 
 namespace Fixin\View\Engine;
 
-use Fixin\Base\Stream\Stream;
 use Fixin\Resource\ResourceManagerInterface;
 use Fixin\View\ViewInterface;
 
@@ -28,7 +27,7 @@ class PhpEngine extends Engine {
     public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
         parent::__construct($container, $options, $name);
 
-        $this->assistant = $this->container->clonePrototype('View\Engine\Assistant')->withEngine($this);
+        $this->assistant = $this->container->get('View\Engine\Assistant')->withEngine($this);
     }
 
     /**

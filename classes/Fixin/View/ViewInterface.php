@@ -7,11 +7,10 @@
 
 namespace Fixin\View;
 
-use Fixin\Support\PrototypeInterface;
+use Fixin\Resource\PrototypeInterface;
 use Fixin\View\Engine\EngineInterface;
-use Fixin\Resource\ResourceInterface;
 
-interface ViewInterface extends ResourceInterface, PrototypeInterface {
+interface ViewInterface extends PrototypeInterface {
 
     /**
      * Clear children
