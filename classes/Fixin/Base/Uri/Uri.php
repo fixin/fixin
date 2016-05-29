@@ -7,7 +7,9 @@
 
 namespace Fixin\Base\Uri;
 
-class Uri implements UriInterface {
+use Fixin\Resource\Prototype;
+
+class Uri extends Prototype implements UriInterface {
 
     /**
      * @var array

@@ -7,7 +7,9 @@
 
 namespace Fixin\Delivery\Cargo;
 
-class Cargo implements CargoInterface {
+use Fixin\Resource\Prototype;
+
+class Cargo extends Prototype implements CargoInterface {
 
     /**
      * @var mixed

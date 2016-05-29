@@ -7,7 +7,7 @@
 
 namespace Fixin\Delivery\Cargo;
 
-use Fixin\Support\PrototypeInterface;
+use Fixin\Resource\PrototypeInterface;
 
 interface CargoInterface extends PrototypeInterface {
 

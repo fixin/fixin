@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Uri;
 
-use Fixin\Support\PrototypeInterface;
+use Fixin\Resource\PrototypeInterface;
 
 interface UriInterface extends PrototypeInterface {
 

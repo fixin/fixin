@@ -8,14 +8,14 @@
 namespace Fixin\Delivery\Cargo\Factory;
 
 use Fixin\Delivery\Cargo\HttpCargoInterface;
-use Fixin\ResourceManager\Factory\Factory;
+use Fixin\Resource\Factory\Factory;
 use Fixin\Support\Http;
 
 class HttpCargoFactory extends Factory {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
+     * @see \Fixin\Resource\Factory\FactoryInterface::__invoke()
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */

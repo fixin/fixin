@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Uri\Factory;
 
-use Fixin\ResourceManager\Factory\Factory;
+use Fixin\Resource\Factory\Factory;
 
 class EnvironmentUriFactory extends Factory {
 
@@ -15,7 +15,7 @@ class EnvironmentUriFactory extends Factory {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\ResourceManager\Factory\FactoryInterface::__invoke()
+     * @see \Fixin\Resource\Factory\FactoryInterface::__invoke()
      */
     public function __invoke(array $options = NULL, string $name = null) {
         $uri = $this->container->clonePrototype('Base\Uri\Uri');
