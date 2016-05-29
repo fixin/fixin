@@ -5,9 +5,9 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Version;
+namespace Fixin\Support;
 
-final class Version {
+final class Version extends DoNotCreate {
 
     /**
      * @var string
