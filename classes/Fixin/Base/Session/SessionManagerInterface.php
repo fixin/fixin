@@ -11,4 +11,11 @@ use Fixin\Resource\ResourceInterface;
 
 interface SessionManagerInterface extends ResourceInterface {
 
+    /**
+     * Get session for name
+     *
+     * @param string $name
+     * @return SessionInterface|null
+     */
+    public function getSession(string $name);
 }
