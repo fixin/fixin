@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Validator;
 
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 
 abstract class Validator extends Resource implements ValidatorInterface {
 

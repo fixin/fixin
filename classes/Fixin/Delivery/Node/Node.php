@@ -7,7 +7,7 @@
 
 namespace Fixin\Delivery\Node;
 
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 
 abstract class Node extends Resource {
 

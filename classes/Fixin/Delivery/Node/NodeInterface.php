@@ -8,7 +8,7 @@
 namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface NodeInterface extends ResourceInterface {
 

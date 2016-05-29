@@ -8,7 +8,7 @@
 namespace Fixin\View\Engine;
 
 use Fixin\Base\Stream\Stream;
-use Fixin\ResourceManager\ResourceManagerInterface;
+use Fixin\Resource\ResourceManagerInterface;
 use Fixin\View\ViewInterface;
 
 class PhpEngine extends Engine {

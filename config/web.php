@@ -2,7 +2,7 @@
 
 return [
     'resourceManager' => [
-        'class' => 'Fixin\ResourceManager\ResourceManager',
+        'class' => 'Fixin\Resource\ResourceManager',
         'definitions' => [
             'cargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
             'applicationRoute' => [

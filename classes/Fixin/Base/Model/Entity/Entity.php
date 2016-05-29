@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Model\Entity;
 
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 
 abstract class Entity extends Resource implements EntityInterface {
 }

@@ -8,7 +8,7 @@
 namespace Fixin\View\Helper;
 
 use Fixin\View\Engine\EngineInterface;
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 
 abstract class Helper extends Resource implements HelperInterface {
 

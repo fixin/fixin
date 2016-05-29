@@ -8,7 +8,7 @@
 namespace Fixin\View\Helper;
 
 use Fixin\Base\Escaper\EscaperInterface;
-use Fixin\ResourceManager\ResourceManagerInterface;
+use Fixin\Resource\ResourceManagerInterface;
 
 abstract class EscapeHelper extends Helper {
 

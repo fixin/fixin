@@ -9,7 +9,7 @@ namespace Fixin\View\Engine;
 
 use Fixin\View\Helper\HelperInterface;
 use Fixin\View\ViewInterface;
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface EngineInterface extends ResourceInterface {
 

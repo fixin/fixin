@@ -7,7 +7,7 @@
 
 namespace Fixin\ResourceManager\Factory;
 
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface FactoryInterface extends ResourceInterface {
 

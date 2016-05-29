@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Json;
 
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface JsonInterface extends ResourceInterface {
 

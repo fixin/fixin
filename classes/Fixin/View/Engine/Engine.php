@@ -7,7 +7,7 @@
 
 namespace Fixin\View\Engine;
 
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 use Fixin\View\ViewInterface;
 use Fixin\View\Helper\HelperInterface;
 use Fixin\Base\Exception\InvalidArgumentException;

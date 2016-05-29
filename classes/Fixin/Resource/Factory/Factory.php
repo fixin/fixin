@@ -7,7 +7,7 @@
 
 namespace Fixin\ResourceManager\Factory;
 
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 
 abstract class Factory extends Resource implements FactoryInterface {
 

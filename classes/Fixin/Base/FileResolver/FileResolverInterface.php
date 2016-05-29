@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\FileResolver;
 
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface FileResolverInterface extends ResourceInterface {
 

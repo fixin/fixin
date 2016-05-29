@@ -7,7 +7,7 @@
 
 namespace Fixin\View\Helper;
 
-use Fixin\ResourceManager\ResourceManagerInterface;
+use Fixin\Resource\ResourceManagerInterface;
 
 class JsVariable extends Helper {
 

@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Filter;
 
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface FilterInterface extends ResourceInterface {
 

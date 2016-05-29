@@ -8,7 +8,7 @@
 namespace Fixin\Delivery\Route;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface RouteInterface extends ResourceInterface {
 

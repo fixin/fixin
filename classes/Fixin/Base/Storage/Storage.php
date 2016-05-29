@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Storage;
 
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 
 abstract class Storage extends Resource implements StorageInterface {
 

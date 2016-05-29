@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Validator;
 
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface ValidatorInterface extends ResourceInterface {
 

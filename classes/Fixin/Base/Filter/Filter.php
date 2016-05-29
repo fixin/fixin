@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Filter;
 
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 
 abstract class Filter extends Resource implements FilterInterface {
 

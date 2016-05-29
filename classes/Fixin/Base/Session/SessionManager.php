@@ -8,7 +8,7 @@
 namespace Fixin\Base\Session;
 
 use Fixin\Base\Model\Repository\RepositoryInterface;
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 
 class SessionManager extends Resource implements SessionManagerInterface {
 

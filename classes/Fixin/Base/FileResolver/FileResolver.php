@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\FileResolver;
 
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 use Fixin\Support\Strings;
 
 class FileResolver extends Resource implements FileResolverInterface {

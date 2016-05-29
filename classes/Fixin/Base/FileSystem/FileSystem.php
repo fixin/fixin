@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\FileSystem;
 
-use Fixin\ResourceManager\Resource;
+use Fixin\Resource\Resource;
 
 abstract class FileSystem extends Resource implements FileSystemInterface {
 

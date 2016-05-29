@@ -8,7 +8,7 @@
 namespace Fixin\Base\Model\Repository;
 
 use Fixin\Base\Model\Entity\EntityInterface;
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface RepositoryInterface extends ResourceInterface {
 

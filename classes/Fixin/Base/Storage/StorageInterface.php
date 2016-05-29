@@ -9,7 +9,7 @@ namespace Fixin\Base\Storage;
 
 use Fixin\Base\Model\Entity\EntityInterface;
 use Fixin\Base\Model\Repository\RepositoryInterface;
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface StorageInterface extends ResourceInterface {
 

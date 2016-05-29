@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Session;
 
-use Fixin\ResourceManager\ResourceInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface SessionManagerInterface extends ResourceInterface {
 
