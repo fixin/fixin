@@ -29,9 +29,10 @@ interface FileSystemInterface extends ResourceInterface {
      * Get the contents of a file
      *
      * @param string $filename
+     * @param bool $lock
      * @return string
      */
-    public function get(string $filename): string;
+    public function get(string $filename, bool $lock = false): string;
 
     /**
      * Determine if path is a file
@@ -54,9 +55,10 @@ interface FileSystemInterface extends ResourceInterface {
      *
      * @param string $filename
      * @param string $content
+     * @param bool $lock
      * @return self
      */
-    public function put(string $filename, string $content);
+    public function put(string $filename, string $contents, bool $lock = false): int {
 
     /**
      * Get file size
