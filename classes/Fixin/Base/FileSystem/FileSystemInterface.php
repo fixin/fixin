@@ -54,7 +54,7 @@ interface FileSystemInterface extends ResourceInterface {
      * Put the contents of a file
      *
      * @param string $filename
-     * @param string $content
+     * @param string $contents
      * @param bool $lock
      * @return self
      */
