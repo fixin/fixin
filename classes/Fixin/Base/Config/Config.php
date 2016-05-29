@@ -7,7 +7,7 @@ namespace Fixin\Base\Config;
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-use Fixin\Base\Exception\InvalidKeyException;
+use Fixin\Base\Exception\InvalidArgumentException;
 use Fixin\Support\{ContainerInterface, ToStringTrait};
 
 class Config implements ContainerInterface, \Iterator {
