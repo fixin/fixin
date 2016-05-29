@@ -8,7 +8,7 @@
 namespace Fixin\View;
 
 use Fixin\Base\Exception\RuntimeException;
-use Fixin\Base\FileResolver\FileResolverInterface;
+use Fixin\Base\FileSystem\FileResolverInterface;
 use Fixin\Resource\Resource;
 use Fixin\View\Engine\EngineInterface;
 

@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\FileResolver;
+namespace Fixin\Base\FileSystem;
 
 use Fixin\Resource\ResourceInterface;
 

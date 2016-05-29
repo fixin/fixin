@@ -1,11 +1,15 @@
 <?php
 
 return [
+    'application' => [
+        'cargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
+        'route' => 'mainRoute',
+        'errorRoute' => 'errorRoute'
+    ],
     'resourceManager' => [
         'class' => 'Fixin\Resource\ResourceManager',
         'definitions' => [
-            'cargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
-            'applicationRoute' => [
+            'mainRoute' => [
                 'class' => 'Delivery\Route\Route',
                 'options' => [
                     'nodes' => [
@@ -20,8 +24,13 @@ return [
                     ]
                 ]
             ],
+            'Base\Session\SessionManager' => [
+                'options' => [
+                    'repository' => 'Base\Session\SessionRepository'
+                ]
+            ],
             'View\View\FileResolver' => [
-                'class' => 'Base\FileResolver\FileResolver',
+                'class' => 'Base\FileSystem\FileResolver',
                 'options' => [
                     'defaultExtension' => '.phtml'
                 ]
@@ -29,7 +38,7 @@ return [
         ],
         'abstractFactories' => [
             'prefixFallback' => [
-                'class' => 'Fixin\ResourceManager\AbstractFactory\PrefixFallbackFactory'
+                'class' => 'Fixin\Resource\AbstractFactory\PrefixFallbackFactory'
             ]
         ]
     ],
