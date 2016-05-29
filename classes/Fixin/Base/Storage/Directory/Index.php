@@ -210,7 +210,7 @@ class Index extends Prototype {
             static::KEY_VALUES => $this->values
         ];
 
-        $this->fileSystem->put($this->filename, serialize($data));
+        $this->fileSystem->put($this->filename, serialize($data), true);
 
         $this->dirty = false;
 
