@@ -5,13 +5,11 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\Model\Entity;
+namespace Fixin\Base\Model;
 
-use Fixin\Base\Model\Repository\RepositoryInterface;
-use Fixin\Resource\ResourceInterface;
-use Fixin\Support\PrototypeInterface;
+use Fixin\Resource\PrototypeInterface;
 
-interface EntityInterface extends ResourceInterface, PrototypeInterface {
+interface EntityInterface extends PrototypeInterface {
 
     /**
      * Delete entity from the repository

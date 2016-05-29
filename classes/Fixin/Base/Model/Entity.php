@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\Model\Entity;
+namespace Fixin\Base\Model;
 
 use Fixin\Resource\Resource;
 

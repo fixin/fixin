@@ -5,9 +5,8 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\Model\Repository;
+namespace Fixin\Base\Model;
 
-use Fixin\Base\Model\Entity\EntityInterface;
 use Fixin\Resource\ResourceInterface;
 
 interface RepositoryInterface extends ResourceInterface {
@@ -16,9 +15,9 @@ interface RepositoryInterface extends ResourceInterface {
      * Get single entity
      *
      * @param int|string|array $id
-     * @return EntityInterface
+     * @return EntityInterface|null
      */
-    public function get($id): EntityInterface;
+    public function get($id);
 
     /*
     public function create();
