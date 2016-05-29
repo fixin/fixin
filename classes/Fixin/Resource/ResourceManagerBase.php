@@ -178,24 +178,46 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      * Resolve definition (various data)
      *
      * @param mixed $definition
+     * @param string $name
      * @return array
      */
-    protected function resolveDefinition($definition): array {
+    protected function resolveDefinition($definition, string $name): array {
         // String
         if (is_string($definition)) {
             return $this->resolveDefinitionFromName($definition);
         }
         // Array
-        elseif (is_array($definition) && isset($definition[static::KEY_CLASS])) {
-            $inherited = $this->resolveDefinitionFromName($definition[static::KEY_CLASS]);
+        elseif (is_array($definition)) {
+            return $this->resolveDefinitionArray($definition, $name);
+        }
+
+        return [
+            static::KEY_CLASS => $definition,
+            static::KEY_OPTIONS => null,
+            static::KEY_RESOLVED => true
+        ];
+    }
+
+    /**
+     * Resolve definition (array)
+     *
+     * @param array $definition
+     * @param string $name
+     * @return array
+     */
+    protected function resolveDefinitionArray(array $definition, string $name): array {
+        $class = $definition[static::KEY_CLASS] ?? $name;
+
+        if ($class !== $name) {
+            $inherited = $this->resolveDefinitionFromName($class);
             unset($definition[static::KEY_CLASS]);
 
             return array_replace_recursive($inherited, $definition);
         }
 
         return [
-            static::KEY_CLASS => $definition,
-            static::KEY_OPTIONS => null,
+            static::KEY_CLASS => $class,
+            static::KEY_OPTIONS => $definition[static::KEY_OPTIONS] ?? null,
             static::KEY_RESOLVED => true
         ];
     }
@@ -210,11 +232,15 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
         if (isset($this->definitions[$name])) {
             $definition = $this->definitions[$name];
 
-            if (is_array($definition) && isset($definition[static::KEY_RESOLVED])) {
-                return $definition;
+            if (is_array($definition)) {
+                if (isset($definition[static::KEY_RESOLVED])) {
+                    return $definition;
+                }
+
+                return $this->definitions[$name] = $this->resolveDefinitionArray($definition, $name);
             }
 
-            return $this->definitions[$name] = $this->resolveDefinition($definition);
+            return $this->definitions[$name] = $this->resolveDefinition($definition, $name);
         }
 
         return [
@@ -232,7 +258,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      */
     protected function setupAbstractFactories(array $abstractFactories) {
         foreach ($abstractFactories as $key => $abstractFactory) {
-            $abstractFactory = $this->createFromDefinition($key, $this->resolveDefinition($abstractFactory));
+            $abstractFactory = $this->createFromDefinition($key, $this->resolveDefinition($abstractFactory, ''));
 
             if (!$abstractFactory instanceof AbstractFactoryInterface) {
                 throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION, $key));
