@@ -15,7 +15,6 @@ class Index extends Prototype {
 
     const EXCEPTION_FILENAME_NOT_SET = 'Filename not set';
     const EXCEPTION_INVALID_DATA = 'Invalid data';
-    const KEY_FILENAME = 'filename';
     const KEY_PRIMARY_KEYS = 'primaryKeys';
     const KEY_VALUES = 'values';
 
