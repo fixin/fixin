@@ -9,4 +9,5 @@ namespace Fixin\Base\Exception;
 
 class InvalidArgumentException extends \BadMethodCallException {
 
+    const MESSAGE = "Invalid '%s' argument: %s allowed";
 }
