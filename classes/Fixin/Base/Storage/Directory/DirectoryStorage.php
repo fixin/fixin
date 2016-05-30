@@ -85,6 +85,7 @@ class DirectoryStorage extends Storage {
      * Set data path
      *
      * @param string $path
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function setPath(string $path) {
         $this->path = Strings::normalizePath($path);

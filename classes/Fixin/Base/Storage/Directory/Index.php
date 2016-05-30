@@ -12,6 +12,9 @@ use Fixin\Resource\Prototype;
 use Fixin\Base\FileSystem\FileSystemInterface;
 use Fixin\Support\Arrays;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class Index extends Prototype {
 
     const EXCEPTION_FILENAME_NOT_SET = 'Filename not set';
@@ -155,7 +158,7 @@ class Index extends Prototype {
      * @param array $values
      * @return array
      */
-    public function in(array $values): array {
+    public function inValues(array $values): array {
         return array_intersect_key($this->ids, array_intersect($this->values, $values));
     }
 
@@ -214,6 +217,7 @@ class Index extends Prototype {
      *
      * @param array $data
      * @return bool
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function loadArray(array $data): bool {
         // Value check
@@ -295,7 +299,7 @@ class Index extends Prototype {
             static::KEY_VALUES => $this->values
         ];
 
-        $this->fileSystem->put($this->filename, serialize($data), true);
+        $this->fileSystem->putWithLock($this->filename, serialize($data));
 
         $this->dirty = false;
 

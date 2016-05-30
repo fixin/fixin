@@ -8,7 +8,6 @@
 namespace Fixin\Resource;
 
 use Fixin\Base\Exception\InvalidArgumentException;
-use Fixin\Base\Exception\RuntimeException;
 
 abstract class Resource implements ResourceInterface {
 

@@ -9,7 +9,6 @@ namespace Fixin\Support;
 
 class CodeInspector extends DoNotCreate {
 
-
     /**
      * Remove indent from lines
      *
