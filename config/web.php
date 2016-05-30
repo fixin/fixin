@@ -24,6 +24,7 @@ return [
                     ]
                 ]
             ],
+            'Base\FileSystem\Default' => 'Base\FileSystem\Local',
             'Base\Session\SessionRepository' => [
                 'class' => 'Base\Model\Repository',
                 'options' => [
