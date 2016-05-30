@@ -14,10 +14,10 @@ interface RepositoryInterface extends ResourceInterface {
     /**
      * Get single entity
      *
-     * @param int|string|array $id
+     * @param int|string|array $entityId
      * @return EntityInterface|null
      */
-    public function get($id);
+    public function get($entityId);
 
     /*
     public function create();

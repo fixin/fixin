@@ -20,7 +20,7 @@ class Index extends Prototype {
     const EXCEPTION_FILENAME_NOT_SET = 'Filename not set';
     const EXCEPTION_INVALID_DATA = 'Invalid data';
 
-    const KEY_IDS = 'ids';
+    const KEY_ENTITY_IDS = 'entityIds';
     const KEY_VALUES = 'values';
 
     /**
@@ -41,7 +41,7 @@ class Index extends Prototype {
     /**
      * @var array
      */
-    protected $ids = [];
+    protected $entityIds = [];
 
     /**
      * @var array
@@ -63,7 +63,7 @@ class Index extends Prototype {
      * @return self
      */
     public function clear() {
-        $this->ids = [];
+        $this->entityIds = [];
         $this->values = [];
 
         $this->dirty = true;
@@ -78,7 +78,7 @@ class Index extends Prototype {
      * @return array
      */
     public function equal($value): array {
-        return array_slice($this->ids, $start = $this->findIndex($value, -1), $this->findIndex($value, 0) - $start);
+        return array_slice($this->entityIds, $start = $this->findIndex($value, -1), $this->findIndex($value, 0) - $start);
     }
 
     /**
@@ -121,13 +121,13 @@ class Index extends Prototype {
     }
 
     /**
-     * Get values for ids
+     * Get values for IDs
      *
-     * @param array $ids
+     * @param array $entityIds
      * @return array
      */
-    public function getValuesForIds(array $ids): array {
-        $filtered = array_intersect($this->ids, $ids);
+    public function getValuesForIds(array $entityIds): array {
+        $filtered = array_intersect($this->entityIds, $entityIds);
 
         return array_combine($filtered, array_intersect_key($this->values, $filtered));
     }
@@ -139,7 +139,7 @@ class Index extends Prototype {
      * @return array
      */
     public function greaterThan($value): array {
-        return array_slice($this->ids, $this->findIndex($value, 0));
+        return array_slice($this->entityIds, $this->findIndex($value, 0));
     }
 
     /**
@@ -149,7 +149,7 @@ class Index extends Prototype {
      * @return array
      */
     public function greaterThanOrEqual($value): array {
-        return array_slice($this->ids, $this->findIndex($value, -1));
+        return array_slice($this->entityIds, $this->findIndex($value, -1));
     }
 
     /**
@@ -159,20 +159,20 @@ class Index extends Prototype {
      * @return array
      */
     public function inValues(array $values): array {
-        return array_intersect_key($this->ids, array_intersect($this->values, $values));
+        return array_intersect_key($this->entityIds, array_intersect($this->values, $values));
     }
 
     /**
-     * Insert value for id
+     * Insert value for ID
      *
-     * @param mixed $id
+     * @param mixed $entityId
      * @param mixed $value
      * @return self
      */
-    public function insert($id, $value) {
+    public function insert($entityId, $value) {
         $index = $this->findIndex($value, -1);
 
-        array_splice($this->ids, $index, 0, [$id]);
+        array_splice($this->entityIds, $index, 0, [$entityId]);
         array_splice($this->values, $index, 0, [$value]);
 
         $this->dirty = true;
@@ -188,7 +188,7 @@ class Index extends Prototype {
      * @return array
      */
     public function intervalOf($beginValue, $endValue): array {
-        return array_slice($this->ids, $start = $this->findIndex($beginValue, -1), $this->findIndex($endValue, 0) - $start);
+        return array_slice($this->entityIds, $start = $this->findIndex($beginValue, -1), $this->findIndex($endValue, 0) - $start);
     }
 
     /**
@@ -221,15 +221,15 @@ class Index extends Prototype {
      */
     protected function loadArray(array $data): bool {
         // Value check
-        $ids = Arrays::arrayForKey($data, static::KEY_IDS);
+        $entityIds = Arrays::arrayForKey($data, static::KEY_ENTITY_IDS);
         $values = Arrays::arrayForKey($data, static::KEY_VALUES);
 
-        if (is_null($ids) || is_null($values) || count($ids) !== count($values)) {
+        if (is_null($entityIds) || is_null($values) || count($entityIds) !== count($values)) {
             return false;
         }
 
         // Load
-        $this->ids = $ids;
+        $this->entityIds = $entityIds;
         $this->values = $values;
 
         return true;
@@ -242,7 +242,7 @@ class Index extends Prototype {
      * @return array
      */
     public function lowerThan($value): array {
-        return array_slice($this->ids, 0, $this->findIndex($value, -1));
+        return array_slice($this->entityIds, 0, $this->findIndex($value, -1));
     }
 
     /**
@@ -252,18 +252,18 @@ class Index extends Prototype {
      * @return array
      */
     public function lowerThanOrEqual($value): array {
-        return array_slice($this->ids, 0, $this->findIndex($value, 0));
+        return array_slice($this->entityIds, 0, $this->findIndex($value, 0));
     }
 
     /**
-     * Remove primary key
+     * Remove ID
      *
-     * @param mixed $id
+     * @param mixed $entityId
      * @return self
      */
-    public function remove($id) {
-        if (false !== $index = array_search($id, $this->ids)) {
-            array_splice($this->ids, $index, 1);
+    public function remove($entityId) {
+        if (false !== $index = array_search($entityId, $this->entityIds)) {
+            array_splice($this->entityIds, $index, 1);
             array_splice($this->values, $index, 1);
 
             $this->dirty = true;
@@ -295,7 +295,7 @@ class Index extends Prototype {
         }
 
         $data = [
-            static::KEY_IDS => $this->ids,
+            static::KEY_ENTITY_IDS => $this->entityIds,
             static::KEY_VALUES => $this->values
         ];
 
