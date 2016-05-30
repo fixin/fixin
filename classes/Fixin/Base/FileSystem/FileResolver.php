@@ -8,14 +8,23 @@
 namespace Fixin\Base\FileSystem;
 
 use Fixin\Resource\Resource;
-use Fixin\Support\Strings;
+use Fixin\Base\Exception\InvalidArgumentException;
+use Fixin\Base\Exception\RuntimeException;
 
 class FileResolver extends Resource implements FileResolverInterface {
+
+    const EXCEPTION_FILE_SYSTEM_NOT_SET = 'File system not set';
+    const EXCEPTION_INVALID_FILE_SYSTEM_ARGUMENT = "Invalid 'fileSystem' argument: string or FileSystemInterface allowed";
 
     /**
      * @var string
      */
-    protected $defaultExtension;
+    protected $defaultExtension = '';
+
+    /**
+     * @var FileSystemInterface
+     */
+    protected $fileSystem;
 
     /**
      * @var string[]
@@ -24,11 +33,32 @@ class FileResolver extends Resource implements FileResolverInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\FileResolver\FileResolverInterface::resolve()
+     * @see \Fixin\Resource\Resource::configurationTests()
+     */
+    protected function configurationTests() {
+        if (!isset($this->fileSystem)) {
+            throw new RuntimeException(static::EXCEPTION_FILE_SYSTEM_NOT_SET);
+        }
+    }
+
+    /**
+     * Get FileSystem instance
+     *
+     * @return FileSystemInterface
+     */
+    protected function getFileSystem(): FileSystemInterface {
+        return is_object($fileSystem = $this->fileSystem) ? $fileSystem : ($this->fileSystem = $this->container->get($fileSystem));
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\FileSystem\FileResolverInterface::resolve()
      */
     public function resolve(string $filename) {
+        $fileSystem = $this->getFileSystem();
+
         // Default extension
-        if (pathinfo($filename, PATHINFO_EXTENSION) === '') {
+        if ($fileSystem->extension($filename) === '') {
             $filename .= $this->defaultExtension;
         }
 
@@ -36,8 +66,8 @@ class FileResolver extends Resource implements FileResolverInterface {
         foreach ($this->paths as $path) {
             $fullname = $path . $filename;
 
-            if (is_readable($fullname)) {
-                return realpath($fullname);
+            if ($fileSystem->isReadable($fullname)) {
+                return $fileSystem->realpath($fullname);
             }
         }
 
@@ -51,6 +81,22 @@ class FileResolver extends Resource implements FileResolverInterface {
      */
     protected function setDefaultExtension(string $defaultExtension) {
         $this->defaultExtension = $defaultExtension;
+    }
+
+    /**
+     * Set file system
+     *
+     * @param string|FileSystemInterface $fileSystem
+     * @throws InvalidArgumentException
+     */
+    protected function setFileSystem($fileSystem) {
+        if (is_string($fileSystem) || $fileSystem instanceof FileSystemInterface) {
+            $this->fileSystem = $fileSystem;
+
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'fileSystem', 'string or FileSystemInterface'));
     }
 
     /**
