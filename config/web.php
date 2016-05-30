@@ -9,6 +9,7 @@ return [
     'resourceManager' => [
         'class' => 'Fixin\Resource\ResourceManager',
         'definitions' => [
+            'defaultFileSystem' => 'Base\FileSystem\Local',
             'errorRoute' => [
                 'class' => 'Delivery\Route\Route',
                 'options' => [
@@ -24,18 +25,25 @@ return [
                     ]
                 ]
             ],
-            'Base\FileSystem\Default' => 'Base\FileSystem\Local',
+            'viewFileResolver' => [
+                'class' => 'Base\FileSystem\FileResolver',
+                'options' => [
+                    'defaultExtension' => '.phtml',
+                    'fileSystem' => 'defaultFileSystem'
+                ]
+            ],
+
+            /*
             'Base\Session\SessionRepository' => [
                 'class' => 'Base\Model\Repository',
                 'options' => [
                     'name' => 'sessions',
                     'storage' => 'Base\Storage\Directory\DirectoryStorage'
                 ]
-            ],
-            'View\FileResolver' => [
-                'class' => 'Base\FileSystem\FileResolver',
+            ],*/
+            'View\View' => [
                 'options' => [
-                    'defaultExtension' => '.phtml'
+                    'fileResolver' => 'viewFileResolver'
                 ]
             ]
         ],
