@@ -35,7 +35,7 @@ class Repository extends Resource implements RepositoryInterface {
     protected $prototypeEntity = '\Fixin\Base\Model\Entity';
 
     /**
-     * @var StorageInterface
+     * @var StorageInterface|string
      */
     protected $storage;
 
@@ -64,7 +64,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Base\Model\RepositoryInterface::get($id)
      */
     public function get($id) {
-        $data = $this->storage->get($this, $id);
+        $data = $this->getStorage()->get($this, $id);
         return $data;
     }
 
@@ -75,6 +75,13 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function getName(): string {
         return $this->name;
+    }
+
+    /**
+     * @return StorageInterface
+     */
+    protected function getStorage(): StorageInterface {
+        return is_object($this->storage) ? $this->storage : ($this->storage = $this->container->get($this->storage));
     }
 
     /**
@@ -100,13 +107,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @throws InvalidArgumentException
      */
     protected function setStorage($storage) {
-        if (is_string($storage)) {
-            $this->storage = $this->container->get($storage);
-
-            return;
-        }
-
-        if ($storage instanceof StorageInterface) {
+        if (is_string($storage) || $storage instanceof StorageInterface) {
             $this->storage = $storage;
 
             return;
