@@ -10,6 +10,15 @@ namespace Fixin\Resource;
 abstract class Prototype extends Resource implements PrototypeInterface {
 
     /**
+     * @param ResourceManagerInterface $container
+     * @param array $options
+     * @param string $name
+     */
+    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
+        $this->container = $container;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Resource\PrototypeInterface::withOptions($options)
      */
