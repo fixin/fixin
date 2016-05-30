@@ -19,7 +19,7 @@ class DirectoryStorage extends Storage {
     const EXCEPTION_PATH_NOT_SET = 'Path not set';
 
     /**
-     * @var FileSystemInterface
+     * @var FileSystemInterface|false|null
      */
     protected $fileSystem;
 
@@ -37,7 +37,7 @@ class DirectoryStorage extends Storage {
             throw new RuntimeException(static::EXCEPTION_PATH_NOT_SET);
         }
 
-        if (mb_strlen($this->fileSystem) === 0) {
+        if (!isset($this->fileSystem)) {
             throw new RuntimeException(static::EXCEPTION_FILE_SYSTEM_NOT_SET);
         }
     }

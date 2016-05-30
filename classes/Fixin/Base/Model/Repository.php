@@ -31,12 +31,7 @@ class Repository extends Resource implements RepositoryInterface {
     protected $primaryKey = ['id'];
 
     /**
-     * @var EntityInterface|string
-     */
-    protected $prototypeEntity = '\Fixin\Base\Model\Entity';
-
-    /**
-     * @var StorageInterface|string
+     * @var StorageInterface|false|null
      */
     protected $storage;
 
@@ -49,7 +44,7 @@ class Repository extends Resource implements RepositoryInterface {
             throw new RuntimeException(static::EXCEPTION_NAME_NOT_SET);
         }
 
-        if (mb_strlen($this->storage) === 0) {
+        if (!isset($this->storage)) {
             throw new RuntimeException(static::EXCEPTION_STORAGE_NOT_SET);
         }
 
@@ -80,7 +75,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @return StorageInterface
      */
     protected function getStorage(): StorageInterface {
-        return is_object($this->storage) ? $this->storage : ($this->storage = $this->container->get($this->storage));
+        return $this->storage ?: $this->loadLazyLoadedProperty('storage');
     }
 
     /**
@@ -103,15 +98,8 @@ class Repository extends Resource implements RepositoryInterface {
      * Set storage
      *
      * @param string|StorageInterface $storage
-     * @throws InvalidArgumentException
      */
     protected function setStorage($storage) {
-        if (is_string($storage) || $storage instanceof StorageInterface) {
-            $this->storage = $storage;
-
-            return;
-        }
-
-        throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'storage', 'string or StorageInterface'));
+        $this->setLazyLoadedProperty('storage', StorageInterface::class, $storage);
     }
 }

@@ -17,7 +17,7 @@ class SessionManager extends Resource implements SessionManagerInterface {
     const EXCEPTION_REPOSITORY_NOT_SET = 'Repository not set';
 
     /**
-     * @var RepositoryInterface|string
+     * @var RepositoryInterface|false|null
      */
     protected $repository = 'Base\Session\SessionRepository';
 
@@ -26,7 +26,7 @@ class SessionManager extends Resource implements SessionManagerInterface {
      * @see \Fixin\Resource\Resource::configurationTests()
      */
     protected function configurationTests() {
-        if (mb_strlen($this->repository) === 0) {
+        if (!isset($this->repository)) {
             throw new RuntimeException(static::EXCEPTION_REPOSITORY_NOT_SET);
         }
     }
@@ -35,7 +35,7 @@ class SessionManager extends Resource implements SessionManagerInterface {
      * @return RepositoryInterface
      */
     protected function getRepository(): RepositoryInterface {
-        return is_object($this->repository) ? $this->repository : ($this->repository = $this->container->get($this->repository));
+        return $this->repository ?: $this->loadLazyLoadedProperty('repository');
     }
 
     /**
@@ -51,16 +51,11 @@ class SessionManager extends Resource implements SessionManagerInterface {
     }
 
     /**
+     * Set repository
+     *
      * @param string|RepositoryInterface $repository
-     * @throws InvalidArgumentException
      */
     protected function setRepository($repository) {
-        if (is_string($repository) || $repository instanceof RepositoryInterface) {
-            $this->repository = $repository;
-
-            return;
-        }
-
-        throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'repository', 'string or RepositoryInterface'));
+        $this->setLazyLoadedProperty('repository', RepositoryInterface::class, $repository);
     }
 }

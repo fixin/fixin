@@ -48,7 +48,7 @@ class FileResolver extends Resource implements FileResolverInterface {
      * @return FileSystemInterface
      */
     protected function getFileSystem(): FileSystemInterface {
-        return is_object($fileSystem = $this->fileSystem) ? $fileSystem : ($this->fileSystem = $this->container->get($fileSystem));
+        return $this->fileSystem ?: $this->loadLazyLoadedProperty('fileSystem');
     }
 
     /**
@@ -88,16 +88,9 @@ class FileResolver extends Resource implements FileResolverInterface {
      * Set file system
      *
      * @param string|FileSystemInterface $fileSystem
-     * @throws InvalidArgumentException
      */
     protected function setFileSystem($fileSystem) {
-        if (is_string($fileSystem) || $fileSystem instanceof FileSystemInterface) {
-            $this->fileSystem = $fileSystem;
-
-            return;
-        }
-
-        throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'fileSystem', 'string or FileSystemInterface'));
+        $this->setLazyLoadedProperty('fileSystem', FileSystemInterface::class, $fileSystem);
     }
 
     /**
