@@ -8,11 +8,8 @@
 namespace Fixin\View;
 
 use Fixin\Resource\PrototypeInterface;
-use Fixin\View\Engine\EngineInterface;
 
 interface ViewInterface extends PrototypeInterface {
-
-    const RESOURCE_FILE_RESOLVER = 'View\FileResolver';
 
     /**
      * Clear children
@@ -42,20 +39,6 @@ interface ViewInterface extends PrototypeInterface {
      * @return ViewInterface[]
      */
     public function getChildren(): array;
-
-    /**
-     * Get engine name or instance
-     *
-     * @return string|EngineInterface|NULL
-     */
-    public function getEngine();
-
-    /**
-     * Get resolved engine
-     *
-     * @return EngineInterface
-     */
-    public function getResolvedEngine(): EngineInterface;
 
     /**
      * Get resolved template filename
@@ -101,14 +84,6 @@ interface ViewInterface extends PrototypeInterface {
      * @return self
      */
     public function setChild(string $name, ViewInterface $child);
-
-    /**
-     * Set engine name or instance
-     *
-     * @param bool|string $engine
-     * @return self
-     */
-    public function setEngine($engine);
 
     /**
      * Set template name

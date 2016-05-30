@@ -10,10 +10,11 @@ namespace Fixin\Base\Session;
 use Fixin\Base\Exception\InvalidArgumentException;
 use Fixin\Base\Model\RepositoryInterface;
 use Fixin\Resource\Resource;
+use Fixin\Base\Exception\RuntimeException;
 
 class SessionManager extends Resource implements SessionManagerInterface {
 
-    const EXCEPTION_INVALID_REPOSITORY_TYPE = 'Invalid repository type';
+    const EXCEPTION_REPOSITORY_NOT_SET = 'Repository not set';
 
     /**
      * @var RepositoryInterface|string
@@ -22,13 +23,11 @@ class SessionManager extends Resource implements SessionManagerInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configureWithOptions()
+     * @see \Fixin\Resource\Resource::configurationTests()
      */
-    protected function configureWithOptions(array $options) {
-        parent::configureWithOptions($options);
-
+    protected function configurationTests() {
         if (mb_strlen($this->repository) === 0) {
-            throw new InvalidArgumentException(static::EXCEPTION_INVALID_REPOSITORY_TYPE);
+            throw new RuntimeException(static::EXCEPTION_REPOSITORY_NOT_SET);
         }
     }
 
@@ -62,6 +61,6 @@ class SessionManager extends Resource implements SessionManagerInterface {
             return;
         }
 
-        throw new InvalidArgumentException(static::EXCEPTION_INVALID_REPOSITORY_TYPE);
+        throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'repository', 'string or RepositoryInterface'));
     }
 }

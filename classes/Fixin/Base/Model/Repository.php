@@ -10,14 +10,15 @@ namespace Fixin\Base\Model;
 use Fixin\Resource\Resource;
 use Fixin\Base\Storage\StorageInterface;
 use Fixin\Base\Exception\InvalidArgumentException;
+use Fixin\Base\Exception\RuntimeException;
 
 class Repository extends Resource implements RepositoryInterface {
 
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
     const EXCEPTION_INVALID_STORAGE_TYPE = 'Invalid storage type';
-    const EXCEPTION_NO_NAME_DEFINED = "No name defined";
-    const EXCEPTION_NO_PRIMARY_KEY_DEFINED = 'No primary key defined';
-    const EXCEPTION_NO_STORAGE_SET = "No storage set";
+    const EXCEPTION_NAME_NOT_SET = "Name not set";
+    const EXCEPTION_PRIMARY_KEY_NOT_SET = 'Primary key not set';
+    const EXCEPTION_STORAGE_NOT_SET = "Storage not set";
 
     /**
      * @var string
@@ -41,21 +42,19 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configureWithOptions()
+     * @see \Fixin\Resource\Resource::configurationTests()
      */
-    protected function configureWithOptions(array $options) {
-        parent::configureWithOptions($options);
-
+    protected function configurationTests() {
         if (mb_strlen($this->name) === 0) {
-            throw new InvalidArgumentException(static::EXCEPTION_NO_NAME_DEFINED);
+            throw new RuntimeException(static::EXCEPTION_NAME_NOT_SET);
         }
 
-        if (!isset($this->storage)) {
-            throw new InvalidArgumentException(static::EXCEPTION_NO_STORAGE_SET);
+        if (mb_strlen($this->storage) === 0) {
+            throw new RuntimeException(static::EXCEPTION_STORAGE_NOT_SET);
         }
 
         if (empty($this->primaryKey)) {
-            throw new InvalidArgumentException(static::EXCEPTION_NO_PRIMARY_KEY_DEFINED);
+            throw new RuntimeException(static::EXCEPTION_PRIMARY_KEY_NOT_SET);
         }
     }
 
@@ -113,6 +112,6 @@ class Repository extends Resource implements RepositoryInterface {
             return;
         }
 
-        throw new InvalidArgumentException(static::EXCEPTION_INVALID_STORAGE_TYPE);
+        throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'storage', 'string or StorageInterface'));
     }
 }

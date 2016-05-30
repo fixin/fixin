@@ -11,11 +11,13 @@ use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\FileSystem\FileResolverInterface;
 use Fixin\Resource\Prototype;
 use Fixin\View\Engine\EngineInterface;
+use Fixin\Base\Exception\InvalidArgumentException;
 
 class View extends Prototype implements ViewInterface {
 
     const DEFAULT_ENGINE = 'View\Engine\JsonEngine';
-    const EXCEPTION_INVALID_ENGINE_ARGUMENT = "Invalid engine argument: string or EngineInterface allowed";
+
+    const EXCEPTION_FILE_RESOLVER_NOT_SET = 'File resolver not set';
     const EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE = "Unable to resolve template '%s'";
 
     /**
@@ -37,7 +39,7 @@ class View extends Prototype implements ViewInterface {
     ];
 
     /**
-     * @var FileResolverInterface
+     * @var FileResolverInterface|string|null
      */
     protected $fileResolver;
 
@@ -73,7 +75,7 @@ class View extends Prototype implements ViewInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getChild()
+     * @see \Fixin\View\ViewInterface::getChild($name)
      */
     public function getChild(string $name) {
         return $this->children[$name] ?? null;
@@ -88,11 +90,19 @@ class View extends Prototype implements ViewInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getEngine()
+     * Get Engine instance
+     *
+     * @return EngineInterface
      */
-    public function getEngine() {
-        return $this->engine;
+    protected function getEngine(): EngineInterface {
+        $engine = $this->engine;
+
+        // Resolved
+        if ($engine instanceof EngineInterface) {
+            return $engine;
+        }
+
+        return $this->engine = $this->container->get($engine ?? $this->getEngineNameForTemplate());
     }
 
     /**
@@ -119,27 +129,22 @@ class View extends Prototype implements ViewInterface {
     }
 
     /**
-     * FileResolver instance
+     * Get FileResolver instance
      *
      * @return FileResolverInterface
      */
     protected function getFileResolver() {
-        return $this->fileResolver ?? ($this->fileResolver = $this->container->get(static::RESOURCE_FILE_RESOLVER));
-    }
+        $fileResolver = $this->fileResolver;
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getResolvedEngine()
-     */
-    public function getResolvedEngine(): EngineInterface {
-        $engine = $this->engine;
-
-        // Resolved
-        if ($engine instanceof EngineInterface) {
-            return $engine;
+        if (is_object($fileResolver)) {
+            return $fileResolver;
         }
 
-        return $this->engine = $this->container->get($engine ?? $this->getEngineNameForTemplate());
+        if (isset($fileResolver)) {
+            return $this->fileResolver = $this->container->get($fileResolver);
+        }
+
+        throw new RuntimeException(static::EXCEPTION_FILE_RESOLVER_NOT_SET);
     }
 
     /**
@@ -177,7 +182,7 @@ class View extends Prototype implements ViewInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getVariable()
+     * @see \Fixin\View\ViewInterface::getVariable($name)
      */
     public function getVariable(string $name) {
         return $this->variables[$name] ?? null;
@@ -185,7 +190,7 @@ class View extends Prototype implements ViewInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getData()
+     * @see \Fixin\View\ViewInterface::getVariables()
      */
     public function getVariables(): array {
         return $this->variables;
@@ -196,12 +201,12 @@ class View extends Prototype implements ViewInterface {
      * @see \Fixin\View\ViewInterface::render()
      */
     public function render() {
-        return $this->getResolvedEngine()->render($this);
+        return $this->getEngine()->render($this);
     }
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::setChild()
+     * @see \Fixin\View\ViewInterface::setChild($name, $child)
      */
     public function setChild(string $name, ViewInterface $child) {
         $this->children[$name] = $child;
@@ -210,22 +215,36 @@ class View extends Prototype implements ViewInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::setEngine()
+     * Set Engine
+     *
+     * @param string|EngineInterface $engine
+     * @throws InvalidArgumentException
      */
-    public function setEngine($engine) {
+    protected function setEngine($engine) {
         if (isset($engine) && !is_string($engine) && !$engine instanceof EngineInterface) {
-            throw new InvalidArgumentException(static::EXCEPTION_INVALID_ENGINE_ARGUMENT);
+            throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'engine', 'string or EngineInterface'));
         }
 
         $this->engine = $engine;
+    }
 
-        return $this;
+    /**
+     * Set FileResolver
+     *
+     * @param string|FileResolverInterface $fileResolver
+     * @throws InvalidArgumentException
+     */
+    protected function setFileResolver($fileResolver) {
+        if (!is_string($fileResolver) && !$fileResolver instanceof FileResolverInterface) {
+            throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'fileResolver', 'string or FileResolverInterface'));
+        }
+
+        $this->fileResolver = $fileResolver;
     }
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::setTemplate()
+     * @see \Fixin\View\ViewInterface::setTemplate($template)
      */
     public function setTemplate(string $template) {
         $this->template = $template;
@@ -235,7 +254,7 @@ class View extends Prototype implements ViewInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::setVariable()
+     * @see \Fixin\View\ViewInterface::setVariable($name, $value)
      */
     public function setVariable(string $name, $value) {
         $this->variables[$name] = $value;
@@ -245,7 +264,7 @@ class View extends Prototype implements ViewInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::setVariables()
+     * @see \Fixin\View\ViewInterface::setVariables($variables)
      */
     public function setVariables(array $variables) {
         $this->variables = $variables + $this->variables;
