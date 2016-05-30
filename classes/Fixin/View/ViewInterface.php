@@ -12,6 +12,8 @@ use Fixin\View\Engine\EngineInterface;
 
 interface ViewInterface extends PrototypeInterface {
 
+    const RESOURCE_FILE_RESOLVER = 'View\FileResolver';
+
     /**
      * Clear children
      *

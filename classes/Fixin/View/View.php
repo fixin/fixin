@@ -124,7 +124,7 @@ class View extends Prototype implements ViewInterface {
      * @return FileResolverInterface
      */
     protected function getFileResolver() {
-        return $this->fileResolver ?? ($this->fileResolver = $this->container->get('View\View\FileResolver'));
+        return $this->fileResolver ?? ($this->fileResolver = $this->container->get(static::RESOURCE_FILE_RESOLVER));
     }
 
     /**

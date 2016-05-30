@@ -31,7 +31,7 @@ return [
                     'storage' => 'Base\Storage\Directory\DirectoryStorage'
                 ]
             ],
-            'View\View\FileResolver' => [
+            'View\FileResolver' => [
                 'class' => 'Base\FileSystem\FileResolver',
                 'options' => [
                     'defaultExtension' => '.phtml'
