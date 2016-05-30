@@ -8,9 +8,9 @@
 namespace Fixin\View\Helper;
 
 use Fixin\View\Engine\EngineInterface;
-use Fixin\Resource\Resource;
+use Fixin\Resource\Prototype;
 
-abstract class Helper extends Resource implements HelperInterface {
+abstract class Helper extends Prototype implements HelperInterface {
 
     /**
      * @var EngineInterface
@@ -18,13 +18,11 @@ abstract class Helper extends Resource implements HelperInterface {
     protected $engine;
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Helper\HelperInterface::withEngine($engine)
+     * Set engine instance
+     *
+     * @param EngineInterface $engine
      */
-    public function withEngine(EngineInterface $engine): HelperInterface {
-        $clone = clone $this;
-        $clone->engine = $engine;
-
-        return $clone;
+    protected function setEngine(EngineInterface $engine) {
+        $this->engine = $engine;
     }
 }

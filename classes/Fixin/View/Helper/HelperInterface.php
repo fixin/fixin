@@ -7,16 +7,10 @@
 
 namespace Fixin\View\Helper;
 
-use Fixin\View\Engine\EngineInterface;
-use Fixin\Resource\ResourceInterface;
+use Fixin\Resource\PrototypeInterface;
 
-interface HelperInterface extends ResourceInterface {
+interface HelperInterface extends PrototypeInterface {
 
-    /**
-     * New instance for engine
-     *
-     * @param EngineInterface $engine
-     * @return self
-     */
-    public function withEngine(EngineInterface $engine): HelperInterface;
+    const OPTION_ENGINE = 'engine';
+
 }

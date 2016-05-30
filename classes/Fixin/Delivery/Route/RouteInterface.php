@@ -12,6 +12,8 @@ use Fixin\Resource\ResourceInterface;
 
 interface RouteInterface extends ResourceInterface {
 
+    const OPTION_NODES = 'nodes';
+
     /**
      * Dispatch cargo
      *
