@@ -29,6 +29,18 @@ class Local extends FileSystem {
         return file_exists($path);
     }
 
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::extension($path)
+     */
+    public function extension(string $path): string {
+        return pathinfo($path, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::get($filename, $lock)
+     */
     public function get(string $filename, bool $lock = false): string {
         if ($this->isFile($filename)) {
             return $lock ? $this->lockedGet($filename) : file_get_contents($filename);
@@ -39,7 +51,7 @@ class Local extends FileSystem {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::isDirectory($filename)
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::isDirectory($path)
      */
     public function isDirectory(string $path): bool {
         return is_dir($path);
@@ -47,7 +59,7 @@ class Local extends FileSystem {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::isFile($filename)
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::isFile($path)
      */
     public function isFile(string $path): bool {
         return is_file($path);
@@ -75,6 +87,10 @@ class Local extends FileSystem {
         return $contents;
     }
 
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::put($filename, $contents, $lock)
+     */
     public function put(string $filename, string $contents, bool $lock = false): int {
         return file_put_contents($filename, $contents, $lock * LOCK_EX);
     }

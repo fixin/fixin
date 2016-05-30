@@ -11,8 +11,6 @@ use Fixin\Resource\ResourceInterface;
 
 interface FileSystemInterface extends ResourceInterface {
 
-    const RESOURCE_DEFAULT = 'Base\FileSystem\Default';
-
     /**
      * @param string $filename
      * @return bool
@@ -26,6 +24,14 @@ interface FileSystemInterface extends ResourceInterface {
      * @return bool
      */
     public function exists(string $path): bool;
+
+    /**
+     * Get extension of a filename
+     *
+     * @param string $path
+     * @return string
+     */
+    public function extension(string $path): string;
 
     /**
      * Get the contents of a file
