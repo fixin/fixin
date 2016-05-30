@@ -19,7 +19,7 @@ class SessionManager extends Resource implements SessionManagerInterface {
     /**
      * @var RepositoryInterface|false|null
      */
-    protected $repository = 'Base\Session\SessionRepository';
+    protected $repository;
 
     /**
      * {@inheritDoc}
@@ -35,7 +35,7 @@ class SessionManager extends Resource implements SessionManagerInterface {
      * @return RepositoryInterface
      */
     protected function getRepository(): RepositoryInterface {
-        return $this->repository ?: $this->loadLazyLoadedProperty('repository');
+        return $this->repository ?: $this->loadLazyProperty('repository');
     }
 
     /**
@@ -56,6 +56,6 @@ class SessionManager extends Resource implements SessionManagerInterface {
      * @param string|RepositoryInterface $repository
      */
     protected function setRepository($repository) {
-        $this->setLazyLoadedProperty('repository', RepositoryInterface::class, $repository);
+        $this->setLazyLoadingProperty('repository', RepositoryInterface::class, $repository);
     }
 }

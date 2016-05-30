@@ -26,7 +26,7 @@ class View extends Prototype implements ViewInterface {
     protected $children = [];
 
     /**
-     * @var string|EngineInterface|null
+     * @var EngineInterface|false|null
      */
     protected $engine;
 
@@ -39,7 +39,7 @@ class View extends Prototype implements ViewInterface {
     ];
 
     /**
-     * @var FileResolverInterface|string|null
+     * @var FileResolverInterface|false|null
      */
     protected $fileResolver;
 
@@ -95,14 +95,15 @@ class View extends Prototype implements ViewInterface {
      * @return EngineInterface
      */
     protected function getEngine(): EngineInterface {
-        $engine = $this->engine;
+        if ($this->engine) {
+            return $this->engine;
+        }
 
-        // Resolved
-        if ($engine instanceof EngineInterface) {
+        if ($engine = $this->loadLazyProperty('engine')) {
             return $engine;
         }
 
-        return $this->engine = $this->container->get($engine ?? $this->getEngineNameForTemplate());
+        return $this->engine = $this->container->get($this->getEngineNameForTemplate());
     }
 
     /**
@@ -133,18 +134,8 @@ class View extends Prototype implements ViewInterface {
      *
      * @return FileResolverInterface
      */
-    protected function getFileResolver() {
-        $fileResolver = $this->fileResolver;
-
-        if (is_object($fileResolver)) {
-            return $fileResolver;
-        }
-
-        if (isset($fileResolver)) {
-            return $this->fileResolver = $this->container->get($fileResolver);
-        }
-
-        throw new RuntimeException(static::EXCEPTION_FILE_RESOLVER_NOT_SET);
+    protected function getFileResolver(): FileResolverInterface {
+        return $this->fileResolver ?: $this->loadLazyProperty('fileResolver');
     }
 
     /**
@@ -221,25 +212,16 @@ class View extends Prototype implements ViewInterface {
      * @throws InvalidArgumentException
      */
     protected function setEngine($engine) {
-        if (isset($engine) && !is_string($engine) && !$engine instanceof EngineInterface) {
-            throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'engine', 'string or EngineInterface'));
-        }
-
-        $this->engine = $engine;
+        $this->setLazyLoadingProperty('engine', EngineInterface::class, $engine);
     }
 
     /**
      * Set FileResolver
      *
      * @param string|FileResolverInterface $fileResolver
-     * @throws InvalidArgumentException
      */
     protected function setFileResolver($fileResolver) {
-        if (!is_string($fileResolver) && !$fileResolver instanceof FileResolverInterface) {
-            throw new InvalidArgumentException(sprintf(InvalidArgumentException::MESSAGE, 'fileResolver', 'string or FileResolverInterface'));
-        }
-
-        $this->fileResolver = $fileResolver;
+        $this->setLazyLoadingProperty('fileResolver', FileResolverInterface::class, $fileResolver);
     }
 
     /**

@@ -10,6 +10,7 @@ namespace Fixin\Base\Storage\Directory;
 use Fixin\Base\Exception\RuntimeException;
 use Fixin\Resource\Prototype;
 use Fixin\Base\FileSystem\FileSystemInterface;
+use Fixin\Support\Arrays;
 
 class Index extends Prototype {
 
@@ -25,7 +26,7 @@ class Index extends Prototype {
     protected $dirty = false;
 
     /**
-     * @var FileSystemInterface
+     * @var FileSystemInterface|false|null
      */
     protected $fileSystem;
 
@@ -215,16 +216,11 @@ class Index extends Prototype {
      * @return bool
      */
     protected function loadArray(array $data): bool {
-        // Key check
-        if (array_keys($data) != [static::KEY_VALUES, static::KEY_IDS]) {
-            return false;
-        }
-
         // Value check
-        $ids = $data[static::KEY_IDS];
-        $values = $data[static::KEY_VALUES];
+        $ids = Arrays::arrayForKey($data, static::KEY_IDS);
+        $values = Arrays::arrayForKey($data, static::KEY_VALUES);
 
-        if (!is_array($ids) || !is_array($values) || count($ids) !== count($values)) {
+        if (is_null($ids) || count($ids) !== count($values)) {
             return false;
         }
 

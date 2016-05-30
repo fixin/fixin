@@ -23,7 +23,7 @@ class FileResolver extends Resource implements FileResolverInterface {
     protected $defaultExtension = '';
 
     /**
-     * @var FileSystemInterface
+     * @var FileSystemInterface|false|null
      */
     protected $fileSystem;
 
@@ -48,7 +48,7 @@ class FileResolver extends Resource implements FileResolverInterface {
      * @return FileSystemInterface
      */
     protected function getFileSystem(): FileSystemInterface {
-        return $this->fileSystem ?: $this->loadLazyLoadedProperty('fileSystem');
+        return $this->fileSystem ?: $this->loadLazyProperty('fileSystem');
     }
 
     /**
@@ -90,7 +90,7 @@ class FileResolver extends Resource implements FileResolverInterface {
      * @param string|FileSystemInterface $fileSystem
      */
     protected function setFileSystem($fileSystem) {
-        $this->setLazyLoadedProperty('fileSystem', FileSystemInterface::class, $fileSystem);
+        $this->setLazyLoadingProperty('fileSystem', FileSystemInterface::class, $fileSystem);
     }
 
     /**

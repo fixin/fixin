@@ -15,7 +15,6 @@ use Fixin\Base\Exception\RuntimeException;
 class Repository extends Resource implements RepositoryInterface {
 
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
-    const EXCEPTION_INVALID_STORAGE_TYPE = 'Invalid storage type';
     const EXCEPTION_NAME_NOT_SET = "Name not set";
     const EXCEPTION_PRIMARY_KEY_NOT_SET = 'Primary key not set';
     const EXCEPTION_STORAGE_NOT_SET = "Storage not set";
@@ -75,7 +74,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @return StorageInterface
      */
     protected function getStorage(): StorageInterface {
-        return $this->storage ?: $this->loadLazyLoadedProperty('storage');
+        return $this->storage ?: $this->loadLazyProperty('storage');
     }
 
     /**
@@ -100,6 +99,6 @@ class Repository extends Resource implements RepositoryInterface {
      * @param string|StorageInterface $storage
      */
     protected function setStorage($storage) {
-        $this->setLazyLoadedProperty('storage', StorageInterface::class, $storage);
+        $this->setLazyLoadingProperty('storage', StorageInterface::class, $storage);
     }
 }
