@@ -9,10 +9,10 @@ namespace Fixin\View;
 
 use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\FileSystem\FileResolverInterface;
-use Fixin\Resource\Resource;
+use Fixin\Resource\Prototype;
 use Fixin\View\Engine\EngineInterface;
 
-class View extends Resource implements ViewInterface {
+class View extends Prototype implements ViewInterface {
 
     const DEFAULT_ENGINE = 'View\Engine\JsonEngine';
     const EXCEPTION_INVALID_ENGINE_ARGUMENT = "Invalid engine argument: string or EngineInterface allowed";
