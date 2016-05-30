@@ -82,7 +82,10 @@ class Application implements ApplicationInterface {
         $container = $this->container;
 
         $view = $container->clonePrototype('View\View');
-        $view->setTemplate('layout/test');
+        $view->setTemplate('layout/default');
+        $view->setVariables([
+            'test' => 'test'
+        ]);
 
         echo $view->render();
 

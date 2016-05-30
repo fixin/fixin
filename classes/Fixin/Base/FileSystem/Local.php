@@ -66,6 +66,14 @@ class Local extends FileSystem {
     }
 
     /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::isReadable($filename)
+     */
+    public function isReadable(string $filename): bool {
+        return is_readable($filename);
+    }
+
+    /**
      * Get contents with lock
      *
      * @param string $filename
@@ -93,6 +101,14 @@ class Local extends FileSystem {
      */
     public function put(string $filename, string $contents, bool $lock = false): int {
         return file_put_contents($filename, $contents, $lock * LOCK_EX);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::realpath($path)
+     */
+    public function realpath(string $path): string {
+        return realpath($path);
     }
 
     /**

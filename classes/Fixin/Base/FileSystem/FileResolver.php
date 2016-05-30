@@ -10,6 +10,7 @@ namespace Fixin\Base\FileSystem;
 use Fixin\Resource\Resource;
 use Fixin\Base\Exception\InvalidArgumentException;
 use Fixin\Base\Exception\RuntimeException;
+use Fixin\Support\Strings;
 
 class FileResolver extends Resource implements FileResolverInterface {
 

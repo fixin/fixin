@@ -59,6 +59,14 @@ interface FileSystemInterface extends ResourceInterface {
     public function isFile(string $path): bool;
 
     /**
+     * Determine if path is a file and is readable
+     *
+     * @param string $filename
+     * @return bool
+     */
+    public function isReadable(string $filename): bool;
+
+    /**
      * Put the contents of a file
      *
      * @param string $filename
@@ -67,6 +75,14 @@ interface FileSystemInterface extends ResourceInterface {
      * @return self
      */
     public function put(string $filename, string $contents, bool $lock = false): int;
+
+    /**
+     * Get real path
+     *
+     * @param string $path
+     * @return string
+     */
+    public function realpath(string $path): string;
 
     /**
      * Get file size
