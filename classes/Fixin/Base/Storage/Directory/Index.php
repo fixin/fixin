@@ -9,6 +9,7 @@ namespace Fixin\Base\Storage\Directory;
 
 use Fixin\Base\Exception\RuntimeException;
 use Fixin\Resource\Prototype;
+use Fixin\Base\FileSystem\FileSystemInterface;
 
 class Index extends Prototype {
 
@@ -22,6 +23,11 @@ class Index extends Prototype {
      * @var bool
      */
     protected $dirty = false;
+
+    /**
+     * @var FileSystemInterface
+     */
+    protected $fileSystem;
 
     /**
      * @var string
@@ -42,7 +48,7 @@ class Index extends Prototype {
      * Flush on destruction
      */
     public function __destruct() {
-        if (isset($filename)) {
+        if (isset($this->filename)) {
             $this->flush();
         }
     }
