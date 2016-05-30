@@ -16,6 +16,11 @@ abstract class Prototype extends Resource implements PrototypeInterface {
      */
     public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
         $this->container = $container;
+
+        // Options
+        if (isset($options)) {
+            $this->configureWithOptions($options);
+        }
     }
 
     /**
@@ -23,6 +28,8 @@ abstract class Prototype extends Resource implements PrototypeInterface {
      * @see \Fixin\Resource\PrototypeInterface::withOptions($options)
      */
     public function withOptions(array $options): PrototypeInterface {
-        return (clone $this)->configureWithOptions($options);
+        return (clone $this)
+        ->configureWithOptions($options)
+        ->configurationTests();
     }
 }

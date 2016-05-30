@@ -7,15 +7,16 @@
 
 namespace Fixin\Base\Storage\Directory;
 
-use Fixin\Base\Exception\InvalidArgumentException;
 use Fixin\Base\FileSystem\FileSystemInterface;
 use Fixin\Base\Model\RepositoryInterface;
 use Fixin\Base\Storage\Storage;
 use Fixin\Support\Strings;
+use Fixin\Base\Exception\RuntimeException;
 
 class DirectoryStorage extends Storage {
 
-    const EXCEPTION_NO_PATH_DEFINED = "No path defined";
+    const EXCEPTION_FILE_SYSTEM_NOT_SET = 'File system not set';
+    const EXCEPTION_PATH_NOT_SET = 'Path not set';
 
     /**
      * @var FileSystemInterface
@@ -29,17 +30,15 @@ class DirectoryStorage extends Storage {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configureWithOptions()
+     * @see \Fixin\Resource\Resource::configurationTests()
      */
-    protected function configureWithOptions(array $options) {
-        parent::configureWithOptions($options);
-
+    protected function configurationTests() {
         if (mb_strlen($this->path) === 0) {
-            throw new InvalidArgumentException(static::EXCEPTION_NO_PATH_DEFINED);
+            throw new RuntimeException(static::EXCEPTION_PATH_NOT_SET);
         }
 
-        if (!isset($this->fileSystem)) {
-            $this->fileSystem = $this->container->get(FileSystemInterface::RESOURCE_DEFAULT);
+        if (mb_strlen($this->fileSystem) === 0) {
+            throw new RuntimeException(static::EXCEPTION_FILE_SYSTEM_NOT_SET);
         }
     }
 

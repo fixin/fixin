@@ -29,7 +29,21 @@ abstract class Resource implements ResourceInterface {
         $this->container = $container;
 
         // Options
-        $this->configureWithOptions($options ?? []);
+        if (isset($options)) {
+            $this->configureWithOptions($options);
+        }
+
+        // Configuration test
+        $this->configurationTests();
+    }
+
+    /**
+     * Configuration test
+     *
+     * @return self
+     */
+    protected function configurationTests() {
+        return $this;
     }
 
     /**
