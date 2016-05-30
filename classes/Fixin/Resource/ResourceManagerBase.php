@@ -24,14 +24,15 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     const EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION = "Invalid abstract factory definition '%s'";
     const EXCEPTION_INVALID_DEFINITION = "Invalid definition registered for name '%s'";
 
-    const KEY_ABSTRACT_FACTORIES = 'abstractFactories';
     const KEY_CLASS = 'class';
-    const KEY_DEFINITIONS = 'definitions';
     const KEY_OPTIONS = 'options';
     const KEY_RESOLVED = 'resolved';
-    const KEY_RESOURCES = 'resources';
 
-    const OPTIONS_INJECT_KEYS = [self::KEY_DEFINITIONS => 'Definition', self::KEY_RESOURCES => 'Resource'];
+    const OPTION_ABSTRACT_FACTORIES = 'abstractFactories';
+    const OPTION_DEFINITIONS = 'definitions';
+    const OPTION_RESOURCES = 'resources';
+    
+    const OPTIONS_INJECT_KEYS = [self::OPTION_DEFINITIONS => 'Definition', self::OPTION_RESOURCES => 'Resource'];
 
     /**
      * Abstract factories
@@ -59,8 +60,8 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
      */
     public function __construct(array $options) {
         // Abstract factories
-        if (isset($options[static::KEY_ABSTRACT_FACTORIES])) {
-            $this->setupAbstractFactories($options[static::KEY_ABSTRACT_FACTORIES]);
+        if (isset($options[static::OPTION_ABSTRACT_FACTORIES])) {
+            $this->setupAbstractFactories($options[static::OPTION_ABSTRACT_FACTORIES]);
         }
 
         // Inject options

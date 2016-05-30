@@ -9,7 +9,7 @@ namespace Fixin\Resource\AbstractFactory;
 
 class PrefixFallbackFactory extends AbstractFactory {
 
-    const KEY_SEARCH_ORDER = 'searchOrder';
+    const OPTION_SEARCH_ORDER = 'searchOrder';
 
     /**
      * @var array

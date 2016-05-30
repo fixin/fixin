@@ -15,7 +15,7 @@ class Route extends Resource implements RouteInterface {
 
     const EXCEPTION_INVALID_NODE = "Invalid node resource '%s'";
 
-    const KEY_NODES = 'nodes';
+    const OPTION_NODES = 'nodes';
 
     /**
      * @var NodeInterface[]

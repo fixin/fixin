@@ -7,7 +7,12 @@
 
 namespace Fixin\Application;
 
+use Fixin\Base\Storage\Directory\Index;
+
 class Application implements ApplicationInterface {
+
+    const CONFIG_APPLICATION = 'application';
+    const CONFIG_RESOURCE_MANAGER = 'resourceManager';
 
     const DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\Resource\ResourceManager';
     const DEFAULT_RESOURCE_MANAGER_CONFIG_CLASS = 'Fixin\Base\Config\Config';
@@ -15,14 +20,13 @@ class Application implements ApplicationInterface {
     const INTERNAL_SERVER_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error';
     const INTERNAL_SERVER_ERROR_HTML = '<h1>500 Internal server error</h1>';
 
-    const KEY_APPLICATION = 'application';
-    const KEY_CARGO = 'cargo';
-    const KEY_CLASS = 'class';
-    const KEY_CONFIG = 'config';
-    const KEY_CONFIG_CLASS = 'configClass';
-    const KEY_ERROR_ROUTE = 'errorRoute';
-    const KEY_RESOURCE_MANAGER = 'resourceManager';
-    const KEY_ROUTE = 'route';
+    const OPTION_CARGO = 'cargo';
+    const OPTION_CLASS = 'class';
+    const OPTION_CONFIG_CLASS = 'configClass';
+    const OPTION_ERROR_ROUTE = 'errorRoute';
+    const OPTION_ROUTE = 'route';
+
+    const RESOURCE_CONFIG = 'config';
 
     protected $config;
 
@@ -36,22 +40,22 @@ class Application implements ApplicationInterface {
      */
     public function __construct(array $config) {
         // Config
-        $this->config = $config[static::KEY_APPLICATION] ?? [];
-        unset($config[static::KEY_APPLICATION]);
+        $this->config = $config[static::CONFIG_APPLICATION] ?? [];
+        unset($config[static::CONFIG_APPLICATION]);
 
         // Resource Manager config
-        $containerConfig = $config[static::KEY_RESOURCE_MANAGER];
-        unset($config[static::KEY_RESOURCE_MANAGER]);
+        $containerConfig = $config[static::CONFIG_RESOURCE_MANAGER];
+        unset($config[static::CONFIG_RESOURCE_MANAGER]);
 
         // Classes
-        $containerClass = $containerConfig[static::KEY_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
-        unset($containerConfig[static::KEY_CLASS]);
+        $containerClass = $containerConfig[static::OPTION_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
+        unset($containerConfig[static::OPTION_CLASS]);
 
-        $configClass = $containerConfig[static::KEY_CONFIG_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CONFIG_CLASS;
-        unset($containerConfig[static::KEY_CONFIG_CLASS]);
+        $configClass = $containerConfig[static::OPTION_CONFIG_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CONFIG_CLASS;
+        unset($containerConfig[static::OPTION_CONFIG_CLASS]);
 
         // Config
-        $containerConfig['resources'][static::KEY_CONFIG] = new $configClass($config);
+        $containerConfig['resources'][static::RESOURCE_CONFIG] = new $configClass($config);
 
         // Resoure Manager init
         $this->container = new $containerClass($containerConfig);
@@ -72,7 +76,7 @@ class Application implements ApplicationInterface {
             }
 
             // Error dispatch
-            $cargo = $container->get($this->config[static::KEY_ERROR_ROUTE])->dispatch($cargo);
+            $cargo = $container->get($this->config[static::OPTION_ERROR_ROUTE])->dispatch($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {
@@ -88,13 +92,23 @@ class Application implements ApplicationInterface {
     public function run() {
         $container = $this->container;
 
-        $sessionManager = $container->get('Base\Session\SessionManager');
-        $sessionManager->getSession('abcde');
+        $index = new Index($container, [
+
+        ]);
+        $index->insert(2, 'b');
+        $index->insert(2, 'c');
+        $index->insert(2, 'd');
+        $index->insert(4, 'e');
+        $index->insert(3, 'f');
+        $index->insert(3, 'g');
+        $index->insert(6, 'h');
+        $index->insert(1, 'i');
+        $index->insert(2, 'a');
 
         try {
             // Normal dispatch
-            $cargo = $container->clonePrototype($this->config[static::KEY_CARGO]);
-            $cargo = $container->get($this->config[static::KEY_ROUTE])->dispatch($cargo);
+            $cargo = $container->clonePrototype($this->config[static::OPTION_CARGO]);
+            $cargo = $container->get($this->config[static::OPTION_ROUTE])->dispatch($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {
