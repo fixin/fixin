@@ -92,19 +92,6 @@ class Application implements ApplicationInterface {
     public function run() {
         $container = $this->container;
 
-        $index = new Index($container, [
-
-        ]);
-        $index->insert(2, 'b');
-        $index->insert(2, 'c');
-        $index->insert(2, 'd');
-        $index->insert(4, 'e');
-        $index->insert(3, 'f');
-        $index->insert(3, 'g');
-        $index->insert(6, 'h');
-        $index->insert(1, 'i');
-        $index->insert(2, 'a');
-
         try {
             // Normal dispatch
             $cargo = $container->clonePrototype($this->config[static::OPTION_CARGO]);
