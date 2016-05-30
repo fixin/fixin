@@ -17,5 +17,5 @@ interface SessionManagerInterface extends ResourceInterface {
      * @param string $name
      * @return SessionInterface|null
      */
-    public function getSession(string $name);
+    public function getSession(string $name): SessionInterface;
 }

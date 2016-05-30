@@ -43,8 +43,12 @@ class SessionManager extends Resource implements SessionManagerInterface {
      * {@inheritDoc}
      * @see \Fixin\Base\Session\SessionManagerInterface::getSession()
      */
-    public function getSession(string $name) {
-        return $this->getRepository()->get($name);
+    public function getSession(string $name): SessionInterface {
+        $options = [
+            SessionInterface::OPTION_SESSION_MANAGER => $this
+        ];
+
+        return $this->container->clonePrototype('Base\Session\Session', $options);
     }
 
     /**
