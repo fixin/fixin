@@ -11,6 +11,8 @@ use Fixin\Resource\ResourceInterface;
 
 interface FileSystemInterface extends ResourceInterface {
 
+    const RESOURCE_DEFAULT = 'Base\FileSystem\Default';
+
     /**
      * @param string $filename
      * @return bool

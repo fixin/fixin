@@ -39,7 +39,7 @@ class DirectoryStorage extends Storage {
         }
 
         if (!isset($this->fileSystem)) {
-            $this->fileSystem = $this->container->get('Base\FileSystem\Local');
+            $this->fileSystem = $this->container->get(FileSystemInterface::RESOURCE_DEFAULT);
         }
     }
 
