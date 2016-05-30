@@ -39,14 +39,38 @@ class Local extends FileSystem {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::get($filename, $lock)
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::get($filename)
      */
-    public function get(string $filename, bool $lock = false): string {
+    public function get(string $filename): string {
         if ($this->isFile($filename)) {
-            return $lock ? $this->lockedGet($filename) : file_get_contents($filename);
+            return file_get_contents($filename);
         }
 
         throw new FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::getWithLock($filename)
+     */
+    public function getWithLock(string $filename): string {
+        if (!$this->isFile($filename)) {
+            throw new FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
+        }
+
+        $contents = '';
+
+        if ($handle = fopen($filename, 'r')) {
+            if (flock($handle, LOCK_SH)) {
+                while (!feof($handle)) {
+                    $contents .= fread($handle, 1048576);
+                }
+            }
+
+            fclose($handle);
+        }
+
+        return $contents;
     }
 
     /**
@@ -74,33 +98,19 @@ class Local extends FileSystem {
     }
 
     /**
-     * Get contents with lock
-     *
-     * @param string $filename
-     * @return string
+     * {@inheritDoc}
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::put($filename, $contents)
      */
-    protected function lockedGet(string $filename): string {
-        $contents = '';
-
-        if ($handle = fopen($filename, 'r')) {
-            if (flock($handle, LOCK_SH)) {
-                while (!feof($handle)) {
-                    $contents .= fread($handle, 1048576);
-                }
-            }
-
-            fclose($handle);
-        }
-
-        return $contents;
+    public function put(string $filename, string $contents): int {
+        return file_put_contents($filename, $contents);
     }
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::put($filename, $contents, $lock)
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::putWithLock($filename, $contents)
      */
-    public function put(string $filename, string $contents, bool $lock = false): int {
-        return file_put_contents($filename, $contents, $lock * LOCK_EX);
+    public function putWithLock(string $filename, string $contents): int {
+        return file_put_contents($filename, $contents, LOCK_EX);
     }
 
     /**

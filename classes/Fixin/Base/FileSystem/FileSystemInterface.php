@@ -37,10 +37,17 @@ interface FileSystemInterface extends ResourceInterface {
      * Get the contents of a file
      *
      * @param string $filename
-     * @param bool $lock
      * @return string
      */
-    public function get(string $filename, bool $lock = false): string;
+    public function get(string $filename): string;
+
+    /**
+     * Get the contents of a file with lock
+     *
+     * @param string $filename
+     * @return string
+     */
+    public function getWithLock(string $filename): string;
 
     /**
      * Determine if path is a file
@@ -71,10 +78,18 @@ interface FileSystemInterface extends ResourceInterface {
      *
      * @param string $filename
      * @param string $contents
-     * @param bool $lock
      * @return self
      */
-    public function put(string $filename, string $contents, bool $lock = false): int;
+    public function put(string $filename, string $contents): int;
+
+    /**
+     * Put the contents of a file with lock
+     *
+     * @param string $filename
+     * @param string $contents
+     * @return self
+     */
+    public function putWithLock(string $filename, string $contents): int;
 
     /**
      * Get real path
