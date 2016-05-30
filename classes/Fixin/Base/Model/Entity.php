@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Model;
 
-use Fixin\Resource\Resource;
+use Fixin\Resource\Prototype;
 
-abstract class Entity extends Resource implements EntityInterface {
+abstract class Entity extends Prototype implements EntityInterface {
 }

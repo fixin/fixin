@@ -24,12 +24,4 @@ interface EntityInterface extends PrototypeInterface {
      * @return self
      */
     public function save();
-
-    /**
-     * New instance for repository
-     *
-     * @param RepositoryInterface $repository
-     * @return EntityInterface
-     */
-    public function withRepository(RepositoryInterface $repository): EntityInterface;
 }
