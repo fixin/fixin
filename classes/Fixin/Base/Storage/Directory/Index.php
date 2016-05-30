@@ -220,7 +220,7 @@ class Index extends Prototype {
         $ids = Arrays::arrayForKey($data, static::KEY_IDS);
         $values = Arrays::arrayForKey($data, static::KEY_VALUES);
 
-        if (is_null($ids) || count($ids) !== count($values)) {
+        if (is_null($ids) || is_null($values) || count($ids) !== count($values)) {
             return false;
         }
 

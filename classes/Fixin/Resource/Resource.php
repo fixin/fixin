@@ -80,7 +80,6 @@ abstract class Resource implements ResourceInterface {
      *
      * @param string $propertyName
      * @throws InvalidArgumentException
-     * @throws RuntimeException
      * @return mixed
      */
     protected function loadLazyProperty(string $propertyName) {
@@ -102,7 +101,7 @@ abstract class Resource implements ResourceInterface {
     /**
      * Set lazy-loading property
      *
-     * @param string $name
+     * @param string $propertyName
      * @param string $interface
      * @param string|object $value
      * @throws InvalidArgumentException
