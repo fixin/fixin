@@ -8,25 +8,20 @@
 namespace Fixin\Base\Storage\Directory;
 
 use Fixin\Base\Exception\RuntimeException;
-use Fixin\Base\FileSystem\FileSystemInterface;
 use Fixin\Resource\Prototype;
 
 class Index extends Prototype {
 
     const EXCEPTION_FILENAME_NOT_SET = 'Filename not set';
     const EXCEPTION_INVALID_DATA = 'Invalid data';
-    const KEY_PRIMARY_KEYS = 'primaryKeys';
+
+    const KEY_IDS = 'ids';
     const KEY_VALUES = 'values';
 
     /**
      * @var bool
      */
     protected $dirty = false;
-
-    /**
-     * @var FileSystemInterface
-     */
-    protected $fileSystem;
 
     /**
      * @var string
@@ -36,15 +31,20 @@ class Index extends Prototype {
     /**
      * @var array
      */
-    protected $primaryKeys = [];
+    protected $ids = [];
 
     /**
      * @var array
      */
     protected $values = [];
 
+    /**
+     * Flush on destruction
+     */
     public function __destruct() {
-        $this->flush();
+        if (isset($filename)) {
+            $this->flush();
+        }
     }
 
     /**
@@ -53,7 +53,7 @@ class Index extends Prototype {
      * @return self
      */
     public function clear() {
-        $this->primaryKeys = [];
+        $this->ids = [];
         $this->values = [];
 
         $this->dirty = true;
@@ -62,25 +62,36 @@ class Index extends Prototype {
     }
 
     /**
-     * Find before greater index
+     * IDs of equal values
      *
      * @param mixed $value
+     * @return array
+     */
+    public function equal($value): array {
+        return array_slice($this->ids, $start = $this->findIndex($value, -1), $this->findIndex($value, 0) - $start);
+    }
+
+    /**
+     * Find index for a value based
+     *
+     * @param mixed $value
+     * @param int $compareLimit
      * @return int
      */
-    protected function findBeforeGreaterIndex($value): int {
+    protected function findIndex($value, int $compareLimit): int {
         $begin = 0;
         $end = count($this->values) - 1;
 
-        while ($begin < $end) {
+        while ($begin <= $end) {
             $middle = intdiv($begin + $end, 2);
 
-            if ($this->values[$middle] <= $value) {
+            if (($this->values[$middle] <=> $value) <= $compareLimit) {
                 $begin = $middle + 1;
 
                 continue;
             }
 
-            $end = $middle;
+            $end = $middle - 1;
         }
 
         return $begin;
@@ -100,21 +111,74 @@ class Index extends Prototype {
     }
 
     /**
-     * Insert primary key
+     * Get values for ids
      *
-     * @param string $primaryKey
+     * @param array $ids
+     * @return array
+     */
+    public function getValuesForIds(array $ids): array {
+        $filtered = array_intersect($this->ids, $ids);
+
+        return array_combine($filtered, array_intersect_key($this->values, $filtered));
+    }
+
+    /**
+     * IDs of greather than values
+     *
+     * @param mixed $value
+     * @return array
+     */
+    public function greaterThan($value): array {
+        return array_slice($this->ids, $this->findIndex($value, 0));
+    }
+
+    /**
+     * IDs of greather than or equal values
+     *
+     * @param mixed $value
+     * @return array
+     */
+    public function greaterThanOrEqual($value): array {
+        return array_slice($this->ids, $this->findIndex($value, -1));
+    }
+
+    /**
+     * IDs of values
+     *
+     * @param array $values
+     * @return array
+     */
+    public function in(array $values): array {
+        return array_intersect_key($this->ids, array_intersect($this->values, $values));
+    }
+
+    /**
+     * Insert value for id
+     *
+     * @param mixed $id
      * @param mixed $value
      * @return self
      */
-    public function insert(string $primaryKey, $value) {
-        $index = $this->findBeforeGreaterIndex($value);
+    public function insert($id, $value) {
+        $index = $this->findIndex($value, -1);
 
-        array_splice($this->primaryKeys, $index, 0, [$primaryKey]);
+        array_splice($this->ids, $index, 0, [$id]);
         array_splice($this->values, $index, 0, [$value]);
 
         $this->dirty = true;
 
         return $this;
+    }
+
+    /**
+     * IDs of values of interval
+     *
+     * @param mixed $beginValue
+     * @param mixed $endValue
+     * @return array
+     */
+    public function intervalOf($beginValue, $endValue): array {
+        return array_slice($this->ids, $start = $this->findIndex($beginValue, -1), $this->findIndex($endValue, 0) - $start);
     }
 
     /**
@@ -146,34 +210,54 @@ class Index extends Prototype {
      */
     protected function loadArray(array $data): bool {
         // Key check
-        if (array_keys($data) != [static::KEY_VALUES, static::KEY_PRIMARY_KEYS]) {
+        if (array_keys($data) != [static::KEY_VALUES, static::KEY_IDS]) {
             return false;
         }
 
         // Value check
-        $primaryKeys = $data[static::KEY_PRIMARY_KEYS];
+        $ids = $data[static::KEY_IDS];
         $values = $data[static::KEY_VALUES];
 
-        if (!is_array($primaryKeys) || !is_array($values) || count($primaryKeys) !== count($values)) {
+        if (!is_array($ids) || !is_array($values) || count($ids) !== count($values)) {
             return false;
         }
 
         // Load
-        $this->primaryKeys = $primaryKeys;
+        $this->ids = $ids;
         $this->values = $values;
 
         return true;
     }
 
     /**
+     * IDs of lower than values
+     *
+     * @param mixed $value
+     * @return array
+     */
+    public function lowerThan($value): array {
+        return array_slice($this->ids, 0, $this->findIndex($value, -1));
+    }
+
+    /**
+     * IDs of lower than or equal values
+     *
+     * @param mixed $value
+     * @return array
+     */
+    public function lowerThanOrEqual($value): array {
+        return array_slice($this->ids, 0, $this->findIndex($value, 0));
+    }
+
+    /**
      * Remove primary key
      *
-     * @param string $primaryKey
+     * @param mixed $id
      * @return self
      */
-    public function remove(string $primaryKey) {
-        if (false !== $index = array_search($primaryKey, $this->primaryKeys)) {
-            array_splice($this->primaryKeys, $index, 1);
+    public function remove($id) {
+        if (false !== $index = array_search($id, $this->ids)) {
+            array_splice($this->ids, $index, 1);
             array_splice($this->values, $index, 1);
 
             $this->dirty = true;
@@ -205,7 +289,7 @@ class Index extends Prototype {
         }
 
         $data = [
-            static::KEY_PRIMARY_KEYS => $this->primaryKeys,
+            static::KEY_IDS => $this->ids,
             static::KEY_VALUES => $this->values
         ];
 
