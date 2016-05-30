@@ -55,9 +55,18 @@ class Local extends FileSystem {
      */
     public function getWithLock(string $filename): string {
         if (!$this->isFile($filename)) {
-            throw new FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
+            return $this->getSharedContents($filename);
         }
 
+        throw new FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
+    }
+
+    /**
+     * Get contents of shared file
+     * @param string $filename
+     * @return string
+     */
+    protected function getSharedContents(string $filename): string {
         $contents = '';
 
         if ($handle = fopen($filename, 'r')) {
