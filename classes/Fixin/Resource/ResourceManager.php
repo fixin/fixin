@@ -13,8 +13,8 @@ class ResourceManager extends ResourceManagerBase {
      * {@inheritDoc}
      * @see \Fixin\Resource\ResourceManagerInterface::clonePrototype()
      */
-    public function clonePrototype(string $name) {
-        return clone $this->getResource($name, true);
+    public function clonePrototype(string $name, array $options = []) {
+        return $this->getResource($name, true)->withOptions($options);
     }
 
     /**

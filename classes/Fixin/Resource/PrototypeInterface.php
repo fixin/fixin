@@ -9,4 +9,11 @@ namespace Fixin\Resource;
 
 interface PrototypeInterface extends ResourceInterface {
 
+    /**
+     * New instance with changed options
+     *
+     * @param array $options
+     * @return self
+     */
+    public function withOptions(array $options): PrototypeInterface;
 }

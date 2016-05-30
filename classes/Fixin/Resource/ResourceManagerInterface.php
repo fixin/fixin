@@ -14,7 +14,8 @@ interface ResourceManagerInterface extends ContainerInterface {
      * Clone the registered prototype
      *
      * @param string $name
+     * @param array $options
      * @return object
      */
-    public function clonePrototype(string $name);
+    public function clonePrototype(string $name, array $options = []);
 }

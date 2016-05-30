@@ -50,5 +50,7 @@ abstract class Resource implements ResourceInterface {
 
             throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_OPTION, $key, get_class($this)));
         }
+
+        return $this;
     }
 }
