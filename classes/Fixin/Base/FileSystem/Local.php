@@ -54,7 +54,7 @@ class Local extends FileSystem {
      * @see \Fixin\Base\FileSystem\FileSystemInterface::getWithLock($filename)
      */
     public function getWithLock(string $filename): string {
-        if (!$this->isFile($filename)) {
+        if ($this->isFile($filename)) {
             return $this->getSharedContents($filename);
         }
 
