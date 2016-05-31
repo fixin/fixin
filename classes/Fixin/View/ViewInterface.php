@@ -11,19 +11,22 @@ use Fixin\Resource\PrototypeInterface;
 
 interface ViewInterface extends PrototypeInterface {
 
+    const OPTION_ENGINE = 'engine';
+    const OPTION_FILE_RESOLVER = 'fileResolver';
+
     /**
      * Clear children
      *
      * @return self
      */
-    public function clearChildren();
+    public function clearChildren(): ViewInterface;
 
     /**
      * Clear variables
      *
      * @return self
      */
-    public function clearVariables();
+    public function clearVariables(): ViewInterface;
 
     /**
      * Get named child
@@ -43,16 +46,16 @@ interface ViewInterface extends PrototypeInterface {
     /**
      * Get resolved template filename
      *
-     * @return string|null
+     * @return string
      */
-    public function getResolvedTemplate();
+    public function getResolvedTemplate(): string;
 
     /**
      * Get template
      *
-     * @return string|null
+     * @return string
      */
-    public function getTemplate();
+    public function getTemplate(): string;
 
     /**
      * Get variable value
@@ -67,7 +70,7 @@ interface ViewInterface extends PrototypeInterface {
      *
      * @return array
      */
-    public function getVariables();
+    public function getVariables(): array;
 
     /**
      * Render
@@ -83,7 +86,7 @@ interface ViewInterface extends PrototypeInterface {
      * @param ViewInterface $child
      * @return self
      */
-    public function setChild(string $name, ViewInterface $child);
+    public function setChild(string $name, ViewInterface $child): ViewInterface;
 
     /**
      * Set template name
@@ -91,7 +94,7 @@ interface ViewInterface extends PrototypeInterface {
      * @param string $template
      * @return self
      */
-    public function setTemplate(string $template);
+    public function setTemplate(string $template): ViewInterface;
 
     /**
      * Set variable value
@@ -100,7 +103,7 @@ interface ViewInterface extends PrototypeInterface {
      * @param mixed $value
      * @return self
      */
-    public function setVariable(string $name, $value);
+    public function setVariable(string $name, $value): ViewInterface;
 
     /**
      * Set variables
@@ -108,5 +111,5 @@ interface ViewInterface extends PrototypeInterface {
      * @param array $variables
      * @return self
      */
-    public function setVariables(array $variables);
+    public function setVariables(array $variables): ViewInterface;
 }

@@ -12,7 +12,7 @@ class Arrays extends DoNotCreate {
     /**
      * @param array $array
      * @param string|int $key
-     * @return NULL|unknown
+     * @return mixed|null
      */
     public static function arrayForKey(array $array, $key) {
         $value = $array[$key] ?? null;

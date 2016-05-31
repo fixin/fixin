@@ -7,10 +7,10 @@
 
 namespace Fixin\View\Engine;
 
-use Fixin\Resource\Resource;
-use Fixin\View\ViewInterface;
-use Fixin\View\Helper\HelperInterface;
 use Fixin\Base\Exception\InvalidArgumentException;
+use Fixin\Resource\Resource;
+use Fixin\View\Helper\HelperInterface;
+use Fixin\View\ViewInterface;
 
 abstract class Engine extends Resource implements EngineInterface {
 

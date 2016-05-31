@@ -14,7 +14,7 @@ class SimpleAutoloader implements AutoloaderInterface {
     /**
      * Registered paths
      *
-     * @var array
+     * @var string[]
      */
     protected $paths = [];
 

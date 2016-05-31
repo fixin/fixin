@@ -12,10 +12,10 @@ interface EscaperInterface {
     /**
      * Encode variable for JavaScript
      *
-     * @param mixed $string
+     * @param mixed $var
      * @return string
      */
-    public function encodeJsVariable($string): string;
+    public function encodeJsVariable($var): string;
 
     /**
      * Escape string for HTML

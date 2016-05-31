@@ -22,9 +22,9 @@ class Route extends Resource implements RouteInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Delivery\Route\RouteInterface::dispatch()
+     * @see \Fixin\Delivery\Route\RouteInterface::dispatch($cargo)
      */
-    public function dispatch(CargoInterface $cargo) {
+    public function dispatch(CargoInterface $cargo): CargoInterface {
         $cargo->setDelivered(false);
         $plan = $this->nodes;
 

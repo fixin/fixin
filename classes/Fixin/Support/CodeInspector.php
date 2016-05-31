@@ -13,11 +13,11 @@ class CodeInspector extends DoNotCreate {
      * Remove indent from lines
      *
      * @param array $lines
-     * @return mixed
+     * @return string
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected static function removeIndent(array $lines) {
+    protected static function removeIndent(array $lines): string {
         // Indents
         $left = PHP_INT_MAX;
 
@@ -41,9 +41,9 @@ class CodeInspector extends DoNotCreate {
      * Get source code of function
      *
      * @param string|\Closure $function
-     * @return mixed
+     * @return string
      */
-    public static function functionSource($function) {
+    public static function functionSource($function): string {
         // File content
         $reflection = new \ReflectionFunction($function);
         $file = file($reflection->getFileName());

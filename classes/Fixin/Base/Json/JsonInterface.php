@@ -11,6 +11,11 @@ use Fixin\Resource\ResourceInterface;
 
 interface JsonInterface extends ResourceInterface {
 
+    const OPTION_DECODING_MAX_DEPTH = 'decodingMaxDepth';
+    const OPTION_DECODING_OPTIONS = 'decodingOptions';
+    const OPTION_ENCODING_MAX_DEPTH = 'encodingMaxDepth';
+    const OPTION_ENCODING_OPTIONS = 'encodingOptions';
+
     /**
      * Decode JSON string
      *

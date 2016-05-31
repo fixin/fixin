@@ -23,7 +23,7 @@ interface CargoInterface extends PrototypeInterface {
      *
      * @return string
      */
-    public function getContentType();
+    public function getContentType(): string;
 
     /**
      * Is delivered
@@ -38,7 +38,7 @@ interface CargoInterface extends PrototypeInterface {
      * @param mixed $content
      * @return self
      */
-    public function setContent($content);
+    public function setContent($content): CargoInterface;
 
     /**
      * Set content type
@@ -46,7 +46,7 @@ interface CargoInterface extends PrototypeInterface {
      * @param string $contentType
      * @return self
      */
-    public function setContentType($contentType);
+    public function setContentType(string $contentType): CargoInterface;
 
     /**
      * Set delivered state
@@ -54,7 +54,7 @@ interface CargoInterface extends PrototypeInterface {
      * @param bool $delivered
      * @return self
      */
-    public function setDelivered(bool $delivered);
+    public function setDelivered(bool $delivered): CargoInterface;
 
     /**
      * Unpack cargo

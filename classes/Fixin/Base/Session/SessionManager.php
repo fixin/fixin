@@ -7,10 +7,9 @@
 
 namespace Fixin\Base\Session;
 
-use Fixin\Base\Exception\InvalidArgumentException;
+use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\Model\RepositoryInterface;
 use Fixin\Resource\Resource;
-use Fixin\Base\Exception\RuntimeException;
 
 class SessionManager extends Resource implements SessionManagerInterface {
 
@@ -25,13 +24,17 @@ class SessionManager extends Resource implements SessionManagerInterface {
      * {@inheritDoc}
      * @see \Fixin\Resource\Resource::configurationTests()
      */
-    protected function configurationTests() {
+    protected function configurationTests(): Resource {
         if (!isset($this->repository)) {
             throw new RuntimeException(static::EXCEPTION_REPOSITORY_NOT_SET);
         }
+
+        return $this;
     }
 
     /**
+     * Get repository instance
+     *
      * @return RepositoryInterface
      */
     protected function getRepository(): RepositoryInterface {
@@ -40,7 +43,7 @@ class SessionManager extends Resource implements SessionManagerInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::getSession()
+     * @see \Fixin\Base\Session\SessionManagerInterface::getSession($name)
      */
     public function getSession(string $name): SessionInterface {
         $options = [

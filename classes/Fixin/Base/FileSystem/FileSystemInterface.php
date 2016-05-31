@@ -12,6 +12,8 @@ use Fixin\Resource\ResourceInterface;
 interface FileSystemInterface extends ResourceInterface {
 
     /**
+     * Delete file
+     *
      * @param string $filename
      * @return bool
      */

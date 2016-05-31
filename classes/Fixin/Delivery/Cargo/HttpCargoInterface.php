@@ -18,14 +18,14 @@ interface HttpCargoInterface extends CargoInterface {
      * @param string $value
      * @return self
      */
-    public function addHeader(string $name, string $value);
+    public function addHeader(string $name, string $value): HttpCargoInterface;
 
     /**
      * Clear all headers
      *
      * @return self
      */
-    public function clearHeaders();
+    public function clearHeaders(): HttpCargoInterface;
 
     /**
      * Get cookie value
@@ -108,9 +108,9 @@ interface HttpCargoInterface extends CargoInterface {
     /**
      * Get status code
      *
-     * @return number
+     * @return int
      */
-    public function getStatusCode();
+    public function getStatusCode(): int;
 
     /**
      * Set cookies
@@ -118,7 +118,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param array $cookies
      * @return self
      */
-    public function setCookies(array $cookies);
+    public function setCookies(array $cookies): HttpCargoInterface;
 
     /**
      * Set environment parameters
@@ -126,7 +126,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param array $parameters
      * @return self
      */
-    public function setEnvironmentParameters(array $parameters);
+    public function setEnvironmentParameters(array $parameters): HttpCargoInterface;
 
     /**
      * Set header value
@@ -135,7 +135,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param string|array $value
      * @return self
      */
-    public function setHeader(string $name, $value);
+    public function setHeader(string $name, $value): HttpCargoInterface;
 
     /**
      * Set protocol version
@@ -143,7 +143,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param string $protocolVersion
      * @return self
      */
-    public function setProtocolVersion(string $protocolVersion);
+    public function setProtocolVersion(string $protocolVersion): HttpCargoInterface;
 
     /**
      * Set request header values
@@ -151,7 +151,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param array $headers
      * @return self
      */
-    public function setRequestHeaders(array $headers);
+    public function setRequestHeaders(array $headers): HttpCargoInterface;
 
     /**
      * Set request method
@@ -159,7 +159,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param string $method
      * @return self
      */
-    public function setRequestMethod(string $method);
+    public function setRequestMethod(string $method): HttpCargoInterface;
 
     /**
      * Set request parameters
@@ -167,7 +167,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param array $parameters
      * @return self
      */
-    public function setRequestParameters(array $parameters);
+    public function setRequestParameters(array $parameters): HttpCargoInterface;
 
     /**
      * Set request protocol version
@@ -175,7 +175,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param string $protocolVersion
      * @return self
      */
-    public function setRequestProtocolVersion(string $protocolVersion);
+    public function setRequestProtocolVersion(string $protocolVersion): HttpCargoInterface;
 
     /**
      * Set request URI
@@ -183,7 +183,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param UriInterface $requestUri
      * @return self
      */
-    public function setRequestUri(UriInterface $requestUri);
+    public function setRequestUri(UriInterface $requestUri): HttpCargoInterface;
 
     /**
      * Set server parameters
@@ -191,7 +191,7 @@ interface HttpCargoInterface extends CargoInterface {
      * @param array $parameters
      * @return self
      */
-    public function setServerParameters(array $parameters);
+    public function setServerParameters(array $parameters): HttpCargoInterface;
 
     /**
      * Set status code
@@ -199,5 +199,5 @@ interface HttpCargoInterface extends CargoInterface {
      * @param int $statusCode
      * @return self
      */
-    public function setStatusCode(int $statusCode);
+    public function setStatusCode(int $statusCode): HttpCargoInterface;
 }

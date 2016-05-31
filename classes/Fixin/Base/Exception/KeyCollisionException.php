@@ -7,6 +7,6 @@
 
 namespace Fixin\Base\Exception;
 
-class KeyCollisionException extends \RuntimeException {
+class KeyCollisionException extends RuntimeException {
 
 }

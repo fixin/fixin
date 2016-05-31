@@ -7,8 +7,8 @@
 
 namespace Fixin\View\Helper;
 
-use Fixin\View\Engine\EngineInterface;
 use Fixin\Resource\Prototype;
+use Fixin\View\Engine\EngineInterface;
 
 abstract class Helper extends Prototype implements HelperInterface {
 

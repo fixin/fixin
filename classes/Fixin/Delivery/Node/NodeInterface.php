@@ -18,5 +18,5 @@ interface NodeInterface extends ResourceInterface {
      * @param CargoInterface $cargo
      * @return CargoInterface
      */
-    public function handle(CargoInterface $cargo);
+    public function handle(CargoInterface $cargo): CargoInterface;
 }

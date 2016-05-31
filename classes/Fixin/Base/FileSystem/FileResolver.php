@@ -7,15 +7,13 @@
 
 namespace Fixin\Base\FileSystem;
 
-use Fixin\Resource\Resource;
-use Fixin\Base\Exception\InvalidArgumentException;
 use Fixin\Base\Exception\RuntimeException;
+use Fixin\Resource\Resource;
 use Fixin\Support\Strings;
 
 class FileResolver extends Resource implements FileResolverInterface {
 
     const EXCEPTION_FILE_SYSTEM_NOT_SET = 'File system not set';
-    const EXCEPTION_INVALID_FILE_SYSTEM_ARGUMENT = "Invalid 'fileSystem' argument: string or FileSystemInterface allowed";
 
     /**
      * @var string
@@ -36,10 +34,12 @@ class FileResolver extends Resource implements FileResolverInterface {
      * {@inheritDoc}
      * @see \Fixin\Resource\Resource::configurationTests()
      */
-    protected function configurationTests() {
+    protected function configurationTests(): Resource {
         if (!isset($this->fileSystem)) {
             throw new RuntimeException(static::EXCEPTION_FILE_SYSTEM_NOT_SET);
         }
+
+        return $this;
     }
 
     /**
@@ -53,9 +53,9 @@ class FileResolver extends Resource implements FileResolverInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileResolverInterface::resolve()
+     * @see \Fixin\Base\FileSystem\FileResolverInterface::resolve($filename)
      */
-    public function resolve(string $filename) {
+    public function resolve(string $filename):string {
         $fileSystem = $this->getFileSystem();
 
         // Default extension
@@ -72,7 +72,7 @@ class FileResolver extends Resource implements FileResolverInterface {
             }
         }
 
-        return null;
+        return '';
     }
 
     /**

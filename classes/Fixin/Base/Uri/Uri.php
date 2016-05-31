@@ -57,7 +57,7 @@ class Uri extends Prototype implements UriInterface {
     /**
      * @return string
      */
-    public function __toString() {
+    public function __toString(): string {
         return ltrim($this->scheme . '://', ':/')
             . $this->getAuthority()
             . ($this->path !== '' ? '/' . ltrim($this->path, '/') : '')

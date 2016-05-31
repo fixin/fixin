@@ -19,9 +19,9 @@ interface StreamInterface {
     /**
      * Is at the end of the stream
      *
-     * @return boolean
+     * @return bool
      */
-    public function eof(): boolean;
+    public function eof(): bool;
 
     /**
      * Remaining content
@@ -48,21 +48,21 @@ interface StreamInterface {
     /**
      * Is the stream readable
      *
-     * @return boolean
+     * @return bool
      */
     public function isReadable(): bool;
 
     /**
      * Is the stream seekable
      *
-     * @return boolean
+     * @return bool
      */
     public function isSeekable(): bool;
 
     /**
      * Is the stream writable
      *
-     * @return boolean
+     * @return bool
      */
     public function isWritable(): bool;
 
@@ -79,7 +79,7 @@ interface StreamInterface {
      *
      * @return self
      */
-    public function rewind();
+    public function rewind(): StreamInterface;
 
     /**
      * Seek to a position
@@ -88,7 +88,7 @@ interface StreamInterface {
      * @param int $whence
      * @return self
      */
-    public function seek(int $offset, int $whence = SEEK_SET);
+    public function seek(int $offset, int $whence = SEEK_SET): StreamInterface;
 
     /**
      * Return current position

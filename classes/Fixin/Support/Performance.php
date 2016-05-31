@@ -74,12 +74,12 @@ class Performance extends DoNotCreate {
     /**
      * Display info
      *
-     * @param number $time
+     * @param float $time
      * @param int $memoryUsage
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected static function measureInfo($time, $memoryUsage) {
+    protected static function measureInfo(float $time, int $memoryUsage) {
         $data = [
             $memoryUsage - static::$lastMemoryUsage,
             memory_get_peak_usage(),

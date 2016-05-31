@@ -72,7 +72,7 @@ class Stream implements StreamInterface {
      * {@inheritDoc}
      * @see \Fixin\Base\Stream\StreamInterface::eof()
      */
-    public function eof(): boolean {
+    public function eof(): bool {
         return feof($this->resource);
     }
 
@@ -190,7 +190,7 @@ class Stream implements StreamInterface {
      * {@inheritDoc}
      * @see \Fixin\Base\Stream\StreamInterface::rewind()
      */
-    public function rewind() {
+    public function rewind(): StreamInterface {
         return $this->seek(0);
     }
 
@@ -198,7 +198,7 @@ class Stream implements StreamInterface {
      * {@inheritDoc}
      * @see \Fixin\Base\Stream\StreamInterface::seek($offset, $whence)
      */
-    public function seek(int $offset, int $whence = SEEK_SET) {
+    public function seek(int $offset, int $whence = SEEK_SET): StreamInterface {
         if (!$this->isSeekable()) {
             throw new RuntimeException(static::EXCEPTION_NOT_SEEKABLE);
         }

@@ -33,7 +33,7 @@ class Index extends Prototype {
     /**
      * @var string
      */
-    protected $filename;
+    protected $filename = '';
 
     /**
      * @var array

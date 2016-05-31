@@ -7,8 +7,11 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
+use Fixin\Resource\Resource;
+
 class PrefixFallbackFactory extends AbstractFactory {
 
+    const EXCEPTION_SEARCH_ORDER_NOT_SET = 'Search order not set';
     const OPTION_SEARCH_ORDER = 'searchOrder';
 
     /**
@@ -19,7 +22,7 @@ class PrefixFallbackFactory extends AbstractFactory {
     /**
      * @var array
      */
-    protected $searchOrder;
+    protected $searchOrder = [];
 
     /**
      * {@inheritDoc}
@@ -54,6 +57,18 @@ class PrefixFallbackFactory extends AbstractFactory {
 
         // Not found
         return $this->map[$name] = false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Resource\Resource::configurationTests()
+     */
+    protected function configurationTests(): Resource {
+        if (empty($this->searchOrder)) {
+            throw new RuntimeException(static::EXCEPTION_SEARCH_ORDER_NOT_SET);
+        }
+
+        return $this;
     }
 
     /**

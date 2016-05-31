@@ -55,24 +55,6 @@ class Json extends Resource implements JsonInterface {
     }
 
     /**
-     * Get decoding options
-     *
-     * @return int
-     */
-    public function getDecodingOptions(): int {
-        return $this->decodingOptions;
-    }
-
-    /**
-     * Get encoding options
-     *
-     * @return int
-     */
-    public function getEncodingOptions(): int {
-        return $this->encodingOptions;
-    }
-
-    /**
      * @param int $decodingMaxDepth
      */
     protected function setDecodingMaxDepth(int $decodingMaxDepth) {

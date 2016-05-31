@@ -23,7 +23,7 @@ class Local extends FileSystem {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::exists($filename)
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::exists($path)
      */
     public function exists(string $path): bool {
         return file_exists($path);
@@ -63,6 +63,7 @@ class Local extends FileSystem {
 
     /**
      * Get contents of shared file
+     *
      * @param string $filename
      * @return string
      */

@@ -7,6 +7,6 @@
 
 namespace Fixin\Base\Exception;
 
-class Exception extends \Exception {
+class LogicException extends \LogicException {
 
 }

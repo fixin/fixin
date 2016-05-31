@@ -7,6 +7,8 @@
 
 namespace Fixin\Application;
 
+use Fixin\Delivery\Cargo\CargoInterface;
+
 class Application implements ApplicationInterface {
 
     const CONFIG_APPLICATION = 'application';
@@ -53,19 +55,12 @@ class Application implements ApplicationInterface {
     /**
      * Error route
      *
-     * @param \Throwable|CargoInterface $cargo
-     * @throws \Throwable
+     * @param CargoInterface $cargo
      */
-    protected function errorRoute($cargo) {
-        $container = $this->container;
-
+    protected function errorRoute(CargoInterface $cargo) {
         try {
-            if ($cargo instanceof \Throwable) {
-                $cargo = $container->clonePrototype('Delivery\Cargo\Cargo')->setContent($cargo);
-            }
-
             // Error dispatch
-            $cargo = $container->get($this->config[static::OPTION_ERROR_ROUTE])->dispatch($cargo);
+            $cargo = $this->container->get($this->config[static::OPTION_ERROR_ROUTE])->dispatch($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {
@@ -78,7 +73,7 @@ class Application implements ApplicationInterface {
      * {@inheritDoc}
      * @see \Fixin\Application\ApplicationInterface::run()
      */
-    public function run() {
+    public function run(): ApplicationInterface {
         $container = $this->container;
 
         $view = $container->clonePrototype('View\View');
@@ -96,8 +91,10 @@ class Application implements ApplicationInterface {
             $cargo->unpack();
         }
         catch (\Throwable $t) {
-            $this->errorRoute(isset($cargo) ? $cargo->setContent($t) : $t);
+            $this->errorRoute(($cargo ?? $container->clonePrototype('Delivery\Cargo\Cargo'))->setContent($t));
         }
+
+        return $this;
     }
 
     /**

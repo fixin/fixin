@@ -11,6 +11,9 @@ use Fixin\Resource\ResourceInterface;
 
 interface RepositoryInterface extends ResourceInterface {
 
+    const OPTION_NAME = 'name';
+    const OPTION_STORAGE = 'storage';
+
     /**
      * Get single entity
      *

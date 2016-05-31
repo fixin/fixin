@@ -7,6 +7,7 @@
 
 namespace Fixin\View\Helper;
 
+use Fixin\Base\Escaper\EscaperInterface;
 use Fixin\Resource\ResourceManagerInterface;
 
 class JsVariable extends Helper {
@@ -28,7 +29,7 @@ class JsVariable extends Helper {
     }
 
     /**
-     * Normal escape or iterated for arrays
+     * Invoke encode()
      *
      * @param mixed $value
      * @return string

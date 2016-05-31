@@ -25,9 +25,9 @@ abstract class Validator extends Resource implements ValidatorInterface {
      * Invoke isValid()
      *
      * @param mixed $value
-     * @return boolean
+     * @return bool
      */
-    public function __invoke($value) {
+    public function __invoke($value): bool {
         return $this->isValid($value);
     }
 
@@ -35,9 +35,9 @@ abstract class Validator extends Resource implements ValidatorInterface {
      * Add error
      *
      * @param string $error
-     * @return \Fixin\Base\Validator\Validator
+     * @return self
      */
-    protected function addError(string $error) {
+    protected function addError(string $error): Validator {
         $this->errors[$error] = $this->errorTemplates[$error] ?? $error;
 
         return $this;

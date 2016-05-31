@@ -16,12 +16,12 @@ interface EntityInterface extends PrototypeInterface {
      *
      * @return self
      */
-    public function delete();
+    public function delete(): EntityInterface;
 
     /**
      * Save entity to the repository
      *
      * @return self
      */
-    public function save();
+    public function save(): EntityInterface;
 }

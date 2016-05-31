@@ -73,7 +73,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::addHeader($name, $value)
      */
-    public function addHeader(string $name, string $value) {
+    public function addHeader(string $name, string $value): HttpCargoInterface {
         $this->headers[$name][] = $value;
 
         return $this;
@@ -83,7 +83,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::clearHeaders()
      */
-    public function clearHeaders() {
+    public function clearHeaders(): HttpCargoInterface {
         $this->headers = [];
 
         return $this;
@@ -93,8 +93,8 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\Cargo::getContentType()
      */
-    public function getContentType() {
-        return $this->headers[Http::HEADER_CONTENT_TYPE][0] ?? [];
+    public function getContentType(): string {
+        return $this->headers[Http::HEADER_CONTENT_TYPE][0] ?? '';
     }
 
     /**
@@ -181,7 +181,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getStatusCode()
      */
-    public function getStatusCode() {
+    public function getStatusCode(): int {
         return $this->statusCode;
     }
 
@@ -189,7 +189,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setCookies($cookies)
      */
-    public function setCookies(array $cookies) {
+    public function setCookies(array $cookies): HttpCargoInterface {
         $this->cookies = $cookies;
 
         return $this;
@@ -197,9 +197,9 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\Cargo::setContentType()
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setContentType($contentType)
      */
-    public function setContentType($contentType) {
+    public function setContentType(string $contentType): CargoInterface {
         $this->headers[Http::HEADER_CONTENT_TYPE] = [$contentType];
 
         return $this;
@@ -209,7 +209,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setEnvironmentParameters($parameters)
      */
-    public function setEnvironmentParameters(array $parameters) {
+    public function setEnvironmentParameters(array $parameters): HttpCargoInterface {
         $this->environmentParameters = $parameters;
 
         return $this;
@@ -219,7 +219,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setHeader($name, $value)
      */
-    public function setHeader(string $name, $value) {
+    public function setHeader(string $name, $value): HttpCargoInterface {
         $this->headers[$name] = is_scalar($value) ? [$value] : $value;
 
         return $this;
@@ -229,7 +229,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setProtocolVersion($protocolVersion)
      */
-    public function setProtocolVersion(string $protocolVersion) {
+    public function setProtocolVersion(string $protocolVersion): HttpCargoInterface {
         $this->protocolVersion = $protocolVersion;
 
         return $this;
@@ -239,7 +239,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestHeaders($headers)
      */
-    public function setRequestHeaders(array $headers) {
+    public function setRequestHeaders(array $headers): HttpCargoInterface {
         $this->requestHeaders = $headers;
 
         return $this;
@@ -249,7 +249,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestMethod($method)
      */
-    public function setRequestMethod(string $method) {
+    public function setRequestMethod(string $method): HttpCargoInterface {
         $this->requestMethod = $method;
         return $this;
     }
@@ -258,7 +258,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestParameters($parameters)
      */
-    public function setRequestParameters(array $parameters) {
+    public function setRequestParameters(array $parameters): HttpCargoInterface {
         $this->requestParameters = $parameters;
 
         return $this;
@@ -268,7 +268,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestProtocolVersion($protocolVersion)
      */
-    public function setRequestProtocolVersion(string $protocolVersion) {
+    public function setRequestProtocolVersion(string $protocolVersion): HttpCargoInterface {
         $this->requestProtocolVersion = $protocolVersion;
 
         return $this;
@@ -278,7 +278,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestUri($requestUri)
      */
-    public function setRequestUri(UriInterface $requestUri) {
+    public function setRequestUri(UriInterface $requestUri): HttpCargoInterface {
         $this->requestUri = $requestUri;
 
         return $this;
@@ -288,7 +288,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setServerParameters($parameters)
      */
-    public function setServerParameters(array $parameters) {
+    public function setServerParameters(array $parameters): HttpCargoInterface {
         $this->serverParameters = $parameters;
 
         return $this;
@@ -298,7 +298,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setStatusCode($statusCode)
      */
-    public function setStatusCode(int $statusCode) {
+    public function setStatusCode(int $statusCode): HttpCargoInterface {
         $this->statusCode = $statusCode;
 
         return $this;

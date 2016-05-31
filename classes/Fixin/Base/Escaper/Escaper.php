@@ -15,7 +15,7 @@ class Escaper implements EscaperInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\Escaper\EscaperInterface::encodeJsVariable($string)
+     * @see \Fixin\Base\Escaper\EscaperInterface::encodeJsVariable($var)
      */
     public function encodeJsVariable($var): string {
         return strtr(json_encode($var, static::JS_ENCODING_OPTIONS), static::JS_REPLACES);

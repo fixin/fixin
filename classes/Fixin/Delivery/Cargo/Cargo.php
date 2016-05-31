@@ -19,7 +19,7 @@ class Cargo extends Prototype implements CargoInterface {
     /**
      * @var string
      */
-    protected $contentType;
+    protected $contentType = '';
 
     /**
      * @var bool
@@ -38,7 +38,7 @@ class Cargo extends Prototype implements CargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\CargoInterface::getContentType()
      */
-    public function getContentType() {
+    public function getContentType(): string {
         return $this->contentType;
     }
 
@@ -52,9 +52,9 @@ class Cargo extends Prototype implements CargoInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoInterface::setContent()
+     * @see \Fixin\Delivery\Cargo\CargoInterface::setContent($content)
      */
-    public function setContent($content) {
+    public function setContent($content): CargoInterface {
         $this->content = $content;
 
         return $this;
@@ -64,7 +64,7 @@ class Cargo extends Prototype implements CargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\CargoInterface::setContentType($contentType)
      */
-    public function setContentType($contentType) {
+    public function setContentType(string $contentType): CargoInterface {
         $this->contentType = $contentType;
 
         return $this;
@@ -74,7 +74,7 @@ class Cargo extends Prototype implements CargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\CargoInterface::setDelivered($delivered)
      */
-    public function setDelivered(bool $delivered) {
+    public function setDelivered(bool $delivered): CargoInterface {
         $this->delivered = $delivered;
 
         return $this;

@@ -12,6 +12,7 @@ use Fixin\Base\Model\RepositoryInterface;
 use Fixin\Base\Storage\Storage;
 use Fixin\Support\Strings;
 use Fixin\Base\Exception\RuntimeException;
+use Fixin\Resource\Resource;
 
 class DirectoryStorage extends Storage {
 
@@ -26,13 +27,13 @@ class DirectoryStorage extends Storage {
     /**
      * @var string
      */
-    protected $path;
+    protected $path = '';
 
     /**
      * {@inheritDoc}
      * @see \Fixin\Resource\Resource::configurationTests()
      */
-    protected function configurationTests() {
+    protected function configurationTests(): Resource {
         if (mb_strlen($this->path) === 0) {
             throw new RuntimeException(static::EXCEPTION_PATH_NOT_SET);
         }
@@ -40,6 +41,8 @@ class DirectoryStorage extends Storage {
         if (!isset($this->fileSystem)) {
             throw new RuntimeException(static::EXCEPTION_FILE_SYSTEM_NOT_SET);
         }
+
+        return $this;
     }
 
     /**

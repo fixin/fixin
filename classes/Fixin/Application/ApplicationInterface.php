@@ -14,5 +14,5 @@ interface ApplicationInterface {
      *
      * @return self
      */
-    public function run();
+    public function run(): ApplicationInterface;
 }

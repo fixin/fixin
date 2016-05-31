@@ -11,7 +11,6 @@ use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\FileSystem\FileResolverInterface;
 use Fixin\Resource\Prototype;
 use Fixin\View\Engine\EngineInterface;
-use Fixin\Base\Exception\InvalidArgumentException;
 
 class View extends Prototype implements ViewInterface {
 
@@ -44,9 +43,9 @@ class View extends Prototype implements ViewInterface {
     protected $fileResolver;
 
     /**
-     * @var string|null
+     * @var string
      */
-    protected $template;
+    protected $template = '';
 
     /**
      * @var array
@@ -57,7 +56,7 @@ class View extends Prototype implements ViewInterface {
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::clearChildren()
      */
-    public function clearChildren() {
+    public function clearChildren(): ViewInterface {
         $this->children = [];
 
         return $this;
@@ -67,7 +66,7 @@ class View extends Prototype implements ViewInterface {
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::clearVariables()
      */
-    public function clearVariables() {
+    public function clearVariables(): ViewInterface {
         $this->variables = [];
 
         return $this;
@@ -142,7 +141,7 @@ class View extends Prototype implements ViewInterface {
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::getResolvedTemplate()
      */
-    public function getResolvedTemplate() {
+    public function getResolvedTemplate(): string {
         $template = $this->template;
 
         // No template or accessible file
@@ -167,7 +166,7 @@ class View extends Prototype implements ViewInterface {
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::getTemplate()
      */
-    public function getTemplate() {
+    public function getTemplate(): String {
         return $this->template;
     }
 
@@ -199,7 +198,7 @@ class View extends Prototype implements ViewInterface {
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::setChild($name, $child)
      */
-    public function setChild(string $name, ViewInterface $child) {
+    public function setChild(string $name, ViewInterface $child): ViewInterface {
         $this->children[$name] = $child;
 
         return $this;
@@ -209,7 +208,6 @@ class View extends Prototype implements ViewInterface {
      * Set Engine
      *
      * @param string|EngineInterface $engine
-     * @throws InvalidArgumentException
      */
     protected function setEngine($engine) {
         $this->setLazyLoadingProperty('engine', EngineInterface::class, $engine);
@@ -228,7 +226,7 @@ class View extends Prototype implements ViewInterface {
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::setTemplate($template)
      */
-    public function setTemplate(string $template) {
+    public function setTemplate(string $template): ViewInterface {
         $this->template = $template;
 
         return $this;
@@ -238,7 +236,7 @@ class View extends Prototype implements ViewInterface {
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::setVariable($name, $value)
      */
-    public function setVariable(string $name, $value) {
+    public function setVariable(string $name, $value): ViewInterface {
         $this->variables[$name] = $value;
 
         return $this;
@@ -248,7 +246,7 @@ class View extends Prototype implements ViewInterface {
      * {@inheritDoc}
      * @see \Fixin\View\ViewInterface::setVariables($variables)
      */
-    public function setVariables(array $variables) {
+    public function setVariables(array $variables): ViewInterface {
         $this->variables = $variables + $this->variables;
 
         return $this;

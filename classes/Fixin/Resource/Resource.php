@@ -48,7 +48,7 @@ abstract class Resource implements ResourceInterface {
      *
      * @return self
      */
-    protected function configurationTests() {
+    protected function configurationTests(): Resource {
         return $this;
     }
 
@@ -58,7 +58,7 @@ abstract class Resource implements ResourceInterface {
      * @param array $options
      * @throws InvalidArgumentException
      */
-    protected function configureWithOptions(array $options) {
+    protected function configureWithOptions(array $options): Resource {
         foreach ($options as $key => $value) {
             $method = 'set' . $key;
 

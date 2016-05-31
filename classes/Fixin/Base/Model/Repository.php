@@ -7,10 +7,10 @@
 
 namespace Fixin\Base\Model;
 
-use Fixin\Resource\Resource;
-use Fixin\Base\Storage\StorageInterface;
 use Fixin\Base\Exception\InvalidArgumentException;
 use Fixin\Base\Exception\RuntimeException;
+use Fixin\Base\Storage\StorageInterface;
+use Fixin\Resource\Resource;
 
 class Repository extends Resource implements RepositoryInterface {
 
@@ -22,7 +22,7 @@ class Repository extends Resource implements RepositoryInterface {
     /**
      * @var string
      */
-    protected $name;
+    protected $name = '';
 
     /**
      * @var string[]
@@ -38,7 +38,7 @@ class Repository extends Resource implements RepositoryInterface {
      * {@inheritDoc}
      * @see \Fixin\Resource\Resource::configurationTests()
      */
-    protected function configurationTests() {
+    protected function configurationTests(): Resource {
         if (mb_strlen($this->name) === 0) {
             throw new RuntimeException(static::EXCEPTION_NAME_NOT_SET);
         }
@@ -50,6 +50,8 @@ class Repository extends Resource implements RepositoryInterface {
         if (empty($this->primaryKey)) {
             throw new RuntimeException(static::EXCEPTION_PRIMARY_KEY_NOT_SET);
         }
+
+        return $this;
     }
 
     /**
@@ -71,6 +73,8 @@ class Repository extends Resource implements RepositoryInterface {
     }
 
     /**
+     * Get storage instance
+     *
      * @return StorageInterface
      */
     protected function getStorage(): StorageInterface {

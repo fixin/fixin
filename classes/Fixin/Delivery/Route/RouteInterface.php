@@ -20,5 +20,5 @@ interface RouteInterface extends ResourceInterface {
      * @param CargoInterface $cargo
      * @return CargoInterface
      */
-    public function dispatch(CargoInterface $cargo);
+    public function dispatch(CargoInterface $cargo): CargoInterface;
 }

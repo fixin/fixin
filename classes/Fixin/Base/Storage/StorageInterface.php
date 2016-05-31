@@ -13,8 +13,11 @@ use Fixin\Resource\ResourceInterface;
 interface StorageInterface extends ResourceInterface {
 
     /**
+     * Get data
+     *
      * @param RepositoryInterface $repository
      * @param string $key
+     * @return mixed
      */
     public function get(RepositoryInterface $repository, $key);
 }
