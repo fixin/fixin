@@ -2,8 +2,8 @@
 
 return [
     'application' => [
-        'cargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
-        'route' => 'mainRoute',
+        'cargo' => 'starterCargo',
+        'route' => 'starterRoute',
         'errorRoute' => 'errorRoute'
     ],
     'resourceManager' => [
@@ -17,7 +17,8 @@ return [
                     ]
                 ]
             ],
-            'mainRoute' => [
+            'starterCargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
+            'starterRoute' => [
                 'class' => 'Delivery\Route\Route',
                 'options' => [
                     'nodes' => [
@@ -33,14 +34,6 @@ return [
                 ]
             ],
 
-            /*
-            'Base\Session\SessionRepository' => [
-                'class' => 'Base\Model\Repository',
-                'options' => [
-                    'name' => 'sessions',
-                    'storage' => 'Base\Storage\Directory\DirectoryStorage'
-                ]
-            ],*/
             'View\View' => [
                 'options' => [
                     'fileResolver' => 'viewFileResolver'
