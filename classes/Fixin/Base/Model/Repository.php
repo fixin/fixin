@@ -54,10 +54,10 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\Model\RepositoryInterface::get($entityId)
+     * @see \Fixin\Base\Model\RepositoryInterface::get($key)
      */
-    public function get($entityId) {
-        $data = $this->getStorage()->get($this, $entityId);
+    public function get($key) {
+        $data = $this->getStorage()->get($this, $key);
         return $data;
     }
 

@@ -44,10 +44,10 @@ class DirectoryStorage extends Storage {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\Storage\StorageInterface::get($repository, $entityId)
+     * @see \Fixin\Base\Storage\StorageInterface::get($repository, $key)
      */
-    public function get(RepositoryInterface $repository, $entityId) {
-        $filename = $this->rowFilename($repository, $entityId);
+    public function get(RepositoryInterface $repository, $key) {
+        $filename = $this->rowFilename($repository, $key);
 
         if ($this->fileSystem->isFile($filename)) {
             $contents = unserialize($this->fileSystem->get($filename));
@@ -60,23 +60,23 @@ class DirectoryStorage extends Storage {
 
     /**
      * @param RepositoryInterface $repository
-     * @param string $entityId
+     * @param string $key
      * @return string
      */
-    protected function rowFilename(RepositoryInterface $repository, $entityId): string {
-        return $this->path . $repository->getName() . DIRECTORY_SEPARATOR . $entityId . '.data';
+    protected function rowFilename(RepositoryInterface $repository, $key): string {
+        return $this->path . $repository->getName() . DIRECTORY_SEPARATOR . $key . '.data';
     }
 
     /**
      * @param RepositoryInterface $repository
      * @param array $data
-     * @param string $entityId
+     * @param string $key
      * @return self
      */
-    public function update(RepositoryInterface $repository, array $data, $entityId) {
+    public function update(RepositoryInterface $repository, array $data, $key) {
         $contents = serialize($data);
 
-        $this->fileSystem->put($this->rowFilename($repository, $entityId), $contents);
+        $this->fileSystem->put($this->rowFilename($repository, $key), $contents);
 
         return $this;
     }

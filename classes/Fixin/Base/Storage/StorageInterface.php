@@ -14,7 +14,7 @@ interface StorageInterface extends ResourceInterface {
 
     /**
      * @param RepositoryInterface $repository
-     * @param string $entityId
+     * @param string $key
      */
-    public function get(RepositoryInterface $repository, $entityId);
+    public function get(RepositoryInterface $repository, $key);
 }
