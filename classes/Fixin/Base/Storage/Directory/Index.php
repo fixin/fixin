@@ -8,19 +8,16 @@
 namespace Fixin\Base\Storage\Directory;
 
 use Fixin\Base\Exception\RuntimeException;
-use Fixin\Resource\Prototype;
 use Fixin\Base\FileSystem\FileSystemInterface;
+use Fixin\Resource\Prototype;
 use Fixin\Support\Arrays;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
 class Index extends Prototype {
 
     const EXCEPTION_FILENAME_NOT_SET = 'Filename not set';
     const EXCEPTION_INVALID_DATA = 'Invalid data';
 
-    const KEY_ENTITY_IDS = 'entityIds';
+    const KEY_KEYS = 'keys';
     const KEY_VALUES = 'values';
 
     /**
@@ -41,7 +38,7 @@ class Index extends Prototype {
     /**
      * @var array
      */
-    protected $entityIds = [];
+    protected $keys = [];
 
     /**
      * @var array
@@ -63,22 +60,12 @@ class Index extends Prototype {
      * @return self
      */
     public function clear() {
-        $this->entityIds = [];
+        $this->keys = [];
         $this->values = [];
 
         $this->dirty = true;
 
         return $this;
-    }
-
-    /**
-     * IDs of equal values
-     *
-     * @param mixed $value
-     * @return array
-     */
-    public function equal($value): array {
-        return array_slice($this->entityIds, $start = $this->findIndex($value, -1), $this->findIndex($value, 0) - $start);
     }
 
     /**
@@ -121,74 +108,113 @@ class Index extends Prototype {
     }
 
     /**
-     * Get values for IDs
-     *
-     * @param array $entityIds
-     * @return array
-     */
-    public function getValuesForIds(array $entityIds): array {
-        $filtered = array_intersect($this->entityIds, $entityIds);
-
-        return array_combine($filtered, array_intersect_key($this->values, $filtered));
-    }
-
-    /**
-     * IDs of greather than values
+     * Get keys of value
      *
      * @param mixed $value
      * @return array
      */
-    public function greaterThan($value): array {
-        return array_slice($this->entityIds, $this->findIndex($value, 0));
+    public function getKeysOf($value): array {
+        return array_slice($this->keys, $start = $this->findIndex($value, -1), $this->findIndex($value, 0) - $start);
     }
 
     /**
-     * IDs of greather than or equal values
+     * Get keys of greather than values
      *
      * @param mixed $value
      * @return array
      */
-    public function greaterThanOrEqual($value): array {
-        return array_slice($this->entityIds, $this->findIndex($value, -1));
+    public function getKeysOfGreaterThan($value): array {
+        return array_slice($this->keys, $this->findIndex($value, 0));
     }
 
     /**
-     * IDs of values
+     * Get keys of greather than or equal values
      *
-     * @param array $values
+     * @param mixed $value
      * @return array
      */
-    public function inValues(array $values): array {
-        return array_intersect_key($this->entityIds, array_intersect($this->values, $values));
+    public function getKeysOfGreaterThanOrEqual($value): array {
+        return array_slice($this->keys, $this->findIndex($value, -1));
     }
 
     /**
-     * Insert value for ID
-     *
-     * @param mixed $entityId
-     * @param mixed $value
-     * @return self
-     */
-    public function insert($entityId, $value) {
-        $index = $this->findIndex($value, -1);
-
-        array_splice($this->entityIds, $index, 0, [$entityId]);
-        array_splice($this->values, $index, 0, [$value]);
-
-        $this->dirty = true;
-
-        return $this;
-    }
-
-    /**
-     * IDs of values of interval
+     * Get keys of values of interval
      *
      * @param mixed $beginValue
      * @param mixed $endValue
      * @return array
      */
-    public function intervalOf($beginValue, $endValue): array {
-        return array_slice($this->entityIds, $start = $this->findIndex($beginValue, -1), $this->findIndex($endValue, 0) - $start);
+    public function getKeysOfInterval($beginValue, $endValue): array {
+        return array_slice($this->keys, $start = $this->findIndex($beginValue, -1), $this->findIndex($endValue, 0) - $start);
+    }
+
+    /**
+     * Get keys of lower than values
+     *
+     * @param mixed $value
+     * @return array
+     */
+    public function getKeysOfLowerThan($value): array {
+        return array_slice($this->keys, 0, $this->findIndex($value, -1));
+    }
+
+    /**
+     * Get keys of lower than or equal values
+     *
+     * @param mixed $value
+     * @return array
+     */
+    public function getKeysOfLowerThanOrEqual($value): array {
+        return array_slice($this->keys, 0, $this->findIndex($value, 0));
+    }
+
+    /**
+     * Get keys of values
+     *
+     * @param array $values
+     * @return array
+     */
+    public function getKeysOfValues(array $values): array {
+        return array_intersect_key($this->keys, array_intersect($this->values, $values));
+    }
+
+    /**
+     * Get value
+     * @param mixed $key
+     * @return NULL|mixed
+     */
+    public function getValue($key) {
+        return (false !== $index = array_search($key, $this->keys)) ? $this->values[$index] : null;
+    }
+
+    /**
+     * Get values
+     *
+     * @param array $keys
+     * @return array
+     */
+    public function getValues(array $keys): array {
+        $filtered = array_intersect($this->keys, $keys);
+
+        return array_combine($filtered, array_intersect_key($this->values, $filtered));
+    }
+
+    /**
+     * Insert key
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return self
+     */
+    public function insert($key, $value) {
+        $index = $this->findIndex($value, -1);
+
+        array_splice($this->keys, $index, 0, [$key]);
+        array_splice($this->values, $index, 0, [$value]);
+
+        $this->dirty = true;
+
+        return $this;
     }
 
     /**
@@ -221,49 +247,29 @@ class Index extends Prototype {
      */
     protected function loadArray(array $data): bool {
         // Value check
-        $entityIds = Arrays::arrayForKey($data, static::KEY_ENTITY_IDS);
+        $keys = Arrays::arrayForKey($data, static::KEY_KEYS);
         $values = Arrays::arrayForKey($data, static::KEY_VALUES);
 
-        if (is_null($entityIds) || is_null($values) || count($entityIds) !== count($values)) {
+        if (is_null($keys) || is_null($values) || count($keys) !== count($values)) {
             return false;
         }
 
         // Load
-        $this->entityIds = $entityIds;
+        $this->keys = $keys;
         $this->values = $values;
 
         return true;
     }
 
     /**
-     * IDs of lower than values
+     * Remove key
      *
-     * @param mixed $value
-     * @return array
-     */
-    public function lowerThan($value): array {
-        return array_slice($this->entityIds, 0, $this->findIndex($value, -1));
-    }
-
-    /**
-     * IDs of lower than or equal values
-     *
-     * @param mixed $value
-     * @return array
-     */
-    public function lowerThanOrEqual($value): array {
-        return array_slice($this->entityIds, 0, $this->findIndex($value, 0));
-    }
-
-    /**
-     * Remove ID
-     *
-     * @param mixed $entityId
+     * @param mixed $key
      * @return self
      */
-    public function remove($entityId) {
-        if (false !== $index = array_search($entityId, $this->entityIds)) {
-            array_splice($this->entityIds, $index, 1);
+    public function remove($key) {
+        if (false !== $index = array_search($key, $this->keys)) {
+            array_splice($this->keys, $index, 1);
             array_splice($this->values, $index, 1);
 
             $this->dirty = true;
@@ -295,7 +301,7 @@ class Index extends Prototype {
         }
 
         $data = [
-            static::KEY_ENTITY_IDS => $this->entityIds,
+            static::KEY_KEYS => $this->keys,
             static::KEY_VALUES => $this->values
         ];
 
