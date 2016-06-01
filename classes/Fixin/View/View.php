@@ -30,17 +30,17 @@ class View extends Prototype implements ViewInterface {
     protected $engine;
 
     /**
-     * @var array
-     */
-    protected $engineByPostfix = [
-        '.php' => 'View\Engine\PhpEngine',
-        '.phtml' => 'View\Engine\PhpEngine'
-    ];
-
-    /**
      * @var FileResolverInterface|false|null
      */
     protected $fileResolver;
+
+    /**
+     * @var array
+     */
+    protected $postfixEngineMap = [
+        '.php' => 'View\Engine\PhpEngine',
+        '.phtml' => 'View\Engine\PhpEngine'
+    ];
 
     /**
      * @var string
@@ -120,8 +120,8 @@ class View extends Prototype implements ViewInterface {
             $start = mb_strrpos($template, '.', $start - $max - 1);
             $postfix = mb_substr($template, $start);
 
-            if (isset($this->engineByPostfix[$postfix])) {
-                return $this->engineByPostfix[$postfix];
+            if (isset($this->postfixEngineMap[$postfix])) {
+                return $this->postfixEngineMap[$postfix];
             }
         };
 
@@ -220,6 +220,15 @@ class View extends Prototype implements ViewInterface {
      */
     protected function setFileResolver($fileResolver) {
         $this->setLazyLoadingProperty('fileResolver', FileResolverInterface::class, $fileResolver);
+    }
+
+    /**
+     * Set postfix-engine mapping
+     *
+     * @param array $postfixEngineMap
+     */
+    protected function setPostfixEngineMap(array $postfixEngineMap) {
+        $this->postfixEngineMap = $postfixEngineMap;
     }
 
     /**
