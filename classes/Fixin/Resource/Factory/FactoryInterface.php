@@ -7,7 +7,14 @@
 
 namespace Fixin\Resource\Factory;
 
+use Fixin\Resource\ResourceManagerInterface;
+
 interface FactoryInterface {
+
+    /**
+     * @param ResourceManagerInterface $container
+     */
+    public function __construct(ResourceManagerInterface $container);
 
     /**
      * Produce resource
