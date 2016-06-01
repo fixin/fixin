@@ -20,7 +20,7 @@ class PrefixFallbackFactory extends AbstractFactory {
     protected $map = [];
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $searchOrder = [];
 

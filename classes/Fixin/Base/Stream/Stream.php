@@ -166,7 +166,7 @@ class Stream implements StreamInterface {
      * @throws InvalidArgumentException
      * @return resource
      */
-    protected function resourceByReference(string $reference, $mode) {
+    protected function resourceByReference(string $reference, string $mode) {
         $error = null;
 
         // Suppress warnings

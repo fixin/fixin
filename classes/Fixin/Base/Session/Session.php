@@ -8,13 +8,29 @@
 namespace Fixin\Base\Session;
 
 use Fixin\Resource\Prototype;
+use Fixin\Resource\Resource;
+use Fixin\Base\Exception\RuntimeException;
 
 class Session extends Prototype implements SessionInterface {
+
+    const EXCEPTION_SESSION_MANAGER_NOT_SET = 'Session manager not set';
 
     /**
      * @var SessionManagerInterface
      */
     protected $sessionManager;
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Resource\Resource::configurationTests()
+     */
+    protected function configurationTests(): Resource {
+        if (!isset($this->sessionManager)) {
+            throw new RuntimeException(static::EXCEPTION_SESSION_MANAGER_NOT_SET);
+        }
+
+        return $this;
+    }
 
     /**
      * Set session manager instance

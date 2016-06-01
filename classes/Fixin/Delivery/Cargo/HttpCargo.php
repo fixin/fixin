@@ -133,7 +133,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getRequestHeader($name)
      */
-    public function getRequestHeader(string $name): string {
+    public function getRequestHeader(string $name) {
         return $this->requestHeaders[$name] ?? null;
     }
 

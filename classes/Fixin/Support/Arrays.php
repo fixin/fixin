@@ -10,6 +10,8 @@ namespace Fixin\Support;
 class Arrays extends DoNotCreate {
 
     /**
+     * Get array item
+     *
      * @param array $array
      * @param string|int $key
      * @return mixed|null

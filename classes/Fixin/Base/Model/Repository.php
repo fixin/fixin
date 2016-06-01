@@ -39,7 +39,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Resource\Resource::configurationTests()
      */
     protected function configurationTests(): Resource {
-        if (mb_strlen($this->name) === 0) {
+        if ($this->name === '') {
             throw new RuntimeException(static::EXCEPTION_NAME_NOT_SET);
         }
 

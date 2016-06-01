@@ -18,9 +18,7 @@ class Ground extends DoNotCreate {
      * @return string
      */
     public static function debugText(string $html): string {
-        return static::isConsole()
-        ? htmlspecialchars_decode(strip_tags($html))
-        : sprintf(static::DEBUG_TEXT_TEMPLATE, $html);
+        return static::isConsole() ? htmlspecialchars_decode(strip_tags($html)) : sprintf(static::DEBUG_TEXT_TEMPLATE, $html);
     }
 
     /**

@@ -10,6 +10,25 @@ namespace Fixin\Support;
 class CodeInspector extends DoNotCreate {
 
     /**
+     * Get source code of function
+     *
+     * @param string|\Closure $function
+     * @return string
+     */
+    public static function functionSource($function): string {
+        // File content
+        $reflection = new \ReflectionFunction($function);
+        $file = file($reflection->getFileName());
+        $lines = array_slice($file, $startLine = $reflection->getStartLine(), $reflection->getEndLine() - $startLine);
+
+        // Last row
+        $last = array_pop($lines);
+        array_push($lines, rtrim(mb_substr($last, 0, mb_strrpos($last, '}'))));
+
+        return static::removeIndent($lines);
+    }
+
+    /**
      * Remove indent from lines
      *
      * @param array $lines
@@ -35,24 +54,5 @@ class CodeInspector extends DoNotCreate {
         }
 
         return implode('', $lines);
-    }
-
-    /**
-     * Get source code of function
-     *
-     * @param string|\Closure $function
-     * @return string
-     */
-    public static function functionSource($function): string {
-        // File content
-        $reflection = new \ReflectionFunction($function);
-        $file = file($reflection->getFileName());
-        $lines = array_slice($file, $startLine = $reflection->getStartLine(), $reflection->getEndLine() - $startLine);
-
-        // Last row
-        $last = array_pop($lines);
-        array_push($lines, rtrim(mb_substr($last, 0, mb_strrpos($last, '}'))));
-
-        return static::removeIndent($lines);
     }
 }

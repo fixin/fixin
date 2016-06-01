@@ -12,12 +12,12 @@ use Fixin\Resource\Resource;
 abstract class Validator extends Resource implements ValidatorInterface {
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $errorTemplates = [];
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $errors = [];
 

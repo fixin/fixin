@@ -16,6 +16,8 @@ final class Version extends DoNotCreate {
 
     /**
      * Installed version
+     *
+     * @var string
      */
     const VERSION = '0.1';
 }

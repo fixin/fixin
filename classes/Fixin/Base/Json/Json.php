@@ -55,6 +55,8 @@ class Json extends Resource implements JsonInterface {
     }
 
     /**
+     * Set decoding max depth
+     *
      * @param int $decodingMaxDepth
      */
     protected function setDecodingMaxDepth(int $decodingMaxDepth) {
@@ -62,6 +64,8 @@ class Json extends Resource implements JsonInterface {
     }
 
     /**
+     * Set decoding options
+     *
      * @param int $decodingOptions
      */
     protected function setDecodingOptions(int $decodingOptions) {
@@ -69,6 +73,8 @@ class Json extends Resource implements JsonInterface {
     }
 
     /**
+     * Set encoding max depth
+     *
      * @param int $encodingMaxDepth
      */
     protected function setEncodingMaxDepth(int $encodingMaxDepth) {
@@ -76,6 +82,8 @@ class Json extends Resource implements JsonInterface {
     }
 
     /**
+     * Set encoding options
+     *
      * @param int $encodingOptions
      */
     protected function setEncodingOptions(int $encodingOptions) {

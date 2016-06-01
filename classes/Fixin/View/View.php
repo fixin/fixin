@@ -145,7 +145,7 @@ class View extends Prototype implements ViewInterface {
         $template = $this->template;
 
         // No template or accessible file
-        if (mb_strlen($template) === 0 || is_file($template)) {
+        if ($template === '' || is_file($template)) {
             return $template;
         }
 

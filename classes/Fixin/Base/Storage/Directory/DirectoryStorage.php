@@ -34,7 +34,7 @@ class DirectoryStorage extends Storage {
      * @see \Fixin\Resource\Resource::configurationTests()
      */
     protected function configurationTests(): Resource {
-        if (mb_strlen($this->path) === 0) {
+        if ($this->path === '') {
             throw new RuntimeException(static::EXCEPTION_PATH_NOT_SET);
         }
 

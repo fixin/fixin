@@ -8,6 +8,7 @@
 namespace Fixin\Application;
 
 use Fixin\Delivery\Cargo\CargoInterface;
+use Fixin\Resource\ResourceManagerInterface;
 
 class Application implements ApplicationInterface {
 
@@ -30,7 +31,7 @@ class Application implements ApplicationInterface {
     protected $config;
 
     /**
-     * @var \Fixin\Resource\ResourceManagerInterface
+     * @var ResourceManagerInterface
      */
     protected $container;
 
@@ -70,19 +71,24 @@ class Application implements ApplicationInterface {
     }
 
     /**
+     * Internal Server Error
+     *
+     * @param string $text
+     */
+    protected function internalServerError(string $text) {
+        header(static::INTERNAL_SERVER_ERROR_HEADER, true, 500);
+        echo static::INTERNAL_SERVER_ERROR_HTML;
+
+        echo $text;
+        exit;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Application\ApplicationInterface::run()
      */
     public function run(): ApplicationInterface {
         $container = $this->container;
-
-        $view = $container->clonePrototype('View\View');
-        $view->setTemplate('layout/default');
-        $view->setVariables([
-            'test' => 'test'
-        ]);
-
-        echo $view->render();
 
         try {
             // Normal dispatch
@@ -95,18 +101,5 @@ class Application implements ApplicationInterface {
         }
 
         return $this;
-    }
-
-    /**
-     * Internal Server Error
-     *
-     * @param string $text
-     */
-    protected function internalServerError(string $text) {
-        header(static::INTERNAL_SERVER_ERROR_HEADER, true, 500);
-        echo static::INTERNAL_SERVER_ERROR_HTML;
-
-        echo $text;
-        exit;
     }
 }
