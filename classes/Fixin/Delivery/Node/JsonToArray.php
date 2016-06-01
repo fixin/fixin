@@ -15,7 +15,7 @@ class JsonToArray extends Node implements NodeInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Delivery\Node\NodeInterface::handle($cargo)
+     * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
      */
     public function handle(CargoInterface $cargo): CargoInterface {
         if (in_array($cargo->getContentType(), static::JSON_TYPES)) {
