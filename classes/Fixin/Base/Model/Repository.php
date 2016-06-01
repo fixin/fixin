@@ -98,6 +98,15 @@ class Repository extends Resource implements RepositoryInterface {
     }
 
     /**
+     * Set primary key
+     *
+     * @param string[] $primaryKey
+     */
+    protected function setPrimaryKey(array $primaryKey) {
+        $this->primaryKey = $primaryKey;
+    }
+
+    /**
      * Set storage
      *
      * @param string|StorageInterface $storage
