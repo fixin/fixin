@@ -9,6 +9,6 @@ namespace Fixin\Resource\Factory;
 
 use Fixin\Resource\Resource;
 
-abstract class Factory extends Resource implements FactoryInterface {
+abstract class Factory implements FactoryInterface {
 
 }

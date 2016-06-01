@@ -31,7 +31,7 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     const OPTION_ABSTRACT_FACTORIES = 'abstractFactories';
     const OPTION_DEFINITIONS = 'definitions';
     const OPTION_RESOURCES = 'resources';
-    
+
     const OPTIONS_INJECT_KEYS = [self::OPTION_DEFINITIONS => 'Definition', self::OPTION_RESOURCES => 'Resource'];
 
     /**

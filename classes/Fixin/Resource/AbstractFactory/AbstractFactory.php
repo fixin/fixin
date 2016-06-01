@@ -7,8 +7,8 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Resource\Factory\Factory;
+use Fixin\Resource\Resource;
 
-abstract class AbstractFactory extends Factory implements AbstractFactoryInterface {
+abstract class AbstractFactory extends Resource implements AbstractFactoryInterface {
 
 }

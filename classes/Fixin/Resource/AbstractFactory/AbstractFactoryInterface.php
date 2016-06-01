@@ -7,9 +7,9 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Resource\Factory\FactoryInterface;
+use Fixin\Resource\ResourceInterface;
 
-interface AbstractFactoryInterface extends FactoryInterface {
+interface AbstractFactoryInterface extends ResourceInterface {
 
     /**
      * Determine if we can produce a resource by name
