@@ -7,9 +7,10 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
+use Fixin\Base\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 
-class PrefixFallbackFactory extends AbstractFactory {
+class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface {
 
     const EXCEPTION_SEARCH_ORDER_NOT_SET = 'Search order not set';
     const OPTION_SEARCH_ORDER = 'searchOrder';
@@ -25,8 +26,9 @@ class PrefixFallbackFactory extends AbstractFactory {
     protected $searchOrder = [];
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Factory\FactoryInterface::__invoke()
+     * @param array $options
+     * @param string $name
+     * @return object|NULL
      */
     public function __invoke(array $options = null, string $name = null) {
         $mapped = $this->map[$name];

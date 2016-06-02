@@ -8,6 +8,7 @@
 namespace Fixin\View\Helper;
 
 use Fixin\Base\Json\JsonInterface;
+use Fixin\Resource\ResourceManagerInterface;
 
 class Json extends Helper {
 
