@@ -20,6 +20,12 @@ class ClassHelper {
      */
     protected $shortNameResolve = [];
 
+    protected $visibilityOrder = [
+        'public' => 0,
+        'protected' => 1,
+        'private' => 2,
+    ];
+
     /**
      * @param string $topDir
      */
@@ -135,7 +141,7 @@ class ClassHelper {
         $list = [];
 
         foreach ($reflections as $reflection) {
-            $list[$reflection->getName()] = $reflection;
+            $list[$this->visibilityOrder[$this->reflectionVisibility($reflection)] . ':' . $reflection->getName()] = $reflection;
         }
 
         ksort($list);
@@ -149,7 +155,7 @@ class ClassHelper {
     protected function processElements() {
         foreach (array_merge(get_declared_classes(), get_declared_interfaces(), get_declared_traits()) as $name) {
             $reflection = new \ReflectionClass($name);
-            if ($reflection->isInternal() || $name === 'Classes\ClassHelper') {
+            if ($reflection->isInternal() || mb_substr($name, 0, 11) === 'FixinTools\\') {
                 continue;
             }
 
@@ -173,5 +179,13 @@ class ClassHelper {
         return strncmp($name, 'Fixin\\', 6)
         ? '\\' . htmlspecialchars($name)
         : '<a href="#' . htmlspecialchars($name) . '">' . htmlspecialchars($reflection->getShortName()) . '</a>';
+    }
+
+    /**
+     * @param mixed $reflection
+     * @return string
+     */
+    public function reflectionVisibility($reflection): string {
+        return $reflection->isPublic() ? 'public' : ($reflection->isProtected() ? 'protected' : 'private');
     }
 }

@@ -8,13 +8,11 @@
  */
 
 $topDir = dirname(__DIR__, 2);
-$application = include "$topDir/cheats/web.php";
+include "$topDir/cheats/tools.php";
 
 use \Fixin\Support\VariableInspector;
 
 // Functions
-include "{$topDir}/tools/classes/FixinTools/Base/ClassHelper.php";
-
 $helper = new \FixinTools\Base\ClassHelper($topDir);
 $showAll = !empty($_GET['all']);
 
@@ -23,11 +21,11 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
 
 ?><!DOCTYPE html>
 <html>
-    <body>
+    <head>
         <style>
 #classes {
-    font-size: 8pt;
-    font-family: monospace;
+    font-size: 10pt;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 #classes h1, h2, h3 {
@@ -78,16 +76,18 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
 
     color: #579;
     line-height: 1.5;
-    font-style: italic;
 }
 
 #classes .FromComment {
     color: #999;
-    font-style: italic;
 }
 
 #classes .Inherited {
     color: #aaa;
+}
+
+#classes .Element td {
+    color: #686868;
 }
 
 #classes .Parameter.Odd,
@@ -118,12 +118,16 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
     border-right: 1px solid #ddd;
 }
 
-#classes .Const .Name {
-    color: #777;
+#classes .Public .Visibility {
+    color: #484;
 }
 
-#classes .Method .Name {
-    color: #070;
+#classes .Protected .Visibility {
+    color: #b90;
+}
+
+#classes .Private .Visibility {
+    color: #d70;
 }
 
 #classes .Method .ReturnType,
@@ -177,12 +181,9 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
     border-top: 1px solid #ddd;
     padding-bottom: 2em
 }
-
-#classes .Property .Name,
-#classes .Parameter.Name {
-    color: #850;
-}
         </style>
+    </head>
+    <body>
         <div id="classes">
             <table>
                 <?php foreach ($helper->namespaces as $namespace => $elements): ?>
@@ -191,7 +192,7 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
                         <td colspan="10"><h2><?= htmlspecialchars($namespace) ?></h2></td>
                     </tr>
                     <?php foreach ($elements as $name => $reflection): ?>
-                        <tr class="Header" id=""<?= htmlspecialchars(strtr($reflection->name, '\\', '-')) ?>">
+                        <tr class="Header" id="<?= htmlspecialchars(strtr($reflection->name, '\\', '-')) ?>">
                             <td class="Tab"></td>
                             <td colspan="9">
                                 <h3><?= htmlspecialchars($reflection->name) ?></h3>
@@ -240,7 +241,7 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
                         <?php if (!empty($constants)): ?>
 
                             <?php foreach ($constants as $key => $value): ?>
-                                <tr class="Element Const <?= $helper->evenStyle() ?>">
+                                <tr class="Element Const <?= $helper->evenStyle() ?> Public">
                                     <td class="Tab"></td>
                                     <td class="Tab"></td>
                                     <td></td>
@@ -259,11 +260,11 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
                             <?php $defaultValues = $reflection->getDefaultProperties() ?>
                             <?php foreach ($helper->orderedReflectionList($properties) as $property): ?>
                                 <?php if ($property->getDeclaringClass() == $reflection): ?>
-                                    <tr class="Element Property <?= $helper->evenStyle() ?>">
+                                    <tr class="Element Property <?= $helper->evenStyle() ?> <?= ucfirst($visibility = $helper->reflectionVisibility($property)) ?>">
                                         <td class="Tab"></td>
                                         <td class="Tab"></td>
-                                        <td>
-                                            <?= $property->isPublic() ? 'public' : ($property->isProtected() ? 'protected' : 'private') ?>
+                                        <td class="Visibility">
+                                            <?= $visibility ?>
                                             <?= $property->isStatic() ? 'static' : '' ?>
                                         </td>
                                         <td><?= $helper->commentVar($property) ?></td>
@@ -286,14 +287,15 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
                                         $parameters = $method->getParameters();
                                         $parameterCount = max(1, count($parameters));
                                         $docParameters = $helper->commentParameters($method);
+                                        $returnType = $method->getReturnType();
                                     ?>
-                                    <tr class="Element Method <?= $oddEvenStyle = $helper->evenStyle() ?>">
+                                    <tr class="Element Method <?= $oddEvenStyle = $helper->evenStyle() ?> <?= ucfirst($visibility = $helper->reflectionVisibility($method)) ?>">
                                         <td class="Tab" rowspan="<?= $parameterCount ?>"></td>
                                         <td class="Tab" rowspan="<?= $parameterCount ?>"></td>
-                                        <td rowspan="<?= $parameterCount ?>">
+                                        <td class="Visibility" rowspan="<?= $parameterCount ?>">
                                             <?= $method->isFinal() ? 'final' : '' ?>
                                             <?= !$reflection->isInterface() && $method->isAbstract() ? 'abstract' : '' ?>
-                                            <?= $method->isPublic() ? 'public' : ($method->isProtected() ? 'protected' : 'private') ?>
+                                            <?= $visibility ?>
                                             <?= $method->isStatic() ? 'static' : '' ?>
                                         </td>
                                         <td rowspan="<?= $parameterCount ?>">function</td>
@@ -306,11 +308,11 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
                                         <?php else: ?>
                                             <td colspan="3"></td>
                                         <?php endif ?>
-                                        <td class="ReturnType" rowspan="<?= $parameterCount ?>"><?= rtrim(': ' . ($method->getReturnType() ?? $helper->commentReturnType($method) ?? ''), ': ') ?></td>
+                                        <td class="ReturnType" rowspan="<?= $parameterCount ?>"><?= rtrim(': ' . ($returnType ? $helper->classLink($returnType) : $helper->commentReturnType($method)), ': ') ?></td>
                                         <td class="Comment" rowspan="<?= $parameterCount ?>"><?= $helper->commentText($method) ?></td>
                                     </tr>
                                     <?php foreach ($parameters as $parameter): ?>
-                                        <tr class="Element Parameter <?= $oddEvenStyle ?>">
+                                        <tr class="Element Parameter <?= $oddEvenStyle ?> <?= ucfirst($visibility) ?>">
                                             <?php include 'includes/classes.parameter.php' ?>
                                         </tr>
                                     <?php endforeach ?>
