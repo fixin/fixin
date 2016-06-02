@@ -60,8 +60,7 @@ class Application implements ApplicationInterface {
      */
     protected function errorRoute(CargoInterface $cargo) {
         try {
-            // Error dispatch
-            $cargo = $this->container->get($this->config[static::OPTION_ERROR_ROUTE])->dispatch($cargo);
+            $cargo = $this->container->get($this->config[static::OPTION_ERROR_ROUTE])->handle($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {
@@ -91,9 +90,8 @@ class Application implements ApplicationInterface {
         $container = $this->container;
 
         try {
-            // Normal dispatch
             $cargo = $container->clonePrototype($this->config[static::OPTION_CARGO]);
-            $cargo = $container->get($this->config[static::OPTION_ROUTE])->dispatch($cargo);
+            $cargo = $container->get($this->config[static::OPTION_ROUTE])->handle($cargo);
             $cargo->unpack();
         }
         catch (\Throwable $t) {
