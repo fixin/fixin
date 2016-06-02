@@ -9,7 +9,7 @@ namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 
-class JsonToArray extends Node {
+class ArrayToJson extends Node {
 
     const JSON_TYPES = ['application/json', 'application/jsonml+json'];
 
@@ -18,8 +18,8 @@ class JsonToArray extends Node {
      * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
      */
     public function handle(CargoInterface $cargo): CargoInterface {
-        if (in_array($cargo->getContentType(), static::JSON_TYPES)) {
-            $cargo->setContent($this->container->get('Base\Json\Json')->decode($cargo->getContent()));
+        if (is_array($cargo->getContent()) && !in_array($cargo->getContentType(), static::JSON_TYPES)) {
+            $cargo->setContent($this->container->get('Base\Json\Json')->encode($cargo->getContent()));
         }
 
         return $cargo;
