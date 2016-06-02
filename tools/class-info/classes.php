@@ -76,10 +76,12 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
 
     color: #579;
     line-height: 1.5;
+    font-style: italic;
 }
 
 #classes .FromComment {
     color: #999;
+    font-style: italic;
 }
 
 #classes .Inherited {
