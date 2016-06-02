@@ -11,15 +11,15 @@ use Fixin\Delivery\Cargo\CargoInterface;
 
 class ArrayToJson extends Node {
 
-    const JSON_TYPES = ['application/json', 'application/jsonml+json'];
-
     /**
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
      */
     public function handle(CargoInterface $cargo): CargoInterface {
-        if (is_array($cargo->getContent()) && !in_array($cargo->getContentType(), static::JSON_TYPES)) {
-            $cargo->setContent($this->container->get('Base\Json\Json')->encode($cargo->getContent()));
+        if (is_array($cargo->getContent())) {
+            $cargo
+            ->setContent($this->container->get('Base\Json\Json')->encode($cargo->getContent()))
+            ->setContentType('application/json');
         }
 
         return $cargo;
