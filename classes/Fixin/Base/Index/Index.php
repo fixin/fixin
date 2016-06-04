@@ -5,14 +5,14 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\Storage\Directory;
+namespace Fixin\Base\Index;
 
 use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\FileSystem\FileSystemInterface;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Arrays;
 
-class Index extends Prototype {
+class Index extends Prototype implements IndexInterface {
 
     const EXCEPTION_FILENAME_NOT_SET = 'Filename not set';
     const EXCEPTION_INVALID_DATA = 'Invalid data';
@@ -55,11 +55,10 @@ class Index extends Prototype {
     }
 
     /**
-     * Clear all values
-     *
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::clear()
      */
-    public function clear() {
+    public function clear(): IndexInterface {
         $this->keys = [];
         $this->values = [];
 
@@ -95,11 +94,10 @@ class Index extends Prototype {
     }
 
     /**
-     * Write data if dirty
-     *
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::flush()
      */
-    public function flush() {
+    public function flush(): IndexInterface {
         if ($this->dirty) {
             $this->save();
         }
@@ -108,90 +106,72 @@ class Index extends Prototype {
     }
 
     /**
-     * Get keys of value
-     *
-     * @param mixed $value
-     * @return array
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::getKeysOf($value)
      */
     public function getKeysOf($value): array {
         return array_slice($this->keys, $start = $this->findIndex($value, -1), $this->findIndex($value, 0) - $start);
     }
 
     /**
-     * Get keys of greather than values
-     *
-     * @param mixed $value
-     * @return array
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::getKeysOfGreaterThan($value)
      */
     public function getKeysOfGreaterThan($value): array {
         return array_slice($this->keys, $this->findIndex($value, 0));
     }
 
     /**
-     * Get keys of greather than or equal values
-     *
-     * @param mixed $value
-     * @return array
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::getKeysOfGreaterThanOrEqual($value)
      */
     public function getKeysOfGreaterThanOrEqual($value): array {
         return array_slice($this->keys, $this->findIndex($value, -1));
     }
 
     /**
-     * Get keys of values of interval
-     *
-     * @param mixed $beginValue
-     * @param mixed $endValue
-     * @return array
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::getKeysOfInterval($beginValue, $endValue)
      */
     public function getKeysOfInterval($beginValue, $endValue): array {
         return array_slice($this->keys, $start = $this->findIndex($beginValue, -1), $this->findIndex($endValue, 0) - $start);
     }
 
     /**
-     * Get keys of lower than values
-     *
-     * @param mixed $value
-     * @return array
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::getKeysOfLowerThan($value)
      */
     public function getKeysOfLowerThan($value): array {
         return array_slice($this->keys, 0, $this->findIndex($value, -1));
     }
 
     /**
-     * Get keys of lower than or equal values
-     *
-     * @param mixed $value
-     * @return array
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::getKeysOfLowerThanOrEqual($value)
      */
     public function getKeysOfLowerThanOrEqual($value): array {
         return array_slice($this->keys, 0, $this->findIndex($value, 0));
     }
 
     /**
-     * Get keys of values
-     *
-     * @param array $values
-     * @return array
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::getKeysOfValues($values)
      */
     public function getKeysOfValues(array $values): array {
         return array_intersect_key($this->keys, array_intersect($this->values, $values));
     }
 
     /**
-     * Get value
-     * @param mixed $key
-     * @return NULL|mixed
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::getValue($key)
      */
     public function getValue($key) {
         return (false !== $index = array_search($key, $this->keys)) ? $this->values[$index] : null;
     }
 
     /**
-     * Get values
-     *
-     * @param array $keys
-     * @return array
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::getValues($keys)
      */
     public function getValues(array $keys): array {
         $filtered = array_intersect($this->keys, $keys);
@@ -200,13 +180,10 @@ class Index extends Prototype {
     }
 
     /**
-     * Insert key
-     *
-     * @param mixed $key
-     * @param mixed $value
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::insert($key, $value)
      */
-    public function insert($key, $value) {
+    public function insert($key, $value): IndexInterface {
         $index = $this->findIndex($value, -1);
 
         array_splice($this->keys, $index, 0, [$key]);
@@ -262,12 +239,10 @@ class Index extends Prototype {
     }
 
     /**
-     * Remove key
-     *
-     * @param mixed $key
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::remove($key)
      */
-    public function remove($key) {
+    public function remove($key): IndexInterface {
         if (false !== $index = array_search($key, $this->keys)) {
             array_splice($this->keys, $index, 1);
             array_splice($this->values, $index, 1);
@@ -279,11 +254,10 @@ class Index extends Prototype {
     }
 
     /**
-     * Rollback modifications to the last saved state
-     *
-     * @return self
+     * {@inheritDoc}
+     * @see \Fixin\Base\Index\IndexInterface::rollback()
      */
-    public function rollback() {
+    public function rollback(): IndexInterface {
         $this->load();
 
         return $this;
