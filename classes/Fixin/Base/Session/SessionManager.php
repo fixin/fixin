@@ -7,8 +7,8 @@
 
 namespace Fixin\Base\Session;
 
-use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\Model\RepositoryInterface;
+use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 
 class SessionManager extends Resource implements SessionManagerInterface {

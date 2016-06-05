@@ -7,8 +7,8 @@
 
 namespace Fixin\Base\Stream;
 
-use Fixin\Base\Exception\RuntimeException;
-use Fixin\Base\Exception\InvalidArgumentException;
+use Fixin\Exception\InvalidArgumentException;
+use Fixin\Exception\RuntimeException;
 
 class Stream implements StreamInterface {
 

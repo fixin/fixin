@@ -7,9 +7,9 @@
 
 namespace Fixin\Base\Session;
 
+use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Prototype;
 use Fixin\Resource\Resource;
-use Fixin\Base\Exception\RuntimeException;
 
 class Session extends Prototype implements SessionInterface {
 

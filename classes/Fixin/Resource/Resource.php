@@ -7,7 +7,7 @@
 
 namespace Fixin\Resource;
 
-use Fixin\Base\Exception\InvalidArgumentException;
+use Fixin\Exception\InvalidArgumentException;
 
 abstract class Resource implements ResourceInterface {
 
@@ -44,7 +44,7 @@ abstract class Resource implements ResourceInterface {
     }
 
     /**
-     * Configuration test
+     * Configuration tests
      *
      * @return self
      */

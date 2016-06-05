@@ -5,8 +5,7 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\Exception;
+namespace Fixin\Exception;
 
-class LogicException extends \LogicException {
-
+interface FixinException {
 }

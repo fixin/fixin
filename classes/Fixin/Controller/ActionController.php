@@ -7,9 +7,9 @@
 
 namespace Fixin\Controller;
 
-use Fixin\Base\Exception\UnexpectedValueException;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Exception\UnexpectedValueException;
 use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 use Fixin\Support\Strings;

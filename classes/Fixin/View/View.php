@@ -7,8 +7,8 @@
 
 namespace Fixin\View;
 
-use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\FileSystem\FileResolverInterface;
+use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Prototype;
 use Fixin\View\Engine\EngineInterface;
 
@@ -37,7 +37,7 @@ class View extends Prototype implements ViewInterface {
     /**
      * @var array
      */
-    protected $postfixEngineMap = [
+    protected $postfixToEngineMap = [
         '.php' => 'View\Engine\PhpEngine',
         '.phtml' => 'View\Engine\PhpEngine'
     ];
@@ -120,8 +120,8 @@ class View extends Prototype implements ViewInterface {
             $start = mb_strrpos($template, '.', $start - $max - 1);
             $postfix = mb_substr($template, $start);
 
-            if (isset($this->postfixEngineMap[$postfix])) {
-                return $this->postfixEngineMap[$postfix];
+            if (isset($this->postfixToEngineMap[$postfix])) {
+                return $this->postfixToEngineMap[$postfix];
             }
         };
 
@@ -223,12 +223,12 @@ class View extends Prototype implements ViewInterface {
     }
 
     /**
-     * Set postfix-engine mapping
+     * Set postfix to engine mapping
      *
-     * @param array $postfixEngineMap
+     * @param array $postfixToEngineMap
      */
-    protected function setPostfixEngineMap(array $postfixEngineMap) {
-        $this->postfixEngineMap = $postfixEngineMap;
+    protected function setPostfixToEngineMap(array $postfixToEngineMap) {
+        $this->postfixToEngineMap = $postfixToEngineMap;
     }
 
     /**

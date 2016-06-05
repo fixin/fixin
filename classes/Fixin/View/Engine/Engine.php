@@ -7,7 +7,8 @@
 
 namespace Fixin\View\Engine;
 
-use Fixin\Base\Exception\InvalidArgumentException;
+use Fixin\Exception\InvalidArgumentException;
+use Fixin\Exception\KeyCollisionException;
 use Fixin\Resource\Resource;
 use Fixin\View\Helper\HelperInterface;
 use Fixin\View\ViewInterface;

@@ -7,8 +7,7 @@
 
 namespace Fixin\Resource\Exception;
 
-use Fixin\Base\Exception\InvalidArgumentException;
+use Fixin\Exception\InvalidArgumentException;
 
-class ClassNotFoundException extends InvalidArgumentException {
-
+class ClassNotFoundException extends InvalidArgumentException implements ResourceException {
 }

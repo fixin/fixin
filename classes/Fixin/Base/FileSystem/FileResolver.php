@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\FileSystem;
 
-use Fixin\Base\Exception\RuntimeException;
+use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 use Fixin\Support\Strings;
 

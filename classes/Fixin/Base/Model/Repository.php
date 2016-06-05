@@ -7,9 +7,9 @@
 
 namespace Fixin\Base\Model;
 
-use Fixin\Base\Exception\InvalidArgumentException;
-use Fixin\Base\Exception\RuntimeException;
 use Fixin\Base\Storage\StorageInterface;
+use Fixin\Exception\InvalidArgumentException;
+use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 
 class Repository extends Resource implements RepositoryInterface {

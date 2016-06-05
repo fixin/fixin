@@ -10,9 +10,9 @@ namespace Fixin\Base\Storage\Directory;
 use Fixin\Base\FileSystem\FileSystemInterface;
 use Fixin\Base\Model\RepositoryInterface;
 use Fixin\Base\Storage\Storage;
-use Fixin\Support\Strings;
-use Fixin\Base\Exception\RuntimeException;
+use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
+use Fixin\Support\Strings;
 
 class DirectoryStorage extends Storage {
 

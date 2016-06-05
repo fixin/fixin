@@ -7,7 +7,7 @@
 
 namespace Fixin\Resource;
 
-use Fixin\Base\Exception\InvalidArgumentException;
+use Fixin\Exception\InvalidArgumentException;
 use Fixin\Resource\AbstractFactory\AbstractFactoryInterface;
 use Fixin\Resource\Factory\FactoryInterface;
 

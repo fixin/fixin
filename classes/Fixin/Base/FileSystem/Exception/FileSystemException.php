@@ -5,8 +5,8 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\Exception;
+namespace Fixin\Base\FileSystem\Exception;
 
-class KeyCollisionException extends RuntimeException {
+interface FileSystemException {
 
 }
