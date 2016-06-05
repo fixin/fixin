@@ -9,6 +9,7 @@ namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Support\Http;
 
 abstract class HttpHub extends Node {
 
