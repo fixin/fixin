@@ -12,7 +12,7 @@ use Fixin\Resource\PrototypeInterface;
 interface ViewInterface extends PrototypeInterface {
 
     const OPTION_ENGINE = 'engine';
-    const OPTION_POSTFIX_ENGINE_MAP = 'postfixEngineMap';
+    const OPTION_POSTFIX_TO_ENGINE_MAP = 'postfixToEngineMap';
     const OPTION_FILE_RESOLVER = 'fileResolver';
 
     /**

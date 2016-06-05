@@ -7,7 +7,7 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Base\Exception\RuntimeException;
+use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 
 class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface {
@@ -26,9 +26,8 @@ class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
     protected $searchOrder = [];
 
     /**
-     * @param array $options
-     * @param string $name
-     * @return object|NULL
+     * {@inheritDoc}
+     * @see \Fixin\Resource\AbstractFactory\AbstractFactoryInterface::__invoke($options, $name)
      */
     public function __invoke(array $options = null, string $name = null) {
         $mapped = $this->map[$name];

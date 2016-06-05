@@ -19,7 +19,7 @@ final class EncapsulatedInclude {
      */
     public static function include(AssistantInterface $_, string $__filename, array $__data) {
         // Extract data
-        unset($__data['_']);
+        unset($__data['_'], $__data['__filename']);
 
         extract($__data);
         unset($__data);

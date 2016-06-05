@@ -8,7 +8,6 @@
 namespace Fixin\View\Engine;
 
 use Fixin\Base\Json\Json;
-use Fixin\Resource\ResourceManagerInterface;
 use Fixin\View\ViewInterface;
 
 class JsonEngine extends Engine {
@@ -19,22 +18,11 @@ class JsonEngine extends Engine {
     protected $json;
 
     /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     * @param string $name
-     */
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
-        parent::__construct($container, $options, $name);
-
-        $this->json = $this->container->get('Base\Json\Json');
-    }
-
-    /**
      * {@inheritDoc}
      * @see \Fixin\View\Engine\EngineInterface::render($view)
      */
     public function render(ViewInterface $view) {
-        $json = $this->json;
+        $json = $this->json ?? ($this->json = $this->container->get('Base\Json\Json'));
         $result = [];
 
         // Children
