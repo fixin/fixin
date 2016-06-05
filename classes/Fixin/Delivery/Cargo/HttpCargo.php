@@ -67,7 +67,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     /**
      * @var int
      */
-    protected $statusCode = Http::STATUS_OK_200;
+    protected $statusCode = Http::STATUS_CONTINUE_100;
 
     /**
      * {@inheritDoc}
