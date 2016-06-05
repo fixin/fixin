@@ -11,6 +11,8 @@ use Fixin\Delivery\Cargo\CargoInterface;
 
 class ArrayToJson extends Node {
 
+    const CONTENT_TYPE = 'application/json';
+
     /**
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
@@ -19,7 +21,7 @@ class ArrayToJson extends Node {
         if (is_array($cargo->getContent())) {
             $cargo
             ->setContent($this->container->get('Base\Json\Json')->encode($cargo->getContent()))
-            ->setContentType('application/json');
+            ->setContentType(static::CONTENT_TYPE);
         }
 
         return $cargo;
