@@ -57,11 +57,13 @@ abstract class RestfulController extends Resource implements ControllerInterface
             $method = $cargo->getRequestMethod();
 
             if (isset(static::METHOD_MAP[$method])) {
-                return $this->{static::METHOD_MAP[$method]}($cargo);
+                return $this->{static::METHOD_MAP[$method]}($cargo->setStatusCode(Http::STATUS_OK_200));
             }
+
+            return $this->replyMethodNotAllowed($cargo);
         }
 
-        return $this->replyMethodNotAllowed($cargo);
+        return $cargo;
     }
 
     /**
