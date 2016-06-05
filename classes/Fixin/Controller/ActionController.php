@@ -52,7 +52,7 @@ abstract class ActionController extends Resource implements ControllerInterface 
                 return $this->handleMethod($cargo, $method);
             }
 
-            return $this->replyNotFound();
+            return $this->replyNotFound($cargo);
         }
 
         return $cargo;
