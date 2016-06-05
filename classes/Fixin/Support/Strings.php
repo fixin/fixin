@@ -9,7 +9,18 @@ namespace Fixin\Support;
 
 class Strings extends DoNotCreate {
 
-    const SOURCE_REPLACE = ["\t" => '    '];
+    const METHOD_NAME_REPLACE = ['.' => '', '-' => '', '_' => ''];
+    const NORMALIZE_LEADING_REPLACE = ["\t" => '    '];
+
+    /**
+     * Convert string to "camelCase" method name
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function methodName(string $string): string {
+        return lcfirst(strtr(ucwords($string, '.-_'), static::METHOD_NAME_REPLACE));
+    }
 
     /**
      * Replace tabs with spaces in leading of the line
@@ -20,7 +31,7 @@ class Strings extends DoNotCreate {
     public static function normalizeLeading(string $line): string {
         $indent = strspn($line, " \t");
 
-        return strtr(substr($line, 0, $indent), static::SOURCE_REPLACE) . mb_substr($line, $indent);
+        return strtr(substr($line, 0, $indent), static::NORMALIZE_LEADING_REPLACE) . mb_substr($line, $indent);
     }
 
     /**
