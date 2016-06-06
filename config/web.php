@@ -43,6 +43,7 @@ return [
                     'nodes' => [
                         'Delivery\Node\JsonToArray',
                         'controllerHub',
+                        'Delivery\Node\HttpNotFoundFallback',
                         'Delivery\Node\HttpErrorHub',
                         'Delivery\Node\ArrayToJson',
                     ]
