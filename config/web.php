@@ -23,7 +23,8 @@ return [
             'controllerHub' => [
                 'class' => 'Delivery\Node\HttpClassHub',
                 'options' => [
-                    'classPrefix' => 'Fixin',
+                    'basePath' => '/',
+                    'classPrefix' => 'Controller',
                     'depth' => 2
                 ]
             ],
