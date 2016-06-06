@@ -9,6 +9,24 @@ return [
     'resourceManager' => [
         'class' => 'Fixin\Resource\ResourceManager',
         'definitions' => [
+            'Delivery\Node\HttpErrorHub' => [
+                'options' => [
+                    'route' => 'errorRoute'
+                ]
+            ],
+            'View\View' => [
+                'options' => [
+                    'fileResolver' => 'viewFileResolver'
+                ]
+            ],
+
+            'controllerHub' => [
+                'class' => 'Delivery\Node\HttpClassHub',
+                'options' => [
+                    'classPrefix' => 'Fixin',
+                    'depth' => 2
+                ]
+            ],
             'defaultFileSystem' => 'Base\FileSystem\Local',
             'errorRoute' => [
                 'class' => 'Delivery\Route\Route',
@@ -23,6 +41,9 @@ return [
                 'options' => [
                     'nodes' => [
                         'Delivery\Node\JsonToArray',
+                        'controllerHub',
+                        'Delivery\Node\HttpErrorHub',
+                        'Delivery\Node\ArrayToJson',
                     ]
                 ]
             ],
@@ -31,12 +52,6 @@ return [
                 'options' => [
                     'defaultExtension' => '.phtml',
                     'fileSystem' => 'defaultFileSystem'
-                ]
-            ],
-
-            'View\View' => [
-                'options' => [
-                    'fileResolver' => 'viewFileResolver'
                 ]
             ]
         ],
