@@ -178,7 +178,7 @@ class ClassHelper {
 
         return strncmp($name, 'Fixin\\', 6)
         ? '\\' . htmlspecialchars($name)
-        : '<a href="#' . htmlspecialchars($name) . '">' . htmlspecialchars($reflection->getShortName()) . '</a>';
+        : '<a href="#' . htmlspecialchars(strtr($name, '\\', '-')) . '">' . htmlspecialchars($reflection->getShortName()) . '</a>';
     }
 
     /**
