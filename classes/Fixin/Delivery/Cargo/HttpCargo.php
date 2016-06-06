@@ -256,6 +256,16 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestParameter($name, $value)
+     */
+    public function setRequestParameter(string $name, $value): HttpCargoInterface {
+        $this->requestParameters[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestParameters($parameters)
      */
     public function setRequestParameters(array $parameters): HttpCargoInterface {

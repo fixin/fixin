@@ -162,6 +162,15 @@ interface HttpCargoInterface extends CargoInterface {
     public function setRequestMethod(string $method): HttpCargoInterface;
 
     /**
+     * Set request parameter
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return self
+     */
+    public function setRequestParameter(string $name, $value): HttpCargoInterface;
+
+    /**
      * Set request parameters
      *
      * @param array $parameters
