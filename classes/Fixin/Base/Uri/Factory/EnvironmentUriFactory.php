@@ -40,7 +40,7 @@ class EnvironmentUriFactory extends Factory {
             throw new InvalidConfigException(static::EXCEPTION_CAN_T_DETERMINE);
         })();
 
-        if (null === $index = strpos($uri, '?')) {
+        if (false === $index = strpos($uri, '?')) {
             return $uri;
         }
 

@@ -28,7 +28,7 @@ abstract class ActionController extends Resource implements ControllerInterface 
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function getActionMethodName(string $action): string {
-        $method = Strings::methodName($action);
+        $method = Strings::methodName($action) . 'Action';
 
         // Checking method
         if (method_exists($this, $method)) {

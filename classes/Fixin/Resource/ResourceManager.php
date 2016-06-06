@@ -35,11 +35,16 @@ class ResourceManager extends ResourceManagerBase {
             return true;
         }
 
+        // Class
+        if (class_exists($name)) {
+            return true;
+        }
+
         // Abstract factories
         $has = false;
 
         foreach ($this->abstractFactories as $abstractFactory) {
-            if ($abstractFactory->canProduce($this, $name)) {
+            if ($abstractFactory->canProduce($name)) {
                 $has = true;
                 break;
             }
