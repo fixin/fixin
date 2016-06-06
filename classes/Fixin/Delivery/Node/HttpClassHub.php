@@ -66,28 +66,28 @@ class HttpClassHub extends HttpHub {
         $depth = $this->depth;
         $tags = explode('/', rtrim($path, '/'), $depth + 2);
 
-        switch (count($tags)) {
-            case $depth + 1:
-                // Action
+        if (!isset($tags[$depth + 1])) {
+            // Action
+            if (isset($tags[$depth])) {
                 $cargo->setRequestParameter('action', $tags[$depth]);
+            }
 
-            case $depth:
-                // Name to class
-                $name = implode('\\', array_slice($tags, 0, $depth));
-                if (preg_match(static::CLASS_NAME_PATTERN, $name)) {
-                    $fullName = $this->classPrefix . Strings::className($name);
+            // Name to class
+            $name = implode('\\', array_slice($tags, 0, $depth));
+            if (preg_match(static::CLASS_NAME_PATTERN, $name)) {
+                $fullName = $this->classPrefix . Strings::className($name);
 
-                    // Test class
-                    if ($this->container->has($fullName)) {
-                        $instance = $this->container->get($fullName);
+                // Test class
+                if ($this->container->has($fullName)) {
+                    $instance = $this->container->get($fullName);
 
-                        if ($instance instanceof CargoHandlerInterface) {
-                            return $instance->handle($cargo);
-                        }
-
-                        throw new RuntimeException(sprintf(static::EXCEPTION_INVALID_CLASS, get_class($instance)));
+                    if ($instance instanceof CargoHandlerInterface) {
+                        return $instance->handle($cargo);
                     }
+
+                    throw new RuntimeException(sprintf(static::EXCEPTION_INVALID_CLASS, get_class($instance)));
                 }
+            }
         }
 
         return $cargo->setStatusCode(Http::STATUS_NOT_FOUND_404);
