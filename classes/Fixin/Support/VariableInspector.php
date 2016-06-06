@@ -42,7 +42,7 @@ class VariableInspector extends DoNotCreate {
                 $value = '*****';
             }
 
-            $info .= "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . str_replace("\n", "\n    ", static::valueInfo($value)) . "\n";
+            $info .= "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . str_replace("\n", "\n    ", static::valueInfo($value)) . "\n";
         }
 
         return $info;
@@ -59,14 +59,13 @@ class VariableInspector extends DoNotCreate {
 
         if (method_exists($var, '__debugInfo')) {
             $var = $var->__debugInfo();
+            return $opening . ($var ? "\n" . static::itemsInfo($var, '#444') : '') . '}';
         }
         elseif (method_exists($var, '__toString')) {
-            return $opening . static::scalarInfo((string) $var) . '}';
+            return $opening . htmlspecialchars((string) $var) . '}';
         }
 
-        $var = (array) $var;
-
-        return $opening . ($var ? "\n" . static::itemsInfo($var, '#444') : '') . '}';
+        return $opening . '}';
     }
 
     /**
