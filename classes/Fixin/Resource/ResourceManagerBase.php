@@ -73,6 +73,25 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     }
 
     /**
+     * @return string
+     */
+    public function __toString(): string {
+        $resources = [];
+
+        foreach ($this->definitions as $key => $definition) {
+            $resources[$key] = str_pad($key, 50) . ' defined';
+        }
+
+        foreach ($this->resources as $key => $resource) {
+            $resources[$key] = str_pad($key, 50) . ' {' . get_class($resource) . '} ' . ($resource instanceof PrototypeInterface ? 'prototype' : 'resource');
+        }
+
+        ksort($resources);
+
+        return get_class($this) . " {\n\n    " . implode(",\n    ", $resources) . "\n}";
+    }
+
+    /**
      * Create object from definition
      *
      * @param string $name
