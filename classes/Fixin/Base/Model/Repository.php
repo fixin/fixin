@@ -18,6 +18,7 @@ class Repository extends Resource implements RepositoryInterface {
     const EXCEPTION_NAME_NOT_SET = "Name not set";
     const EXCEPTION_PRIMARY_KEY_NOT_SET = 'Primary key not set';
     const EXCEPTION_STORAGE_NOT_SET = "Storage not set";
+    const NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
 
     /**
      * @var string
@@ -88,7 +89,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @throws InvalidArgumentException
      */
     protected function setName(string $name) {
-        if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {
+        if (preg_match(static::NAME_PATTERN, $name)) {
             $this->name = $name;
 
             return;

@@ -17,6 +17,7 @@ abstract class Engine extends Resource implements EngineInterface {
 
     const EXCEPTION_INVALID_HELPER_NAME = "Invalid helper name: '%s'";
     const EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'";
+    const HELPER_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
 
     /**
      * @var HelperInterface[]
@@ -39,7 +40,7 @@ abstract class Engine extends Resource implements EngineInterface {
      * @return HelperInterface
      */
     protected function produceHelper(string $name): HelperInterface {
-        if (preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $name)) {
+        if (preg_match(static::HELPER_NAME_PATTERN, $name)) {
             return $this->container->clonePrototype('View\Helper\\' . ucfirst($name), [
                 HelperInterface::OPTION_ENGINE => $this
             ]);
