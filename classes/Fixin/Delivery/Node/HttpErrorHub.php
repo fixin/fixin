@@ -11,6 +11,7 @@ use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Delivery\Route\RouteInterface;
 use Fixin\Exception\RuntimeException;
+use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
 class HttpErrorHub extends Node {
