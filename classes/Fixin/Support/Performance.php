@@ -7,6 +7,9 @@
 
 namespace Fixin\Support;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ */
 class Performance extends DoNotCreate {
 
     const MEASURE_FORMAT = "\n"
@@ -29,8 +32,6 @@ class Performance extends DoNotCreate {
      * Measurement for performance tests
      *
      * Elapsed time, memory change, memory peak, memory system peak
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public static function measure() {
         $memoryUsage = memory_get_usage();
@@ -57,8 +58,6 @@ class Performance extends DoNotCreate {
      * Measurement for code
      *
      * @param \Closure $function
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public static function measureCode(\Closure $function) {
         echo "\n" . CodeInspector::functionSource($function);
@@ -76,8 +75,6 @@ class Performance extends DoNotCreate {
      *
      * @param float $time
      * @param int $memoryUsage
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected static function measureInfo(float $time, int $memoryUsage) {
         $data = [
