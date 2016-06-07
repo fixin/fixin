@@ -20,7 +20,7 @@ return [
                 ]
             ],
 
-            'controllerHub' => [
+            'controllerClassHub' => [
                 'class' => 'Delivery\Node\HttpClassHub',
                 'options' => [
                     'basePath' => '/',
@@ -33,6 +33,24 @@ return [
                 'class' => 'Delivery\Route\Route',
                 'options' => [
                     'nodes' => [
+                        'Delivery\Node\ThrowableToHtml'
+                    ]
+                ]
+            ],
+            'routerHub' => [
+                'class' => 'Delivery\Node\HttpRouterHub',
+                'options' => [
+                    'routes' => [
+                        'postComment' => [
+                            'uri' => '/posts/{id}/comments/{comment?}',
+                            'patterns' => [
+                                'comment' => '[A-Za-z0-9-]+',
+                            ],
+                            'handler' => 'Controller\RestfulController',
+                        ]
+                    ],
+                    'patterns' => [
+                        'id' => '[0-9]+'
                     ]
                 ]
             ],
@@ -42,7 +60,8 @@ return [
                 'options' => [
                     'nodes' => [
                         'Delivery\Node\JsonToArray',
-                        'controllerHub',
+                        'routerHub',
+                        'controllerClassHub',
                         'Delivery\Node\HttpNotFoundFallback',
                         'Delivery\Node\HttpErrorHub',
                         'Delivery\Node\ArrayToJson',
