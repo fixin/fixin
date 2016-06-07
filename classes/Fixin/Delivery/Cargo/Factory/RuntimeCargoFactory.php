@@ -16,7 +16,6 @@ class RuntimeCargoFactory extends Factory {
      * {@inheritDoc}
      * @see \Fixin\Resource\Factory\FactoryInterface::__invoke()
      *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __invoke(array $options = null, string $name = null) {
         $factory = 'Delivery\Cargo\Factory\\' . (Ground::isConsole() ? 'ConsoleCargoFactory' : 'HttpCargoFactory');

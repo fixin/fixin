@@ -220,7 +220,6 @@ class Index extends Prototype implements IndexInterface {
      *
      * @param array $data
      * @return bool
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function loadArray(array $data): bool {
         // Value check

@@ -7,9 +7,6 @@
 
 namespace Fixin\Support;
 
-/**
- * @SuppressWarnings(PHPMD.StaticAccess)
- */
 class Performance extends DoNotCreate {
 
     const MEASURE_FORMAT = "\n"

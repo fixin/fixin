@@ -97,8 +97,6 @@ class FileResolver extends Resource implements FileResolverInterface {
      * Set paths in normalized form
      *
      * @param array $paths
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function setPaths(array $paths) {
         $this->paths = [];

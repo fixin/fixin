@@ -14,9 +14,6 @@ use Fixin\Exception\RuntimeException;
 use Fixin\Support\Http;
 use Fixin\Support\Strings;
 
-/**
- * @SuppressWarnings(PHPMD.StaticAccess)
- */
 class HttpClassHub extends HttpHub {
 
     const CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/';

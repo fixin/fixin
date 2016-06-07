@@ -13,8 +13,6 @@ trait ToStringTrait {
      * Return readable list of variables of instance
      *
      * @return string
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __toString(): string {
         $items = method_exists($this, '__debugInfo') ? $this->__debugInfo() : (array) $this;
