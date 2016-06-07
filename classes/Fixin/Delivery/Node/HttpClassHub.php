@@ -72,25 +72,39 @@ class HttpClassHub extends HttpHub {
                 $cargo->setRequestParameter('action', $tags[$depth]);
             }
 
-            // Name to class
-            $name = implode('\\', array_slice($tags, 0, $depth));
-            if (preg_match(static::CLASS_NAME_PATTERN, $name)) {
-                $fullName = $this->classPrefix . Strings::className($name);
-
-                // Test class
-                if ($this->container->has($fullName)) {
-                    $instance = $this->container->get($fullName);
-
-                    if ($instance instanceof CargoHandlerInterface) {
-                        return $instance->handle($cargo);
-                    }
-
-                    throw new RuntimeException(sprintf(static::EXCEPTION_INVALID_CLASS, get_class($instance)));
-                }
+            // Controller
+            if ($controller = $this->pathToController(implode('\\', array_slice($tags, 0, $depth)))) {
+                return $controller->handle($cargo);
             }
         }
 
         return $cargo->setStatusCode(Http::STATUS_NOT_FOUND_404);
+    }
+
+    /**
+     * Get controller instance for path
+     *
+     * @param string $name
+     * @throws RuntimeException
+     * @return CargoHandlerInterface|NULL
+     */
+    protected function pathToController(string $name) {
+        if (preg_match(static::CLASS_NAME_PATTERN, $name)) {
+            $fullName = $this->classPrefix . Strings::className($name);
+
+            // Test class
+            if ($this->container->has($fullName)) {
+                $instance = $this->container->get($fullName);
+
+                if ($instance instanceof CargoHandlerInterface) {
+                    return $instance;
+                }
+
+                throw new RuntimeException(sprintf(static::EXCEPTION_INVALID_CLASS, get_class($instance)));
+            }
+        }
+
+        return null;
     }
 
     /**
