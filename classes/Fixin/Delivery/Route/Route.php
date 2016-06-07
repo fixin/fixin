@@ -18,7 +18,39 @@ class Route extends Resource implements RouteInterface {
     /**
      * @var NodeInterface[]
      */
+    protected $loadedNodes = [];
+
+    /**
+     * @var array
+     */
     protected $nodes = [];
+
+    /**
+     * Get node instance for index
+     *
+     * @param int $index
+     * @throws InvalidArgumentException
+     * @return NodeInterface
+     */
+    protected function getNode(int $index): NodeInterface {
+        if (isset($this->loadedNodes[$index])) {
+            return $this->loadedNodes[$index];
+        }
+
+        $node = $this->nodes[$index];
+
+        if (is_string($node)) {
+            $node = $this->container->get($node);
+        }
+
+        if ($node instanceof NodeInterface) {
+            $this->loadedNodes[$index] = $node;
+
+            return $node;
+        }
+
+        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NODE, $index));
+    }
 
     /**
      * {@inheritDoc}
@@ -26,14 +58,18 @@ class Route extends Resource implements RouteInterface {
      */
     public function handle(CargoInterface $cargo): CargoInterface {
         $cargo->setDelivered(false);
-        $plan = $this->nodes;
 
-        while (!empty($plan)) {
-            $cargo = array_shift($plan)->handle($cargo);
+        $index = 0;
+        $length = count($this->nodes);
+
+        while ($index < $length) {
+            $cargo = $this->getNode($index)->handle($cargo);
 
             if ($cargo->isDelivered()) {
                 break;
             }
+
+            $index++;
         }
 
         return $cargo;
@@ -43,19 +79,8 @@ class Route extends Resource implements RouteInterface {
      * Set nodes
      *
      * @param array $nodes
-     * @throws InvalidArgumentException
      */
     protected function setNodes(array $nodes) {
-        $this->nodes = [];
-
-        foreach ($nodes as $key => $node) {
-            $node = $this->container->get($node);
-
-            if (!$node instanceof NodeInterface) {
-                throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NODE, $key));
-            }
-
-            $this->nodes[] = $node;
-        }
+        $this->nodes = array_values($nodes);
     }
 }
