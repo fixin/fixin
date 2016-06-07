@@ -9,6 +9,8 @@ namespace Fixin\Application;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Resource\ResourceManagerInterface;
+use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Support\Http;
 
 class Application implements ApplicationInterface {
 
@@ -59,6 +61,11 @@ class Application implements ApplicationInterface {
      * @param CargoInterface $cargo
      */
     protected function errorRoute(CargoInterface $cargo) {
+        // HTTP cargo
+        if ($cargo instanceof HttpCargoInterface) {
+            $cargo->setStatusCode(Http::STATUS_INTERNAL_SERVER_ERROR_500);
+        }
+
         try {
             $cargo = $this->container->get($this->config[static::OPTION_ERROR_ROUTE])->handle($cargo);
             $cargo->unpack();
