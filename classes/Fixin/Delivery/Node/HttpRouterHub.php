@@ -76,7 +76,7 @@ class HttpRouterHub extends HttpHub {
     /**
      * Set observerd routes
      *
-     * @param array $definition
+     * @param array $routes
      */
     protected function setParsedRoutes(array $routes) {
         $this->routes = $routes;

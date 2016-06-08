@@ -129,7 +129,7 @@ class HttpRouterHubFactory extends Factory {
     }
 
     /**
-     * Add route from definition
+     * Add route
      *
      * @param array $definition
      * @param string $uri
@@ -151,7 +151,26 @@ class HttpRouterHubFactory extends Factory {
     }
 
     /**
-     * Add routes from definition
+     * Add route group
+     *
+     * @param array $definition
+     * @param string $uri
+     * @param string $namespace
+     * @throws InvalidArgumentException
+     */
+    protected function addRouteGroupFromDefinition(array $definition, string $uri, string $namespace) {
+        foreach ($definition as $key => $route) {
+            if (is_array($route)) {
+                $this->addRoutesFromDefinition($route, $uri, $namespace . $key . '::');
+                continue;
+            }
+
+            throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ROUTE_ARGUMENT, $key));
+        }
+    }
+
+    /**
+     * Add routes
      *
      * @param array $definition
      * @param string $uri
@@ -186,13 +205,6 @@ class HttpRouterHubFactory extends Factory {
         }
 
         // Group
-        foreach ($definition as $key => $route) {
-            if (is_array($route)) {
-                $this->addRoutesFromDefinition($route, $uri, $namespace . $key . '::');
-                continue;
-            }
-
-            throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ROUTE_ARGUMENT, $key));
-        }
+        $this->addRouteGroupFromDefinition($definition, $uri, $namespace);
     }
 }
