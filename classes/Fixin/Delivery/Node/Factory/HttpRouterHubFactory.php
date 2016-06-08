@@ -63,6 +63,9 @@ class HttpRouterHubFactory extends Factory {
 
             // Hub
             if (count($this->routes)) {
+                echo '<pre>';
+                print_r($this->routes);
+                die;
                 return new HttpRouterHub($this->container, [
                     HttpRouterHub::OPTION_PARSED_ROUTES => $this->routes,
                     HttpRouterHub::OPTION_HANDLERS => $this->handlers
@@ -71,61 +74,6 @@ class HttpRouterHubFactory extends Factory {
         }
 
         throw new RuntimeException(static::EXCEPTION_NO_ROUTES);
-    }
-
-    /**
-     * Add route by segments
-     *
-     * @param array $segments
-     * @param array $path
-     * @param array $parameters
-     * @param int $level
-     */
-    protected function addRoute(array $segments, array $path, array $parameters, int $level) {
-        // End
-        if (empty($segments)) {
-            array_unshift($path, $level);
-
-            Arrays::set($this->routes, $path, [
-                HttpRouterHub::KEY_HANDLER => $this->scopeHandler,
-                HttpRouterHub::KEY_PARAMETERS => $parameters
-            ]);
-
-            return;
-        }
-
-        $segment = array_shift($segments);
-
-        // Parameter
-        $last = strlen($segment) - 1;
-        if ($segment[0] === '{' && $segment[$last] === '}') {
-            $last--;
-
-            // Optional
-            if ($segment[$last] === '?') {
-                $last--;
-
-                $this->addRoute($segments, $path, $parameters, $level);
-            }
-
-            $name = substr($segment, 1, $last);
-            $pattern = HttpRouterHub::KEY_ANY_PARAMETER;
-            $parameters[] = $name;
-
-            if (isset($this->scopePatterns[$name])) {
-                $pattern = $this->scopePatterns[$name];
-                $path[] = HttpRouterHub::KEY_PATTERN_PARAMETER;
-            }
-
-            $path[] = $pattern;
-            $this->addRoute($segments, $path, $parameters, $level + 1);
-
-            return;
-        }
-
-        // Normal segment
-        $path[] = $segment;
-        $this->addRoute($segments, $path, $parameters, $level + 1);
     }
 
     /**
@@ -147,7 +95,7 @@ class HttpRouterHubFactory extends Factory {
             $this->scopePatterns = array_replace($this->scopePatterns, $routePatterns);
         }
 
-        $this->addRoute(explode('/', trim($uri, '/')), [], [], 0);
+        $this->addRouteSegments(explode('/', trim($uri, '/')), [], [], 0);
     }
 
     /**
@@ -167,6 +115,72 @@ class HttpRouterHubFactory extends Factory {
 
             throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ROUTE_ARGUMENT, $key));
         }
+    }
+
+    /**
+     * Add route parameter segment
+     *
+     * @param string $name
+     * @param array $segments
+     * @param array $path
+     * @param array $parameters
+     * @param int $level
+     */
+    protected function addRouteParameterSegment(string $name, array $segments, array $path, array $parameters, int $level) {
+        $pattern = HttpRouterHub::KEY_ANY_PARAMETER;
+        $parameters[] = $name;
+
+        if (isset($this->scopePatterns[$name])) {
+            $pattern = $this->scopePatterns[$name];
+            $path[] = HttpRouterHub::KEY_PATTERN_PARAMETER;
+        }
+
+        $path[] = $pattern;
+        $this->addRouteSegments($segments, $path, $parameters, $level + 1);
+    }
+
+    /**
+     * Add route segments
+     *
+     * @param array $segments
+     * @param array $path
+     * @param array $parameters
+     * @param int $level
+     */
+    protected function addRouteSegments(array $segments, array $path, array $parameters, int $level) {
+        // End
+        if (empty($segments)) {
+            array_unshift($path, $level);
+
+            Arrays::set($this->routes, $path, [
+                HttpRouterHub::KEY_HANDLER => $this->scopeHandler,
+                HttpRouterHub::KEY_PARAMETERS => $parameters
+            ]);
+
+            return;
+        }
+
+        $segment = array_shift($segments);
+
+        // Parameter
+        $last = strlen($segment) - 1;
+        if ($segment[0] === '{' && $segment[$last] === '}') {
+            $last--;
+
+            // Optional
+            if ($segment[$last] === '?') {
+                $this->addRouteSegments($segments, $path, $parameters, $level);
+                $last--;
+            }
+
+            $this->addRouteParameterSegment(substr($segment, 1, $last), $segments, $path, $parameters, $level);
+
+            return;
+        }
+
+        // Normal segment
+        $path[] = $segment;
+        $this->addRouteSegments($segments, $path, $parameters, $level + 1);
     }
 
     /**
