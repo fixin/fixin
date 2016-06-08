@@ -58,6 +58,10 @@ return [
                         'login' => [
                             'uri' => '/login',
                             'handler' => 'Controller\ResfulController'
+                        ],
+                        'test' => [
+                            'uri' => '{date}/index',
+                            'handler' => 'Controller\ResfulController'
                         ]
                     ],
                     'patterns' => [

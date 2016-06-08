@@ -20,6 +20,7 @@ class HttpRouterHub extends HttpHub {
     const KEY_HANDLER = 'handler';
     const KEY_PARAMETERS = 'parameters';
     const KEY_PATTERN_PARAMETER = '?';
+    const KEY_URI = 'uri';
 
     const OPTION_HANDLERS = 'handlers';
     const OPTION_ROUTE_TREE = 'routeTree';

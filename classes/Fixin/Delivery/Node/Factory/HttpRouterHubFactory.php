@@ -97,7 +97,7 @@ class HttpRouterHubFactory extends Factory {
             $this->scopePatterns = array_replace($this->scopePatterns, $routePatterns);
         }
 
-        $this->addRouteSegments(explode('/', trim($uri, '/')), [], '/', [], 0);
+        $this->addRouteSegments(explode('/', trim($uri, '/')), [], '', [], 0);
     }
 
     /**
@@ -131,14 +131,15 @@ class HttpRouterHubFactory extends Factory {
      */
     protected function addRouteParameterSegment(string $name, array $segments, array $path, string $uri, array $parameters, int $level) {
         // Optional
-        if ($name[strlen($name) - 1] === '?') {
+        $isOptional = $name[strlen($name) - 1] === '?';
+        if ($isOptional) {
             $this->addRouteSegments($segments, $path, $uri, $parameters, $level);
 
             $name = substr($name, 0, -1);
         }
 
         $pattern = HttpRouterHub::KEY_ANY_PARAMETER;
-        $parameters[] = $name;
+        $parameters[$name] = !$isOptional;
 
         if (isset($this->scopePatterns[$name])) {
             $pattern = $this->scopePatterns[$name];
@@ -146,7 +147,7 @@ class HttpRouterHubFactory extends Factory {
         }
 
         $path[] = $pattern;
-        $this->addRouteSegments($segments, $path, $uri . '/%s', $parameters, $level + 1);
+        $this->addRouteSegments($segments, $path, $uri . '%s', $parameters, $level + 1);
     }
 
     /**
@@ -165,10 +166,13 @@ class HttpRouterHubFactory extends Factory {
 
             Arrays::set($this->routeTree, $path, [
                 HttpRouterHub::KEY_HANDLER => $this->scopeName,
-                HttpRouterHub::KEY_PARAMETERS => $parameters
+                HttpRouterHub::KEY_PARAMETERS => array_keys($parameters)
             ]);
 
-            $this->routeUris[$this->scopeName] = '/' . ltrim($uri, '/');
+            $this->routeUris[$this->scopeName] = [
+                HttpRouterHub::KEY_URI => $uri,
+                HttpRouterHub::KEY_PARAMETERS => $parameters
+            ];
 
             return;
         }
