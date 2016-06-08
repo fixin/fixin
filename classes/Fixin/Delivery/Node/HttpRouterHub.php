@@ -9,6 +9,7 @@ namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 
 class HttpRouterHub extends HttpHub {
@@ -21,7 +22,8 @@ class HttpRouterHub extends HttpHub {
     const KEY_PATTERN_PARAMETER = '?';
 
     const OPTION_HANDLERS = 'handlers';
-    const OPTION_PARSED_ROUTES = 'parsedRoutes';
+    const OPTION_ROUTE_TREE = 'routeTree';
+    const OPTION_ROUTE_URIS = 'routeUris';
 
     /**
      * @var array
@@ -31,14 +33,19 @@ class HttpRouterHub extends HttpHub {
     /**
      * @var array
      */
-    protected $routes;
+    protected $routeTree;
+
+    /**
+     * @var array
+     */
+    protected $routeUris;
 
     /**
      * {@inheritDoc}
      * @see \Fixin\Resource\Resource::configurationTests()
      */
     protected function configurationTests(): Resource {
-        if (empty($this->routes)) {
+        if (empty($this->routeTree)) {
             throw new RuntimeException(static::EXCEPTION_NO_ROUTE_SET);
         }
 
@@ -74,11 +81,20 @@ class HttpRouterHub extends HttpHub {
     }
 
     /**
-     * Set observerd routes
+     * Set route tree
      *
-     * @param array $routes
+     * @param array $routeTree
      */
-    protected function setParsedRoutes(array $routes) {
-        $this->routes = $routes;
+    protected function setRouteTree(array $routeTree) {
+        $this->routeTree = $routeTree;
+    }
+
+    /**
+     * Set URIs
+     *
+     * @param array $routeUris
+     */
+    protected function setRouteUris(array $routeUris) {
+        $this->routeUris = $routeUris;
     }
 }
