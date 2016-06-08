@@ -16,6 +16,17 @@ class Strings extends DoNotCreate {
     const NORMALIZE_LEADING_REPLACE = ["\t" => '    '];
 
     /**
+     * Determine if string begins with a string
+     *
+     * @param string $string
+     * @param string $begin
+     * @return bool
+     */
+    public static function beginsWith(string $string, string $begin): bool {
+        return strncmp($string, $begin, strlen($begin)) === 0;
+    }
+
+    /**
      * Convert string to "CamelCase" class name
      *
      * @param string $string
@@ -23,6 +34,17 @@ class Strings extends DoNotCreate {
      */
     public static function className(string $string): string {
         return strtr(ucwords($string, static::CLASS_NAME_WORD_DELIMITERS), static::CLASS_NAME_REPLACE);
+    }
+
+    /**
+     * Determine if string ends with a string
+     *
+     * @param string $string
+     * @param string $end
+     * @return bool
+     */
+    public static function endsWith(string $string, string $end): bool {
+        return substr_compare($string, $end, -strlen($end)) === 0;
     }
 
     /**
