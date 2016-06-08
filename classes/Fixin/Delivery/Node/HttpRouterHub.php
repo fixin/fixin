@@ -9,17 +9,24 @@ namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
-use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 
 class HttpRouterHub extends HttpHub {
 
     const EXCEPTION_NO_ROUTE_SET = "No route set";
 
+    const KEY_ANY_PARAMETER = ':';
+    const KEY_HANDLER = 'handler';
+    const KEY_PARAMETERS = 'parameters';
+    const KEY_PATTERN_PARAMETER = '?';
+
+    const OPTION_HANDLERS = 'handlers';
+    const OPTION_PARSED_ROUTES = 'parsedRoutes';
+
     /**
      * @var array
      */
-    protected $patterns;
+    protected $handlers;
 
     /**
      * @var array
@@ -47,20 +54,31 @@ class HttpRouterHub extends HttpHub {
     }
 
     /**
-     * Set global patterns
+     * Build route URI
      *
-     * @param array $patterns
+     * @param string $routeName
+     * @param array $parameters
+     * @return string
      */
-    protected function setPatterns(array $patterns) {
+    public function route(string $routeName, array $parameters): string {
 
+    }
+
+    /**
+     * Set handlers
+     *
+     * @param array $handlers
+     */
+    protected function setHandlers(array $handlers) {
+        $this->handlers = $handlers;
     }
 
     /**
      * Set observerd routes
      *
-     * @param array $routes
+     * @param array $definition
      */
-    protected function setRoutes(array $routes) {
-
+    protected function setParsedRoutes(array $routes) {
+        $this->routes = $routes;
     }
 }

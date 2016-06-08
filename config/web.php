@@ -38,15 +38,26 @@ return [
                 ]
             ],
             'routerHub' => [
-                'class' => 'Delivery\Node\HttpRouterHub',
+                'class' => 'Delivery\Node\Factory\HttpRouterHubFactory',
                 'options' => [
                     'routes' => [
-                        'postComment' => [
-                            'uri' => '/posts/{id}/comments/{comment?}',
-                            'patterns' => [
-                                'comment' => '[A-Za-z0-9-]+',
+                        'post' => [
+                            'uri' => '/posts',
+                            'view' => [
+                                'uri' => '{id}',
+                                'handler' => 'Controller\RestfulController',
                             ],
-                            'handler' => 'Controller\RestfulController',
+                            'comment' => [
+                                'uri' => '{id}/comments/{comment?}',
+                                'patterns' => [
+                                    'comment' => '[A-Za-z0-9-]+',
+                                ],
+                                'handler' => 'Controller\RestfulController',
+                            ]
+                        ],
+                        'login' => [
+                            'uri' => '/login',
+                            'handler' => 'Controller\ResfulController'
                         ]
                     ],
                     'patterns' => [
