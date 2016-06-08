@@ -21,4 +21,27 @@ class Arrays extends DoNotCreate {
 
         return is_array($value) ? $value : null;
     }
+
+    /**
+     * Set value at path
+     *
+     * @param array $array
+     * @param array $path
+     * @param mixed $data
+     */
+    public static function set(array &$array, array $path, $data) {
+        $current = array_shift($path);
+
+        if (count($path)) {
+            if (!isset($array[$current]) || is_array($array[$current])) {
+                $array[$current] = [];
+            }
+
+            static::set($array[$current], $path, $data);
+
+            return;
+        }
+
+        $array[$current] = $data;
+    }
 }
