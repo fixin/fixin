@@ -78,4 +78,16 @@ class Strings extends DoNotCreate {
     public static function normalizePath(string $path): string {
         return rtrim($path, '/\\') . DIRECTORY_SEPARATOR;
     }
+
+    /**
+     * Determine if surrounded by $begin and $end
+     *
+     * @param string $string
+     * @param string $begin
+     * @param string $end
+     * @return boolean
+     */
+    public static function surroundedBy(string $string, string $begin, string $end) {
+        return static::beginsWith($string, $begin) && static::endsWith($string, $end);
+    }
 }
