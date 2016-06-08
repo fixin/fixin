@@ -63,9 +63,6 @@ class HttpRouterHubFactory extends Factory {
 
             // Hub
             if (count($this->routes)) {
-                echo '<pre>';
-                print_r($this->routes);
-                die;
                 return new HttpRouterHub($this->container, [
                     HttpRouterHub::OPTION_PARSED_ROUTES => $this->routes,
                     HttpRouterHub::OPTION_HANDLERS => $this->handlers
