@@ -127,6 +127,13 @@ class HttpRouterHubFactory extends Factory {
      * @param int $level
      */
     protected function addRouteParameterSegment(string $name, array $segments, array $path, array $parameters, int $level) {
+        // Optional
+        if ($name[strlen($name) - 1] === '?') {
+            $this->addRouteSegments($segments, $path, $parameters, $level);
+
+            $name = substr($name, 0, -1);
+        }
+
         $pattern = HttpRouterHub::KEY_ANY_PARAMETER;
         $parameters[] = $name;
 
@@ -163,17 +170,8 @@ class HttpRouterHubFactory extends Factory {
         $segment = array_shift($segments);
 
         // Parameter
-        $last = strlen($segment) - 1;
-        if ($segment[0] === '{' && $segment[$last] === '}') {
-            $last--;
-
-            // Optional
-            if ($segment[$last] === '?') {
-                $this->addRouteSegments($segments, $path, $parameters, $level);
-                $last--;
-            }
-
-            $this->addRouteParameterSegment(substr($segment, 1, $last), $segments, $path, $parameters, $level);
+        if ($segment[0] === '{' && $segment[strlen($segment) - 1] === '}') {
+            $this->addRouteParameterSegment(substr($segment, 1, -1), $segments, $path, $parameters, $level);
 
             return;
         }
@@ -194,17 +192,9 @@ class HttpRouterHubFactory extends Factory {
     protected function addRoutesFromDefinition(array $definition, string $uri, string $namespace) {
         // Uri
         if (isset($definition[static::OPTION_URI])) {
-            $value = $definition[static::OPTION_URI];
+            $uri = $this->uri($definition[static::OPTION_URI], $uri);
 
-            if ($value !== '') {
-                if ($value[0] === '/') {
-                    $uri = '';
-                }
-
-                $uri .= rtrim($value, '/') . '/';
-
-                unset($definition[static::OPTION_URI]);
-            }
+            unset($definition[static::OPTION_URI]);
         }
 
         // Route
@@ -220,5 +210,24 @@ class HttpRouterHubFactory extends Factory {
 
         // Group
         $this->addRouteGroupFromDefinition($definition, $uri, $namespace);
+    }
+
+    /**
+     * URI overriding (absolute, relative)
+     *
+     * @param string $uri
+     * @param string $inherited
+     * @return string
+     */
+    protected function uri(string $uri, string $inherited): string {
+        if ($uri !== '') {
+            if ($uri[0] === '/') {
+                $inherited = '';
+            }
+
+            return $inherited . rtrim($uri, '/') . '/';
+        }
+
+        return $inherited;
     }
 }
