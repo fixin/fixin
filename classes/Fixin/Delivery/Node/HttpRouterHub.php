@@ -11,10 +11,13 @@ use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
+use Fixin\Exception\InvalidArgumentException;
 
 class HttpRouterHub extends HttpHub {
 
+    const EXCEPTION_MISSING_ROUTE_PARAMETER = "Missing route parameter '%s'";
     const EXCEPTION_NO_ROUTE_SET = "No route set";
+    const EXCEPTION_UNKNOWN_ROUTE = "Unknown route '%s'";
 
     const KEY_ANY_PARAMETER = ':';
     const KEY_HANDLER = 'handler';
@@ -64,12 +67,35 @@ class HttpRouterHub extends HttpHub {
     /**
      * Build route URI
      *
-     * @param string $routeName
+     * @param string $name
      * @param array $parameters
      * @return string
      */
-    public function route(string $routeName, array $parameters): string {
+    public function route(string $name, array $parameters): string {
+        if (isset($this->routeUris[$name])) {
+            $uri = $this->routeUris[$name];
+            $replaces = [];
 
+            foreach ($uri[static::KEY_PARAMETERS] as $key => $required) {
+                if (isset($parameters[$key])) {
+                    $replaces[] = '/' . rawurlencode($parameters[$key]);
+
+                    continue;
+                }
+
+                if (!$required) {
+                    $replaces[] = '';
+
+                    continue;
+                }
+
+                throw new InvalidArgumentException(sprintf(static::EXCEPTION_MISSING_ROUTE_PARAMETER, $key));
+            }
+
+            return vsprintf($uri[static::KEY_URI], $replaces);
+        }
+
+        throw new InvalidArgumentException(sprintf(static::EXCEPTION_UNKNOWN_ROUTE, $name));
     }
 
     /**
