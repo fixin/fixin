@@ -10,6 +10,7 @@ namespace Fixin\Delivery\Node\Factory;
 use Fixin\Delivery\Node\HttpRouterHub;
 use Fixin\Resource\Factory\Factory;
 use Fixin\Support\Arrays;
+use Fixin\Support\Strings;
 
 class HttpRouterHubFactory extends Factory {
 
@@ -120,6 +121,25 @@ class HttpRouterHubFactory extends Factory {
     }
 
     /**
+     * Add route item to the results
+     *
+     * @param array $path
+     * @param string $uri
+     * @param array $parameters
+     */
+    protected function addRouteItem(array $path, string $uri, array $parameters) {
+        Arrays::set($this->routeTree, $path, [
+            HttpRouterHub::KEY_HANDLER => $this->scopeName,
+            HttpRouterHub::KEY_PARAMETERS => array_keys($parameters)
+        ]);
+
+        $this->routeUris[$this->scopeName] = [
+            HttpRouterHub::KEY_URI => $uri,
+            HttpRouterHub::KEY_PARAMETERS => $parameters
+        ];
+    }
+
+    /**
      * Add route parameter segment
      *
      * @param string $name
@@ -164,26 +184,14 @@ class HttpRouterHubFactory extends Factory {
         if (empty($segments)) {
             array_unshift($path, $level);
 
-            Arrays::set($this->routeTree, $path, [
-                HttpRouterHub::KEY_HANDLER => $this->scopeName,
-                HttpRouterHub::KEY_PARAMETERS => array_keys($parameters)
-            ]);
-
-            $this->routeUris[$this->scopeName] = [
-                HttpRouterHub::KEY_URI => $uri,
-                HttpRouterHub::KEY_PARAMETERS => $parameters
-            ];
-
-            return;
+            return $this->addRouteItem($path, $uri, $parameters);
         }
 
         $segment = array_shift($segments);
 
         // Parameter
-        if ($segment[0] === '{' && $segment[strlen($segment) - 1] === '}') {
-            $this->addRouteParameterSegment(substr($segment, 1, -1), $segments, $path, $uri, $parameters, $level);
-
-            return;
+        if (Strings::surroundedBy($segment, '{', '}')) {
+            return $this->addRouteParameterSegment(substr($segment, 1, -1), $segments, $path, $uri, $parameters, $level);
         }
 
         // Normal segment
