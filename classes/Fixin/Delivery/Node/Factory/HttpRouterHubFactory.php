@@ -59,9 +59,7 @@ class HttpRouterHubFactory extends Factory {
         // Routes
         if (isset($options[static::OPTION_ROUTES])) {
             // Reset
-            $this->routeTree = [];
-            $this->routeUris = [];
-            $this->handlers = [];
+            $this->reset();
             $this->patterns = $options[static::OPTION_PATTERNS] ?? [];
 
             // Process
@@ -218,6 +216,15 @@ class HttpRouterHubFactory extends Factory {
 
         // Group
         $this->addRouteGroupFromDefinition($definition, $uri, $namespace);
+    }
+
+    /**
+     * Reset data
+     */
+    protected function reset() {
+        $this->routeTree = [];
+        $this->routeUris = [];
+        $this->handlers = [];
     }
 
     /**
