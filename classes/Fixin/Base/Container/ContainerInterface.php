@@ -5,20 +5,21 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Support;
+namespace Fixin\Base\Container;
 
 interface ContainerInterface {
 
     /**
-     * Get the registered instance
+     * Get value for key or return default value for not-set key
      *
      * @param string $name
+     * @param mixed $default
      * @return mixed
      */
-    public function get(string $name);
+    public function get(string $name, $default = null);
 
     /**
-     * Check if the name has been registered
+     * Determine the key has value
      *
      * @param string $name
      * @return bool
