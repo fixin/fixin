@@ -9,9 +9,10 @@ namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
-abstract class HttpHub extends Node {
+abstract class HttpHub extends Resource implements NodeInterface {
 
     /**
      * {@inheritDoc}

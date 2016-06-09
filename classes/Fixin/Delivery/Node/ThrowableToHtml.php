@@ -8,8 +8,9 @@
 namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
+use Fixin\Resource\Resource;
 
-class ThrowableToHtml extends Node {
+class ThrowableToHtml extends Resource implements NodeInterface {
 
     const CONTENT_TYPE = 'text/html';
 

@@ -14,7 +14,7 @@ use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
-class HttpErrorHub extends Node {
+class HttpErrorHub extends Resource implements NodeInterface {
 
     const EXCEPTION_ROUTE_NOT_SET = "Route not set";
 

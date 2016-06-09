@@ -8,8 +8,9 @@
 namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
+use Fixin\Resource\Resource;
 
-class ArrayToJson extends Node {
+class ArrayToJson extends Resource implements NodeInterface {
 
     const CONTENT_TYPE = 'application/json';
 
