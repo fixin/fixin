@@ -13,7 +13,7 @@ use Fixin\Resource\Resource;
 
 class Route extends Resource implements RouteInterface {
 
-    const EXCEPTION_INVALID_NODE = "Invalid node resource '%s'";
+    const EXCEPTION_INVALID_NODE = "Invalid node '%s'";
 
     /**
      * @var NodeInterface[]
