@@ -9,10 +9,9 @@ namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Exception\InvalidArgumentException;
 use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
-use Fixin\Exception\InvalidArgumentException;
-use Fixin\Delivery\Cargo\CargoHandlerInterface;
 
 class HttpRouterHub extends HttpHub {
 
@@ -58,6 +57,65 @@ class HttpRouterHub extends HttpHub {
     }
 
     /**
+     * Find handler for segments
+     *
+     * @param array $segments
+     * @param array $node
+     * @param array $parameters
+     * @return array|null
+     */
+    protected function findHandler(array $segments, array $node, array $parameters) {
+        // Handler
+        if (empty($segments)) {
+            return [
+                static::KEY_HANDLER => $node[static::KEY_HANDLER],
+                static::KEY_PARAMETERS => array_combine($node[static::KEY_PARAMETERS], $parameters)
+            ];
+        }
+
+        // Next segment
+        $segment = array_shift($segments);
+
+        // Normal segment
+        if (isset($node[$segment])) {
+            return $this->findHandler($segments, $node[$segment], $parameters);
+        }
+
+        // Parameter
+        return $this->findHandlerParameter($segments, $node, $parameters, $segment);
+    }
+
+    /**
+     * Find handler - Parameter processing
+     *
+     * @param array $segments
+     * @param array $node
+     * @param array $parameters
+     * @param string $segment
+     * @return array|null
+     */
+    protected function findHandlerParameter(array $segments, array $node, array $parameters, string $segment) {
+        $segment = rawurldecode($segment);
+        $parameters[] = $segment;
+
+        // Pattern parameter
+        if (isset($node[static::KEY_PATTERN_PARAMETER])) {
+            foreach ($node[static::KEY_PATTERN_PARAMETER] as $pattern => $route) {
+                if (preg_match("/^$pattern\$/", $segment) && false !== $result = $this->findHandler($segments, $route, $parameters)) {
+                    return $result;
+                }
+            }
+        }
+
+        // Any parameter
+        if (isset($node[static::KEY_ANY_PARAMETER])) {
+            return $this->findHandler($segments, $node[static::KEY_ANY_PARAMETER], $parameters);
+        }
+
+        return null;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Delivery\Node\HttpHub::handleHttpCargo($cargo)
      */
@@ -65,10 +123,10 @@ class HttpRouterHub extends HttpHub {
         $segments = explode('/', trim($cargo->getRequestUri()->getPath(), '/'));
         $count = count($segments);
 
-        if (isset($this->routeTree[$count])) {
-            $handlerFound = false;
+        if (isset($this->routeTree[$count]) && false !== $found = $this->findHandler($segments, $this->routeTree[$count], [])) {
+            $cargo->getRequestParameters()->setValues($found[static::KEY_PARAMETERS]);
 
-            return $this->toHandler($cargo, $segments, $this->routeTree[$count], [], $handlerFound);
+            return $this->getHandler($found[static::KEY_HANDLER])->handle($cargo);
         }
 
         return $cargo;
@@ -144,59 +202,5 @@ class HttpRouterHub extends HttpHub {
      */
     protected function setRouteUris(array $routeUris) {
         $this->routeUris = $routeUris;
-    }
-
-    /**
-     * Route to handler
-     *
-     * @param HttpCargoInterface $cargo
-     * @param array $segments
-     * @param array $node
-     * @param array $parameters
-     * @param bool $handlerFound
-     * @return CargoInterface
-     */
-    protected function toHandler(HttpCargoInterface $cargo, array $segments, array $node, array $parameters, bool &$handlerFound): CargoInterface {
-        // Handler
-        if (empty($segments)) {
-            $handlerFound = true;
-            //             $cargo->setRequestParameters(array_combine($node[static::KEY_PARAMETERS], $parameters) + $cargo->getRequestParameters());
-
-            return $this->getHandler($node[static::KEY_HANDLER]($cargo));
-        }
-
-        // Next segment
-        $segment = array_shift($segments);
-
-        // Normal segment
-        if (isset($node[$segment])) {
-            return $this->toHandler($cargo, $segments, $node[$segment], $parameters, $handlerFound);
-        }
-
-        $segment = rawurldecode($segment);
-        $parameters[] = $segment;
-
-        // Pattern parameter
-        if (isset($node[static::KEY_PATTERN_PARAMETER])) {
-            foreach ($node[static::KEY_PATTERN_PARAMETER] as $pattern => $route) {
-                if (preg_match("/^$pattern\$/", $segment)) {
-                    $cargo = $this->toHandler($cargo, $segments, $route, $parameters, $handlerFound);
-
-                    if ($handlerFound) {
-                        return $cargo;
-                    }
-                }
-            }
-
-            return $cargo;
-        }
-
-        // Any parameter
-        if (isset($node[static::KEY_ANY_PARAMETER])) {
-
-            return $this->toHandler($cargo, $segments, $node[static::KEY_ANY_PARAMETER], $parameters, $handlerFound);
-        }
-
-        return $cargo;
     }
 }
