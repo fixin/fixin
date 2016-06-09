@@ -12,14 +12,14 @@ use Fixin\Resource\Resource;
 
 class JsonToArray extends Resource implements NodeInterface {
 
-    const JSON_TYPES = ['application/json', 'application/jsonml+json'];
+    const ALLOWED_TYPES = ['application/json', 'application/jsonml+json'];
 
     /**
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
      */
     public function handle(CargoInterface $cargo): CargoInterface {
-        if (in_array($cargo->getContentType(), static::JSON_TYPES)) {
+        if (in_array($cargo->getContentType(), static::ALLOWED_TYPES)) {
             $cargo->setContent($this->container->get('Base\Json\Json')->decode($cargo->getContent()));
         }
 
