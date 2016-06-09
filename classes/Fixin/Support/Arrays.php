@@ -33,7 +33,7 @@ class Arrays extends DoNotCreate {
         $current = array_shift($path);
 
         if (count($path)) {
-            if (!isset($array[$current]) || is_array($array[$current])) {
+            if (!isset($array[$current]) || !is_array($array[$current])) {
                 $array[$current] = [];
             }
 
