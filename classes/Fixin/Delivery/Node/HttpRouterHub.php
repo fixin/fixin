@@ -85,21 +85,45 @@ class HttpRouterHub extends HttpHub {
         $segment = rawurldecode($segment);
         $parameters[] = $segment;
 
-        return $this->findHandlerPatternParameter($segments, $node, $parameters, $segment) ?: $this->findHandlerAnyParameter($segments, $node, $parameters);
+        // Pattern
+        if (isset($node[static::KEY_PATTERN_PARAMETER])) {
+            return $this->findHandlerPatternParameter($segments, $node, $parameters, $segment);
+        }
+
+        // Any
+        return $this->findHandlerAnyParameter($segments, $node, $parameters);
     }
 
+    /**
+     * Find handler - any parameter test
+     *
+     * @param array $segments
+     * @param array $node
+     * @param array $parameters
+     * @return array|NULL
+     */
     protected function findHandlerAnyParameter(array $segments, array $node, array $parameters) {
         return isset($node[static::KEY_ANY_PARAMETER]) ? $this->findHandler($segments, $node[static::KEY_ANY_PARAMETER], $parameters) : null;
     }
 
+    /**
+     * Find handler - pattern parameter test
+     *
+     * @param array $segments
+     * @param array $node
+     * @param array $parameters
+     * @param string $segment
+     * @return array|null
+     */
     protected function findHandlerPatternParameter(array $segments, array $node, array $parameters, string $segment) {
-        if (isset($node[static::KEY_PATTERN_PARAMETER])) {
-            foreach ($node[static::KEY_PATTERN_PARAMETER] as $pattern => $route) {
-                if (preg_match("/^$pattern\$/", $segment) && false !== $result = $this->findHandler($segments, $route, $parameters)) {
-                    return $result;
-                }
+        foreach ($node[static::KEY_PATTERN_PARAMETER] as $pattern => $route) {
+            if (preg_match("/^$pattern\$/", $segment) && false !== $result = $this->findHandler($segments, $route, $parameters)) {
+                return $result;
             }
         }
+
+        // Fallback to any
+        return $this->findHandlerAnyParameter($segments, $node, $parameters);
     }
 
     /**
