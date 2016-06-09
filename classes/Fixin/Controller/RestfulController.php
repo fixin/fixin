@@ -124,7 +124,7 @@ abstract class RestfulController extends Resource implements ControllerInterface
      */
     protected function replyMethodNotAllowed(HttpCargoInterface $cargo): HttpCargoInterface {
         return $cargo
-        ->setContent(static::METHOD_NOT_ALLOWED)
+        ->setContent(static::CONTENT_METHOD_NOT_ALLOWED)
         ->setContentType(static::CONTENT_TYPE)
         ->setStatusCode(Http::STATUS_METHOD_NOT_ALLOWED_405);
     }

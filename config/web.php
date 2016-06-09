@@ -33,7 +33,8 @@ return [
                 'class' => 'Delivery\Route\Route',
                 'options' => [
                     'nodes' => [
-                        'Delivery\Node\ThrowableToHtml'
+                        'Delivery\Node\ThrowableToHtml',
+                        'Delivery\Node\ArrayToJson'
                     ]
                 ]
             ],
@@ -83,7 +84,7 @@ return [
                         'controllerClassHub',
                         'Delivery\Node\HttpNotFoundFallback',
                         'Delivery\Node\HttpErrorHub',
-                        'Delivery\Node\ArrayToJson',
+                        'Delivery\Node\ArrayToJson'
                     ]
                 ]
             ],
