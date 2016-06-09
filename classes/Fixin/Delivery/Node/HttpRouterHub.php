@@ -82,27 +82,31 @@ class HttpRouterHub extends HttpHub {
         }
 
         // Parameter
+        return $this->findHandlerParameter($segments, $node, $parameters, $segment);
+    }
+
+    /**
+     * Find handler - parameter
+     *
+     * @param array $segments
+     * @param array $node
+     * @param array $parameters
+     * @param string $segment
+     * @return array|NULL
+     */
+    protected function findHandlerParameter(array $segments, array $node, array $parameters, string $segment) {
+        // Parameter
         $segment = rawurldecode($segment);
         $parameters[] = $segment;
 
         // Pattern
         if (isset($node[static::KEY_PATTERN_PARAMETER])) {
-            return $this->findHandlerPatternParameter($segments, $node, $parameters, $segment);
+            if ($result = $this->findHandlerPatternParameter($segments, $node, $parameters, $segment)) {
+                return $result;
+            }
         }
 
         // Any
-        return $this->findHandlerAnyParameter($segments, $node, $parameters);
-    }
-
-    /**
-     * Find handler - any parameter test
-     *
-     * @param array $segments
-     * @param array $node
-     * @param array $parameters
-     * @return array|NULL
-     */
-    protected function findHandlerAnyParameter(array $segments, array $node, array $parameters) {
         return isset($node[static::KEY_ANY_PARAMETER]) ? $this->findHandler($segments, $node[static::KEY_ANY_PARAMETER], $parameters) : null;
     }
 
@@ -135,9 +139,6 @@ class HttpRouterHub extends HttpHub {
         $count = count($segments);
 
         if (isset($this->routeTree[$count]) && false !== $found = $this->findHandler($segments, $this->routeTree[$count], [])) {
-            echo '<pre>';
-            print_r($found);
-            die;
             $cargo->getRequestParameters()->setValues($found[static::KEY_PARAMETERS]);
 
             return $this->getHandler($found[static::KEY_HANDLER])->handle($cargo);
