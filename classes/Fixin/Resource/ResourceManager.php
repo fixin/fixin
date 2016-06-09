@@ -35,7 +35,7 @@ class ResourceManager extends ResourceManagerBase {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Support\ContainerInterface::get($name)
+     * @see \Fixin\Resource\ResourceManagerInterface::get($name)
      */
     public function get(string $name) {
         return $this->getResource($name, false);
@@ -43,7 +43,7 @@ class ResourceManager extends ResourceManagerBase {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Support\ContainerInterface::has($name)
+     * @see \Fixin\Resource\ResourceManagerInterface::has($name)
      */
     public function has(string $name): bool {
         return isset($this->definitions[$name]) || class_exists($name) || $this->canProduceByAbstractFactory($name);

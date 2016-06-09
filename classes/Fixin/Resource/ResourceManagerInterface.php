@@ -6,9 +6,7 @@
  */
 namespace Fixin\Resource;
 
-use Fixin\Support\ContainerInterface;
-
-interface ResourceManagerInterface extends ContainerInterface {
+interface ResourceManagerInterface {
 
     /**
      * Clone the registered prototype
@@ -18,4 +16,20 @@ interface ResourceManagerInterface extends ContainerInterface {
      * @return object
      */
     public function clonePrototype(string $name, array $options = []);
+
+    /**
+     * Get the registered instance
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function get(string $name);
+
+    /**
+     * Check if the name has been registered
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function has(string $name): bool;
 }
