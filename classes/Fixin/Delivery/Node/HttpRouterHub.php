@@ -142,23 +142,8 @@ class HttpRouterHub extends HttpHub {
      * @return CargoHandlerInterface
      */
     protected function getHandler(string $name): CargoHandlerInterface {
-        if (isset($this->loadedHandlers[$name])) {
-            return $this->loadedHandlers[$name];
-        }
+        return $this->loadedHandlers[$name] ?? ($this->loadedHandlers[$name] = $this->produceHandler($name));
 
-        $handler = $this->handlers[$name];
-
-        if (is_string($handler)) {
-            $handler = $this->container->get($handler);
-        }
-
-        if ($handler instanceof CargoHandlerInterface) {
-            $this->loadedHandlers[$name] = $handler;
-
-            return $handler;
-        }
-
-        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_HANDLER, $name));
     }
 
     /**
@@ -176,6 +161,27 @@ class HttpRouterHub extends HttpHub {
         }
 
         return $cargo;
+    }
+
+    /**
+     * Produce handler
+     *
+     * @param string $name
+     * @throws InvalidArgumentException
+     * @return CargoHandlerInterface
+     */
+    protected function produceHandler(string $name): CargoHandlerInterface {
+        $handler = $this->handlers[$name];
+
+        if (is_string($handler)) {
+            $handler = $this->container->get($handler);
+        }
+
+        if ($handler instanceof CargoHandlerInterface) {
+            return $handler;
+        }
+
+        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_HANDLER, $name));
     }
 
     /**
