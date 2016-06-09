@@ -12,9 +12,11 @@ use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Exception\InvalidArgumentException;
 use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
+use Fixin\Delivery\Cargo\CargoHandlerInterface;
 
 class HttpRouterHub extends HttpHub {
 
+    const EXCEPTION_INVALID_HANDLER = "Invalid handler '%s'";
     const EXCEPTION_MISSING_ROUTE_PARAMETER = "Missing route parameter '%s'";
     const EXCEPTION_NO_ROUTE_SET = "No route set";
     const EXCEPTION_UNKNOWN_ROUTE = "Unknown route '%s'";
@@ -33,6 +35,11 @@ class HttpRouterHub extends HttpHub {
      * @var array
      */
     protected $handlers;
+
+    /**
+     * @var array
+     */
+    protected $loadedHandlers = [];
 
     /**
      * @var array
@@ -128,6 +135,33 @@ class HttpRouterHub extends HttpHub {
     }
 
     /**
+     * Get handler instance by name
+     *
+     * @param string $name
+     * @throws InvalidArgumentException
+     * @return CargoHandlerInterface
+     */
+    protected function getHandler(string $name): CargoHandlerInterface {
+        if (isset($this->loadedHandlers[$name])) {
+            return $this->loadedHandlers[$name];
+        }
+
+        $handler = $this->handlers[$name];
+
+        if (is_string($handler)) {
+            $handler = $this->container->get($handler);
+        }
+
+        if ($handler instanceof CargoHandlerInterface) {
+            $this->loadedHandlers[$name] = $handler;
+
+            return $handler;
+        }
+
+        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_HANDLER, $name));
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Delivery\Node\HttpHub::handleHttpCargo($cargo)
      */
@@ -136,7 +170,7 @@ class HttpRouterHub extends HttpHub {
         $count = count($segments);
 
         if (isset($this->routeTree[$count]) && false !== $found = $this->findHandler($segments, $this->routeTree[$count], [])) {
-            $cargo->getRequestParameters()->setValues($found[static::KEY_PARAMETERS]);
+            $cargo->getRequestParameters()->setFrom($found[static::KEY_PARAMETERS]);
 
             return $this->getHandler($found[static::KEY_HANDLER])->handle($cargo);
         }
