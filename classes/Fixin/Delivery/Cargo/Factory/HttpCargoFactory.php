@@ -29,19 +29,14 @@ class HttpCargoFactory extends Factory {
             'serverParameters' => clone $variables
         ]);
 
-        $cargo
-        ->setRequestProtocolVersion($this->getProtocolVersion())
-        ->setRequestMethod($method = $this->getMethod())
-        ->setRequestUri($this->container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
-        ->setRequestHeaders($this->getHeaders())
-        ->setCookies($_COOKIE);
+        // Setup data
+        $this->setupRequest($cargo);
+        $this->setupParameters($cargo);
 
-        $cargo->getRequestParameters()->setFrom($_GET);
-        $cargo->getEnvironmentParameters()->setFrom($_ENV);
-        $cargo->getServerParameters()->setFrom($_SERVER);
+        $cargo->setCookies($_COOKIE);
 
         // POST
-        if ($method === Http::METHOD_POST) {
+        if ($cargo->getRequestMethod() === Http::METHOD_POST) {
             $this->setupPost($cargo);
         }
 
@@ -114,6 +109,17 @@ class HttpCargoFactory extends Factory {
     }
 
     /**
+     * Setup parameter containers
+     *
+     * @param HttpCargoInterface $cargo
+     */
+    protected function setupParameters(HttpCargoInterface $cargo) {
+        $cargo->getRequestParameters()->setFrom($_GET);
+        $cargo->getEnvironmentParameters()->setFrom($_ENV);
+        $cargo->getServerParameters()->setFrom($_SERVER);
+    }
+
+    /**
      * Setup POST data
      *
      * @param HttpCargoInterface $cargo
@@ -125,5 +131,18 @@ class HttpCargoFactory extends Factory {
         if ($contentType = $cargo->getRequestHeader(Http::HEADER_CONTENT_TYPE)) {
             $cargo->setContentType($contentType);
         }
+    }
+
+    /**
+     * Setup request data
+     *
+     * @param HttpCargoInterface $cargo
+     */
+    protected function setupRequest(HttpCargoInterface $cargo) {
+        $cargo
+        ->setRequestProtocolVersion($this->getProtocolVersion())
+        ->setRequestMethod($this->getMethod())
+        ->setRequestUri($this->container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
+        ->setRequestHeaders($this->getHeaders());
     }
 }
