@@ -33,7 +33,7 @@ class PhpSerializer implements SerializerInterface {
      */
     public function unserialize(string $data, array $allowedClasses = null) {
         try {
-            return unserialize($value, isset($allowedClasses) ? ['allowed_classes' => $allowedClasses] : null);
+            return unserialize($data, isset($allowedClasses) ? ['allowed_classes' => $allowedClasses] : null);
         }
         catch (\Throwable $t) {
             throw new RuntimeException(static::EXCEPTION_UNSERIALIZATION_FAILED, 0, $t);
