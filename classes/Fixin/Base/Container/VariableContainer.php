@@ -49,9 +49,9 @@ class VariableContainer extends Prototype implements VariableContainerInterface 
     }
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\Container\VariableContainerInterface::setFrom($values)
+     * @see \Fixin\Base\Container\VariableContainerInterface::setFromArray($values)
      */
-    public function setFrom(array $values): VariableContainerInterface {
+    public function setFromArray(array $values): VariableContainerInterface {
         $this->data = $values + $this->data;
 
         return $this;

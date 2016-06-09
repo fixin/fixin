@@ -33,5 +33,5 @@ interface VariableContainerInterface extends ContainerInterface, PrototypeInterf
      * @param array $values
      * @return VariableContainerInterface
      */
-    public function setFrom(array $values): VariableContainerInterface;
+    public function setFromArray(array $values): VariableContainerInterface;
 }

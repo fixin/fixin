@@ -115,9 +115,9 @@ class HttpCargoFactory extends Factory {
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function setupParameters(HttpCargoInterface $cargo) {
-        $cargo->getRequestParameters()->setFrom($_GET);
-        $cargo->getEnvironmentParameters()->setFrom($_ENV);
-        $cargo->getServerParameters()->setFrom($_SERVER);
+        $cargo->getRequestParameters()->setFromArray($_GET);
+        $cargo->getEnvironmentParameters()->setFromArray($_ENV);
+        $cargo->getServerParameters()->setFromArray($_SERVER);
     }
 
     /**
