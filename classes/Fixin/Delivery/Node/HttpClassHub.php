@@ -69,7 +69,7 @@ class HttpClassHub extends HttpHub {
         if (!isset($tags[$depth + 1])) {
             // Action
             if (isset($tags[$depth])) {
-                $cargo->setRequestParameter('action', $tags[$depth]);
+                $cargo->getRequestParameters()->set('action', $tags[$depth]);
             }
 
             // Controller

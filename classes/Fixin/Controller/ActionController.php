@@ -48,7 +48,7 @@ abstract class ActionController extends Resource implements ControllerInterface 
      */
     public function handle(CargoInterface $cargo): CargoInterface {
         if ($cargo instanceof HttpCargoInterface) {
-            if ($method = $this->getActionMethodName($cargo->getRequestParameter(static::ACTION_PARAMETER, static::DEFAULT_ACTION))) {
+            if ($method = $this->getActionMethodName($cargo->getRequestParameters()->get(static::ACTION_PARAMETER, static::DEFAULT_ACTION))) {
                 return $this->handleMethod($cargo, $method);
             }
 
