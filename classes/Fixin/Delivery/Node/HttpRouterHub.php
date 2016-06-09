@@ -12,6 +12,7 @@ use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 use Fixin\Exception\InvalidArgumentException;
+use Fixin\Delivery\Cargo\CargoHandlerInterface;
 
 class HttpRouterHub extends HttpHub {
 
@@ -61,6 +62,15 @@ class HttpRouterHub extends HttpHub {
      * @see \Fixin\Delivery\Node\HttpHub::handleHttpCargo($cargo)
      */
     public function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface {
+        $segments = explode('/', trim($cargo->getRequestUri()->getPath(), '/'));
+        $count = count($segments);
+
+        if (isset($this->routeTree[$count])) {
+            $handlerFound = false;
+
+            return $this->toHandler($cargo, $segments, $this->routeTree[$count], [], $handlerFound);
+        }
+
         return $cargo;
     }
 
@@ -73,29 +83,40 @@ class HttpRouterHub extends HttpHub {
      */
     public function route(string $name, array $parameters): string {
         if (isset($this->routeUris[$name])) {
-            $uri = $this->routeUris[$name];
-            $replaces = [];
-
-            foreach ($uri[static::KEY_PARAMETERS] as $key => $required) {
-                if (isset($parameters[$key])) {
-                    $replaces[] = '/' . rawurlencode($parameters[$key]);
-
-                    continue;
-                }
-
-                if (!$required) {
-                    $replaces[] = '';
-
-                    continue;
-                }
-
-                throw new InvalidArgumentException(sprintf(static::EXCEPTION_MISSING_ROUTE_PARAMETER, $key));
-            }
-
-            return vsprintf($uri[static::KEY_URI], $replaces);
+            return vsprintf($this->routeUris[$name][static::KEY_URI], $this->routeParameters($name, $parameters));
         }
 
         throw new InvalidArgumentException(sprintf(static::EXCEPTION_UNKNOWN_ROUTE, $name));
+    }
+
+    /**
+     * Build route parameter array
+     *
+     * @param string $name
+     * @param array $parameters
+     * @throws InvalidArgumentException
+     * @return array
+     */
+    protected function routeParameters(string $name, array $parameters): array {
+        $replaces = [];
+
+        foreach ($this->routeUris[$name][static::KEY_PARAMETERS] as $key => $required) {
+            if (isset($parameters[$key])) {
+                $replaces[] = '/' . rawurlencode($parameters[$key]);
+
+                continue;
+            }
+
+            if (!$required) {
+                $replaces[] = '';
+
+                continue;
+            }
+
+            throw new InvalidArgumentException(sprintf(static::EXCEPTION_MISSING_ROUTE_PARAMETER, $key));
+        }
+
+        return $replaces;
     }
 
     /**
@@ -123,5 +144,59 @@ class HttpRouterHub extends HttpHub {
      */
     protected function setRouteUris(array $routeUris) {
         $this->routeUris = $routeUris;
+    }
+
+    /**
+     * Route to handler
+     *
+     * @param HttpCargoInterface $cargo
+     * @param array $segments
+     * @param array $node
+     * @param array $parameters
+     * @param bool $handlerFound
+     * @return CargoInterface
+     */
+    protected function toHandler(HttpCargoInterface $cargo, array $segments, array $node, array $parameters, bool &$handlerFound): CargoInterface {
+        // Handler
+        if (empty($segments)) {
+            $handlerFound = true;
+            //             $cargo->setRequestParameters(array_combine($node[static::KEY_PARAMETERS], $parameters) + $cargo->getRequestParameters());
+
+            return $this->getHandler($node[static::KEY_HANDLER]($cargo));
+        }
+
+        // Next segment
+        $segment = array_shift($segments);
+
+        // Normal segment
+        if (isset($node[$segment])) {
+            return $this->toHandler($cargo, $segments, $node[$segment], $parameters, $handlerFound);
+        }
+
+        $segment = rawurldecode($segment);
+        $parameters[] = $segment;
+
+        // Pattern parameter
+        if (isset($node[static::KEY_PATTERN_PARAMETER])) {
+            foreach ($node[static::KEY_PATTERN_PARAMETER] as $pattern => $route) {
+                if (preg_match("/^$pattern\$/", $segment)) {
+                    $cargo = $this->toHandler($cargo, $segments, $route, $parameters, $handlerFound);
+
+                    if ($handlerFound) {
+                        return $cargo;
+                    }
+                }
+            }
+
+            return $cargo;
+        }
+
+        // Any parameter
+        if (isset($node[static::KEY_ANY_PARAMETER])) {
+
+            return $this->toHandler($cargo, $segments, $node[static::KEY_ANY_PARAMETER], $parameters, $handlerFound);
+        }
+
+        return $cargo;
     }
 }
