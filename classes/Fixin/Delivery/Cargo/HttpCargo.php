@@ -7,8 +7,10 @@
 
 namespace Fixin\Delivery\Cargo;
 
+use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Uri\UriInterface;
-use Fixin\Support\{Http, ToStringTrait};
+use Fixin\Support\Http;
+use Fixin\Support\ToStringTrait;
 
 class HttpCargo extends Cargo implements HttpCargoInterface {
 
@@ -20,9 +22,9 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     protected $cookies = [];
 
     /**
-     * @var array
+     * @var VariableContainerInterface
      */
-    protected $environmentParameters = [];
+    protected $environmentParameters;
 
     /**
      * @var array
@@ -45,9 +47,9 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     protected $requestMethod = Http::METHOD_GET;
 
     /**
-     * @var array
+     * @var VariableContainerInterface
      */
-    protected $requestParameters = [];
+    protected $requestParameters;
 
     /**
      * @var string
@@ -60,9 +62,9 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     protected $requestUri;
 
     /**
-     * @var array
+     * @var VariableContainerInterface
      */
-    protected $serverParameters = [];
+    protected $serverParameters;
 
     /**
      * @var int
@@ -107,10 +109,10 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getEnvironmentParameter($name, $default)
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getEnvironmentParameters()
      */
-    public function getEnvironmentParameter(string $name, string $default = null) {
-        return $this->environmentParameters[$name] ?? $default;
+    public function getEnvironmentParameters(): VariableContainerInterface {
+        return $this->environmentParameters;
     }
 
     /**
@@ -147,10 +149,10 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getRequestParameter($name, $default)
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getRequestParameters()
      */
-    public function getRequestParameter(string $name, string $default = null) {
-        return $this->requestParameters[$name] ?? $default;
+    public function getRequestParameters(): VariableContainerInterface {
+        return $this->requestParameters;
     }
 
     /**
@@ -171,10 +173,10 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getServerParameter($name, $default)
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getServerParameters()
      */
-    public function getServerParameter(string $name, string $default = null) {
-        return $this->serverParameters[$name] ?? $default;
+    public function getServerParameters(): VariableContainerInterface {
+        return $this->serverParameters;
     }
 
     /**
@@ -206,13 +208,12 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setEnvironmentParameters($parameters)
+     * Set enviroment parameter container
+     *
+     * @param VariableContainerInterface $parameters
      */
-    public function setEnvironmentParameters(array $parameters): HttpCargoInterface {
+    protected function setEnvironmentParameters(VariableContainerInterface $parameters) {
         $this->environmentParameters = $parameters;
-
-        return $this;
     }
 
     /**
@@ -236,6 +237,15 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     }
 
     /**
+     * Set request parameter container
+     *
+     * @param VariableContainerInterface $parameters
+     */
+    protected function setRequestParameters(VariableContainerInterface $parameters) {
+        $this->requestParameters = $parameters;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestHeaders($headers)
      */
@@ -251,26 +261,6 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      */
     public function setRequestMethod(string $method): HttpCargoInterface {
         $this->requestMethod = $method;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestParameter($name, $value)
-     */
-    public function setRequestParameter(string $name, $value): HttpCargoInterface {
-        $this->requestParameters[$name] = $value;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setRequestParameters($parameters)
-     */
-    public function setRequestParameters(array $parameters): HttpCargoInterface {
-        $this->requestParameters = $parameters;
-
         return $this;
     }
 
@@ -295,13 +285,12 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setServerParameters($parameters)
+     * Set server parameter container
+     *
+     * @param VariableContainerInterface $parameters
      */
-    public function setServerParameters(array $parameters): HttpCargoInterface {
+    protected function setServerParameters(VariableContainerInterface $parameters) {
         $this->serverParameters = $parameters;
-
-        return $this;
     }
 
     /**

@@ -7,6 +7,7 @@
 
 namespace Fixin\Delivery\Cargo;
 
+use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Uri\UriInterface;
 
 interface HttpCargoInterface extends CargoInterface {
@@ -36,13 +37,11 @@ interface HttpCargoInterface extends CargoInterface {
     public function getCookie(string $name);
 
     /**
-     * Get environment parameter or returns default value when the parameter is missing
+     * Get environment parameters
      *
-     * @param string $name
-     * @param string $default
-     * @return string|null
+     * @return VariableContainerInterface
      */
-    public function getEnvironmentParameter(string $name, string $default = null);
+    public function getEnvironmentParameters(): VariableContainerInterface;
 
     /**
      * Get header values
@@ -74,13 +73,11 @@ interface HttpCargoInterface extends CargoInterface {
     public function getRequestMethod(): string;
 
     /**
-     * Get server parameter or returns default value when the parameter is missing
+     * Get request parameters
      *
-     * @param string $name
-     * @param string $default
-     * @return mixed|null
+     * @return VariableContainerInterface
      */
-    public function getRequestParameter(string $name, string $default = null);
+    public function getRequestParameters(): VariableContainerInterface;
 
     /**
      * Get request protocol version
@@ -97,13 +94,11 @@ interface HttpCargoInterface extends CargoInterface {
     public function getRequestUri();
 
     /**
-     * Get server parameter or returns default value when the parameter is missing
+     * Get server parameters
      *
-     * @param string $name
-     * @param string $default
-     * @return string|null
+     * @return VariableContainerInterface
      */
-    public function getServerParameter(string $name, string $default = null);
+    public function getServerParameters(): VariableContainerInterface;
 
     /**
      * Get status code
@@ -119,14 +114,6 @@ interface HttpCargoInterface extends CargoInterface {
      * @return self
      */
     public function setCookies(array $cookies): HttpCargoInterface;
-
-    /**
-     * Set environment parameters
-     *
-     * @param array $parameters
-     * @return self
-     */
-    public function setEnvironmentParameters(array $parameters): HttpCargoInterface;
 
     /**
      * Set header value
@@ -162,23 +149,6 @@ interface HttpCargoInterface extends CargoInterface {
     public function setRequestMethod(string $method): HttpCargoInterface;
 
     /**
-     * Set request parameter
-     *
-     * @param string $name
-     * @param mixed $value
-     * @return self
-     */
-    public function setRequestParameter(string $name, $value): HttpCargoInterface;
-
-    /**
-     * Set request parameters
-     *
-     * @param array $parameters
-     * @return self
-     */
-    public function setRequestParameters(array $parameters): HttpCargoInterface;
-
-    /**
      * Set request protocol version
      *
      * @param string $protocolVersion
@@ -193,14 +163,6 @@ interface HttpCargoInterface extends CargoInterface {
      * @return self
      */
     public function setRequestUri(UriInterface $requestUri): HttpCargoInterface;
-
-    /**
-     * Set server parameters
-     *
-     * @param array $parameters
-     * @return self
-     */
-    public function setServerParameters(array $parameters): HttpCargoInterface;
 
     /**
      * Set status code

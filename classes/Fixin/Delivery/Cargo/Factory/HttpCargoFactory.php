@@ -20,16 +20,25 @@ class HttpCargoFactory extends Factory {
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __invoke(array $options = NULL, string $name = NULL) {
-        $cargo = $this->container->clonePrototype('Delivery\Cargo\HttpCargo');
+        $variables = $this->container->clonePrototype('Base\Container\VariableContainer');
 
-        $cargo->setRequestProtocolVersion($this->getProtocolVersion())
-            ->setRequestMethod($method = $this->getMethod())
-            ->setRequestUri($this->container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
-            ->setRequestParameters($_GET)
-            ->setRequestHeaders($this->getHeaders())
-            ->setCookies($_COOKIE)
-            ->setEnvironmentParameters($_ENV)
-            ->setServerParameters($_SERVER);
+        /** @var HttpCargoInterface $cargo */
+        $cargo = $this->container->clonePrototype('Delivery\Cargo\HttpCargo', [
+            'environmentParameters' => $variables,
+            'requestParameters' => clone $variables,
+            'serverParameters' => clone $variables
+        ]);
+
+        $cargo
+        ->setRequestProtocolVersion($this->getProtocolVersion())
+        ->setRequestMethod($method = $this->getMethod())
+        ->setRequestUri($this->container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
+        ->setRequestHeaders($this->getHeaders())
+        ->setCookies($_COOKIE);
+
+        $cargo->getRequestParameters()->setFrom($_GET);
+        $cargo->getEnvironmentParameters()->setFrom($_ENV);
+        $cargo->getServerParameters()->setFrom($_SERVER);
 
         // POST
         if ($method === Http::METHOD_POST) {
