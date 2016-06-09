@@ -35,7 +35,7 @@ return [
                     'nodes' => [
                         'Delivery\Node\ThrowableToHtml',
                         'errorLayoutViewWrapper',
-                        'Delivery\Node\ViewRenderer',
+                        'Delivery\Node\ViewRender',
                         'Delivery\Node\ArrayToJson'
                     ]
                 ]
@@ -101,7 +101,7 @@ return [
                         'Delivery\Node\HttpNotFoundFallback',
                         'Delivery\Node\HttpErrorHub',
                         'layoutViewWrapper',
-                        'Delivery\Node\ViewRenderer',
+                        'Delivery\Node\ViewRender',
                         'Delivery\Node\ArrayToJson'
                     ]
                 ]
