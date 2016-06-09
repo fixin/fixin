@@ -60,7 +60,11 @@ return [
                             'handler' => 'Controller\ResfulController'
                         ],
                         'test' => [
-                            'uri' => '{date}/index',
+                            'uri' => '{date?}/index',
+                            'handler' => 'Controller\ResfulController'
+                        ],
+                        'index' => [
+                            'uri' => '/',
                             'handler' => 'Controller\ResfulController'
                         ]
                     ],
