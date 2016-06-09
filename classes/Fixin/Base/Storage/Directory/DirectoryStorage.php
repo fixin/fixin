@@ -9,12 +9,12 @@ namespace Fixin\Base\Storage\Directory;
 
 use Fixin\Base\FileSystem\FileSystemInterface;
 use Fixin\Base\Model\RepositoryInterface;
-use Fixin\Base\Storage\Storage;
+use Fixin\Base\Storage\StorageInterface;
 use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 use Fixin\Support\Strings;
 
-class DirectoryStorage extends Storage {
+class DirectoryStorage extends Resource implements StorageInterface {
 
     const EXCEPTION_FILE_SYSTEM_NOT_SET = 'File system not set';
     const EXCEPTION_PATH_NOT_SET = 'Path not set';
