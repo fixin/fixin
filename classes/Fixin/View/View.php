@@ -89,6 +89,15 @@ class View extends Prototype implements ViewInterface {
     }
 
     /**
+     * Get type of rendered content
+     *
+     * @return string
+     */
+    public function getContentType(): string {
+        return $this->getEngine()->getContentType();
+    }
+
+    /**
      * Get Engine instance
      *
      * @return EngineInterface

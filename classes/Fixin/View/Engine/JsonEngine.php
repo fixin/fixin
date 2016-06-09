@@ -12,6 +12,8 @@ use Fixin\View\ViewInterface;
 
 class JsonEngine extends Engine {
 
+    const CONTENT_TYPE = 'application/json';
+
     /**
      * @var Json
      */

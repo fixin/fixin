@@ -15,6 +15,7 @@ use Fixin\View\ViewInterface;
 
 abstract class Engine extends Resource implements EngineInterface {
 
+    const CONTENT_TYPE = 'text/html';
     const EXCEPTION_INVALID_HELPER_NAME = "Invalid helper name: '%s'";
     const EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'";
     const HELPER_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
@@ -23,6 +24,14 @@ abstract class Engine extends Resource implements EngineInterface {
      * @var HelperInterface[]
      */
     protected $helpers = [];
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\View\Engine\EngineInterface::getContentType()
+     */
+    public function getContentType(): string {
+        return static::CONTENT_TYPE;
+    }
 
     /**
      * {@inheritDoc}
