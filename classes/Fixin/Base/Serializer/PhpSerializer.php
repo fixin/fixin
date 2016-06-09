@@ -11,6 +11,9 @@ use Fixin\Exception\RuntimeException;
 
 class PhpSerializer implements SerializerInterface {
 
+    const EXCEPTION_SERIALIZATION_FAILED = 'Serialization failed';
+    const EXCEPTION_UNSERIALIZATION_FAILED = 'Unserialization failed';
+
     /**
      * {@inheritDoc}
      * @see \Fixin\Base\Serializer\SerializerInterface::serialize($value)
