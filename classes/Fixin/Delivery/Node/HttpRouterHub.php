@@ -125,9 +125,6 @@ class HttpRouterHub extends HttpHub {
                 return $result;
             }
         }
-
-        // Fallback to any
-        return $this->findHandlerAnyParameter($segments, $node, $parameters);
     }
 
     /**
