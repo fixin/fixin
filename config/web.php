@@ -34,8 +34,24 @@ return [
                 'options' => [
                     'nodes' => [
                         'Delivery\Node\ThrowableToHtml',
+                        'errorLayoutViewWrapper',
+                        'Delivery\Node\ViewRenderer',
                         'Delivery\Node\ArrayToJson'
                     ]
+                ]
+            ],
+            'errorLayoutViewWrapper' => [
+                'class' => 'Delivery\Node\WrapInView',
+                'options' => [
+                    'template' => 'layout/error.phtml',
+                    'contentName' => 'content'
+                ]
+            ],
+            'layoutViewWrapper' => [
+                'class' => 'Delivery\Node\WrapInView',
+                'options' => [
+                    'template' => 'layout/default.phtml',
+                    'contentName' => 'content'
                 ]
             ],
             'routerHub' => [
@@ -84,6 +100,8 @@ return [
                         'controllerClassHub',
                         'Delivery\Node\HttpNotFoundFallback',
                         'Delivery\Node\HttpErrorHub',
+                        'layoutViewWrapper',
+                        'Delivery\Node\ViewRenderer',
                         'Delivery\Node\ArrayToJson'
                     ]
                 ]
