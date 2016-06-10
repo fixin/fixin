@@ -9,10 +9,14 @@ return [
     'resourceManager' => [
         'class' => 'Fixin\Resource\ResourceManager',
         'definitions' => [
+            // Classes
             'Delivery\Node\HttpErrorHub' => [
                 'options' => [
                     'route' => 'errorRoute'
                 ]
+            ],
+            'Delivery\Node\HttpRouterHub' => [
+                'class' => 'Delivery\Node\Factory\HttpRouterHubFactory'
             ],
             'View\View' => [
                 'options' => [
@@ -20,26 +24,18 @@ return [
                 ]
             ],
 
-            'controllerClassHub' => [
-                'class' => 'Delivery\Node\HttpClassHub',
-                'options' => [
-                    'basePath' => '/',
-                    'classPrefix' => 'Controller',
-                    'depth' => 2
-                ]
-            ],
+            // Basics
             'defaultFileSystem' => 'Base\FileSystem\Local',
-            'errorRoute' => [
-                'class' => 'Delivery\Route\Route',
+            'starterCargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
+            'viewFileResolver' => [
+                'class' => 'Base\FileSystem\FileResolver',
                 'options' => [
-                    'nodes' => [
-                        'Delivery\Node\ThrowableToHtml',
-                        'errorLayoutViewWrapper',
-                        'Delivery\Node\ViewRender',
-                        'Delivery\Node\ArrayToJson'
-                    ]
+                    'defaultExtension' => '.phtml',
+                    'fileSystem' => 'defaultFileSystem'
                 ]
             ],
+
+            // View Wrappers
             'errorLayoutViewWrapper' => [
                 'class' => 'Delivery\Node\WrapInView',
                 'options' => [
@@ -54,8 +50,46 @@ return [
                     'contentName' => 'content'
                 ]
             ],
+
+            // Routes
+            'errorRoute' => [
+                'class' => 'Delivery\Route\Route',
+                'options' => [
+                    'nodes' => [
+                        'Delivery\Node\ThrowableToHtml',
+                        'errorLayoutViewWrapper',
+                        'Delivery\Node\ViewRender',
+                        'Delivery\Node\ArrayToJson'
+                    ]
+                ]
+            ],
+            'starterRoute' => [
+                'class' => 'Delivery\Route\Route',
+                'options' => [
+                    'nodes' => [
+                        'Delivery\Node\JsonToArray',
+                        'routerHub',
+                        'controllerClassHub',
+                        'Delivery\Node\HttpNotFoundFallback',
+                        'Delivery\Node\HttpErrorHub',
+                        'layoutViewWrapper',
+                        'Delivery\Node\ViewRender',
+                        'Delivery\Node\ArrayToJson'
+                    ]
+                ]
+            ],
+
+            // Hubs
+            'controllerClassHub' => [
+                'class' => 'Delivery\Node\HttpClassHub',
+                'options' => [
+                    'basePath' => '/',
+                    'classPrefix' => 'Controller',
+                    'depth' => 2
+                ]
+            ],
             'routerHub' => [
-                'class' => 'Delivery\Node\Factory\HttpRouterHubFactory',
+                'class' => 'Delivery\Node\HttpRouterHub',
                 'options' => [
                     'routes' => [
                         'post' => [
@@ -90,29 +124,7 @@ return [
                     ]
                 ]
             ],
-            'starterCargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
-            'starterRoute' => [
-                'class' => 'Delivery\Route\Route',
-                'options' => [
-                    'nodes' => [
-                        'Delivery\Node\JsonToArray',
-                        'routerHub',
-                        'controllerClassHub',
-                        'Delivery\Node\HttpNotFoundFallback',
-                        'Delivery\Node\HttpErrorHub',
-                        'layoutViewWrapper',
-                        'Delivery\Node\ViewRender',
-                        'Delivery\Node\ArrayToJson'
-                    ]
-                ]
-            ],
-            'viewFileResolver' => [
-                'class' => 'Base\FileSystem\FileResolver',
-                'options' => [
-                    'defaultExtension' => '.phtml',
-                    'fileSystem' => 'defaultFileSystem'
-                ]
-            ]
+
         ],
         'abstractFactories' => [
             'prefixFallback' => [
