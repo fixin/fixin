@@ -17,6 +17,7 @@ use Fixin\Support\Http;
 class HttpErrorHub extends Resource implements NodeInterface {
 
     const EXCEPTION_ROUTE_NOT_SET = "Route not set";
+    const OPTION_ROUTE = 'route';
 
     /**
      * @var RouteInterface|false|null

@@ -18,6 +18,7 @@ class DirectoryStorage extends Resource implements StorageInterface {
 
     const EXCEPTION_FILE_SYSTEM_NOT_SET = 'File system not set';
     const EXCEPTION_PATH_NOT_SET = 'Path not set';
+    const OPTION_PATH = 'path';
 
     /**
      * @var FileSystemInterface|false|null

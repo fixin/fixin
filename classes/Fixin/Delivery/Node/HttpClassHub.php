@@ -18,6 +18,9 @@ class HttpClassHub extends HttpHub {
 
     const CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/';
     const EXCEPTION_INVALID_CLASS = "Class '%s' is invalid, CargoHandlerInterface required";
+    const OPTION_BASE_PATH = 'basePath';
+    const OPTION_CLASS_PREFIX = 'classPrefix';
+    const OPTION_DEPTH = 'depth';
 
     /**
      * @var string

@@ -12,6 +12,10 @@ use Fixin\Base\Uri\UriInterface;
 
 interface HttpCargoInterface extends CargoInterface {
 
+    const OPTION_ENVIRONMENT_PARAMETERS = 'environmentParameters';
+    const OPTION_REQUEST_PARAMETERS = 'requestParameters';
+    const OPTION_SERVER_PARAMETERS = 'serverParameters';
+
     /**
      * Add header value
      *

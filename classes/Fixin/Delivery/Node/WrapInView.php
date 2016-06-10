@@ -16,6 +16,8 @@ class WrapInView extends Resource implements NodeInterface {
 
     const ALLOWED_TYPES = ['text/html'];
     const EXCEPTION_NO_TEMPLATE_SET = 'No template set';
+    const OPTION_CONTENT_NAME = 'contentName';
+    const OPTION_TEMPLATE = 'template';
 
     /**
      * @var string

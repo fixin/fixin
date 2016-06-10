@@ -12,6 +12,7 @@ use Fixin\Resource\ResourceInterface;
 interface RepositoryInterface extends ResourceInterface {
 
     const OPTION_NAME = 'name';
+    const OPTION_PRIMARY_KEY = 'primaryKey';
     const OPTION_STORAGE = 'storage';
 
     /**

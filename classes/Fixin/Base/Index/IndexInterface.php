@@ -11,6 +11,8 @@ use Fixin\Resource\PrototypeInterface;
 
 interface IndexInterface extends PrototypeInterface {
 
+    const OPTION_FILENAME = 'filename';
+
     /**
      * Clear all values
      *
