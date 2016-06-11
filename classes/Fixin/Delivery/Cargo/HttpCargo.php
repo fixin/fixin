@@ -8,7 +8,9 @@
 namespace Fixin\Delivery\Cargo;
 
 use Fixin\Base\Container\VariableContainerInterface;
+use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
+use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 use Fixin\Support\ToStringTrait;
 
@@ -67,6 +69,11 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     protected $serverParameters;
 
     /**
+     * @var SessionManagerInterface
+     */
+    protected $session;
+
+    /**
      * @var int
      */
     protected $statusCode = Http::STATUS_CONTINUE_100;
@@ -88,6 +95,14 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     public function clearHeaders(): HttpCargoInterface {
         $this->headers = [];
 
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Resource\Resource::configurationTests()
+     */
+    protected function configurationTests(): Resource {
         return $this;
     }
 
@@ -177,6 +192,14 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      */
     public function getServerParameters(): VariableContainerInterface {
         return $this->serverParameters;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\HttpCargoInterface::getSession()
+     */
+    public function getSession(): SessionManagerInterface {
+        return $this->session;
     }
 
     /**
@@ -291,6 +314,15 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
      */
     protected function setServerParameters(VariableContainerInterface $parameters) {
         $this->serverParameters = $parameters;
+    }
+
+    /**
+     * Set session
+     *
+     * @param SessionManagerInterface $session
+     */
+    protected function setSession(SessionManagerInterface $session) {
+        $this->session = $session;
     }
 
     /**

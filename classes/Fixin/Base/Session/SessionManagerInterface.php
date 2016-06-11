@@ -7,17 +7,26 @@
 
 namespace Fixin\Base\Session;
 
-use Fixin\Resource\ResourceInterface;
+use Fixin\Resource\PrototypeInterface;
 
-interface SessionManagerInterface extends ResourceInterface {
+interface SessionManagerInterface extends PrototypeInterface {
 
+    const OPTION_COOKIE_MANAGER = 'cookieManager';
+    const OPTION_COOKIE_NAME = 'cookieName';
     const OPTION_REPOSITORY = 'repository';
 
     /**
-     * Get session for name
+     * Get session area for name
      *
      * @param string $name
-     * @return SessionInterface
+     * @return SessionAreaInterface
      */
-    public function getSession(string $name): SessionInterface;
+    public function getArea(string $name): SessionAreaInterface;
+
+    /**
+     * Start session
+     *
+     * @return SessionAreaInterface
+     */
+    public function start(): SessionAreaInterface;
 }

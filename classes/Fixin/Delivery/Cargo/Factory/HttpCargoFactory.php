@@ -7,11 +7,16 @@
 
 namespace Fixin\Delivery\Cargo\Factory;
 
+use Fixin\Base\Cookie\CookieManagerInterface;
+use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Resource\Factory\Factory;
 use Fixin\Support\Http;
 
 class HttpCargoFactory extends Factory {
+
+    const DEFAULT_SESSION_COOKIE = 'session';
+    const OPTION_SESSION_COOKIE = 'sessionCookie';
 
     /**
      * {@inheritDoc}
@@ -20,20 +25,27 @@ class HttpCargoFactory extends Factory {
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __invoke(array $options = NULL, string $name = NULL) {
-        $variables = $this->container->clonePrototype('Base\Container\VariableContainer');
+        $container = $this->container;
+
+        $variables = $container->clonePrototype('Base\Container\VariableContainer');
+        $cookies = $container->get('Base\Cookie\CookieManager');
+
+        if (!isset($options)) {
+            $options = [];
+        }
 
         /** @var HttpCargoInterface $cargo */
-        $cargo = $this->container->clonePrototype('Delivery\Cargo\HttpCargo', [
+        $cargo = $container->clonePrototype('Delivery\Cargo\HttpCargo', [
             'environmentParameters' => $variables,
             'requestParameters' => clone $variables,
-            'serverParameters' => clone $variables
+            'serverParameters' => clone $variables,
+            'session' => $this->setupSession($options, $cookies)
         ]);
+        $cargo->setCookies($_COOKIE);
 
         // Setup data
         $this->setupRequest($cargo);
         $this->setupParameters($cargo);
-
-        $cargo->setCookies($_COOKIE);
 
         // POST
         if ($cargo->getRequestMethod() === Http::METHOD_POST) {
@@ -145,5 +157,27 @@ class HttpCargoFactory extends Factory {
         ->setRequestMethod($this->getMethod())
         ->setRequestUri($this->container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
         ->setRequestHeaders($this->getHeaders());
+    }
+
+    /**
+     * Setup session
+     *
+     * @param array $options
+     * @param CookieManagerInterface $cookies
+     * @return SessionManagerInterface
+     */
+    protected function setupSession(array $options, CookieManagerInterface $cookies): SessionManagerInterface {
+        // Cookie
+        $cookieName = $options[static::OPTION_SESSION_COOKIE] ?? static::DEFAULT_SESSION_COOKIE;
+
+        $managerOptions = [
+            SessionManagerInterface::OPTION_COOKIE_MANAGER => $cookies
+        ];
+
+        if (isset($_COOKIE[$cookieName])) {
+            $managerOptions[SessionManagerInterface::OPTION_ID] = $_COOKIE[$cookieName];
+        }
+
+        return $this->container->clonePrototype('Base\Session\SessionManager', $managerOptions);
     }
 }

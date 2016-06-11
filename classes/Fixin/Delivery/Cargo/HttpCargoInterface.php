@@ -8,6 +8,7 @@
 namespace Fixin\Delivery\Cargo;
 
 use Fixin\Base\Container\VariableContainerInterface;
+use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
 
 interface HttpCargoInterface extends CargoInterface {
@@ -103,6 +104,13 @@ interface HttpCargoInterface extends CargoInterface {
      * @return VariableContainerInterface
      */
     public function getServerParameters(): VariableContainerInterface;
+
+    /**
+     * Get session
+     *
+     * @return SessionManagerInterface
+     */
+    public function getSession(): SessionManagerInterface;
 
     /**
      * Get status code
