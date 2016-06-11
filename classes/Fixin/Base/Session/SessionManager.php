@@ -146,7 +146,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      */
     public function start(): SessionAreaInterface {
         if (!$this->started) {
-            if ($id = $this->getCookieManager()->get($this->cookieName)) {
+            if ($id = $this->getCookieManager()->getValue($this->cookieName)) {
                 if ($entity = $this->getRepository()->get([static::COLUMN_IN => $id])) {
                     $this->areas = $entity->getData();
 

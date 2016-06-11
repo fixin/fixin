@@ -8,11 +8,13 @@
 namespace Fixin\Delivery\Cargo;
 
 use Fixin\Base\Container\VariableContainerInterface;
+use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
 
 interface HttpCargoInterface extends CargoInterface {
 
+    const OPTION_COOKES = 'cookies';
     const OPTION_ENVIRONMENT_PARAMETERS = 'environmentParameters';
     const OPTION_REQUEST_PARAMETERS = 'requestParameters';
     const OPTION_SERVER_PARAMETERS = 'serverParameters';
@@ -34,12 +36,12 @@ interface HttpCargoInterface extends CargoInterface {
     public function clearHeaders(): HttpCargoInterface;
 
     /**
-     * Get cookie value
+     * Get cookie manager
      *
      * @param string $name
-     * @return string|null
+     * @return CookieManagerInterface
      */
-    public function getCookie(string $name);
+    public function getCookies(): CookieManagerInterface;
 
     /**
      * Get environment parameters
@@ -118,14 +120,6 @@ interface HttpCargoInterface extends CargoInterface {
      * @return int
      */
     public function getStatusCode(): int;
-
-    /**
-     * Set cookies
-     *
-     * @param array $cookies
-     * @return self
-     */
-    public function setCookies(array $cookies): HttpCargoInterface;
 
     /**
      * Set header value
