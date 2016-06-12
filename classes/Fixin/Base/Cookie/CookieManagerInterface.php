@@ -17,9 +17,10 @@ interface CookieManagerInterface extends PrototypeInterface {
      * Get cookie value
      *
      * @param string $name
+     * @param string $default
      * @return mixed
      */
-    public function getValue(string $name);
+    public function getValue(string $name, string $default = null);
 
     /**
      * Determine has value
@@ -28,4 +29,25 @@ interface CookieManagerInterface extends PrototypeInterface {
      * @return bool
      */
     public function has(string $name): bool;
+
+    /**
+     * Send changed or new cookies
+     *
+     * @return self
+     */
+    public function sendChanges(): self;
+
+    /**
+     * Set cookie
+     *
+     * @param string $name
+     * @param string $value
+     * @param int $expire
+     * @param string $path
+     * @param string $domain
+     * @param bool $secure
+     * @param bool $httpOnly
+     * @return self
+     */
+    public function set(string $name, string $value, int $expire = 0, string $path = "", string $domain = "", bool $secure = false, bool $httpOnly = false): self;
 }
