@@ -41,7 +41,7 @@ class HttpCargoFactory extends Factory {
             'environmentParameters' => $variables,
             'requestParameters' => clone $variables,
             'serverParameters' => clone $variables,
-            'session' => $this->setupSession($options, $cookies),
+            'session' => $this->setupSession($cookies),
             'cookies' => $cookies
         ]);
 
@@ -164,22 +164,12 @@ class HttpCargoFactory extends Factory {
     /**
      * Setup session
      *
-     * @param array $options
      * @param CookieManagerInterface $cookies
      * @return SessionManagerInterface
      */
-    protected function setupSession(array $options, CookieManagerInterface $cookies): SessionManagerInterface {
-        // Cookie
-        $cookieName = $options[static::OPTION_SESSION_COOKIE] ?? static::DEFAULT_SESSION_COOKIE;
-
-        $managerOptions = [
+    protected function setupSession(CookieManagerInterface $cookies): SessionManagerInterface {
+        return $this->container->clonePrototype('Base\Session\SessionManager', [
             SessionManagerInterface::OPTION_COOKIE_MANAGER => $cookies
-        ];
-
-        if ($cookies->has($cookieName)) {
-            $managerOptions[SessionManagerInterface::OPTION_ID] = $cookies->getValue($cookieName);
-        }
-
-        return $this->container->clonePrototype('Base\Session\SessionManager', $managerOptions);
+        ]);
     }
 }
