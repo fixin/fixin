@@ -14,6 +14,16 @@ interface CookieManagerInterface extends PrototypeInterface {
     const OPTION_COOKIES = 'cookies';
 
     /**
+     * Expire cookie
+     *
+     * @param string $name
+     * @param string $path
+     * @param string $domain
+     * @return self
+     */
+    public function expire(string $name, string $path = '', string $domain = ''): self;
+
+    /**
      * Get cookie value
      *
      * @param string $name

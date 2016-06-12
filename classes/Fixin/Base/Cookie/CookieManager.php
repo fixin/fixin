@@ -11,10 +11,20 @@ use Fixin\Resource\Prototype;
 
 class CookieManager extends Prototype implements CookieManagerInterface {
 
+    const EXPIRE_MINUTES = -24 * 60 * 7;
+
     /**
      * @var array
      */
     protected $cookies = [];
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Cookie\CookieManagerInterface::expire($name, $path, $domain)
+     */
+    public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface {
+        return $this->set($name, null, static::EXPIRE_MINUTES, $path, $domain);
+    }
 
     /**
      * {@inheritDoc}
