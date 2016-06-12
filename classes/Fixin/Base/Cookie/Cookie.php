@@ -71,6 +71,14 @@ class Cookie extends Prototype implements CookieInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Base\Cookie\CookieInterface::getValue()
+     */
+    public function getValue(): string {
+        return $this->value;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Base\Cookie\CookieInterface::isHttpOnly()
      */
     public function isHttpOnly(): bool {
