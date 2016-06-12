@@ -14,6 +14,11 @@ use Fixin\Resource\Resource;
 
 class Repository extends Resource implements RepositoryInterface {
 
+    const CONFIGURATION_REQUIRES = [
+        'name' => 'string',
+        'primaryKey' => 'array',
+        'storage' => 'instance',
+    ];
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
     const EXCEPTION_NAME_NOT_SET = "Name not set";
     const EXCEPTION_PRIMARY_KEY_NOT_SET = 'Primary key not set';
@@ -37,31 +42,11 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configurationTests()
-     */
-    protected function configurationTests(): Resource {
-        if ($this->name === '') {
-            throw new RuntimeException(static::EXCEPTION_NAME_NOT_SET);
-        }
-
-        if (!isset($this->storage)) {
-            throw new RuntimeException(static::EXCEPTION_STORAGE_NOT_SET);
-        }
-
-        if (empty($this->primaryKey)) {
-            throw new RuntimeException(static::EXCEPTION_PRIMARY_KEY_NOT_SET);
-        }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \Fixin\Base\Model\RepositoryInterface::get($key)
      */
-    public function get($key) {
+    public function get(array $key) {
         $data = $this->getStorage()->get($this, $key);
-        return $data;
+		return $data;
     }
 
     /**
