@@ -10,14 +10,15 @@ namespace Fixin\Base\Storage\Directory;
 use Fixin\Base\FileSystem\FileSystemInterface;
 use Fixin\Base\Model\RepositoryInterface;
 use Fixin\Base\Storage\StorageInterface;
-use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 use Fixin\Support\Strings;
 
 class DirectoryStorage extends Resource implements StorageInterface {
 
-    const EXCEPTION_FILE_SYSTEM_NOT_SET = 'File system not set';
-    const EXCEPTION_PATH_NOT_SET = 'Path not set';
+    const CONFIGURATION_REQUIRES = [
+        'fileSystem' => 'instance',
+        'path' => 'string',
+    ];
     const OPTION_PATH = 'path';
 
     /**
@@ -29,22 +30,6 @@ class DirectoryStorage extends Resource implements StorageInterface {
      * @var string
      */
     protected $path = '';
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configurationTests()
-     */
-    protected function configurationTests(): Resource {
-        if ($this->path === '') {
-            throw new RuntimeException(static::EXCEPTION_PATH_NOT_SET);
-        }
-
-        if (!isset($this->fileSystem)) {
-            throw new RuntimeException(static::EXCEPTION_FILE_SYSTEM_NOT_SET);
-        }
-
-        return $this;
-    }
 
     /**
      * {@inheritDoc}

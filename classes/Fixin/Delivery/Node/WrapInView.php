@@ -15,7 +15,10 @@ use Fixin\View\ViewInterface;
 class WrapInView extends Resource implements NodeInterface {
 
     const ALLOWED_TYPES = ['text/html'];
-    const EXCEPTION_NO_TEMPLATE_SET = 'No template set';
+    const CONFIGURATION_REQUIRES = [
+        'contentName' => 'string',
+        'template' => 'string'
+    ];
     const OPTION_CONTENT_NAME = 'contentName';
     const OPTION_TEMPLATE = 'template';
 
@@ -28,18 +31,6 @@ class WrapInView extends Resource implements NodeInterface {
      * @var string
      */
     protected $template = '';
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configurationTests()
-     */
-    protected function configurationTests(): Resource {
-        if (empty($this->template)) {
-            throw new RuntimeException(static::EXCEPTION_NO_TEMPLATE_SET);
-        }
-
-        return $this;
-    }
 
     /**
      * {@inheritDoc}

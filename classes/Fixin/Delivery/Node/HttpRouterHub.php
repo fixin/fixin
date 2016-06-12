@@ -16,9 +16,11 @@ use Fixin\Delivery\Cargo\CargoHandlerInterface;
 
 class HttpRouterHub extends HttpHub {
 
+    const CONFIGURATION_REQUIRES = [
+        'routeTree' => 'array'
+    ];
     const EXCEPTION_INVALID_HANDLER = "Invalid handler '%s'";
     const EXCEPTION_MISSING_ROUTE_PARAMETER = "Missing route parameter '%s'";
-    const EXCEPTION_NO_ROUTE_SET = "No route set";
     const EXCEPTION_UNKNOWN_ROUTE = "Unknown route '%s'";
 
     const KEY_ANY_PARAMETER = ':';
@@ -50,18 +52,6 @@ class HttpRouterHub extends HttpHub {
      * @var array
      */
     protected $routeUris;
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configurationTests()
-     */
-    protected function configurationTests(): Resource {
-        if (empty($this->routeTree)) {
-            throw new RuntimeException(static::EXCEPTION_NO_ROUTE_SET);
-        }
-
-        return $this;
-    }
 
     /**
      * Find handler for segments

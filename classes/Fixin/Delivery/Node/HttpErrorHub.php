@@ -16,25 +16,15 @@ use Fixin\Support\Http;
 
 class HttpErrorHub extends Resource implements NodeInterface {
 
-    const EXCEPTION_ROUTE_NOT_SET = "Route not set";
+    const CONFIGURATION_REQUIRES = [
+        'route' => 'instance'
+    ];
     const OPTION_ROUTE = 'route';
 
     /**
      * @var RouteInterface|false|null
      */
     protected $route;
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configurationTests()
-     */
-    protected function configurationTests(): Resource {
-        if (!isset($this->route)) {
-            throw new RuntimeException(static::EXCEPTION_ROUTE_NOT_SET);
-        }
-
-        return $this;
-    }
 
     /**
      * Get route instance

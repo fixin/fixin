@@ -11,13 +11,20 @@ use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
-use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 use Fixin\Support\ToStringTrait;
 
 class HttpCargo extends Cargo implements HttpCargoInterface {
 
     use ToStringTrait;
+
+    const CONFIGURATION_REQUIRES = [
+        'cookies' => 'instance',
+        'environmentParameters' => 'instance',
+        'requestParameters' => 'instance',
+        'serverParameters' => 'instance',
+        'session' => 'instance'
+    ];
 
     /**
      * @var CookieManagerInterface
@@ -97,43 +104,6 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
         $this->headers = [];
 
         return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configurationTests()
-     */
-    protected function configurationTests(): Resource {
-        if (!isset($this->cookies)) {
-            throw new RuntimeException(static::EXCEPTION_COOKIES_NOT_SET);
-        }
-
-        if (!isset($this->session)) {
-            throw new RuntimeException(static::EXCEPTION_SESSION_NOT_SET);
-        }
-
-        $this->configurationTestsParameters();
-
-        return $this;
-    }
-
-    /**
-     * Parameters
-     *
-     * @throws RuntimeException
-     */
-    protected function configurationTestsParameters() {
-        if (!isset($this->environmentParameters)) {
-            throw new RuntimeException(static::EXCEPTION_ENVIRONMENT_PARAMETERS_NOT_SET);
-        }
-
-        if (!isset($this->requestParameters)) {
-            throw new RuntimeException(static::EXCEPTION_REQUEST_PARAMETERS_NOT_SET);
-        }
-
-        if (!isset($this->serverParameters)) {
-            throw new RuntimeException(static::EXCEPTION_SERVER_PARAMETERS_NOT_SET);
-        }
     }
 
     /**

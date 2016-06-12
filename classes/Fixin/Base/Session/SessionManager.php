@@ -9,17 +9,17 @@ namespace Fixin\Base\Session;
 
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Model\RepositoryInterface;
-use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Prototype;
-use Fixin\Resource\Resource;
 use Fixin\Support\Strings;
 
 class SessionManager extends Prototype implements SessionManagerInterface {
 
     const COLUMN_IN = 'id';
-    const EXCEPTION_COOKIE_NAME_NOT_SET = 'Cookie name not set';
-    const EXCEPTION_COOKIE_MANAGER_NOT_SET = 'Cookie manager not set';
-    const EXCEPTION_REPOSITORY_NOT_SET = 'Repository not set';
+    const CONFIGURATION_REQUIRES = [
+        'cookieManager' => 'instance',
+        'cookieName' => 'string',
+        'repository' => 'instance',
+    ];
 
     /**
      * @var SessionAreaInterface[]
@@ -55,26 +55,6 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @var bool
      */
     protected $started = false;
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configurationTests()
-     */
-    protected function configurationTests(): Resource {
-        if (!isset($this->repository)) {
-            throw new RuntimeException(static::EXCEPTION_REPOSITORY_NOT_SET);
-        }
-
-        if (!isset($this->cookieManager)) {
-            throw new RuntimeException(static::EXCEPTION_COOKIE_MANAGER_NOT_SET);
-        }
-
-        if ($this->cookieName === '') {
-            throw new RuntimeException(static::EXCEPTION_COOKIE_NAME_NOT_SET);
-        }
-
-        return $this;
-    }
 
     /**
      * Generate session id
