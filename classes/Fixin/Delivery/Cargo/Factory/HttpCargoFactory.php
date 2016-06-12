@@ -32,10 +32,6 @@ class HttpCargoFactory extends Factory {
             CookieManagerInterface::OPTION_COOKIES => $_COOKIE
         ]);
 
-        if (!isset($options)) {
-            $options = [];
-        }
-
         /** @var HttpCargoInterface $cargo */
         $cargo = $container->clonePrototype('Delivery\Cargo\HttpCargo', [
             'environmentParameters' => $variables,

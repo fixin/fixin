@@ -38,7 +38,6 @@ interface HttpCargoInterface extends CargoInterface {
     /**
      * Get cookie manager
      *
-     * @param string $name
      * @return CookieManagerInterface
      */
     public function getCookies(): CookieManagerInterface;
