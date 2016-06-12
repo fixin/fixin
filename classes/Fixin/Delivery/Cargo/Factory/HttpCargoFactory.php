@@ -41,14 +41,7 @@ class HttpCargoFactory extends Factory {
             'cookies' => $cookies
         ]);
 
-        // Setup data
-        $this->setupRequest($cargo);
-        $this->setupParameters($cargo);
-
-        // POST
-        if ($cargo->getRequestMethod() === Http::METHOD_POST) {
-            $this->setupPost($cargo);
-        }
+        $this->setup($cargo);
 
         return $cargo;
     }
@@ -116,6 +109,22 @@ class HttpCargoFactory extends Factory {
     protected function getProtocolVersion(): string {
         return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::PROTOCOL_VERSION_1_0)
             ? Http::PROTOCOL_VERSION_1_0 : Http::PROTOCOL_VERSION_1_1;
+    }
+
+    /**
+     * Setup cargo
+     *
+     * @param HttpCargoInterface $cargo
+     */
+    protected function setup(HttpCargoInterface $cargo) {
+        // Setup data
+        $this->setupRequest($cargo);
+        $this->setupParameters($cargo);
+
+        // POST
+        if ($cargo->getRequestMethod() === Http::METHOD_POST) {
+            $this->setupPost($cargo);
+        }
     }
 
     /**
