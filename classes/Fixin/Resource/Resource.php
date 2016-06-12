@@ -14,7 +14,7 @@ abstract class Resource implements ResourceInterface {
 
     const CONFIGURATION_REQUIRES = [];
     const EXCEPTION_INVALID_OPTION = "Invalid option name '%s'";
-    const EXCEPTION_REQUIRED_NOT_SET = "'%s' not set";
+    const EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s";
 
     /**
      * @var string[]
@@ -87,25 +87,11 @@ abstract class Resource implements ResourceInterface {
      */
     protected function configurationTests(): Resource {
         foreach (static::CONFIGURATION_REQUIRES as $key => $type) {
-            $passed = false;
-
-            switch ($type) {
-                case 'array':
-                    $passed = $this->configurationArrayTest($this->$key);
-                    break;
-
-                case 'instance':
-                    $passed = $this->configurationInstanceTest($this->$key);
-                    break;
-
-                case 'string':
-                    $passed = $this->configurationStringTest($this->$key);
-                    break;
+            if ($this->{'configuration' . $type . 'Test'}($this->$key)) {
+                continue;
             }
 
-            if (!$passed) {
-                throw new RuntimeException(sprintf(static::EXCEPTION_REQUIRED_NOT_SET, $key));
-            }
+            throw new RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, $type));
         }
 
         return $this;
