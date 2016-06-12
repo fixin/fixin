@@ -52,12 +52,7 @@ interface CookieManagerInterface extends PrototypeInterface {
      *
      * @param string $name
      * @param string $value
-     * @param int $expire
-     * @param string $path
-     * @param string $domain
-     * @param bool $secure
-     * @param bool $httpOnly
-     * @return self
+     * @return CookieInterface
      */
-    public function set(string $name, string $value, int $expire = 0, string $path = "", string $domain = "", bool $secure = false, bool $httpOnly = false): self;
+    public function set(string $name, string $value): CookieInterface;
 }

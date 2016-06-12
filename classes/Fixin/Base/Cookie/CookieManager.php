@@ -58,23 +58,15 @@ class CookieManager extends Prototype implements CookieManagerInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieManagerInterface::set($name, $value, $expire, $path, $domain, $secure, $httpOnly)
+     * @see \Fixin\Base\Cookie\CookieManagerInterface::set($name, $value)
      */
-    public function set(string $name, string $value, int $expire = 0, string $path = "", string $domain = "", bool $secure = false, bool $httpOnly = false): CookieManagerInterface {
+    public function set(string $name, string $value): CookieInterface {
         if (!isset($this->cookies[$name]) || !($cookie = $this->cookies[$name]) instanceof CookieInterface) {
             $cookie =
             $this->cookies[$name] = $this->container->clonePrototype('Base\Cookie\Cookie');
         }
 
-        $cookie
-        ->setValue($value)
-        ->setExpire($expire)
-        ->setPath($path)
-        ->setDomain($domain)
-        ->setSecure($secure)
-        ->setHttpOnly($httpOnly);
-
-        return $this;
+        return $cookie->setValue($value);
     }
 
     /**
