@@ -171,7 +171,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * Setup cookie
      */
     protected function setupCookie() {
-        $this->getCookieManager()->set($this->cookieName, $this->sessionId)->setExpire($this->lifetime);
+        $this->getCookieManager()->set($this->cookieName, $this->sessionId)->setExpire($this->lifetime)->setPath('/');
     }
 
     /**
@@ -182,22 +182,35 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         if (!$this->started) {
             $this->started = true;
 
-            if ($sessionId = $this->getCookieManager()->getValue($this->cookieName)) {
-                if ($entity = $this->getRepository()->get([static::COLUMN_IN => $sessionId])) {
-                    $this->areas = $entity->getData();
-
-                    $this->sessionId = $sessionId;
-                    if ($this->lifetime) {
-                        $this->setupCookie();
-                    }
-
-                    return $this;
-                }
+            $sessionId = $this->getCookieManager()->getValue($this->cookieName);
+            if ($sessionId && $this->startWith($sessionId)) {
+                return $this;
             }
 
             $this->regenerateId();
         }
 
         return $this;
+    }
+
+    /**
+     * Start with stored session id
+     *
+     * @param string $sessionId
+     * @return bool
+     */
+    protected function startWith(string $sessionId): bool {
+        if ($entity = $this->getRepository()->get([static::COLUMN_IN => $sessionId])) {
+            $this->areas = $entity->getData();
+
+            $this->sessionId = $sessionId;
+            if ($this->lifetime) {
+                $this->setupCookie();
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
