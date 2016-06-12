@@ -16,6 +16,7 @@ use Fixin\Support\Strings;
 
 class SessionManager extends Prototype implements SessionManagerInterface {
 
+    const COLUMN_IN = 'id';
     const EXCEPTION_COOKIE_NAME_NOT_SET = 'Cookie name not set';
     const EXCEPTION_COOKIE_MANAGER_NOT_SET = 'Cookie manager not set';
     const EXCEPTION_REPOSITORY_NOT_SET = 'Repository not set';
