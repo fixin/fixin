@@ -13,6 +13,7 @@ use Fixin\Exception\RuntimeException;
 class Cookie extends Prototype implements CookieInterface {
 
     const EXCEPTION_CAN_T_SET_COOKIE = "Can't set '%s' cookie";
+    const EXPIRE_TO_TIMESTAMP = 60;
 
     /**
      * @var string
@@ -49,7 +50,7 @@ class Cookie extends Prototype implements CookieInterface {
      * @see \Fixin\Base\Cookie\CookieInterface::sendAs($name)
      */
     public function sendAs(string $name): CookieInterface {
-        if (setcookie($name, $this->value, $this->expire, $this->path, $this->domain, $this->secure, $this->httpOnly)) {
+        if (setcookie($name, $this->value, $this->expire ? time() + $this->expire * static::EXPIRE_TO_TIMESTAMP : 0, $this->path, $this->domain, $this->secure, $this->httpOnly)) {
             return $this;
         }
 
