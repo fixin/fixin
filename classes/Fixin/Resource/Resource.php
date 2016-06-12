@@ -50,6 +50,7 @@ abstract class Resource implements ResourceInterface {
      *
      * @param mixed $value
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private function configurationArrayTest($value): bool {
         return is_array($value) && count($value);
@@ -60,6 +61,7 @@ abstract class Resource implements ResourceInterface {
      *
      * @param mixed $value
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private function configurationInstanceTest($value): bool {
         return $value === false || is_object($value);
@@ -70,6 +72,7 @@ abstract class Resource implements ResourceInterface {
      *
      * @param mixed $value
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private function configurationStringTest($value): bool {
         return is_string($value) && $value !== '';
