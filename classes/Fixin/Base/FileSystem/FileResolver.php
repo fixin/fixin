@@ -7,13 +7,14 @@
 
 namespace Fixin\Base\FileSystem;
 
-use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 use Fixin\Support\Strings;
 
 class FileResolver extends Resource implements FileResolverInterface {
 
-    const EXCEPTION_FILE_SYSTEM_NOT_SET = 'File system not set';
+    const CONFIGURATION_REQUIRES = [
+        'fileSystem' => 'instance'
+    ];
 
     /**
      * @var string
@@ -29,18 +30,6 @@ class FileResolver extends Resource implements FileResolverInterface {
      * @var string[]
      */
     protected $paths = [];
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Resource::configurationTests()
-     */
-    protected function configurationTests(): Resource {
-        if (!isset($this->fileSystem)) {
-            throw new RuntimeException(static::EXCEPTION_FILE_SYSTEM_NOT_SET);
-        }
-
-        return $this;
-    }
 
     /**
      * Get FileSystem instance

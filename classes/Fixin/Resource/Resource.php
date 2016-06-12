@@ -12,11 +12,9 @@ use Fixin\Exception\RuntimeException;
 
 abstract class Resource implements ResourceInterface {
 
+    const CONFIGURATION_REQUIRES = [];
     const EXCEPTION_INVALID_OPTION = "Invalid option name '%s'";
     const EXCEPTION_REQUIRED_NOT_SET = "'%s' not set";
-    const REQUIRED_ARRAY = 0;
-    const REQUIRED_INSTANCE = 1;
-    const REQUIRED_STRING = 2;
 
     /**
      * @var string[]
@@ -53,26 +51,55 @@ abstract class Resource implements ResourceInterface {
     }
 
     /**
+     * Array test
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    private function configurationArrayTest($value): bool {
+        return is_array($value) && count($value);
+    }
+
+    /**
+     * Instance test
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    private function configurationInstanceTest($value): bool {
+        return $value === false || is_object($value);
+    }
+
+    /**
+     * String test
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    private function configurationStringTest($value): bool {
+        return is_string($value) && $value !== '';
+    }
+
+    /**
      * Configuration tests
      *
      * @return self
      */
     protected function configurationTests(): Resource {
-        foreach ($this->configurationRequires as $key => $type) {
+        foreach (static::CONFIGURATION_REQUIRES as $key => $type) {
             $passed = false;
-            $value = $this->$key;
 
             switch ($type) {
-                case static::REQUIRED_ARRAY:
-                    $passed = is_array($value) && count($value);
+                case 'array':
+                    $passed = $this->configurationArrayTest($this->$key);
                     break;
 
-                case static::REQUIRED_INSTANCE:
-                    $passed = $value === false || is_object($value);
+                case 'instance':
+                    $passed = $this->configurationInstanceTest($this->$key);
                     break;
 
-                case static::REQUIRED_STRING:
-                    $passed = is_string($value) && $value !== '';
+                case 'string':
+                    $passed = $this->configurationStringTest($this->$key);
                     break;
             }
 
@@ -80,6 +107,7 @@ abstract class Resource implements ResourceInterface {
                 throw new RuntimeException(sprintf(static::EXCEPTION_REQUIRED_NOT_SET, $key));
             }
         }
+
         return $this;
     }
 
