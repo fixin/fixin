@@ -11,6 +11,7 @@ class Strings extends DoNotCreate {
 
     const CLASS_NAME_REPLACE = ['.' => '', '-' => '', '_' => ''];
     const CLASS_NAME_WORD_DELIMITERS = '.-_\\';
+    const GENERATE_RANDOM_REPLACE = ['/' => '', '+' => '', '=' => ''];
     const METHOD_NAME_REPLACE = ['.' => '', '-' => '', '_' => ''];
     const METHOD_NAME_WORD_DELIMITERS = '.-_';
     const NORMALIZE_LEADING_REPLACE = ["\t" => '    '];
@@ -45,6 +46,22 @@ class Strings extends DoNotCreate {
      */
     public static function endsWith(string $string, string $end): bool {
         return substr_compare($string, $end, -strlen($end)) === 0;
+    }
+
+    /**
+     * Generate random alpha-numeric string
+     *
+     * @param int $length
+     * @return string
+     */
+    public static function generateRandom(int $length): string {
+        $string = '';
+
+        while (($required = $length - strlen($string)) > 0) {
+            $string .= strtr(base64_encode(random_bytes(ceil($required * 0.8))), static::GENERATE_RANDOM_REPLACE);
+        }
+
+        return substr($string, 0, $length);
     }
 
     /**
