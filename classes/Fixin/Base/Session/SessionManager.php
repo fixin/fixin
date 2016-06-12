@@ -171,7 +171,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * Setup cookie
      */
     protected function setupCookie() {
-        $this->getCookieManager()->set($this->cookieName, $this->sessionId, $this->lifetime);
+        $this->getCookieManager()->set($this->cookieName, $this->sessionId)->setExpire($this->lifetime);
     }
 
     /**
