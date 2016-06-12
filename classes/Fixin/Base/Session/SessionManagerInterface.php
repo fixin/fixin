@@ -13,6 +13,7 @@ interface SessionManagerInterface extends PrototypeInterface {
 
     const OPTION_COOKIE_MANAGER = 'cookieManager';
     const OPTION_COOKIE_NAME = 'cookieName';
+    const OPTION_LIFETIME = 'lifetime';
     const OPTION_REPOSITORY = 'repository';
 
     /**
