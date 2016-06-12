@@ -24,9 +24,16 @@ interface SessionManagerInterface extends PrototypeInterface {
     public function getArea(string $name): SessionAreaInterface;
 
     /**
+     * Regenerate session ID
+     *
+     * @return self
+     */
+    public function regenerateId(): self;
+
+    /**
      * Start session
      *
-     * @return SessionAreaInterface
+     * @return self
      */
-    public function start(): SessionAreaInterface;
+    public function start(): self;
 }

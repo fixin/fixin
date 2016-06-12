@@ -12,6 +12,7 @@ use Fixin\Base\Model\RepositoryInterface;
 use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Prototype;
 use Fixin\Resource\Resource;
+use Fixin\Support\Strings;
 
 class SessionManager extends Prototype implements SessionManagerInterface {
 
@@ -69,8 +70,13 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         return $this;
     }
 
+    /**
+     * Generate session id
+     *
+     * @return string
+     */
     protected function generateId(): string {
-
+        return sha1(Strings::generateRandom(24) . uniqid('', true) . microtime(true));
     }
 
     /**
@@ -86,9 +92,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         }
 
         // New area
-        return $this->areas[$name] = $this->container->clonePrototype('Base\Session\SessionArea', [
-//             SessionAreaInterface::OPTION_MANAGER => $this TODO
-        ]);
+        return $this->areas[$name] = $this->container->clonePrototype('Base\Session\SessionArea');
     }
 
     /**
@@ -109,13 +113,22 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         return $this->repository ?: $this->loadLazyProperty('repository');
     }
 
-    public function regenerateId(bool $destroy = false) {
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Session\SessionManagerInterface::regenerateId()
+     */
+    public function regenerateId(): SessionManagerInterface {
         $this->id = $this->generateId();
+
+        echo $this->id;
+        die;
 
         return $this;
     }
 
     /**
+     * Set cookie manager
+     *
      * @param string|CookieManagerInterface $cookieManager
      */
     protected function setCookieManager($cookieManager) {
@@ -144,7 +157,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * {@inheritDoc}
      * @see \Fixin\Base\Session\SessionManagerInterface::start()
      */
-    public function start(): SessionAreaInterface {
+    public function start(): SessionManagerInterface {
         if (!$this->started) {
             if ($id = $this->getCookieManager()->getValue($this->cookieName)) {
                 if ($entity = $this->getRepository()->get([static::COLUMN_IN => $id])) {
