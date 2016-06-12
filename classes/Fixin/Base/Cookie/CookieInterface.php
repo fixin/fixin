@@ -12,6 +12,48 @@ use Fixin\Resource\PrototypeInterface;
 interface CookieInterface extends PrototypeInterface {
 
     /**
+     * Get domain
+     *
+     * @return string
+     */
+    public function getDomain(): string;
+
+    /**
+     * Get expire in minutes
+     *
+     * @return int
+     */
+    public function getExpire(): int;
+
+    /**
+     * Get path
+     *
+     * @return string
+     */
+    public function getPath(): string;
+
+    /**
+     * Get value
+     *
+     * @return string
+     */
+    public function getValue(): string;
+
+    /**
+     * Determine if HTTP-only
+     *
+     * @return bool
+     */
+    public function isHttpOnly(): bool;
+
+    /**
+     * Determine if secure
+     *
+     * @return bool
+     */
+    public function isSecure(): bool;
+
+    /**
      * Send as
      *
      * @param string $name
@@ -28,7 +70,7 @@ interface CookieInterface extends PrototypeInterface {
     public function setDomain(string $domain): self;
 
     /**
-     * Set expire
+     * Set expire in minutes
      *
      * @param int $expire
      * @return self

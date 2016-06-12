@@ -21,12 +21,12 @@ class Cookie extends Prototype implements CookieInterface {
     protected $domain = '';
 
     /**
-     * @var integer
+     * @var int
      */
     protected $expire = 0;
 
     /**
-     * @var string
+     * @var bool
      */
     protected $httpOnly = false;
 
@@ -36,7 +36,7 @@ class Cookie extends Prototype implements CookieInterface {
     protected $path = '';
 
     /**
-     * @var string
+     * @var bool
      */
     protected $secure = false;
 
@@ -44,6 +44,46 @@ class Cookie extends Prototype implements CookieInterface {
      * @var string
      */
     protected $value = '';
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Cookie\CookieInterface::getDomain()
+     */
+    public function getDomain(): string {
+        return $this->domain;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Cookie\CookieInterface::getExpire()
+     */
+    public function getExpire(): int {
+        return $this->expire;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Cookie\CookieInterface::getPath()
+     */
+    public function getPath(): string {
+        return $this->path;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Cookie\CookieInterface::isHttpOnly()
+     */
+    public function isHttpOnly(): bool {
+        return $this->httpOnly;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Cookie\CookieInterface::isSecure()
+     */
+    public function isSecure(): bool {
+        return $this->secure;
+    }
 
     /**
      * {@inheritDoc}
