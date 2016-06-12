@@ -18,8 +18,8 @@ interface RepositoryInterface extends ResourceInterface {
     /**
      * Get single entity
      *
-     * @param int|string|array $key
+     * @param array $key
      * @return EntityInterface|null
      */
-    public function get($key);
+    public function get(array $key);
 }
