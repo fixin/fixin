@@ -14,7 +14,7 @@ use \Fixin\Support\VariableInspector;
 
 // Functions
 $helper = new \FixinTools\Base\ClassHelper($topDir);
-$showAll = !empty($_GET['all']);
+$showAll = !empty($_GET['all']) || !empty($all);
 
 $showProperties = $showAll ? (ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE) : ReflectionProperty::IS_PUBLIC;
 $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED | ReflectionMethod::IS_PRIVATE) : ReflectionMethod::IS_PUBLIC;
