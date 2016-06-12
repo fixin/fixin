@@ -10,6 +10,11 @@ return [
         'class' => 'Fixin\Resource\ResourceManager',
         'definitions' => [
             // Classes
+            'Base\Session\SessionManager' => [
+                'options' => [
+                    'repository' => 'sessionRepository'
+                ]
+            ],
             'Delivery\Node\HttpErrorHub' => [
                 'options' => [
                     'route' => 'errorRoute'
@@ -92,31 +97,9 @@ return [
                 'class' => 'Delivery\Node\HttpRouterHub',
                 'options' => [
                     'routes' => [
-                        'post' => [
-                            'uri' => '/posts',
-                            'view' => [
-                                'uri' => '{id}',
-                                'handler' => 'Controller\RestfulController',
-                            ],
-                            'comment' => [
-                                'uri' => '{id}/comments/{comment?}',
-                                'patterns' => [
-                                    'comment' => '[A-Za-z0-9-]+',
-                                ],
-                                'handler' => 'Controller\RestfulController',
-                            ]
-                        ],
-                        'login' => [
-                            'uri' => '/login',
-                            'handler' => 'Controller\ResfulController'
-                        ],
-                        'test' => [
-                            'uri' => '{date?}/index',
-                            'handler' => 'Controller\ResfulController'
-                        ],
                         'index' => [
                             'uri' => '/',
-                            'handler' => 'Controller\ResfulController'
+                            'handler' => 'Controller\Index'
                         ]
                     ],
                     'patterns' => [
