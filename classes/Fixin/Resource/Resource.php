@@ -17,11 +17,6 @@ abstract class Resource implements ResourceInterface {
     const EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s";
 
     /**
-     * @var string[]
-     */
-    protected $configurationRequires = [];
-
-    /**
      * @var ResourceManagerInterface
      */
     protected $container;
@@ -87,7 +82,7 @@ abstract class Resource implements ResourceInterface {
      */
     protected function configurationTests(): Resource {
         foreach (static::CONFIGURATION_REQUIRES as $key => $type) {
-            if ($this->{'configuration' . $type . 'Test'}($this->$key)) {
+            if ($this->{"configuration{$type}Test"}($this->$key)) {
                 continue;
             }
 
