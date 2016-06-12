@@ -8,11 +8,20 @@
 namespace Fixin\Resource;
 
 use Fixin\Exception\InvalidArgumentException;
+use Fixin\Exception\RuntimeException;
 
 abstract class Resource implements ResourceInterface {
 
     const EXCEPTION_INVALID_OPTION = "Invalid option name '%s'";
-    const EXCEPTION_PROPERTY_NOT_SET = "'%s' not set";
+    const EXCEPTION_REQUIRED_NOT_SET = "'%s' not set";
+    const REQUIRED_ARRAY = 0;
+    const REQUIRED_INSTANCE = 1;
+    const REQUIRED_STRING = 2;
+
+    /**
+     * @var string[]
+     */
+    protected $configurationRequires = [];
 
     /**
      * @var ResourceManagerInterface
@@ -49,6 +58,28 @@ abstract class Resource implements ResourceInterface {
      * @return self
      */
     protected function configurationTests(): Resource {
+        foreach ($this->configurationRequires as $key => $type) {
+            $passed = false;
+            $value = $this->$key;
+
+            switch ($type) {
+                case static::REQUIRED_ARRAY:
+                    $passed = is_array($value) && count($value);
+                    break;
+
+                case static::REQUIRED_INSTANCE:
+                    $passed = $value === false || is_object($value);
+                    break;
+
+                case static::REQUIRED_STRING:
+                    $passed = is_string($value) && $value !== '';
+                    break;
+            }
+
+            if (!$passed) {
+                throw new RuntimeException(sprintf(static::EXCEPTION_REQUIRED_NOT_SET, $key));
+            }
+        }
         return $this;
     }
 
