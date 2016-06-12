@@ -37,11 +37,6 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     protected $cookieName = 'session';
 
     /**
-     * @var string
-     */
-    protected $id;
-
-    /**
      * @var integer
      */
     protected $lifetime = 0;
@@ -50,6 +45,11 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @var RepositoryInterface|false|null
      */
     protected $repository;
+
+    /**
+     * @var string
+     */
+    protected $sessionId;
 
     /**
      * @var bool
@@ -124,7 +124,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @see \Fixin\Base\Session\SessionManagerInterface::regenerateId()
      */
     public function regenerateId(): SessionManagerInterface {
-        $this->id = $this->generateId();
+        $this->sessionId = $this->generateId();
 
         $this->setupCookie();
 
@@ -171,7 +171,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * Setup cookie
      */
     protected function setupCookie() {
-        $this->getCookieManager()->set($this->cookieName, $this->id, $this->lifetime);
+        $this->getCookieManager()->set($this->cookieName, $this->sessionId, $this->lifetime);
     }
 
     /**
@@ -182,11 +182,11 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         if (!$this->started) {
             $this->started = true;
 
-            if ($id = $this->getCookieManager()->getValue($this->cookieName)) {
-                if ($entity = $this->getRepository()->get([static::COLUMN_IN => $id])) {
+            if ($sessionId = $this->getCookieManager()->getValue($this->cookieName)) {
+                if ($entity = $this->getRepository()->get([static::COLUMN_IN => $sessionId])) {
                     $this->areas = $entity->getData();
 
-                    $this->id = $id;
+                    $this->sessionId = $sessionId;
                     $this->lifetime && $this->setupCookie();
 
                     return $this;
