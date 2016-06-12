@@ -363,4 +363,16 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
 
         return $this;
     }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Delivery\Cargo\Cargo::unpack()
+     */
+    public function unpack() {
+        // Cookie changes
+        $this->cookies->sendChanges();
+
+        // Content
+        echo $this->content;
+    }
 }
