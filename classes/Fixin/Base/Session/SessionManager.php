@@ -187,7 +187,9 @@ class SessionManager extends Prototype implements SessionManagerInterface {
                     $this->areas = $entity->getData();
 
                     $this->sessionId = $sessionId;
-                    $this->lifetime && $this->setupCookie();
+                    if ($this->lifetime) {
+                        $this->setupCookie();
+                    }
 
                     return $this;
                 }
