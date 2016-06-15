@@ -7,10 +7,10 @@
 
 namespace Fixin\Model\Repository;
 
-use Fixin\Model\Entity\EntitySetInterface;
-use Fixin\Resource\ResourceInterface;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
+use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface RepositoryInterface extends ResourceInterface {
 
@@ -41,6 +41,14 @@ interface RepositoryInterface extends ResourceInterface {
      * @return EntityIdInterface
      */
     public function createEntityId(...$entityId): EntityIdInterface;
+
+    /**
+     * Get entity of ID
+     *
+     * @param EntityIdInterface $entityId
+     * @return EntityInterface|null
+     */
+    public function getEntityWithId(EntityIdInterface $entityId);
 
     /**
      * Get name of the repository
