@@ -121,14 +121,15 @@ abstract class Resource implements ResourceInterface {
      * Load lazy property
      *
      * @param string $propertyName
+     * @param array $prototypeOptions
      * @throws InvalidArgumentException
      * @return mixed
      */
-    protected function loadLazyProperty(string $propertyName) {
+    protected function loadLazyProperty(string $propertyName, array $prototypeOptions = null) {
         if (isset($this->lazyLoadingProperties[$propertyName])) {
             $set = $this->lazyLoadingProperties[$propertyName];
             $interface = $set[1];
-            $value = $interface instanceof PrototypeInterface ? $this->container->clonePrototype($set[0]) : $this->container->get($set[0]);
+            $value = $interface instanceof PrototypeInterface ? $this->container->clonePrototype($set[0], $prototypeOptions) : $this->container->get($set[0]);
 
             if ($value instanceof $interface) {
                 return $this->$propertyName = $value;
