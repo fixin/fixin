@@ -51,13 +51,6 @@ interface EntitySetInterface extends PrototypeInterface, Iterator, Countable {
     public function prefetchAll(): self;
 
     /**
-     * Refault all fetched entities to IDs
-     *
-     * @return self
-     */
-    public function refault(): self;
-
-    /**
      * Set count of entities for prefetch
      *
      * @param int $prefetchSize
