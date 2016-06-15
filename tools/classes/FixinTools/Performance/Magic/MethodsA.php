@@ -48,4 +48,13 @@ class MethodsA {
     public function __get(string $name) {
         return $this->helpers[$name] ?? null;
     }
+
+    /**
+     * Existing method
+     *
+     * @param mixed $value
+     */
+    public function existing($value) {
+        $this->helpers['escapeHtml']($value);
+    }
 }

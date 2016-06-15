@@ -36,4 +36,11 @@ use FixinTools\Performance\Magic\MethodsB;
             ($objectB->escapeHtml)('test' . $i);
         }
     });
+
+    Performance::measureCode(function() use ($loops, $objectB) {
+        // Existing method
+        for ($i = 0; $i < $loops; $i++) {
+            $objectB->existing('test' . $i);
+        }
+    });
 })();
