@@ -12,7 +12,6 @@ use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Resource\Resource;
-use Fixin\Support\Arrays;
 
 class Repository extends Resource implements RepositoryInterface {
 
@@ -145,22 +144,6 @@ class Repository extends Resource implements RepositoryInterface {
      */
     protected function getStorage(): StorageInterface {
         return $this->storage ?: $this->loadLazyProperty('storage');
-    }
-
-    public function normalizeEntityId(array $entityId): array {
-
-
-
-
-        $primaryKey = $this->getRepository()->getPrimaryKey();
-
-
-
-        if (count($entityId) === count($primaryKey)) {
-            $this->entityId = array_combine($primaryKey, $entityId);
-        }
-
-
     }
 
     /**
