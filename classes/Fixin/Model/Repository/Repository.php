@@ -12,15 +12,18 @@ use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Resource\Resource;
+use Fixin\Resource\ResourceManagerInterface;
 
 class Repository extends Resource implements RepositoryInterface {
 
     const CONFIGURATION_REQUIRES = [
+        'entityIdPrototype' => 'instance',
         'entityPrototype' => 'instance',
         'name' => 'string',
         'primaryKey' => 'array',
         'storage' => 'instance',
     ];
+    const DEFAULT_ID_PROTOTYPE = 'Base\Model\Entity\EntityId';
     const EXCEPTION_INVALID_ID = "Invalid ID";
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
     const NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
@@ -56,24 +59,26 @@ class Repository extends Resource implements RepositoryInterface {
      * @param string $name
      */
     public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
-        $this->setLazyLoadingProperty('entityIdPrototype', EntityIdInterface::class, 'Base\Model\Entity\EntityId');
+        if (!isset($options[static::OPTION_ENTITY_ID_PROTOTYPE])) {
+            $options[static::OPTION_ENTITY_ID_PROTOTYPE] = static::DEFAULT_ID_PROTOTYPE;
+        }
 
         parent::__construct($container, $options, $name);
     }
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::create()
+     * @see \Fixin\Model\Repository\RepositoryInterface::createEntity()
      */
-    public function create(): EntityInterface {
+    public function createEntity(): EntityInterface {
         return clone $this->getEntityPrototype();
     }
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::createId($entityId)
+     * @see \Fixin\Model\Repository\RepositoryInterface::createEntityId($entityId)
      */
-    public function createId(...$entityId): EntityIdInterface {
+    public function createEntityId(...$entityId): EntityIdInterface {
         $columnCount = count($this->primaryKey);
 
         // Array
@@ -89,42 +94,42 @@ class Repository extends Resource implements RepositoryInterface {
 
         // List
         if (count($entityId) === $columnCount) {
-            return $this->createIdForArray(array_combine($this->primaryKey, $entityId));
+            return $this->createEntityIdWithArray(array_combine($this->primaryKey, $entityId));
         }
 
         throw new InvalidArgumentException(static::EXCEPTION_INVALID_ID);
     }
 
     /**
-     * Create ID instance for array
+     * Create entity ID with array
      *
      * @param array $entityId
      * @return EntityIdInterface
      */
-    private function createIdForArray(array $entityId): EntityIdInterface {
+    private function createEntityIdWithArray(array $entityId): EntityIdInterface {
         return $this->getEntityIdPrototype()->withOptions([
             EntityIdInterface::OPTION_ENTITY_ID => $entityId
         ]);
     }
 
     /**
-     * Get entity prototype instance
-     *
-     * @return EntityInterface
-     */
-    protected function getEntityPrototype(): EntityInterface {
-        return $this->entityPrototype ?: $this->loadLazyProperty('entityPrototype', [
-            EntityInterface::OPTION_REPOSITORY => $this
-        ]);
-    }
-
-    /**
-     * Get entity ID prototype instance
+     * Get entity ID prototype
      *
      * @return EntityIdInterface
      */
     protected function getEntityIdPrototype(): EntityIdInterface {
         return $this->entityIdPrototype ?: $this->loadLazyProperty('entityIdPrototype', [
+            EntityInterface::OPTION_REPOSITORY => $this
+        ]);
+    }
+
+    /**
+     * Get entity prototype
+     *
+     * @return EntityInterface
+     */
+    protected function getEntityPrototype(): EntityInterface {
+        return $this->entityPrototype ?: $this->loadLazyProperty('entityPrototype', [
             EntityInterface::OPTION_REPOSITORY => $this
         ]);
     }
@@ -144,6 +149,16 @@ class Repository extends Resource implements RepositoryInterface {
      */
     protected function getStorage(): StorageInterface {
         return $this->storage ?: $this->loadLazyProperty('storage');
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::saveEntity($entity)
+     */
+    public function saveEntity(EntityInterface $entity): RepositoryInterface {
+        $this->getStorage()->save($entity);
+
+        return $this;
     }
 
     /**
