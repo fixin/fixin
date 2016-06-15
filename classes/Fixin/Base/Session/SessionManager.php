@@ -8,7 +8,7 @@
 namespace Fixin\Base\Session;
 
 use Fixin\Base\Cookie\CookieManagerInterface;
-use Fixin\Base\Model\RepositoryInterface;
+use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Strings;
 
@@ -180,7 +180,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @return bool
      */
     protected function startWith(string $sessionId): bool {
-        if ($entity = $this->getRepository()->get([static::COLUMN_IN => $sessionId])) {
+        if ($entity = $this->getRepository()->createEntityId($sessionId)->fetchEntity()) {
             $this->areas = $entity->getData();
 
             $this->sessionId = $sessionId;
