@@ -23,11 +23,11 @@ interface EntityIdInterface extends PrototypeInterface {
     public function deleteEntity(): self;
 
     /**
-     * Fetch entity of ID
+     * Get entity of ID
      *
-     * @return EntityInterface|null
+     * @return EntityInterface
      */
-    public function fetchEntity();
+    public function getEntity(): EntityInterface;
 
     /**
      * Get repository of ID

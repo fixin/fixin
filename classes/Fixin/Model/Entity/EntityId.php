@@ -24,6 +24,24 @@ class EntityId extends Prototype implements EntityIdInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntityIdInterface::deleteEntity()
+     */
+    public function deleteEntity(): EntityIdInterface {
+        $this->getRepository()->where($this)->delete();
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntityIdInterface::getEntity()
+     */
+    public function getEntity() {
+        return $this->getRepository()->getEntityWithId($this);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityIdInterface::getRepository()
      */
     public function getRepository(): RepositoryInterface {
