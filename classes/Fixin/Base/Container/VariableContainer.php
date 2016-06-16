@@ -11,6 +11,9 @@ use Fixin\Resource\Prototype;
 
 class VariableContainer extends Prototype implements VariableContainerInterface {
 
+    /**
+     * @var array
+     */
     protected $data = [];
 
     /**
