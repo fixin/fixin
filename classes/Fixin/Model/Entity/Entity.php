@@ -43,6 +43,14 @@ class Entity extends Prototype implements EntityInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntityInterface::getEntityId()
+     */
+    public function getEntityId() {
+        return $this->entityId;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityInterface::getRepository()
      */
     public function getRepository(): RepositoryInterface {
