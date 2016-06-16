@@ -12,6 +12,20 @@ use Fixin\Resource\Prototype;
 
 class Entity extends Prototype implements EntityInterface {
 
+    const THIS_SETS_LAZY = [
+        self::OPTION_REPOSITORY => RepositoryInterface::class
+    ];
+
+    /**
+     * @var bool
+     */
+    protected $deleted = false;
+
+    /**
+     * @var EntityIdInterface
+     */
+    protected $entityId;
+
     /**
      * @var RepositoryInterface|false|null
      */
@@ -21,8 +35,8 @@ class Entity extends Prototype implements EntityInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityInterface::delete()
      */
-    public function delete(): self {
-        $this->getRepository()->delete($this);
+    public function delete(): EntityInterface {
+        $this->deleted = $this->getRepository()->delete($this);
 
         return $this;
     }
@@ -32,25 +46,32 @@ class Entity extends Prototype implements EntityInterface {
      * @see \Fixin\Model\Entity\EntityInterface::getRepository()
      */
     public function getRepository(): RepositoryInterface {
-        return $this->repository ?: $this->loadLazyProperty('repository');
+        return $this->repository ?: $this->loadLazyProperty(static::OPTION_REPOSITORY);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntityInterface::isCreated()
+     */
+    public function isCreated(): bool {
+        return is_null($this->entityId);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntityInterface::isDeleted()
+     */
+    public function isDeleted(): bool {
+        return $this->deleted;
     }
 
     /**
      * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityInterface::save()
      */
-    public function save(): self {
+    public function save(): EntityInterface {
         $this->getRepository()->save($this);
 
         return $this;
-    }
-
-    /**
-     * Set repository
-     *
-     * @param string|RepositoryInterface $repository
-     */
-    protected function setRepository($repository) {
-        $this->setLazyLoadingProperty('repository', RepositoryInterface::class, $repository);
     }
 }
