@@ -31,7 +31,21 @@ return [
 
             // Basics
             'defaultFileSystem' => 'Base\FileSystem\Local',
+            'fileStorage' => [
+                'class' => 'Base\Storage\Directory\DirectoryStorage',
+                'options' => [
+                    'fileSystem' => 'defaultFileSystem'
+                ]
+            ],
             'starterCargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
+            'sessionRepository' => [
+                'class' => 'Model\Repository\Repository',
+                'options' => [
+                    'name' => 'session',
+                    'storage' => 'fileStorage',
+                    'entityPrototype' => 'Model\Entity\Entity'
+                ]
+            ],
             'viewFileResolver' => [
                 'class' => 'Base\FileSystem\FileResolver',
                 'options' => [
