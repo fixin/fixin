@@ -13,6 +13,8 @@ use Iterator;
 
 interface EntitySetInterface extends PrototypeInterface, Iterator, Countable {
 
+    const OPTION_REPOSITORY = 'repository';
+
     /**
      * Append another entity set
      *
@@ -35,6 +37,13 @@ interface EntitySetInterface extends PrototypeInterface, Iterator, Countable {
      * @return array
      */
     public function getEntityIds(): array;
+
+    /**
+     * Get items (mix of entities and IDs)
+     *
+     * @return array
+     */
+    public function getItems(): array;
 
     /**
      * Get repository
