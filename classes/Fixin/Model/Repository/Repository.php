@@ -16,17 +16,22 @@ use Fixin\Resource\ResourceManagerInterface;
 
 class Repository extends Resource implements RepositoryInterface {
 
-    const CONFIGURATION_REQUIRES = [
-        'entityIdPrototype' => 'instance',
-        'entityPrototype' => 'instance',
-        'name' => 'string',
-        'primaryKey' => 'array',
-        'storage' => 'instance',
-    ];
     const DEFAULT_ID_PROTOTYPE = 'Base\Model\Entity\EntityId';
     const EXCEPTION_INVALID_ID = "Invalid ID";
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
     const NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
+    const THIS_REQUIRES = [
+        self::OPTION_ENTITY_ID_PROTOTYPE => self::TYPE_INSTANCE,
+        self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
+        self::OPTION_NAME => self::TYPE_STRING,
+        self::OPTION_PRIMARY_KEY => self::TYPE_ARRAY,
+        self::OPTION_STORAGE => self::TYPE_INSTANCE,
+    ];
+    const THIS_SETS_LAZY = [
+        self::OPTION_ENTITY_ID_PROTOTYPE => EntityIdInterface::class,
+        self::OPTION_ENTITY_PROTOTYPE => EntityInterface::class,
+        self::OPTION_STORAGE => StorageInterface::class
+    ];
 
     /**
      * @var EntityIdInterface|false|null
@@ -118,7 +123,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @return EntityIdInterface
      */
     protected function getEntityIdPrototype(): EntityIdInterface {
-        return $this->entityIdPrototype ?: $this->loadLazyProperty('entityIdPrototype', [
+        return $this->entityIdPrototype ?: $this->loadLazyProperty(static::OPTION_ENTITY_ID_PROTOTYPE, [
             EntityInterface::OPTION_REPOSITORY => $this
         ]);
     }
@@ -129,7 +134,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @return EntityInterface
      */
     protected function getEntityPrototype(): EntityInterface {
-        return $this->entityPrototype ?: $this->loadLazyProperty('entityPrototype', [
+        return $this->entityPrototype ?: $this->loadLazyProperty(static::OPTION_ENTITY_PROTOTYPE, [
             EntityInterface::OPTION_REPOSITORY => $this
         ]);
     }
@@ -148,7 +153,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @return StorageInterface
      */
     protected function getStorage(): StorageInterface {
-        return $this->storage ?: $this->loadLazyProperty('storage');
+        return $this->storage ?: $this->loadLazyProperty(static::OPTION_STORAGE);
     }
 
     /**
@@ -159,15 +164,6 @@ class Repository extends Resource implements RepositoryInterface {
         $this->getStorage()->save($entity);
 
         return $this;
-    }
-
-    /**
-     * Set entity prototype
-     *
-     * @param string|EntityInterface $entityPrototype
-     */
-    protected function setEntityPrototype($entityPrototype) {
-        $this->setLazyLoadingProperty('entityPrototype', EntityInterface::class, $entityPrototype);
     }
 
     /**
@@ -193,14 +189,5 @@ class Repository extends Resource implements RepositoryInterface {
      */
     protected function setPrimaryKey(array $primaryKey) {
         $this->primaryKey = $primaryKey;
-    }
-
-    /**
-     * Set storage
-     *
-     * @param string|StorageInterface $storage
-     */
-    protected function setStorage($storage) {
-        $this->setLazyLoadingProperty('storage', StorageInterface::class, $storage);
     }
 }

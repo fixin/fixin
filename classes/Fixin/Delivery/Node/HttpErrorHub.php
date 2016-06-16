@@ -10,16 +10,15 @@ namespace Fixin\Delivery\Node;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Delivery\Route\RouteInterface;
-use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
 class HttpErrorHub extends Resource implements NodeInterface {
 
-    const CONFIGURATION_REQUIRES = [
-        'route' => 'instance'
-    ];
     const OPTION_ROUTE = 'route';
+    const THIS_REQUIRES = [
+        self::OPTION_ROUTE => self::TYPE_INSTANCE
+    ];
 
     /**
      * @var RouteInterface|false|null
@@ -32,7 +31,7 @@ class HttpErrorHub extends Resource implements NodeInterface {
      * @return RouteInterface
      */
     protected function getRoute(): RouteInterface {
-        return $this->route ?: $this->loadLazyProperty('route');
+        return $this->route ?: $this->loadLazyProperty(static::OPTION_ROUTE);
     }
 
     /**
@@ -49,14 +48,5 @@ class HttpErrorHub extends Resource implements NodeInterface {
         }
 
         return $cargo;
-    }
-
-    /**
-     * Set route
-     *
-     * @param string|RouteInterface $route
-     */
-    protected function setRoute($route) {
-        $this->setLazyLoadingProperty('route', RouteInterface::class, $route);
     }
 }

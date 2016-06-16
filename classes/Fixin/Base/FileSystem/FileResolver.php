@@ -12,8 +12,11 @@ use Fixin\Support\Strings;
 
 class FileResolver extends Resource implements FileResolverInterface {
 
-    const CONFIGURATION_REQUIRES = [
-        'fileSystem' => 'instance'
+    const THIS_REQUIRES = [
+        self::OPTION_FILE_SYSTEM => self::TYPE_INSTANCE
+    ];
+    const THIS_SETS_LAZY = [
+        self::OPTION_FILE_SYSTEM => FileSystemInterface::class
     ];
 
     /**
@@ -37,7 +40,7 @@ class FileResolver extends Resource implements FileResolverInterface {
      * @return FileSystemInterface
      */
     protected function getFileSystem(): FileSystemInterface {
-        return $this->fileSystem ?: $this->loadLazyProperty('fileSystem');
+        return $this->fileSystem ?: $this->loadLazyProperty(static::OPTION_FILE_SYSTEM);
     }
 
     /**
@@ -71,15 +74,6 @@ class FileResolver extends Resource implements FileResolverInterface {
      */
     protected function setDefaultExtension(string $defaultExtension) {
         $this->defaultExtension = $defaultExtension;
-    }
-
-    /**
-     * Set file system
-     *
-     * @param string|FileSystemInterface $fileSystem
-     */
-    protected function setFileSystem($fileSystem) {
-        $this->setLazyLoadingProperty('fileSystem', FileSystemInterface::class, $fileSystem);
     }
 
     /**

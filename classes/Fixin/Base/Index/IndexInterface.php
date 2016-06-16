@@ -11,6 +11,7 @@ use Fixin\Resource\PrototypeInterface;
 
 interface IndexInterface extends PrototypeInterface {
 
+    const OPTION_FILE_SYSTEM = 'fileSystem';
     const OPTION_FILENAME = 'filename';
 
     /**

@@ -12,6 +12,14 @@ use Fixin\Resource\Prototype;
 
 class EntityId extends Prototype implements EntityIdInterface {
 
+    const THIS_REQUIRES = [
+        self::OPTION_ENTITY_ID => self::TYPE_ARRAY,
+        self::OPTION_REPOSITORY => self::TYPE_INSTANCE
+    ];
+    const THIS_SETS_LAZY = [
+        self::OPTION_REPOSITORY => RepositoryInterface::class
+    ];
+
     /**
      * @var array
      */
@@ -45,7 +53,7 @@ class EntityId extends Prototype implements EntityIdInterface {
      * @see \Fixin\Model\Entity\EntityIdInterface::getRepository()
      */
     public function getRepository(): RepositoryInterface {
-        return $this->repository ?: $this->loadLazyProperty('repository');
+        return $this->repository ?: $this->loadLazyProperty(static::OPTION_REPOSITORY);
     }
 
     /**
@@ -55,14 +63,5 @@ class EntityId extends Prototype implements EntityIdInterface {
      */
     protected function setEntityId(array $entityId) {
         $this->entityId = $entityId;
-    }
-
-    /**
-     * Set repository
-     *
-     * @param string|RepositoryInterface $repository
-     */
-    protected function setRepository($repository) {
-        $this->setLazyLoadingProperty('repository', RepositoryInterface::class, $repository);
     }
 }

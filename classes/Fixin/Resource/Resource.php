@@ -12,9 +12,13 @@ use Fixin\Exception\RuntimeException;
 
 abstract class Resource implements ResourceInterface {
 
-    const CONFIGURATION_REQUIRES = [];
     const EXCEPTION_INVALID_OPTION = "Invalid option name '%s'";
     const EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s";
+    const THIS_REQUIRES = [];
+    const THIS_SETS_LAZY = [];
+    const TYPE_ARRAY = 'array';
+    const TYPE_INSTANCE = 'instance';
+    const TYPE_STRING = 'string';
 
     /**
      * @var ResourceManagerInterface
@@ -84,7 +88,7 @@ abstract class Resource implements ResourceInterface {
      * @return self
      */
     protected function configurationTests(): Resource {
-        foreach (static::CONFIGURATION_REQUIRES as $key => $type) {
+        foreach (static::THIS_REQUIRES as $key => $type) {
             if ($this->{"configuration{$type}Test"}($this->$key)) {
                 continue;
             }
@@ -105,8 +109,16 @@ abstract class Resource implements ResourceInterface {
         foreach ($options as $key => $value) {
             $method = 'set' . $key;
 
+            // Setter for property
             if (method_exists($this, $method)) {
                 $this->$method($value);
+
+                continue;
+            }
+
+            // Lazy-loading property
+            if (isset(static::THIS_SETS_LAZY[$key])) {
+                $this->setLazyLoadingProperty($key, static::THIS_SETS_LAZY[$key], $value);
 
                 continue;
             }

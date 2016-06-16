@@ -14,11 +14,14 @@ use Fixin\Support\Strings;
 
 class SessionManager extends Prototype implements SessionManagerInterface {
 
-    const COLUMN_IN = 'id';
-    const CONFIGURATION_REQUIRES = [
-        'cookieManager' => 'instance',
-        'cookieName' => 'string',
-        'repository' => 'instance',
+    const THIS_REQUIRES = [
+        self::OPTION_COOKIE_MANAGER => self::TYPE_INSTANCE,
+        self::OPTION_COOKIE_NAME => self::TYPE_STRING,
+        self::OPTION_REPOSITORY => self::TYPE_INSTANCE
+    ];
+    const THIS_SETS_LAZY = [
+        self::OPTION_COOKIE_MANAGER => CookieManagerInterface::class,
+        self::OPTION_REPOSITORY => RepositoryInterface::class
     ];
 
     /**
@@ -87,7 +90,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @return CookieManagerInterface
      */
     protected function getCookieManager(): CookieManagerInterface {
-        return $this->cookieManager ?: $this->loadLazyProperty('cookieManager');
+        return $this->cookieManager ?: $this->loadLazyProperty(static::OPTION_COOKIE_MANAGER);
     }
 
     /**
@@ -96,7 +99,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @return RepositoryInterface
      */
     protected function getRepository(): RepositoryInterface {
-        return $this->repository ?: $this->loadLazyProperty('repository');
+        return $this->repository ?: $this->loadLazyProperty(static::OPTION_REPOSITORY);
     }
 
     /**
@@ -109,15 +112,6 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         $this->setupCookie();
 
         return $this;
-    }
-
-    /**
-     * Set cookie manager
-     *
-     * @param string|CookieManagerInterface $cookieManager
-     */
-    protected function setCookieManager($cookieManager) {
-        $this->setLazyLoadingProperty('cookieManager', CookieManagerInterface::class, $cookieManager);
     }
 
     /**
@@ -136,15 +130,6 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      */
     protected function setLifetime(int $lifetime) {
         $this->lifetime = $lifetime;
-    }
-
-    /**
-     * Set repository
-     *
-     * @param string|RepositoryInterface $repository
-     */
-    protected function setRepository($repository) {
-        $this->setLazyLoadingProperty('repository', RepositoryInterface::class, $repository);
     }
 
     /**
