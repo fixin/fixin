@@ -19,6 +19,9 @@ class HttpErrorHub extends Resource implements NodeInterface {
     const THIS_REQUIRES = [
         self::OPTION_ROUTE => self::TYPE_INSTANCE
     ];
+    const THIS_SETS_LAZY = [
+        self::OPTION_ROUTE => RouteInterface::class
+    ];
 
     /**
      * @var RouteInterface|false|null
