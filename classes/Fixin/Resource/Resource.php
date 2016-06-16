@@ -13,7 +13,7 @@ use Fixin\Exception\RuntimeException;
 abstract class Resource implements ResourceInterface {
 
     const EXCEPTION_INVALID_OPTION = "Invalid option name '%s'";
-    const EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s";
+    const EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s for %s";
     const THIS_REQUIRES = [];
     const THIS_SETS_LAZY = [];
     const TYPE_ARRAY = 'array';
@@ -93,7 +93,7 @@ abstract class Resource implements ResourceInterface {
                 continue;
             }
 
-            throw new RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, $type));
+            throw new RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, $type, get_class($this)));
         }
 
         return $this;
@@ -141,7 +141,7 @@ abstract class Resource implements ResourceInterface {
         if (isset($this->lazyLoadingProperties[$propertyName])) {
             $set = $this->lazyLoadingProperties[$propertyName];
             $interface = $set[1];
-            $value = $interface instanceof PrototypeInterface ? $this->container->clonePrototype($set[0], $prototypeOptions) : $this->container->get($set[0]);
+            $value = is_subclass_of($interface, PrototypeInterface::class) ? $this->container->clonePrototype($set[0], $prototypeOptions) : $this->container->get($set[0]);
 
             if ($value instanceof $interface) {
                 return $this->$propertyName = $value;

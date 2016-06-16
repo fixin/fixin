@@ -25,9 +25,9 @@ interface EntityIdInterface extends PrototypeInterface {
     /**
      * Get entity of ID
      *
-     * @return EntityInterface
+     * @return EntityInterface|null
      */
-    public function getEntity(): EntityInterface;
+    public function getEntity();
 
     /**
      * Get repository of ID

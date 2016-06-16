@@ -16,7 +16,7 @@ use Fixin\Resource\ResourceManagerInterface;
 
 class Repository extends Resource implements RepositoryInterface {
 
-    const DEFAULT_ID_PROTOTYPE = 'Base\Model\Entity\EntityId';
+    const DEFAULT_ID_PROTOTYPE = 'Model\Entity\EntityId';
     const EXCEPTION_INVALID_ID = "Invalid ID";
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
     const NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
@@ -137,6 +137,14 @@ class Repository extends Resource implements RepositoryInterface {
         return $this->entityPrototype ?: $this->loadLazyProperty(static::OPTION_ENTITY_PROTOTYPE, [
             EntityInterface::OPTION_REPOSITORY => $this
         ]);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::getEntityWithId($entityId)
+     */
+    public function getEntityWithId(EntityIdInterface $entityId) {
+        return null;
     }
 
     /**

@@ -13,7 +13,6 @@ use Fixin\Resource\Prototype;
 class EntityId extends Prototype implements EntityIdInterface {
 
     const THIS_REQUIRES = [
-        self::OPTION_ENTITY_ID => self::TYPE_ARRAY,
         self::OPTION_REPOSITORY => self::TYPE_INSTANCE
     ];
     const THIS_SETS_LAZY = [
@@ -23,7 +22,7 @@ class EntityId extends Prototype implements EntityIdInterface {
     /**
      * @var array
      */
-    protected $entityId;
+    protected $entityId = [];
 
     /**
      * @var RepositoryInterface|false|null
