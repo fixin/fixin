@@ -18,21 +18,15 @@ interface RepositoryInterface extends ResourceInterface {
     const OPTION_ENTITY_PROTOTYPE = 'entityPrototype';
     const OPTION_NAME = 'name';
     const OPTION_PRIMARY_KEY = 'primaryKey';
+    const OPTION_REQUEST_PROTOTYPE = 'requestPrototype';
     const OPTION_STORAGE = 'storage';
-
-//     public function executeRequest(): EntitySetInterface;
-//     public function getEntityWithId(EntityIdInterface $entityId);
-//     public function getRegisteredEntities(): EntitySet;
-//     public function getRegisteredEntityWithId(EntityIdInterface $entityId);
-
-
 
     /**
      * Create entity for the repository
      *
      * @return EntityInterface
      */
-    public function createEntity(): EntityInterface;
+    public function create(): EntityInterface;
 
     /**
      * Create entity ID
@@ -40,15 +34,23 @@ interface RepositoryInterface extends ResourceInterface {
      * @param array|int|string ...$entityId
      * @return EntityIdInterface
      */
-    public function createEntityId(...$entityId): EntityIdInterface;
+    public function createId(...$entityId): EntityIdInterface;
 
     /**
-     * Get entity of ID
+     * Delete record(s)
      *
-     * @param EntityIdInterface $entityId
-     * @return EntityInterface|null
+     * @param RepositoryRequestInterface $request
+     * @return int
      */
-    public function getEntityWithId(EntityIdInterface $entityId);
+    public function delete(RepositoryRequestInterface $request): int;
+
+    /**
+     * Get entities
+     *
+     * @param RepositoryRequestInterface $request
+     * @return EntitySetInterface
+     */
+    public function get(RepositoryRequestInterface $request): EntitySetInterface;
 
     /**
      * Get name of the repository
@@ -58,10 +60,28 @@ interface RepositoryInterface extends ResourceInterface {
     public function getName(): string;
 
     /**
-     * Save entity
+     * Insert record(s) by request into repository
      *
-     * @param EntityInterface $entity
-     * @return self
+     * @param RepositoryInterface $repository
+     * @param RepositoryRequestInterface $request
+     * @return int
      */
-    public function saveEntity(EntityInterface $entity): self;
+    public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int;
+
+    /**
+     * Update record(s)
+     *
+     * @param array $set
+     * @param RepositoryRequestInterface $request
+     * @return int
+     */
+    public function update(array $set, RepositoryRequestInterface $request): int;
+
+    /**
+     * New request instance
+     *
+     * @param mixed $where
+     * @return RepositoryRequestInterface
+     */
+    public function where($where): RepositoryRequestInterface;
 }

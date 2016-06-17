@@ -7,16 +7,16 @@
 
 namespace Fixin\Model\Repository;
 
-use Fixin\Base\Storage\StorageInterface;
 use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
+use Fixin\Model\Storage\StorageInterface;
 use Fixin\Resource\Resource;
-use Fixin\Resource\ResourceManagerInterface;
 
 class Repository extends Resource implements RepositoryInterface {
 
     const DEFAULT_ID_PROTOTYPE = 'Model\Entity\EntityId';
+    const DEFAULT_REQUEST_PROTOTYPE = 'Model\Repository\RepositoryRequest';
     const EXCEPTION_INVALID_ID = "Invalid ID";
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
     const NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
@@ -25,11 +25,13 @@ class Repository extends Resource implements RepositoryInterface {
         self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
         self::OPTION_NAME => self::TYPE_STRING,
         self::OPTION_PRIMARY_KEY => self::TYPE_ARRAY,
+        self::OPTION_REQUEST_PROTOTYPE => self::TYPE_INSTANCE,
         self::OPTION_STORAGE => self::TYPE_INSTANCE,
     ];
     const THIS_SETS_LAZY = [
         self::OPTION_ENTITY_ID_PROTOTYPE => EntityIdInterface::class,
         self::OPTION_ENTITY_PROTOTYPE => EntityInterface::class,
+        self::OPTION_REQUEST_PROTOTYPE => RepositoryRequestInterface::class,
         self::OPTION_STORAGE => StorageInterface::class
     ];
 
@@ -54,6 +56,11 @@ class Repository extends Resource implements RepositoryInterface {
     protected $primaryKey = ['id'];
 
     /**
+     * @var RepositoryRequestInterface|false|null
+     */
+    protected $requestPrototype;
+
+    /**
      * @var StorageInterface|false|null
      */
     protected $storage;
@@ -73,17 +80,17 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::createEntity()
+     * @see \Fixin\Model\Repository\RepositoryInterface::create()
      */
-    public function createEntity(): EntityInterface {
+    public function create(): EntityInterface {
         return clone $this->getEntityPrototype();
     }
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::createEntityId($entityId)
+     * @see \Fixin\Model\Repository\RepositoryInterface::createId($entityId)
      */
-    public function createEntityId(...$entityId): EntityIdInterface {
+    public function createId(...$entityId): EntityIdInterface {
         $columnCount = count($this->primaryKey);
 
         // Array
@@ -91,7 +98,7 @@ class Repository extends Resource implements RepositoryInterface {
             $entityId = array_intersect_key(array_flip($this->primaryKey), $entityId);
 
             if (count($entityId) === $columnCount) {
-                return $this->createIdForArray($entityId);
+                return $this->createIdWithArray($entityId);
             }
 
             throw new InvalidArgumentException(static::EXCEPTION_INVALID_ID);
@@ -99,7 +106,7 @@ class Repository extends Resource implements RepositoryInterface {
 
         // List
         if (count($entityId) === $columnCount) {
-            return $this->createEntityIdWithArray(array_combine($this->primaryKey, $entityId));
+            return $this->createIdWithArray(array_combine($this->primaryKey, $entityId));
         }
 
         throw new InvalidArgumentException(static::EXCEPTION_INVALID_ID);
@@ -111,10 +118,18 @@ class Repository extends Resource implements RepositoryInterface {
      * @param array $entityId
      * @return EntityIdInterface
      */
-    private function createEntityIdWithArray(array $entityId): EntityIdInterface {
+    private function createIdWithArray(array $entityId): EntityIdInterface {
         return $this->getEntityIdPrototype()->withOptions([
             EntityIdInterface::OPTION_ENTITY_ID => $entityId
         ]);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::delete($request)
+     */
+    public function delete(RepositoryRequestInterface $request): int {
+        return $this->getStorage()->delete($request);
     }
 
     /**
@@ -141,18 +156,21 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::getEntityWithId($entityId)
-     */
-    public function getEntityWithId(EntityIdInterface $entityId) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::getName()
      */
     public function getName(): string {
         return $this->name;
+    }
+
+    /**
+     * Get request prototype
+     *
+     * @return RepositoryRequestInterface
+     */
+    protected function getRequestPrototype(): RepositoryRequestInterface {
+        return $this->requestPrototype ?: $this->loadLazyProperty(static::OPTION_REQUEST_PROTOTYPE, [
+            RepositoryRequestInterface::OPTION_REPOSITORY => $this
+        ]);
     }
 
     /**
@@ -166,12 +184,10 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::saveEntity($entity)
+     * @see \Fixin\Model\Repository\RepositoryInterface::insertInto($repository, $request)
      */
-    public function saveEntity(EntityInterface $entity): RepositoryInterface {
-        $this->getStorage()->save($entity);
-
-        return $this;
+    public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int {
+        return $this->getStorage()->insertInto($repository, $request);
     }
 
     /**
@@ -197,5 +213,21 @@ class Repository extends Resource implements RepositoryInterface {
      */
     protected function setPrimaryKey(array $primaryKey) {
         $this->primaryKey = $primaryKey;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::update($set, $request)
+     */
+    public function update(array $set, RepositoryRequestInterface $request): int {
+        return $this->getStorage()->update($set, $request);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::where($where)
+     */
+    public function where($where): RepositoryRequestInterface {
+        return (clone $this->getRequestPrototype());
     }
 }
