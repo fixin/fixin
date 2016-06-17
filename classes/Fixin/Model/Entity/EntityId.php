@@ -33,10 +33,8 @@ class EntityId extends Prototype implements EntityIdInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityIdInterface::deleteEntity()
      */
-    public function deleteEntity(): EntityIdInterface {
-        $this->getRepository()->where($this)->delete();
-
-        return $this;
+    public function deleteEntity(): bool {
+        return $this->getRepository()->where($this)->delete() > 0;
     }
 
     /**
@@ -44,7 +42,7 @@ class EntityId extends Prototype implements EntityIdInterface {
      * @see \Fixin\Model\Entity\EntityIdInterface::getEntity()
      */
     public function getEntity() {
-        return $this->getRepository()->getEntityWithId($this);
+        return $this->getRepository()->where($this)->get();
     }
 
     /**
