@@ -18,9 +18,9 @@ interface EntityIdInterface extends PrototypeInterface {
     /**
      * Delete entity of ID
      *
-     * @return EntityIdInterface
+     * @return bool
      */
-    public function deleteEntity(): self;
+    public function deleteEntity(): bool;
 
     /**
      * Get entity of ID
