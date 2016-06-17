@@ -30,7 +30,7 @@ interface EntityIdInterface extends PrototypeInterface {
     public function getEntity();
 
     /**
-     * Get repository of ID
+     * Get repository
      *
      * @return RepositoryInterface
      */

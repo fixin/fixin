@@ -38,6 +38,14 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
     }
 
     /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::getRepository()
+     */
+    public function getRepository(): RepositoryInterface {
+        return $this->repository;
+    }
+
+    /**
      * Set repository
      *
      * @param RepositoryInterface $repository

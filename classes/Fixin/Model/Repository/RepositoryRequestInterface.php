@@ -29,6 +29,13 @@ interface RepositoryRequestInterface extends PrototypeInterface {
     public function get(): EntitySetInterface;
 
     /**
+     * Get repository
+     *
+     * @return RepositoryInterface
+     */
+    public function getRepository(): RepositoryInterface;
+
+    /**
      * Update record(s)
      *
      * @param array $set
