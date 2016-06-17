@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Entity;
 
+use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 
 class EntitySet extends Prototype implements EntitySetInterface {
@@ -78,7 +79,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
         $list = [];
         $getter = 'get' . $name;
 
-        foreach ($items as $item) {
+        foreach ($this->items as $item) {
             $list[$item->getEntityId()] = $item->{$getter}();
         }
 
@@ -129,15 +130,6 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     public function next() {
         return next($this->items);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntitySetInterface::prefetchAll()
-     */
-    public function prefetchAll(): EntitySetInterface {
-        // TODO
-        return $this;
     }
 
     /**

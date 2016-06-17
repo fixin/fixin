@@ -8,6 +8,7 @@
 namespace Fixin\Model\Entity;
 
 use Countable;
+use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\PrototypeInterface;
 use Iterator;
 
