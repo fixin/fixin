@@ -71,9 +71,10 @@ class Repository extends Resource implements RepositoryInterface {
      * @param string $name
      */
     public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
-        if (!isset($options[static::OPTION_ENTITY_ID_PROTOTYPE])) {
-            $options[static::OPTION_ENTITY_ID_PROTOTYPE] = static::DEFAULT_ID_PROTOTYPE;
-        }
+        $options += [
+            static::OPTION_ENTITY_ID_PROTOTYPE => static::DEFAULT_ID_PROTOTYPE,
+            static::OPTION_REQUEST_PROTOTYPE => static::DEFAULT_REQUEST_PROTOTYPE
+        ];
 
         parent::__construct($container, $options, $name);
     }
