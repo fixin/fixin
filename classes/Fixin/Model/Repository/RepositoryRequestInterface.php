@@ -42,7 +42,7 @@ interface RepositoryRequestInterface extends PrototypeInterface {
      *
      * @return StorageResultInterface
      */
-    public function getData(): StorageResultInterface;
+    public function getRawData(): StorageResultInterface;
 
     /**
      * Get repository
