@@ -7,8 +7,9 @@
 
 namespace Fixin\Model\Repository;
 
-use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Resource\Prototype;
+use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Model\Storage\StorageResultInterface;
 
 class RepositoryRequest extends Prototype implements RepositoryRequestInterface {
 
@@ -34,7 +35,9 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
      * @see \Fixin\Model\Repository\RepositoryRequestInterface::first()
      */
     public function first() {
-        return null; // TODO
+        $copy = clone $this;
+
+        return $copy->limit(1)->get()->current();
     }
 
     /**
@@ -42,7 +45,15 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
      * @see \Fixin\Model\Repository\RepositoryRequestInterface::get()
      */
     public function get(): EntitySetInterface {
-        return $this->repository->get($this);
+        return $this->repository->selectEntities($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::getRawData()
+     */
+    public function getRawData(): StorageResultInterface {
+        return $this->repository->selectRawData($this);
     }
 
     /**
@@ -51,6 +62,16 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
      */
     public function getRepository(): RepositoryInterface {
         return $this->repository;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::limit($limit)
+     */
+    public function limit(int $limit): RepositoryRequestInterface {
+        // TODO
+
+        return $this;
     }
 
     /**
@@ -68,5 +89,15 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
      */
     public function update(array $set): int {
         return $this->repository->update($set, $this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::where($where)
+     */
+    public function where($where): RepositoryRequestInterface {
+        // TODO
+
+        return $this;
     }
 }
