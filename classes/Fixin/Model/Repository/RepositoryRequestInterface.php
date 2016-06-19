@@ -25,9 +25,9 @@ interface RepositoryRequestInterface extends PrototypeInterface {
     /**
      * First record
      *
-     * @return EntityInterface
+     * @return EntityInterface|null
      */
-    public function first(): EntityInterface;
+    public function first();
 
     /**
      * Get entities
@@ -50,4 +50,30 @@ interface RepositoryRequestInterface extends PrototypeInterface {
      * @return int
      */
     public function update(array $set): int;
+
+    /*
+     * avg
+     * column
+     * count
+     * between
+     * distinct
+     * exists
+     * first
+     * having
+     * in
+     * insertInto
+     * join
+     * leftJoin
+     * max
+     * min
+     * notBetween
+     * notIn
+     * notNull
+     * null
+     * orderBy
+     * sum
+     * union
+     * unionAll
+     * value
+     */
 }

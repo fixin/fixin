@@ -9,11 +9,12 @@ namespace Fixin\Model\Repository;
 
 use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Resource\Prototype;
+use Fixin\Model\Entity\EntityInterface;
 
 class RepositoryRequest extends Prototype implements RepositoryRequestInterface {
 
     const THIS_REQUIRES = [
-        static::OPTION_REPOSITORY => static::TYPE_INSTANCE
+        self::OPTION_REPOSITORY => self::TYPE_INSTANCE
     ];
 
     /**
@@ -27,6 +28,14 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
      */
     public function delete(): int {
         return $this->repository->delete($this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::first()
+     */
+    public function first() {
+        return null; // TODO
     }
 
     /**

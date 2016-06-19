@@ -75,7 +75,7 @@ return [
                 'class' => 'Delivery\Route\Route',
                 'options' => [
                     'nodes' => [
-                        'Delivery\Node\ThrowableToHtml',
+                        'Delivery\Node\ThrowableToText',
                         'errorLayoutViewWrapper',
                         'Delivery\Node\ViewRender',
                         'Delivery\Node\ArrayToJson'
