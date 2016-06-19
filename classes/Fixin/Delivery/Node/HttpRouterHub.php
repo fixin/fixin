@@ -121,6 +121,8 @@ class HttpRouterHub extends HttpHub {
                 return $result;
             }
         }
+
+        return null;
     }
 
     /**
@@ -132,7 +134,6 @@ class HttpRouterHub extends HttpHub {
      */
     protected function getHandler(string $name): CargoHandlerInterface {
         return $this->loadedHandlers[$name] ?? ($this->loadedHandlers[$name] = $this->produceHandler($name));
-
     }
 
     /**

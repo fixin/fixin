@@ -42,7 +42,7 @@ class EntityId extends Prototype implements EntityIdInterface {
      * @see \Fixin\Model\Entity\EntityIdInterface::getEntity()
      */
     public function getEntity() {
-        return $this->getRepository()->where($this)->get();
+        return $this->getRepository()->where($this)->first();
     }
 
     /**

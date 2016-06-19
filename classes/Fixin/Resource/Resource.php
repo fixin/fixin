@@ -117,7 +117,7 @@ abstract class Resource implements ResourceInterface {
             }
 
             // Lazy-loading property
-            if (isset(static::THIS_SETS_LAZY[$key])) {
+            elseif (isset(static::THIS_SETS_LAZY[$key])) {
                 $this->setLazyLoadingProperty($key, static::THIS_SETS_LAZY[$key], $value);
 
                 continue;

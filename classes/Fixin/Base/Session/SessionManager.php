@@ -165,7 +165,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @return bool
      */
     protected function startWith(string $sessionId): bool {
-        if ($entity = $this->getRepository()->createEntityId($sessionId)->getEntity()) {
+        if ($entity = $this->getRepository()->createId($sessionId)->getEntity()) {
             $this->areas = $entity->getData();
 
             $this->sessionId = $sessionId;
