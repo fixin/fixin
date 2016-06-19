@@ -7,9 +7,9 @@
 
 namespace Fixin\Model\Entity;
 
+use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
-use Fixin\Exception\InvalidArgumentException;
 
 class EntitySet extends Prototype implements EntitySetInterface {
 
@@ -25,6 +25,11 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @var array
      */
     protected $items = [];
+
+    /**
+     * @var integer
+     */
+    protected $position = 0;
 
     /**
      * @var integer
@@ -63,10 +68,10 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see Iterator::current()
      */
     public function current() {
-        $result = current($this->items);
+        $result = $this->items[$this->position] ?? null;
 
         if ($result instanceof EntityIdInterface) {
-            // TODO prefetch size
+            // TODO prefetch
 
             $result =
             $this->items[key($this->items)] = $result->getEntity();
@@ -118,16 +123,18 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * {@inheritDoc}
      * @see Iterator::key()
      */
-    public function key() {
-        return key($this->items);
+    public function key(): int {
+        return $this->position;
     }
 
     /**
      * {@inheritDoc}
      * @see Iterator::next()
      */
-    public function next() {
-        return next($this->items);
+    public function next(): EntitySetInterface {
+        $this->position++;
+
+        return $this;
     }
 
     /**
@@ -144,8 +151,10 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * {@inheritDoc}
      * @see Iterator::rewind()
      */
-    public function rewind() {
-        return reset($this->items);
+    public function rewind(): EntitySetInterface {
+        $this->position = 0;
+
+        return $this;
     }
 
     /**
@@ -172,7 +181,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * {@inheritDoc}
      * @see Iterator::valid()
      */
-    public function valid() {
-        return key($this->items) !== null;
+    public function valid(): bool {
+        return isset($this->items[$this->position]);
     }
 }
