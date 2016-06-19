@@ -71,12 +71,10 @@ class Repository extends Resource implements RepositoryInterface {
      * @param string $name
      */
     public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
-        $options += [
+        parent::__construct($container, $options += [
             static::OPTION_ENTITY_ID_PROTOTYPE => static::DEFAULT_ID_PROTOTYPE,
             static::OPTION_REQUEST_PROTOTYPE => static::DEFAULT_REQUEST_PROTOTYPE
-        ];
-
-        parent::__construct($container, $options, $name);
+        ], $name);
     }
 
     /**
@@ -130,7 +128,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::delete($request)
      */
     public function delete(RepositoryRequestInterface $request): int {
-        return $this->getStorage()->delete($request);
+        return $this->isValidRequest($request) && $this->getStorage()->delete($request);
     }
 
     /**
@@ -140,7 +138,7 @@ class Repository extends Resource implements RepositoryInterface {
      */
     protected function getEntityIdPrototype(): EntityIdInterface {
         return $this->entityIdPrototype ?: $this->loadLazyProperty(static::OPTION_ENTITY_ID_PROTOTYPE, [
-            EntityInterface::OPTION_REPOSITORY => $this
+            EntityIdInterface::OPTION_REPOSITORY => $this
         ]);
     }
 
@@ -192,6 +190,16 @@ class Repository extends Resource implements RepositoryInterface {
     }
 
     /**
+     * Check request validity
+     *
+     * @param RepositoryRequestInterface $request
+     * @return bool
+     */
+    protected function isValidRequest(RepositoryRequestInterface $request): bool {
+        return $request->getRepository() === $this;
+    }
+
+    /**
      * Set name
      *
      * @param string $name
@@ -221,7 +229,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::update($set, $request)
      */
     public function update(array $set, RepositoryRequestInterface $request): int {
-        return $this->getStorage()->update($set, $request);
+        return $this->isValidRequest($request) && $this->getStorage()->update($set, $request);
     }
 
     /**
