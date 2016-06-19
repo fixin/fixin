@@ -10,9 +10,11 @@ namespace Fixin\Model\Repository;
 use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
+use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Resource\Resource;
 use Fixin\Resource\ResourceManagerInterface;
+use Fixin\Model\Storage\StorageResultInterface;
 
 class Repository extends Resource implements RepositoryInterface {
 
@@ -80,6 +82,14 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::all()
+     */
+    public function all(): EntitySetInterface {
+        return (clone $this->getRequestPrototype())->get();
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::create()
      */
     public function create(): EntityInterface {
@@ -113,7 +123,7 @@ class Repository extends Resource implements RepositoryInterface {
     }
 
     /**
-     * Create entity ID with array
+     * Create ID with array
      *
      * @param array $entityId
      * @return EntityIdInterface
@@ -187,7 +197,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::insertInto($repository, $request)
      */
     public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int {
-        return $this->getStorage()->insertInto($repository, $request);
+        return $this->isValidRequest($request) && $this->getStorage()->insertInto($repository, $request);
     }
 
     /**
@@ -198,6 +208,22 @@ class Repository extends Resource implements RepositoryInterface {
      */
     protected function isValidRequest(RepositoryRequestInterface $request): bool {
         return $request->getRepository() === $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::selectEntities($request)
+     */
+    public function selectEntities(RepositoryRequestInterface $request): EntitySetInterface {
+        return null; // TODO
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::selectRawData($request)
+     */
+    public function selectRawData(RepositoryRequestInterface $request): StorageResultInterface {
+        return $this->getStorage()->select($request);
     }
 
     /**
@@ -238,6 +264,6 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::where($where)
      */
     public function where($where): RepositoryRequestInterface {
-        return (clone $this->getRequestPrototype());
+        return (clone $this->getRequestPrototype())->where($where);
     }
 }
