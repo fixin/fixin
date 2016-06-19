@@ -36,18 +36,18 @@ interface EntityInterface extends PrototypeInterface {
     public function getRepository(): RepositoryInterface;
 
     /**
-     * Determine if created (not saved yet)
-     *
-     * @return bool
-     */
-    public function isCreated(): bool;
-
-    /**
      * Determine if deleted
      *
      * @return bool
      */
     public function isDeleted(): bool;
+
+    /**
+     * Determine if stored
+     *
+     * @return bool
+     */
+    public function isStored(): bool;
 
     /**
      * Save changes to the repository

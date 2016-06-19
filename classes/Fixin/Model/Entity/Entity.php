@@ -42,6 +42,7 @@ class Entity extends Prototype implements EntityInterface {
             throw new RuntimeException(static::EXCEPTION_NO_ENTITY_ID);
         }
 
+        $this->entityId = null;
         $this->deleted = $this->entityId->deleteEntity();
 
         return $this;
@@ -65,14 +66,6 @@ class Entity extends Prototype implements EntityInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::isCreated()
-     */
-    public function isCreated(): bool {
-        return is_null($this->entityId);
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityInterface::isDeleted()
      */
     public function isDeleted(): bool {
@@ -81,10 +74,20 @@ class Entity extends Prototype implements EntityInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntityInterface::isStored()
+     */
+    public function isStored(): bool {
+        return isset($this->entityId);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityInterface::save()
      */
     public function save(): EntityInterface {
 // TODO         $this->getRepository()->where($this->entityId)->update($set);
+
+        $this->deleted = false;
 
         return $this;
     }
