@@ -50,7 +50,7 @@ interface RepositoryInterface extends ResourceInterface {
      * @param RepositoryRequestInterface $request
      * @return EntitySetInterface
      */
-    public function get(RepositoryRequestInterface $request): EntitySetInterface;
+//     public function get(RepositoryRequestInterface $request): EntitySetInterface;
 
     /**
      * Get name of the repository

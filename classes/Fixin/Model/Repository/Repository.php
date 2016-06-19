@@ -12,6 +12,7 @@ use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Resource\Resource;
+use Fixin\Resource\ResourceManagerInterface;
 
 class Repository extends Resource implements RepositoryInterface {
 
