@@ -7,16 +7,17 @@
 
 namespace Fixin\Model\Repository;
 
-use Fixin\Model\Entity\EntitySetInterface;
-use Fixin\Resource\PrototypeInterface;
 use Fixin\Model\Entity\EntityInterface;
+use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Model\Storage\StorageResultInterface;
+use Fixin\Resource\PrototypeInterface;
 
 interface RepositoryRequestInterface extends PrototypeInterface {
 
     const OPTION_REPOSITORY = 'repository';
 
     /**
-     * Delete record(s)
+     * Delete
      *
      * @return int
      */
@@ -37,6 +38,13 @@ interface RepositoryRequestInterface extends PrototypeInterface {
     public function get(): EntitySetInterface;
 
     /**
+     * Get raw data
+     *
+     * @return StorageResultInterface
+     */
+    public function getData(): StorageResultInterface;
+
+    /**
      * Get repository
      *
      * @return RepositoryInterface
@@ -44,7 +52,7 @@ interface RepositoryRequestInterface extends PrototypeInterface {
     public function getRepository(): RepositoryInterface;
 
     /**
-     * Update record(s)
+     * Update
      *
      * @param array $set
      * @return int
@@ -60,6 +68,7 @@ interface RepositoryRequestInterface extends PrototypeInterface {
      * exists
      * first
      * having
+     * groupBy
      * in
      * insertInto
      * join
