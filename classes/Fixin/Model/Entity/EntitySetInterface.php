@@ -40,13 +40,6 @@ interface EntitySetInterface extends PrototypeInterface, Iterator, Countable {
     public function getEntityIds(): array;
 
     /**
-     * Get items (mix of entities and IDs)
-     *
-     * @return array
-     */
-    public function getItems(): array;
-
-    /**
      * Get repository
      *
      * @return RepositoryInterface

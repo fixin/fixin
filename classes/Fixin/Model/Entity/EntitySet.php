@@ -9,9 +9,11 @@ namespace Fixin\Model\Entity;
 
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
+use Fixin\Exception\InvalidArgumentException;
 
 class EntitySet extends Prototype implements EntitySetInterface {
 
+    const EXCEPTION_INVALID_ENTITY_SET = "Invalid entity set parameter '%s', EntitySet allowed";
     const THIS_REQUIRES = [
         self::OPTION_REPOSITORY => self::TYPE_INSTANCE
     ];
@@ -39,9 +41,13 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::append($entitySet)
      */
     public function append(EntitySetInterface $entitySet): EntitySetInterface {
-        $this->items = array_merge($this->items, $entitySet->getItems());
+        if ($entitySet instanceof self) {
+            $this->items = array_merge($this->items, $entitySet->items);
 
-        return $this;
+            return $this;
+        }
+
+        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ENTITY_SET, get_class($entitySet)));
     }
 
     /**
@@ -102,14 +108,6 @@ class EntitySet extends Prototype implements EntitySetInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntitySetInterface::getItems()
-     */
-    public function getItems(): array {
-        return $this->items;
-    }
-
-    /**
-     * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntitySetInterface::getRepository()
      */
     public function getRepository(): RepositoryInterface {
@@ -130,6 +128,16 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     public function next() {
         return next($this->items);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntitySetInterface::prefetchAll()
+     */
+    public function prefetchAll(): EntitySetInterface {
+        // TODO
+
+        return $this;
     }
 
     /**
