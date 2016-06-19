@@ -9,6 +9,7 @@ namespace Fixin\Model\Repository;
 
 use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Resource\PrototypeInterface;
+use Fixin\Model\Entity\EntityInterface;
 
 interface RepositoryRequestInterface extends PrototypeInterface {
 
@@ -20,6 +21,13 @@ interface RepositoryRequestInterface extends PrototypeInterface {
      * @return int
      */
     public function delete(): int;
+
+    /**
+     * First record
+     *
+     * @return EntityInterface
+     */
+    public function first(): EntityInterface;
 
     /**
      * Get entities
