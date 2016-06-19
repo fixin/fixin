@@ -7,12 +7,10 @@
 
 namespace Fixin\Model\Entity;
 
-use Countable;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\PrototypeInterface;
-use Iterator;
 
-interface EntitySetInterface extends PrototypeInterface, Iterator, Countable {
+interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable {
 
     const OPTION_REPOSITORY = 'repository';
 
@@ -35,7 +33,7 @@ interface EntitySetInterface extends PrototypeInterface, Iterator, Countable {
     /**
      * Get entity IDs of all items
      *
-     * @return array
+     * @return EntityIdInterface[]
      */
     public function getEntityIds(): array;
 
