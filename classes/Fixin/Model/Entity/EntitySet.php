@@ -69,7 +69,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
             // TODO prefetch size
 
             $result =
-            $this->items[key($items)] = $result->getEntity();
+            $this->items[key($this->items)] = $result->getEntity();
         }
 
         return $result;

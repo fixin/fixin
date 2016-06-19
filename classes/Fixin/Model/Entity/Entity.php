@@ -42,8 +42,8 @@ class Entity extends Prototype implements EntityInterface {
             throw new RuntimeException(static::EXCEPTION_NO_ENTITY_ID);
         }
 
-        $this->entityId = null;
         $this->deleted = $this->entityId->deleteEntity();
+        $this->entityId = null;
 
         return $this;
     }

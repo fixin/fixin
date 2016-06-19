@@ -107,17 +107,15 @@ abstract class Resource implements ResourceInterface {
      */
     protected function configureWithOptions(array $options): Resource {
         foreach ($options as $key => $value) {
-            $method = 'set' . $key;
-
             // Setter for property
-            if (method_exists($this, $method)) {
+            if (method_exists($this, $method = 'set' . $key)) {
                 $this->$method($value);
 
                 continue;
             }
 
             // Lazy-loading property
-            elseif (isset(static::THIS_SETS_LAZY[$key])) {
+            if (isset(static::THIS_SETS_LAZY[$key])) {
                 $this->setLazyLoadingProperty($key, static::THIS_SETS_LAZY[$key], $value);
 
                 continue;

@@ -9,7 +9,6 @@ namespace Fixin\Model\Repository;
 
 use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Resource\Prototype;
-use Fixin\Model\Entity\EntityInterface;
 
 class RepositoryRequest extends Prototype implements RepositoryRequestInterface {
 

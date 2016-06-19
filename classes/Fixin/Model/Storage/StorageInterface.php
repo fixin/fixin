@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Storage;
 
+use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Repository\RepositoryRequestInterface;
 use Fixin\Resource\ResourceInterface;
 
