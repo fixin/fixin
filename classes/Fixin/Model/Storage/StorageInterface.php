@@ -14,7 +14,7 @@ use Fixin\Resource\ResourceInterface;
 interface StorageInterface extends ResourceInterface {
 
     /**
-     * Delete record(s)
+     * Delete
      *
      * @param RepositoryRequestInterface $request
      * @return int
@@ -22,15 +22,7 @@ interface StorageInterface extends ResourceInterface {
     public function delete(RepositoryRequestInterface $request): int;
 
     /**
-     * Fetch data
-     *
-     * @param RepositoryRequestInterface $request
-     * @return array
-     */
-    public function fetch(RepositoryRequestInterface $request): array;
-
-    /**
-     * Insert record(s) by request into repository
+     * Insert into
      *
      * @param RepositoryInterface $repository
      * @param StorageRequestInterface $request
@@ -39,7 +31,15 @@ interface StorageInterface extends ResourceInterface {
     public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int;
 
     /**
-     * Update record(s)
+     * Select
+     *
+     * @param RepositoryRequestInterface $request
+     * @return StorageResultInterface
+     */
+    public function select(RepositoryRequestInterface $request): StorageResultInterface;
+
+    /**
+     * Update
      *
      * @param array $set
      * @param StorageRequestInterface $request
