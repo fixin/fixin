@@ -7,13 +7,13 @@
 
 namespace Fixin\Model\Entity;
 
-use Fixin\Exception\RuntimeException;
+use Fixin\Model\Entity\Exception\NotStoredEntityException;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 
 class Entity extends Prototype implements EntityInterface {
 
-    const EXCEPTION_NO_ENTITY_ID = 'No entity ID';
+    const EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity';
     const THIS_SETS_LAZY = [
         self::OPTION_REPOSITORY => RepositoryInterface::class
     ];
@@ -38,14 +38,14 @@ class Entity extends Prototype implements EntityInterface {
      * @see \Fixin\Model\Entity\EntityInterface::delete()
      */
     public function delete(): EntityInterface {
-        if (is_null($this->entityId)) {
-            throw new RuntimeException(static::EXCEPTION_NO_ENTITY_ID);
+        if ($this->isStored()) {
+            $this->deleted = $this->entityId->deleteEntity();
+            $this->entityId = null;
+
+            return $this;
         }
 
-        $this->deleted = $this->entityId->deleteEntity();
-        $this->entityId = null;
-
-        return $this;
+        throw new NotStoredEntityException(static::EXCEPTION_NOT_STORED_ENTITY);
     }
 
     /**
@@ -85,7 +85,7 @@ class Entity extends Prototype implements EntityInterface {
      * @see \Fixin\Model\Entity\EntityInterface::save()
      */
     public function save(): EntityInterface {
-// TODO         $this->getRepository()->where($this->entityId)->update($set);
+        // TODO         $this->getRepository()->where($this->entityId)->update($set);
 
         $this->deleted = false;
 
