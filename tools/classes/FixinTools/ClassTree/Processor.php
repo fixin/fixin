@@ -40,8 +40,11 @@ class Processor {
     public function __toString(): string {
         $info = '';
 
-        foreach ($this->tree as $item) {
-            $info .= $item;
+        foreach ($this->getGroups() as $name => $group) {
+            $info .= "\n[$name]\n";
+            foreach ($group as $item) {
+                $info .= str_replace("\n", "\n    ", $item);
+            }
         }
 
         return $info;
@@ -53,6 +56,19 @@ class Processor {
      */
     public function get(string $name) {
         return $this->items[$name] ?? null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroups(): array {
+        $groups = [];
+
+        foreach ($this->tree as $name => $item) {
+            $groups[$item->getGroup()][] = $item;
+        }
+
+        return $groups;
     }
 
     /**
@@ -94,7 +110,7 @@ class Processor {
 
         foreach ($items as $name => $item) {
             // Extends class
-            if (($parentClass = $item->getReflection()->getParentClass()) && !in_array($parentClass->name, $baseClasses) && isset($items[$parentClass->name])) {
+            if (($parentClass = $item->getReflection()->getParentClass()) && (in_array($name, $baseClasses) || !in_array($parentClass->name, $baseClasses)) && isset($items[$parentClass->name])) {
                 $items[$parentClass->name]->addChild($item);
 
                 continue;
@@ -102,8 +118,8 @@ class Processor {
 
             // Implements or extends interface
             if ($interfaces = $item->getInterfaces()) {
-                $interfaces = array_filter($interfaces, function($item) use ($baseClasses) {
-                    return !in_array($item->name, $baseClasses) && $this->has($item->name);
+                $interfaces = array_filter($interfaces, function($item) use ($name, $baseClasses) {
+                    return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->has($item->name);
                 });
 
                 if ($interfaces) {
@@ -123,6 +139,24 @@ class Processor {
      * @return \FixinTools\ClassTree\Processor
      */
     public function uniteInterfaceImplementations(): self {
+        $all = $this->items;
+
+        while ($all) {
+            $current = array_shift($all);
+
+            if ($implementationOf = $current->getImplementationOf()) {
+                $oldName = $implementationOf->getName();
+                $newName = $current->getName();
+
+                $implementationOf->unite($current);
+
+                unset($this->items[$oldName]);
+                $this->items[$newName] = $implementationOf;
+
+                unset($all[$oldName]);
+                unset($all[$newName]);
+            }
+        }
 
         return $this;
     }
