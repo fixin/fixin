@@ -9,9 +9,9 @@ namespace Fixin\Model\Repository;
 
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
-use Fixin\Resource\ResourceInterface;
-use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Model\Storage\StorageResultInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface RepositoryInterface extends ResourceInterface {
 
