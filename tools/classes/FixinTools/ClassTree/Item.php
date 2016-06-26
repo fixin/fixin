@@ -66,6 +66,13 @@ class Item {
     }
 
     /**
+     * @return array
+     */
+    public function getChildren(): array {
+        return $this->children;
+    }
+
+    /**
      * @return self|null
      */
     public function getImplementationOf() {
@@ -122,6 +129,13 @@ class Item {
     }
 
     /**
+     * @return \FixinTools\ClassTree\self|null
+     */
+    public function getParent() {
+        return $this->parent;
+    }
+
+    /**
      * @return \ReflectionClass
      */
     public function getReflection(): \ReflectionClass {
@@ -138,8 +152,61 @@ class Item {
     /**
      * @return bool
      */
+    public function isAbstract(): bool {
+        return $this->reflection->isAbstract();
+    }
+
+    /**
+     * @return bool
+     */
     public function isClass(): bool {
         return !$this->reflection->isInterface();
+    }
+
+    /**
+     * @param self $item
+     * @return bool
+     */
+    public function isDescendant(self $item): bool {
+        if (in_array($item, $this->children, true)) {
+            return true;
+        }
+
+        foreach ($this->children as $child) {
+            if ($child->isDescendant($item)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFactory(): bool {
+        return $this->reflection->isSubclassOf('Fixin\Resource\Factory\FactoryInterface');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInterface(): bool {
+        return $this->reflection->isInterface();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrototype(): bool {
+        return $this->reflection->isSubclassOf('Fixin\Resource\PrototypeInterface');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isResource(): bool {
+        return $this->reflection->isSubclassOf('Fixin\Resource\ResourceInterface');
     }
 
     /**
