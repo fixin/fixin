@@ -28,6 +28,18 @@ class Strings extends DoNotCreate {
     }
 
     /**
+     * Convert "camelCase" or "CamelCase" name to text
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function camelCaseToText(string $string): string {
+        return preg_replace_callback('/([a-z])([A-Z])/', function($m) {
+            return "$m[1] $m[2]";
+        }, $string);
+    }
+
+    /**
      * Convert string to "CamelCase" class name
      *
      * @param string $string
