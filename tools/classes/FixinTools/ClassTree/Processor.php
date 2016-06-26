@@ -136,6 +136,18 @@ class Processor {
     }
 
     /**
+     * @param int $ratio
+     * @param float $ellipseRatio
+     * @param array $groups
+     * @return string
+     */
+    public function renderSvg(int $ratio, float $ellipseRatio, array $groups): string {
+        $engine = new SvgEngine($this, $ratio, $ellipseRatio);
+
+        return $engine->render($groups);
+    }
+
+    /**
      * @return \FixinTools\ClassTree\Processor
      */
     public function uniteInterfaceImplementations(): self {
@@ -149,6 +161,14 @@ class Processor {
                 $newName = $current->getName();
 
                 $implementationOf->unite($current);
+
+                if ($implementationOf->isDescendant($current->getParent())) {
+                    $parent = $current->getParent();
+                    while ($parent !== $implementationOf) {
+                        $parent->removeFromParent();
+                        $parent = $parent->getParent();
+                    }
+                }
 
                 unset($this->items[$oldName]);
                 $this->items[$newName] = $implementationOf;
