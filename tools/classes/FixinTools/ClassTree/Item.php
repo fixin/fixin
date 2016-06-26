@@ -184,6 +184,13 @@ class Item {
     /**
      * @return bool
      */
+    public function isException(): bool {
+        return $this->reflection->isSubclassOf('Exception');
+    }
+
+    /**
+     * @return bool
+     */
     public function isFactory(): bool {
         return $this->reflection->isSubclassOf('Fixin\Resource\Factory\FactoryInterface');
     }
@@ -207,6 +214,13 @@ class Item {
      */
     public function isResource(): bool {
         return $this->reflection->isSubclassOf('Fixin\Resource\ResourceInterface');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTrait(): bool {
+        return $this->reflection->isTrait();
     }
 
     /**

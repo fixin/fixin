@@ -153,7 +153,9 @@ class SvgEngine {
                 if ($item->isPrototype()) { $classes[] = 'Prototype'; }
                 if ($item->isResource()) { $classes[] = 'Resource'; }
                 if ($item->isFactory()) { $classes[] = 'Factory'; }
+                if ($item->isException()) { $classes[] = 'Exception'; }
             }
+            if ($item->isTrait()) { $classes[] = 'Trait'; }
 
             $source .= '<g class="' . implode(' ', $classes) . "\">\n";
 
