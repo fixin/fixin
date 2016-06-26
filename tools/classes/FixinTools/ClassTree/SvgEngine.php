@@ -170,7 +170,7 @@ class SvgEngine {
 
             // Text
             $tspans = '';
-            $rows = $this->explodeRows(Strings::camelCaseToText($item->getShortName()));
+            $rows = $this->explodeRows(Strings::textFromCamelCase($item->getShortName()));
             $dy = -count($rows) * 0.7 + 0.25 + 0.75;
             foreach ($rows as $rowNo => $text) {
                 $tspans .= $this->tag('tspan', [

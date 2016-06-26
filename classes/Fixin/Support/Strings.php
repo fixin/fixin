@@ -28,18 +28,6 @@ class Strings extends DoNotCreate {
     }
 
     /**
-     * Convert "camelCase" or "CamelCase" name to text
-     *
-     * @param string $string
-     * @return string
-     */
-    public static function camelCaseToText(string $string): string {
-        return preg_replace_callback('/([a-z])([A-Z])/', function($m) {
-            return "$m[1] $m[2]";
-        }, $string);
-    }
-
-    /**
      * Convert string to "CamelCase" class name
      *
      * @param string $string
@@ -118,5 +106,17 @@ class Strings extends DoNotCreate {
      */
     public static function surroundedBy(string $string, string $begin, string $end) {
         return static::beginsWith($string, $begin) && static::endsWith($string, $end);
+    }
+    
+    /**
+     * Convert "camelCase" or "CamelCase" name to text
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function textFromCamelCase(string $string): string {
+        return preg_replace_callback('/([a-z])([A-Z])/', function($m) {
+            return "$m[1] $m[2]";
+        }, $string);
     }
 }
