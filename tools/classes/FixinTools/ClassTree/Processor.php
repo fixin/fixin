@@ -109,13 +109,13 @@ class Processor extends Item {
                 continue;
             }
 
-            // Implements or extends interface
+            // Interface
             if ($interfaces = $item->getInterfaces()) {
                 $interfaces = array_filter($interfaces, function($item) use ($name, $baseClasses) {
                     return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->hasItem($item->name);
                 });
 
-                if ($interfaces) {
+                if (count($interfaces)) {
                     $this->items[reset($interfaces)->name]->addChild($item);
 
                     continue;
@@ -133,7 +133,7 @@ class Processor extends Item {
     public function uniteInterfaceImplementations(): self {
         // Implementations
         $all = $this->items;
-        while ($all) {
+        while (count($all)) {
             $current = array_shift($all);
 
             if ($implementationOf = $current->getImplementationOf()) {
@@ -164,7 +164,7 @@ class Processor extends Item {
 
         // Owners
         $all = $this->items;
-        while ($all) {
+        while (count($all)) {
             $current = array_shift($all);
 
             if (!$current->getParent() && ($belongsTo = $current->getBelongsTo())) {

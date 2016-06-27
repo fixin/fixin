@@ -38,7 +38,6 @@ class Item {
     }
 
     public function __toString(): string {
-        $parentClass = $this->reflection->getParentClass();
         $info = "\n" . $this->getShortName() . "\n";
 
         foreach ($this->children as $index => $child) {
@@ -121,7 +120,7 @@ class Item {
         $all = $this->reflection->getInterfaces();
         $interfaces = $all;
 
-        while ($all) {
+        while (count($all)) {
             $current = array_shift($all);
 
             if ($item = $this->processor->getItem($current->name)) {

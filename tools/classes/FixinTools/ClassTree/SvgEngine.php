@@ -60,7 +60,7 @@ class SvgEngine {
         $rows = [];
         $buffer = array_shift($words);
 
-        while ($words) {
+        while (count($words)) {
             $word = array_shift($words);
 
             if (mb_strlen($buffer . $word) < 12) {
@@ -93,6 +93,7 @@ class SvgEngine {
         }
 
         return $this->tag('text', [
+            'class' => 'Center',
             'style' => 'font-size: ' . $this->fontSize . 'px',
         ], $tspans);
     }
@@ -143,7 +144,7 @@ class SvgEngine {
         foreach ($groups as $data) {
             if (isset($data['label'])) {
                 $source .= $this->tag('text', [
-                    'class' => 'Top',
+                    'class' => 'Center Top',
                     'x' => ($data['x'] + ($data['labelDx'] ?? 0)) * $this->ratio,
                     'y' => ($data['y'] + ($data['labelDy'] ?? 0)) * $this->ratio,
                     'dy' => '0.4em'
@@ -164,11 +165,12 @@ class SvgEngine {
             if ($item->isInterface()) { $classes[] = 'Interface'; }
             if ($item->isClass()) {
                 if ($item->isAbstract()) { $classes[] = 'Abstract'; }
+            }
                 if ($item->isPrototype()) { $classes[] = 'Prototype'; }
                 if ($item->isResource()) { $classes[] = 'Resource'; }
                 if ($item->isFactory()) { $classes[] = 'Factory'; }
                 if ($item->isException()) { $classes[] = 'Exception'; }
-            }
+//             }
             if ($item->isTrait()) { $classes[] = 'Trait'; }
             if ($item->getLevel() < 3 && $item->isMainClass()) { $classes[] = 'Top'; }
 
