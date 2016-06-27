@@ -135,6 +135,10 @@ class Item {
         return $interfaces;
     }
 
+    public function getLevel(): int {
+        return count(explode('\\', $this->getName())) - 1;
+    }
+
     public function getName(): string {
         return $this->reflection->name;
     }
@@ -190,6 +194,10 @@ class Item {
 
     public function isInterface(): bool {
         return $this->reflection->isInterface();
+    }
+
+    public function isMainClass(): bool {
+        return $this->processor->getMainClass($this->reflection->getNamespaceName()) === $this;
     }
 
     public function isPrototype(): bool {

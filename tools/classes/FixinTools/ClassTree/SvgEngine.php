@@ -51,7 +51,7 @@ class SvgEngine {
     }
 
     protected function calculateFontSize() {
-        $this->fontSize = $this->ratio * 0.28 * $this->itemSize;
+        $this->fontSize = $this->ratio * 0.26 * $this->itemSize;
     }
 
     protected function explodeRows(string $text): array {
@@ -134,7 +134,24 @@ class SvgEngine {
             $this->placeItems($itemGroups[$name], $data['x'], $data['y'], $shiftAngle + 0, $shiftAngle + 360);
         }
 
-        return $this->renderLines() . $this->renderItems();
+        return $this->renderGroups($groups) . $this->renderLines() . $this->renderItems();
+    }
+
+    protected function renderGroups(array $groups): string {
+        $source = '';
+
+        foreach ($groups as $data) {
+            if (isset($data['label'])) {
+                $source .= $this->tag('text', [
+                    'class' => 'Top',
+                    'x' => ($data['x'] + ($data['labelDx'] ?? 0)) * $this->ratio,
+                    'y' => ($data['y'] + ($data['labelDy'] ?? 0)) * $this->ratio,
+                    'dy' => '0.4em'
+                ], htmlspecialchars($data['label']));
+            }
+        }
+
+        return $source;
     }
 
     protected function renderItems(): string {
@@ -153,6 +170,7 @@ class SvgEngine {
                 if ($item->isException()) { $classes[] = 'Exception'; }
             }
             if ($item->isTrait()) { $classes[] = 'Trait'; }
+            if ($item->getLevel() < 3 && $item->isMainClass()) { $classes[] = 'Top'; }
 
             $source .= '<g class="' . implode(' ', $classes) . "\">\n";
 

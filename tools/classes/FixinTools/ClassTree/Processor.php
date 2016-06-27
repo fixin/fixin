@@ -74,8 +74,7 @@ class Processor extends Item {
         $tags = explode('\\', $namespace);
         $test = $namespace . '\\' . end($tags);
 
-        return $this->items[$test . 'Manager']
-        ?? $this->items[$test . 'Interface']
+        return $this->items[$test . 'Interface']
         ?? $this->items[$test]
         ?? null;
     }
