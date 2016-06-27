@@ -79,6 +79,17 @@ class SvgEngine {
         return $rows;
     }
 
+    protected function itemCssClass(Item $item): string {
+        $classes = ['Item'];
+        foreach (['Interface', 'Abstract', 'Prototype', 'Resource', 'Factory', 'Exception', 'Trait'] as $test) {
+            if ($item->{'is' . $test}()) {
+                $classes[] = $test;
+            }
+        }
+
+        return str_replace('Interface Abstract', 'Interface', implode(' ', $classes));
+    }
+
     public function itemText(float $x, float $y, string $text): string {
         $rows = $this->explodeRows($text);
         $tspans = '';
@@ -115,10 +126,8 @@ class SvgEngine {
 
             if ($children = $item->getChildren()) {
                 $childrenStep = min(max($angleStep / 1.3, 160 / count($children) / 1.3), 180);
-                $childrenStart = $angle - $childrenStep;
-                $childrenEnd = $angle + $childrenStep;
 
-                $this->placeItems($children, $px, $py, $childrenStart, $childrenEnd);
+                $this->placeItems($children, $px, $py, $angle - $childrenStep, $angle + $childrenStep);
             }
 
             // Step
@@ -160,21 +169,7 @@ class SvgEngine {
         $itemR = $this->itemSize * $this->ratio;
 
         foreach ($this->items as $item) {
-            $classes = ['Item'];
-
-            if ($item->isInterface()) { $classes[] = 'Interface'; }
-            if ($item->isClass()) {
-                if ($item->isAbstract()) { $classes[] = 'Abstract'; }
-            }
-                if ($item->isPrototype()) { $classes[] = 'Prototype'; }
-                if ($item->isResource()) { $classes[] = 'Resource'; }
-                if ($item->isFactory()) { $classes[] = 'Factory'; }
-                if ($item->isException()) { $classes[] = 'Exception'; }
-//             }
-            if ($item->isTrait()) { $classes[] = 'Trait'; }
-            if ($item->getLevel() < 3 && $item->isMainClass()) { $classes[] = 'Top'; }
-
-            $source .= '<g class="' . implode(' ', $classes) . "\">\n";
+            $source .= '<g class="' . $this->itemCssClass($item) . "\">\n";
 
             $px = $item->px;
             $py = $item->py;

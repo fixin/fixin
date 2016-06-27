@@ -78,9 +78,10 @@ class Item {
         }
 
         // Main Class
-        $mainClass = $this->processor->getMainClass($namespace);
-        if ($mainClass && $mainClass->getName() !== $this->getName()) {
-            return $mainClass;
+        if ($mainClass = $this->processor->getMainClass($namespace)) {
+            if ($mainClass->getName() !== $this->getName()) {
+                return $mainClass;
+            }
         }
 
         // Parent
