@@ -168,21 +168,10 @@ class SvgEngine {
             $px = $item->px;
             $py = $item->py;
 
-            $source .= '<g class="' . $this->itemCssClass($item) . "\">\n" .
-
-            // Ellipse
-            $this->tag('ellipse', [
-                'cx' => $px,
-                'cy' => $py,
-                'rx' => $itemR,
-                'ry' => $itemR * $this->ellipseRatio,
-            ])
-
-            // Text
-            . $this->itemText($px, $py, Strings::textFromCamelCase($item->getShortName()))
-
-            // Close
-            . "</g>\n";
+            $source .= '<g class="' . $this->itemCssClass($item) . "\">\n"
+                . $this->tag('ellipse', ['cx' => $px, 'cy' => $py, 'rx' => $itemR, 'ry' => $itemR * $this->ellipseRatio])
+                . $this->itemText($px, $py, Strings::textFromCamelCase($item->getShortName()))
+                . "</g>\n";
         }
 
         return $source;

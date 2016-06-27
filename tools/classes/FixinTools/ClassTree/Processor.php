@@ -44,12 +44,16 @@ class Processor extends Item {
          return $info;
     }
 
+    protected function baseClassTest(string $name, array $baseClasses, \ReflectionClass $item): bool {
+        return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->hasItem($item->name);
+    }
+
     protected function filterInterfaces(Item $item, string $name, array $baseClasses): array {
         return array_filter($item->getInterfaces(), function($item) use ($name, $baseClasses) {
-            return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->hasItem($item->name);
+            return $this->baseClassTest($name, $baseClasses, $item);
         });
     }
-    
+
     public function getEngine(): SvgEngine {
         return $this->engine ?? ($this->engine = new SvgEngine($this));
     }
@@ -114,7 +118,7 @@ class Processor extends Item {
         $this->children = [];
         foreach ($this->items as $name => $item) {
             // Extends class
-            if (($parentClass = $item->getReflection()->getParentClass()) && (in_array($name, $baseClasses) || !in_array($parentClass->name, $baseClasses)) && isset($this->items[$parentClass->name])) {
+            if (($parentClass = $item->getReflection()->getParentClass()) && $this->baseClassTest($name, $baseClasses, $parentClass)) {
                 $this->items[$parentClass->name]->addChild($item);
 
                 continue;
