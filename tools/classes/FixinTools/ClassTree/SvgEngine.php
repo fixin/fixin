@@ -29,7 +29,7 @@ class SvgEngine {
     /**
      * @var float
      */
-    protected $itemSize = 0.03;
+    protected $itemSize = 0.035;
 
     /**
      * @var array
@@ -110,9 +110,9 @@ class SvgEngine {
             $this->items[$item->getName()] = $item;
 
             if ($children = $item->getChildren()) {
-                $childrenStep = min(max($angleStep, 160 / count($children)), 120);
-                $childrenStart = $angle - $childrenStep / 1.1;
-                $childrenEnd = $angle + $childrenStep / 1.1;
+                $childrenStep = min(max($angleStep / 1.3, 160 / count($children) / 1.3), 180);
+                $childrenStart = $angle - $childrenStep;
+                $childrenEnd = $angle + $childrenStep;
 
                 $this->placeItems($children, $px, $py, $childrenStart, $childrenEnd);
             }
@@ -131,7 +131,8 @@ class SvgEngine {
 
         $this->items = [];
         foreach ($groups as $name => $data) {
-            $this->placeItems($itemGroups[$name], $data['x'], $data['y'], 0, 360);
+            $shiftAngle = $data['shiftAngle'] ?? 0;
+            $this->placeItems($itemGroups[$name], $data['x'], $data['y'], $shiftAngle + 0, $shiftAngle + 360);
         }
 
         return $this->renderLines() . $this->renderItems();
@@ -192,6 +193,9 @@ class SvgEngine {
         return $source;
     }
 
+    /**
+     * @return string
+     */
     protected function renderLines(): string {
         $source = '';
 
@@ -199,7 +203,7 @@ class SvgEngine {
             // Parent
             if ($parent = $item->getParent()) {
                 $source .= $this->tag('line', [
-                    'class' => 'Parent',
+                    'class' => $item->isSubclassOf($parent) ? 'Parent' : 'Owner',
                     'x1' => $item->px,
                     'y1' => $item->py,
                     'x2' => $parent->px,

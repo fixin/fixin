@@ -10,21 +10,20 @@ namespace FixinTools\ClassTree;
 use Fixin\Support\Strings;
 
 class Item {
-
     /**
      * @var self[]
      */
     protected $children = [];
 
     /**
-     * @var Processor
-     */
-    protected $processor;
-
-    /**
      * @var self
      */
     protected $parent;
+
+    /**
+     * @var Processor
+     */
+    protected $processor;
 
     /**
      * @var \ReflectionClass
@@ -35,7 +34,7 @@ class Item {
      * @param Processor $processor
      * @param \ReflectionClass $reflection
      */
-    public function __construct(Processor $processor, \ReflectionClass $reflection) {
+    public function __construct(Processor $processor, \ReflectionClass $reflection = null) {
         $this->processor = $processor;
         $this->reflection = $reflection;
     }
@@ -59,6 +58,8 @@ class Item {
      * @return self
      */
     public function addChild(self $child): self {
+        $child->removeFromParent();
+
         $this->children[$child->getName()] = $child;
         $child->parent = $this;
 
@@ -66,10 +67,50 @@ class Item {
     }
 
     /**
+     * @param string $name
+     * @return Item|NULL
+     */
+    public function get(string $name) {
+        return $this->children[$name] ?? null;
+    }
+
+    /**
+     * @return self|NULL
+     */
+    public function getBelongsTo() {
+        $namespace = $this->reflection->getNamespaceName();
+
+        // Factory
+        if (Strings::endsWith($this->getName(), 'Factory')) {
+            if ($factoryOf = $this->processor->getItem(implode('\\', explode('\\', $namespace, -1)) . '\\' . mb_substr($this->getShortName(), 0, -7))) {
+                return $factoryOf;
+            }
+        }
+
+        // Main Class
+        $mainClass = $this->processor->getMainClass($namespace);
+        if ($mainClass && $mainClass->getName() !== $this->getName()) {
+            return $mainClass;
+        }
+
+        // Parent
+        return $this->processor->getMainClass(implode('\\', explode('\\', $namespace, -1)));
+    }
+
+    /**
      * @return array
      */
     public function getChildren(): array {
         return $this->children;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroup(): string {
+        $tags = explode('\\', $this->getName(), 3);
+
+        return $tags[1];
     }
 
     /**
@@ -84,7 +125,7 @@ class Item {
         foreach ($this->getInterfaces() as $interface) {
             $interfaceName = $interface->name;
             if (Strings::endsWith($interfaceName, 'Interface') && $name === mb_substr($interfaceName, 0, -9)) {
-                return $this->processor->get($interfaceName);
+                return $this->processor->getItem($interfaceName);
             }
         }
 
@@ -101,7 +142,7 @@ class Item {
         while ($all) {
             $current = array_shift($all);
 
-            if ($item = $this->processor->get($current->name)) {
+            if ($item = $this->processor->getItem($current->name)) {
                 foreach ($item->getInterfaces() as $name => $interface) {
                     unset($interfaces[$name]);
                     unset($all[$name]);
@@ -115,21 +156,12 @@ class Item {
     /**
      * @return string
      */
-    public function getGroup(): string {
-        $tags = explode('\\', $this->getName(), 3);
-
-        return $tags[1];
-    }
-
-    /**
-     * @return string
-     */
     public function getName(): string {
         return $this->reflection->name;
     }
 
     /**
-     * @return \FixinTools\ClassTree\self|null
+     * @return self|null
      */
     public function getParent() {
         return $this->parent;
@@ -147,6 +179,14 @@ class Item {
      */
     public function getShortName(): string {
         return $this->reflection->getShortName();
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function has(string $name): bool {
+        return isset($this->children[$name]);
     }
 
     /**
@@ -217,6 +257,14 @@ class Item {
     }
 
     /**
+     * @param self $item
+     * @return bool
+     */
+    public function isSubclassOf(self $item): bool {
+        return $this->reflection->isSubclassOf($item->reflection);
+    }
+
+    /**
      * @return bool
      */
     public function isTrait(): bool {
@@ -229,6 +277,8 @@ class Item {
     public function removeFromParent(): self {
         if ($this->parent) {
             unset($this->parent->children[$this->getName()]);
+
+            return $this;
         }
 
         return $this;

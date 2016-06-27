@@ -7,17 +7,9 @@
 
 namespace FixinTools\ClassTree;
 
-class Processor {
+class Processor extends Item {
 
-    /**
-     * @var Item[]
-     */
     protected $items;
-
-    /**
-     * @var Item[]
-     */
-    protected $tree;
 
     /**
      * @param string $topDir
@@ -38,24 +30,16 @@ class Processor {
      * @return string
      */
     public function __toString(): string {
-        $info = '';
+         $info = '';
 
-        foreach ($this->getGroups() as $name => $group) {
+         foreach ($this->getGroups() as $name => $group) {
             $info .= "\n[$name]\n";
             foreach ($group as $item) {
                 $info .= str_replace("\n", "\n    ", $item);
             }
-        }
+         }
 
-        return $info;
-    }
-
-    /**
-     * @param string $name
-     * @return Item|NULL
-     */
-    public function get(string $name) {
-        return $this->items[$name] ?? null;
+         return $info;
     }
 
     /**
@@ -64,7 +48,7 @@ class Processor {
     public function getGroups(): array {
         $groups = [];
 
-        foreach ($this->tree as $name => $item) {
+        foreach ($this->children as $name => $item) {
             $groups[$item->getGroup()][] = $item;
         }
 
@@ -72,17 +56,32 @@ class Processor {
     }
 
     /**
-     * @return array
+     * @param string $name
+     * @return NULL
      */
-    public function getTree(): array {
-        return $this->tree;
+    public function getItem(string $name) {
+        return $this->items[$name] ?? null;
+    }
+
+    /**
+     * @param string $namespace
+     * @return Item
+     */
+    public function getMainClass(string $namespace) {
+        $tags = explode('\\', $namespace);
+        $test = $namespace . '\\' . end($tags);
+
+        return $this->items[$test . 'Manager']
+        ?? $this->items[$test . 'Interface']
+        ?? $this->items[$test]
+        ?? null;
     }
 
     /**
      * @param string $name
      * @return bool
      */
-    public function has(string $name): bool {
+    public function hasItem(string $name): bool {
         return isset($this->items[$name]);
     }
 
@@ -106,12 +105,11 @@ class Processor {
         $this->items = $items;
 
         // Build tree
-        $tree = [];
-
-        foreach ($items as $name => $item) {
+        $this->children = [];
+        foreach ($this->items as $name => $item) {
             // Extends class
             if (($parentClass = $item->getReflection()->getParentClass()) && (in_array($name, $baseClasses) || !in_array($parentClass->name, $baseClasses)) && isset($items[$parentClass->name])) {
-                $items[$parentClass->name]->addChild($item);
+                $this->items[$parentClass->name]->addChild($item);
 
                 continue;
             }
@@ -119,20 +117,18 @@ class Processor {
             // Implements or extends interface
             if ($interfaces = $item->getInterfaces()) {
                 $interfaces = array_filter($interfaces, function($item) use ($name, $baseClasses) {
-                    return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->has($item->name);
+                    return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->hasItem($item->name);
                 });
 
                 if ($interfaces) {
-                    $items[reset($interfaces)->name]->addChild($item);
+                    $this->items[reset($interfaces)->name]->addChild($item);
 
                     continue;
                 }
             }
 
-            $tree[$name] = $item;
+            $this->children[$name] = $item;
         }
-
-        $this->tree = $tree;
     }
 
     /**
@@ -151,8 +147,8 @@ class Processor {
      * @return \FixinTools\ClassTree\Processor
      */
     public function uniteInterfaceImplementations(): self {
+        // Implementations
         $all = $this->items;
-
         while ($all) {
             $current = array_shift($all);
 
@@ -162,6 +158,10 @@ class Processor {
 
                 $implementationOf->unite($current);
 
+                unset($this->items[$oldName]);
+                unset($this->children[$oldName]);
+
+                // Loop remove
                 if ($implementationOf->isDescendant($current->getParent())) {
                     $parent = $current->getParent();
                     while ($parent !== $implementationOf) {
@@ -170,11 +170,22 @@ class Processor {
                     }
                 }
 
-                unset($this->items[$oldName]);
                 $this->items[$newName] = $implementationOf;
 
-                unset($all[$oldName]);
-                unset($all[$newName]);
+                if (!$implementationOf->getParent()) {
+                    $this->children[$implementationOf->getName()] = $implementationOf;
+                }
+            }
+        }
+
+        // Owners
+        $all = $this->items;
+        while ($all) {
+            $current = array_shift($all);
+
+            if (!$current->getParent() && ($belongsTo = $current->getBelongsTo())) {
+                $belongsTo->addChild($current);
+                unset($this->children[$current->getName()]);
             }
         }
 
