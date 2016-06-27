@@ -33,9 +33,16 @@ use FixinTools\Performance\Magic\VariablesB;
     });
 
     Performance::measureCode(function() use ($loops, &$result, $objectA) {
-        // Get: getter
+        // Get: getter w/ name
         for ($i = 0; $i < $loops; $i++) {
             $result = $objectA->getVariable('summary');
+        }
+    });
+
+    Performance::measureCode(function() use ($loops, &$result, $objectA) {
+        // Get: getter
+        for ($i = 0; $i < $loops; $i++) {
+            $result = $objectA->getTest();
         }
     });
 

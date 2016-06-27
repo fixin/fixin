@@ -7,15 +7,14 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Resource;
 
 class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface {
 
-    const CONFIGURATION_REQUIRES = [
-        'searchOrder' => 'array'
-    ];
     const OPTION_SEARCH_ORDER = 'searchOrder';
+    const THIS_REQUIRES = [
+        self::OPTION_SEARCH_ORDER => self::TYPE_ARRAY
+    ];
 
     /**
      * @var array

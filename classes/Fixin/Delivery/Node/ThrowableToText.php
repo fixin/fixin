@@ -9,8 +9,9 @@ namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Resource\Resource;
+use Fixin\Support\Ground;
 
-class ThrowableToHtml extends Resource implements NodeInterface {
+class ThrowableToText extends Resource implements NodeInterface {
 
     const CONTENT_TYPE = 'text/html';
 
@@ -21,7 +22,7 @@ class ThrowableToHtml extends Resource implements NodeInterface {
     public function handle(CargoInterface $cargo): CargoInterface {
         if ($cargo->getContent() instanceof \Throwable) {
             $cargo
-            ->setContent('<pre>' . htmlspecialchars($cargo->getContent()) . '</pre>')
+            ->setContent(Ground::debugText(htmlspecialchars($cargo->getContent())))
             ->setContentType(static::CONTENT_TYPE);
         }
 

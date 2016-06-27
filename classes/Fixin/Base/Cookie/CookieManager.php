@@ -23,7 +23,7 @@ class CookieManager extends Prototype implements CookieManagerInterface {
      * @see \Fixin\Base\Cookie\CookieManagerInterface::expire($name, $path, $domain)
      */
     public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface {
-        $this->set($name, null)->setPath($path)->setDomain($domain);
+        $this->set($name, null)->setExpire(static::EXPIRE_MINUTES)->setPath($path)->setDomain($domain);
 
         return $this;
     }

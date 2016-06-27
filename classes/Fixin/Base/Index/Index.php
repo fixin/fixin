@@ -16,9 +16,11 @@ class Index extends Prototype implements IndexInterface {
 
     const EXCEPTION_FILENAME_NOT_SET = 'Filename not set';
     const EXCEPTION_INVALID_DATA = 'Invalid data';
-
     const KEY_KEYS = 'keys';
     const KEY_VALUES = 'values';
+    const THIS_SETS_LAZY = [
+        self::OPTION_FILE_SYSTEM => FileSystemInterface::class
+    ];
 
     /**
      * @var bool
@@ -103,6 +105,15 @@ class Index extends Prototype implements IndexInterface {
         }
 
         return $this;
+    }
+
+    /**
+     * Get FileSystem instance
+     *
+     * @return FileSystemInterface
+     */
+    protected function getFileSystem(): FileSystemInterface {
+        return $this->fileSystem ?: $this->loadLazyProperty(static::OPTION_FILE_SYSTEM);
     }
 
     /**
@@ -205,7 +216,7 @@ class Index extends Prototype implements IndexInterface {
             throw new RuntimeException(static::EXCEPTION_FILENAME_NOT_SET);
         }
 
-        $data = unserialize($this->fileSystem->get($this->filename), ['allowed_classes' => false]);
+        $data = unserialize($this->getFileSystem()->get($this->filename), ['allowed_classes' => false]);
         if (!is_array($data) || !$this->loadArray($data)) {
             throw new RuntimeException(static::EXCEPTION_INVALID_DATA);
         }
@@ -278,7 +289,7 @@ class Index extends Prototype implements IndexInterface {
             static::KEY_VALUES => $this->values
         ];
 
-        $this->fileSystem->putWithLock($this->filename, serialize($data));
+        $this->getFileSystem()->putWithLock($this->filename, serialize($data));
 
         $this->dirty = false;
 

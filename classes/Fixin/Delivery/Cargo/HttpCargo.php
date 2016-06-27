@@ -18,12 +18,12 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
 
     use ToStringTrait;
 
-    const CONFIGURATION_REQUIRES = [
-        'cookies' => 'instance',
-        'environmentParameters' => 'instance',
-        'requestParameters' => 'instance',
-        'serverParameters' => 'instance',
-        'session' => 'instance'
+    const THIS_REQUIRES = [
+        self::OPTION_COOKIES => self::TYPE_INSTANCE,
+        self::OPTION_ENVIRONMENT_PARAMETERS => self::TYPE_INSTANCE,
+        self::OPTION_REQUEST_PARAMETERS => self::TYPE_INSTANCE,
+        self::OPTION_SERVER_PARAMETERS => self::TYPE_INSTANCE,
+        self::OPTION_SESSION => self::TYPE_INSTANCE
     ];
 
     /**

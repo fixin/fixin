@@ -9,5 +9,5 @@ namespace Fixin\Support\Exception;
 
 use Fixin\Exception\LogicException;
 
-class DoNotCreateException extends LogicException {
+class DoNotCreateException extends LogicException implements SupportException {
 }

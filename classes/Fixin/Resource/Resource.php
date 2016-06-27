@@ -12,9 +12,13 @@ use Fixin\Exception\RuntimeException;
 
 abstract class Resource implements ResourceInterface {
 
-    const CONFIGURATION_REQUIRES = [];
     const EXCEPTION_INVALID_OPTION = "Invalid option name '%s'";
-    const EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s";
+    const EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s for %s";
+    const THIS_REQUIRES = [];
+    const THIS_SETS_LAZY = [];
+    const TYPE_ARRAY = 'array';
+    const TYPE_INSTANCE = 'instance';
+    const TYPE_STRING = 'string';
 
     /**
      * @var ResourceManagerInterface
@@ -84,12 +88,12 @@ abstract class Resource implements ResourceInterface {
      * @return self
      */
     protected function configurationTests(): Resource {
-        foreach (static::CONFIGURATION_REQUIRES as $key => $type) {
+        foreach (static::THIS_REQUIRES as $key => $type) {
             if ($this->{"configuration{$type}Test"}($this->$key)) {
                 continue;
             }
 
-            throw new RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, $type));
+            throw new RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, $type, get_class($this)));
         }
 
         return $this;
@@ -103,10 +107,16 @@ abstract class Resource implements ResourceInterface {
      */
     protected function configureWithOptions(array $options): Resource {
         foreach ($options as $key => $value) {
-            $method = 'set' . $key;
-
-            if (method_exists($this, $method)) {
+            // Setter for property
+            if (method_exists($this, $method = 'set' . $key)) {
                 $this->$method($value);
+
+                continue;
+            }
+
+            // Lazy-loading property
+            if (isset(static::THIS_SETS_LAZY[$key])) {
+                $this->setLazyLoadingProperty($key, static::THIS_SETS_LAZY[$key], $value);
 
                 continue;
             }
@@ -121,14 +131,15 @@ abstract class Resource implements ResourceInterface {
      * Load lazy property
      *
      * @param string $propertyName
+     * @param array $prototypeOptions
      * @throws InvalidArgumentException
      * @return mixed
      */
-    protected function loadLazyProperty(string $propertyName) {
+    protected function loadLazyProperty(string $propertyName, array $prototypeOptions = []) {
         if (isset($this->lazyLoadingProperties[$propertyName])) {
             $set = $this->lazyLoadingProperties[$propertyName];
             $interface = $set[1];
-            $value = $interface instanceof PrototypeInterface ? $this->container->clonePrototype($set[0]) : $this->container->get($set[0]);
+            $value = is_subclass_of($interface, PrototypeInterface::class) ? $this->container->clonePrototype($set[0], $prototypeOptions) : $this->container->get($set[0]);
 
             if ($value instanceof $interface) {
                 return $this->$propertyName = $value;

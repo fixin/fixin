@@ -15,6 +15,8 @@ namespace FixinTools\Performance\Magic;
  */
 class VariablesA implements \ArrayAccess {
 
+    protected $test = 'test';
+
     /**
      * @var array
      */
@@ -45,6 +47,15 @@ class VariablesA implements \ArrayAccess {
      */
     public function __set(string $name, $value) {
         $this->variables[$name] = $value;
+    }
+
+    /**
+     * Simple getter
+     *
+     * @return string
+     */
+    public function getTest() {
+        return $this->test;
     }
 
     /**

@@ -10,15 +10,10 @@ namespace Fixin\Delivery\Node;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Exception\InvalidArgumentException;
-use Fixin\Exception\RuntimeException;
-use Fixin\Resource\Resource;
 use Fixin\Delivery\Cargo\CargoHandlerInterface;
 
 class HttpRouterHub extends HttpHub {
 
-    const CONFIGURATION_REQUIRES = [
-        'routeTree' => 'array'
-    ];
     const EXCEPTION_INVALID_HANDLER = "Invalid handler '%s'";
     const EXCEPTION_MISSING_ROUTE_PARAMETER = "Missing route parameter '%s'";
     const EXCEPTION_UNKNOWN_ROUTE = "Unknown route '%s'";
@@ -32,6 +27,10 @@ class HttpRouterHub extends HttpHub {
     const OPTION_HANDLERS = 'handlers';
     const OPTION_ROUTE_TREE = 'routeTree';
     const OPTION_ROUTE_URIS = 'routeUris';
+
+    const THIS_REQUIRES = [
+        self::OPTION_ROUTE_TREE => self::TYPE_ARRAY
+    ];
 
     /**
      * @var array
@@ -122,6 +121,8 @@ class HttpRouterHub extends HttpHub {
                 return $result;
             }
         }
+
+        return null;
     }
 
     /**
@@ -133,7 +134,6 @@ class HttpRouterHub extends HttpHub {
      */
     protected function getHandler(string $name): CargoHandlerInterface {
         return $this->loadedHandlers[$name] ?? ($this->loadedHandlers[$name] = $this->produceHandler($name));
-
     }
 
     /**

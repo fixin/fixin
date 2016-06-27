@@ -15,12 +15,12 @@ use Fixin\View\ViewInterface;
 class WrapInView extends Resource implements NodeInterface {
 
     const ALLOWED_TYPES = ['text/html'];
-    const CONFIGURATION_REQUIRES = [
-        'contentName' => 'string',
-        'template' => 'string'
-    ];
     const OPTION_CONTENT_NAME = 'contentName';
     const OPTION_TEMPLATE = 'template';
+    const THIS_REQUIRES = [
+        self::OPTION_CONTENT_NAME => self::TYPE_STRING,
+        self::OPTION_TEMPLATE => self::TYPE_STRING
+    ];
 
     /**
      * @var string

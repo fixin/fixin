@@ -15,9 +15,12 @@ use Fixin\View\Engine\EngineInterface;
 class View extends Prototype implements ViewInterface {
 
     const DEFAULT_ENGINE = 'View\Engine\JsonEngine';
-
     const EXCEPTION_FILE_RESOLVER_NOT_SET = 'File resolver not set';
     const EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE = "Unable to resolve template '%s'";
+    const THIS_SETS_LAZY = [
+        self::OPTION_ENGINE => EngineInterface::class,
+        self::OPTION_FILE_RESOLVER => FileResolverInterface::class
+    ];
 
     /**
      * @var ViewInterface[]
@@ -107,7 +110,7 @@ class View extends Prototype implements ViewInterface {
             return $this->engine;
         }
 
-        if ($engine = $this->loadLazyProperty('engine')) {
+        if ($engine = $this->loadLazyProperty(static::OPTION_ENGINE)) {
             return $engine;
         }
 
@@ -143,7 +146,7 @@ class View extends Prototype implements ViewInterface {
      * @return FileResolverInterface
      */
     protected function getFileResolver(): FileResolverInterface {
-        return $this->fileResolver ?: $this->loadLazyProperty('fileResolver');
+        return $this->fileResolver ?: $this->loadLazyProperty(static::OPTION_FILE_RESOLVER);
     }
 
     /**
@@ -211,24 +214,6 @@ class View extends Prototype implements ViewInterface {
         $this->children[$name] = $child;
 
         return $this;
-    }
-
-    /**
-     * Set Engine
-     *
-     * @param string|EngineInterface $engine
-     */
-    protected function setEngine($engine) {
-        $this->setLazyLoadingProperty('engine', EngineInterface::class, $engine);
-    }
-
-    /**
-     * Set FileResolver
-     *
-     * @param string|FileResolverInterface $fileResolver
-     */
-    protected function setFileResolver($fileResolver) {
-        $this->setLazyLoadingProperty('fileResolver', FileResolverInterface::class, $fileResolver);
     }
 
     /**
