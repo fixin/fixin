@@ -29,7 +29,7 @@ class SvgEngine {
     /**
      * @var float
      */
-    protected $itemSize = 0.035;
+    protected $itemSize;
 
     /**
      * @var array
@@ -46,23 +46,15 @@ class SvgEngine {
      */
     protected $ratio;
 
-    /**
-     * @param Processor $processor
-     * @param int $ratio
-     * @param float $ellipseRatio
-     */
-    public function __construct(Processor $processor, int $ratio, float $ellipseRatio) {
+    public function __construct(Processor $processor) {
         $this->processor = $processor;
-        $this->ratio = $ratio;
-        $this->ellipseRatio = $ellipseRatio;
-        $this->fontSize = $ratio * 0.28 * $this->itemSize;
     }
 
-    /**
-     * @param string $text
-     * @return array
-     */
-    function explodeRows(string $text): array {
+    protected function calculateFontSize() {
+        $this->fontSize = $this->ratio * 0.28 * $this->itemSize;
+    }
+
+    protected function explodeRows(string $text): array {
         $words = explode(' ', $text);
 
         $rows = [];
@@ -87,18 +79,29 @@ class SvgEngine {
         return $rows;
     }
 
-    /**
-     * @param array $items
-     * @param float $x
-     * @param float $y
-     * @param float $startAngle
-     * @param float $endAngle
-     */
+    public function itemText(float $x, float $y, string $text): string {
+        $rows = $this->explodeRows($text);
+        $tspans = '';
+        $dy = -count($rows) * 0.7 + 0.25 + 0.75;
+
+        foreach ($rows as $rowNo => $text) {
+            $tspans .= $this->tag('tspan', [
+                'x' => $x,
+                'y' => $y,
+                'dy' => $dy + $rowNo * 1.4 . 'em',
+            ], htmlspecialchars($text));
+        }
+
+        return $this->tag('text', [
+            'style' => 'font-size: ' . $this->fontSize . 'px',
+        ], $tspans);
+    }
+
     protected function placeItems(array $items, float $x, float $y, float $startAngle, float $endAngle) {
         $divs = count($items);
         $angleStep = ($endAngle - $startAngle) / $divs;
         $angle = $startAngle + $angleStep / 2;
-        $itemR = max($this->itemSize * 2.5, $divs * ($this->itemSize * 2.4) / M_PI / 2 * 360 / ($endAngle - $startAngle));
+        $itemR = max($this->itemSize * 2.6, $divs * ($this->itemSize * 2.4) / M_PI / 2 * 360 / ($endAngle - $startAngle));
 
         foreach ($items as $item) {
             $px = $x + cos($angle * M_PI / 180) * $itemR;
@@ -122,10 +125,6 @@ class SvgEngine {
         }
     }
 
-    /**
-     * @param array $groups
-     * @return string
-     */
     public function render(array $groups): string {
         $itemGroups = $this->processor->getGroups();
 
@@ -138,9 +137,6 @@ class SvgEngine {
         return $this->renderLines() . $this->renderItems();
     }
 
-    /**
-     * @return string
-     */
     protected function renderItems(): string {
         $source = '';
         $itemR = $this->itemSize * $this->ratio;
@@ -172,30 +168,15 @@ class SvgEngine {
             ]);
 
             // Text
-            $tspans = '';
-            $rows = $this->explodeRows(Strings::textFromCamelCase($item->getShortName()));
-            $dy = -count($rows) * 0.7 + 0.25 + 0.75;
-            foreach ($rows as $rowNo => $text) {
-                $tspans .= $this->tag('tspan', [
-                    'x' => $px,
-                    'y' => $py,
-                    'dy' => $dy + $rowNo * 1.4 . 'em',
-                ], htmlspecialchars($text));
-            }
+            $source .= $this->itemText($px, $py, Strings::textFromCamelCase($item->getShortName()));
 
-            $source .= $this->tag('text', [
-                'style' => 'font-size: ' . $this->fontSize . 'px',
-            ], $tspans);
-
+            // Close
             $source .= "</g>\n";
         }
 
         return $source;
     }
 
-    /**
-     * @return string
-     */
     protected function renderLines(): string {
         $source = '';
 
@@ -215,12 +196,26 @@ class SvgEngine {
         return $source;
     }
 
-    /**
-     * @param string $name
-     * @param array $attributes
-     * @param string $content
-     * @return string
-     */
+    public function setEllipseRatio(float $ellipseRatio): self {
+        $this->ellipseRatio = $ellipseRatio;
+
+        return $this;
+    }
+
+    public function setItemSize(float $itemSize): self {
+        $this->itemSize = $itemSize;
+        $this->calculateFontSize();
+
+        return $this;
+    }
+
+    public function setRatio(int $ratio): self {
+        $this->ratio = $ratio;
+        $this->calculateFontSize();
+
+        return $this;
+    }
+
     protected function tag(string $name, array $attributes, string $content = ''): string {
         array_walk($attributes, function(&$value, $key) {
             $value = " $key=\"" . htmlspecialchars($value) . '"';

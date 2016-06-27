@@ -9,11 +9,16 @@ namespace FixinTools\ClassTree;
 
 class Processor extends Item {
 
-    protected $items;
+    /**
+     * @var SvgEngine
+     */
+    protected $engine;
 
     /**
-     * @param string $topDir
+     * @var Item[]
      */
+    protected $items;
+
     public function __construct(string $topDir, array $baseClasses) {
         // Include all PHP files under classes/
         $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator("$topDir/classes"));
@@ -26,9 +31,6 @@ class Processor extends Item {
         $this->processElements($baseClasses);
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string {
          $info = '';
 
@@ -42,9 +44,10 @@ class Processor extends Item {
          return $info;
     }
 
-    /**
-     * @return array
-     */
+    public function getEngine(): SvgEngine {
+        return $this->engine ?? ($this->engine = new SvgEngine($this));
+    }
+
     public function getGroups(): array {
         $groups = [];
 
@@ -57,7 +60,7 @@ class Processor extends Item {
 
     /**
      * @param string $name
-     * @return NULL
+     * @return Item|NULL
      */
     public function getItem(string $name) {
         return $this->items[$name] ?? null;
@@ -65,7 +68,7 @@ class Processor extends Item {
 
     /**
      * @param string $namespace
-     * @return Item
+     * @return Item|null
      */
     public function getMainClass(string $namespace) {
         $tags = explode('\\', $namespace);
@@ -77,17 +80,10 @@ class Processor extends Item {
         ?? null;
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
     public function hasItem(string $name): bool {
         return isset($this->items[$name]);
     }
 
-    /**
-     * @param array $baseClasses
-     */
     protected function processElements(array $baseClasses) {
         // Build list
         $items = [];
@@ -131,21 +127,10 @@ class Processor extends Item {
         }
     }
 
-    /**
-     * @param int $ratio
-     * @param float $ellipseRatio
-     * @param array $groups
-     * @return string
-     */
-    public function renderSvg(int $ratio, float $ellipseRatio, array $groups): string {
-        $engine = new SvgEngine($this, $ratio, $ellipseRatio);
-
-        return $engine->render($groups);
+    public function renderSvg(array $groups): string {
+        return $this->getEngine()->render($groups);
     }
 
-    /**
-     * @return \FixinTools\ClassTree\Processor
-     */
     public function uniteInterfaceImplementations(): self {
         // Implementations
         $all = $this->items;
