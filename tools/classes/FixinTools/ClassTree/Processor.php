@@ -44,6 +44,12 @@ class Processor extends Item {
          return $info;
     }
 
+    protected function filterInterfaces(Item $item, string $name, array $baseClasses): array {
+        return array_filter($item->getInterfaces(), function($item) use ($name, $baseClasses) {
+            return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->hasItem($item->name);
+        });
+    }
+    
     public function getEngine(): SvgEngine {
         return $this->engine ?? ($this->engine = new SvgEngine($this));
     }
@@ -108,23 +114,17 @@ class Processor extends Item {
         $this->children = [];
         foreach ($this->items as $name => $item) {
             // Extends class
-            if (($parentClass = $item->getReflection()->getParentClass()) && (in_array($name, $baseClasses) || !in_array($parentClass->name, $baseClasses)) && isset($items[$parentClass->name])) {
+            if (($parentClass = $item->getReflection()->getParentClass()) && (in_array($name, $baseClasses) || !in_array($parentClass->name, $baseClasses)) && isset($this->items[$parentClass->name])) {
                 $this->items[$parentClass->name]->addChild($item);
 
                 continue;
             }
 
             // Interface
-            if ($interfaces = $item->getInterfaces()) {
-                $interfaces = array_filter($interfaces, function($item) use ($name, $baseClasses) {
-                    return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->hasItem($item->name);
-                });
+            if ($interfaces = $this->filterInterfaces($item, $name, $baseClasses)) {
+                $this->items[reset($interfaces)->name]->addChild($item);
 
-                if (count($interfaces)) {
-                    $this->items[reset($interfaces)->name]->addChild($item);
-
-                    continue;
-                }
+                continue;
             }
 
             $this->children[$name] = $item;
@@ -155,25 +155,18 @@ class Processor extends Item {
     }
 
     protected function uniteImplementations() {
-        $all = $this->items;
-        while (count($all)) {
-            $current = array_shift($all);
-
+        foreach ($this->items as $current) {
             if ($implementationOf = $current->getImplementationOf()) {
                 $oldName = $implementationOf->getName();
                 $newName = $current->getName();
 
                 $implementationOf->unite($current);
+                $this->items[$newName] = $implementationOf;
 
                 unset($this->items[$oldName]);
                 unset($this->children[$oldName]);
 
-                // Loop remove
-                if ($implementationOf->isDescendant($current->getParent())) {
-                    $this->uniteImplementationsRemoveLoop($current, $implementationOf);
-                }
-
-                $this->items[$newName] = $implementationOf;
+                $this->uniteImplementationsRemoveLoop($current, $implementationOf);
 
                 if (!$implementationOf->getParent()) {
                     $this->children[$implementationOf->getName()] = $implementationOf;
@@ -183,10 +176,12 @@ class Processor extends Item {
     }
 
     protected function uniteImplementationsRemoveLoop(Item $current, Item $implementationOf) {
-        $parent = $current->getParent();
-        while ($parent !== $implementationOf) {
-            $parent->removeFromParent();
-            $parent = $parent->getParent();
+        if ($implementationOf->isDescendant($current->getParent())) {
+            $parent = $current->getParent();
+            while ($parent !== $implementationOf) {
+                $parent->removeFromParent();
+                $parent = $parent->getParent();
+            }
         }
     }
 }

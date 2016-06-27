@@ -47,7 +47,7 @@ class Item {
         return $info;
     }
 
-    public function addChild(self $child): self {
+    public function addChild(Item $child): self {
         $child->removeFromParent();
 
         $this->children[$child->getName()] = $child;
@@ -71,10 +71,8 @@ class Item {
         $namespace = $this->reflection->getNamespaceName();
 
         // Factory
-        if (Strings::endsWith($this->getName(), 'Factory')) {
-            if ($factoryOf = $this->processor->getItem(implode('\\', explode('\\', $namespace, -1)) . '\\' . mb_substr($this->getShortName(), 0, -7))) {
-                return $factoryOf;
-            }
+        if ($factoryOf = $this->getFactoryOf()) {
+            return $factoryOf;
         }
 
         // Main Class
@@ -92,6 +90,13 @@ class Item {
         return $this->children;
     }
 
+    /**
+     * @return self|null
+     */
+    protected function getFactoryOf() {
+        return Strings::endsWith($this->getName(), 'Factory') ? $this->processor->getItem(implode('\\', explode('\\', $this->reflection->getNamespaceName(), -1)) . '\\' . mb_substr($this->getShortName(), 0, -7)) : null;
+    }
+
     public function getGroup(): string {
         $name = $this->getName();
 
@@ -102,10 +107,6 @@ class Item {
      * @return self|null
      */
     public function getImplementationOf() {
-        if (!$this->isClass()) {
-            return null;
-        }
-
         $name = $this->getName();
         foreach ($this->getInterfaces() as $interface) {
             $interfaceName = $interface->name;
