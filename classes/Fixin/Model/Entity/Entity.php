@@ -11,7 +11,7 @@ use Fixin\Model\Entity\Exception\NotStoredEntityException;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 
-class Entity extends Prototype implements EntityInterface {
+abstract class Entity extends Prototype implements EntityInterface {
 
     const EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity';
     const THIS_SETS_LAZY = [
@@ -32,6 +32,11 @@ class Entity extends Prototype implements EntityInterface {
      * @var RepositoryInterface|false|null
      */
     protected $repository;
+
+    /**
+     * @return array
+     */
+    abstract protected function collectSaveData(): array;
 
     /**
      * {@inheritDoc}
@@ -85,7 +90,12 @@ class Entity extends Prototype implements EntityInterface {
      * @see \Fixin\Model\Entity\EntityInterface::save()
      */
     public function save(): EntityInterface {
-        // TODO         $this->getRepository()->where($this->entityId)->update($set);
+        if ($this->entityId) {
+            $this->getRepository()->where($this->entityId)->update($this->collectSaveData());
+        }
+        else {
+            $this->entityId = $this->getRepository()->insert($this->collectSaveData());
+        }
 
         $this->deleted = false;
 
