@@ -60,6 +60,14 @@ interface RepositoryInterface extends ResourceInterface {
     public function getName(): string;
 
     /**
+     * Insert
+     *
+     * @param array $set
+     * @return int
+     */
+    public function insert(array $set): int;
+
+    /**
      * Insert into
      *
      * @param RepositoryInterface $repository

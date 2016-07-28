@@ -22,6 +22,14 @@ interface StorageInterface extends ResourceInterface {
     public function delete(RepositoryRequestInterface $request): int;
 
     /**
+     * Insert
+     *
+     * @param array $set
+     * @return int
+     */
+    public function insert(array $set): int;
+
+    /**
      * Insert into
      *
      * @param RepositoryInterface $repository

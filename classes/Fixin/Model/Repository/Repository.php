@@ -194,6 +194,14 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::insert($set)
+     */
+    public function insert(array $set): int {
+        return $this->getStorage()->insert($set);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::insertInto($repository, $request)
      */
     public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int {
