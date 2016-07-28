@@ -342,6 +342,8 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
         // Cookie changes
         $this->cookies->sendChanges();
 
+        // @todo header
+
         // Content
         echo $this->content;
     }
