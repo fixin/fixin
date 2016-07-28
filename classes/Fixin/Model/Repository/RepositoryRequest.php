@@ -18,6 +18,11 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
     ];
 
     /**
+     * @var int|null
+     */
+    protected $limit;
+
+    /**
      * @var RepositoryInterface
      */
     protected $repository;
@@ -69,7 +74,7 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
      * @see \Fixin\Model\Repository\RepositoryRequestInterface::limit($limit)
      */
     public function limit(int $limit): RepositoryRequestInterface {
-        // TODO
+        $this->limit = $limit;
 
         return $this;
     }
