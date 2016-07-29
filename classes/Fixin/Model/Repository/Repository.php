@@ -39,6 +39,11 @@ class Repository extends Resource implements RepositoryInterface {
     ];
 
     /**
+     * @var string
+     */
+    protected $autoIncrementColumn;
+
+    /**
      * @var EntityIdInterface|false|null
      */
     protected $entityIdPrototype;
@@ -143,6 +148,14 @@ class Repository extends Resource implements RepositoryInterface {
     }
 
     /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::getAutoIncrementColumn()
+     */
+    public function getAutoIncrementColumn() {
+        return $this->autoIncrementColumn;
+    }
+
+    /**
      * Get entity ID prototype
      *
      * @return EntityIdInterface
@@ -173,6 +186,14 @@ class Repository extends Resource implements RepositoryInterface {
     }
 
     /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::getPrimaryKey()
+     */
+    public function getPrimaryKey(): array {
+        return $this->primaryKey;
+    }
+
+    /**
      * Get request prototype
      *
      * @return RepositoryRequestInterface
@@ -196,8 +217,18 @@ class Repository extends Resource implements RepositoryInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::insert($set)
      */
-    public function insert(array $set): int {
-        return $this->getStorage()->insert($set);
+    public function insert(array $set): EntityIdInterface {
+        if ($this->getStorage()->insert($set)) {
+            $id = Arrays::intersectByKeys($set, $this->primaryKey);
+
+            if (isset($this->autoIncrementColumn)) {
+                $id[$this->autoIncrementColumn] = $this->storage->getLastInsertValue();
+            }
+
+            return $this->createIdWithArray($id);
+        }
+
+        return null;
     }
 
     /**
@@ -232,6 +263,15 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function selectRawData(RepositoryRequestInterface $request): StorageResultInterface {
         return $this->getStorage()->select($request);
+    }
+
+    /**
+     * Set auto-increment column
+     *
+     * @param string $autoIncrementColumn
+     */
+    protected function setAutoIncrementColumn(string $autoIncrementColumn) {
+        $this->autoIncrementColumn = $autoIncrementColumn;
     }
 
     /**

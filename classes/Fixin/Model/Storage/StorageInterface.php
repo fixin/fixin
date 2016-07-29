@@ -22,6 +22,13 @@ interface StorageInterface extends ResourceInterface {
     public function delete(RepositoryRequestInterface $request): int;
 
     /**
+     * Get last insert value
+     *
+     * @return int
+     */
+    public function getLastInsertValue(): int;
+
+    /**
      * Insert
      *
      * @param array $set
