@@ -23,6 +23,17 @@ class Arrays extends DoNotCreate {
     }
 
     /**
+     * Intersect by keys
+     *
+     * @param array $array
+     * @param array $keys
+     * @return array
+     */
+    public static function intersectByKeys(array $array, array $keys): array {
+        return array_intersect_key($array, array_flip($keys));
+    }
+
+    /**
      * Set value at path
      *
      * @param array $array
