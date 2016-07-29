@@ -18,7 +18,7 @@ use Fixin\Resource\ResourceManagerInterface;
 
 class Repository extends Resource implements RepositoryInterface {
 
-    const DEFAULT_ID_PROTOTYPE = 'Model\Entity\EntityId';
+    const DEFAULT_ENTITY_ID_PROTOTYPE = 'Model\Entity\EntityId';
     const DEFAULT_REQUEST_PROTOTYPE = 'Model\Repository\RepositoryRequest';
     const EXCEPTION_INVALID_ID = "Invalid ID";
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
@@ -79,8 +79,8 @@ class Repository extends Resource implements RepositoryInterface {
      * @param string $name
      */
     public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
-        parent::__construct($container, $options += [
-            static::OPTION_ENTITY_ID_PROTOTYPE => static::DEFAULT_ID_PROTOTYPE,
+        parent::__construct($container, ($options ?? []) + [
+            static::OPTION_ENTITY_ID_PROTOTYPE => static::DEFAULT_ENTITY_ID_PROTOTYPE,
             static::OPTION_REQUEST_PROTOTYPE => static::DEFAULT_REQUEST_PROTOTYPE
         ], $name);
     }
