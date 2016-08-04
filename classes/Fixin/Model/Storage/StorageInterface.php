@@ -31,10 +31,11 @@ interface StorageInterface extends ResourceInterface {
     /**
      * Insert
      *
+     * @param RepositoryInterface $repository
      * @param array $set
      * @return int
      */
-    public function insert(array $set): int;
+    public function insert(RepositoryInterface $repository, array $set): int;
 
     /**
      * Insert into
