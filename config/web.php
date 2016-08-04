@@ -32,7 +32,7 @@ return [
             // Basics
             'defaultFileSystem' => 'Base\FileSystem\Local',
             'fileStorage' => [
-                'class' => 'Base\Storage\Directory\DirectoryStorage',
+                'class' => 'Model\Storage\Directory\DirectoryStorage',
                 'options' => [
                     'fileSystem' => 'defaultFileSystem'
                 ]
