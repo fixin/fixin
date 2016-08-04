@@ -173,6 +173,8 @@ class HttpCargoFactory extends Factory {
      * @return SessionManagerInterface
      */
     protected function setupSession(CookieManagerInterface $cookies): SessionManagerInterface {
+        // TODO: locking
+
         return $this->container->clonePrototype('Base\Session\SessionManager', [
             SessionManagerInterface::OPTION_COOKIE_MANAGER => $cookies
         ]);

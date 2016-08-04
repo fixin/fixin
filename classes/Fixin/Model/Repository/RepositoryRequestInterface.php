@@ -78,27 +78,30 @@ interface RepositoryRequestInterface extends PrototypeInterface {
     /*
      * avg
      * column
+     * value
      * count
-     * between
+     * max
+     * min
+     * sum
+     *
      * distinct
+     * columns?
      * exists
-     * first
      * having
      * groupBy
-     * in
      * insertInto
      * join
      * leftJoin
-     * max
-     * min
+     * orderBy
+     * union
+     * unionAll
+     *
+     * between
+     * in
      * notBetween
      * notIn
      * notNull
      * null
-     * orderBy
-     * sum
-     * union
-     * unionAll
-     * value
+     * nested, nestedClose
      */
 }

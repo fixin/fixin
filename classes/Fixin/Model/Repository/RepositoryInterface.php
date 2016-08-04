@@ -15,6 +15,7 @@ use Fixin\Resource\ResourceInterface;
 
 interface RepositoryInterface extends ResourceInterface {
 
+    const OPTION_AUTO_INCREMENT_COLUMN = 'autoIncrementColumn';
     const OPTION_ENTITY_ID_PROTOTYPE = 'entityIdPrototype';
     const OPTION_ENTITY_PROTOTYPE = 'entityPrototype';
     const OPTION_NAME = 'name';
@@ -53,11 +54,33 @@ interface RepositoryInterface extends ResourceInterface {
     public function delete(RepositoryRequestInterface $request): int;
 
     /**
+     * Get auto-increment column
+     *
+     * @return string|null
+     */
+    public function getAutoIncrementColumn();
+
+    /**
      * Get name of the repository
      *
      * @return string
      */
     public function getName(): string;
+
+    /**
+     * Get primary key
+     *
+     * @return string[]
+     */
+    public function getPrimaryKey(): array;
+
+    /**
+     * Insert
+     *
+     * @param array $set
+     * @return EntityIdInterface
+     */
+    public function insert(array $set): EntityIdInterface;
 
     /**
      * Insert into
