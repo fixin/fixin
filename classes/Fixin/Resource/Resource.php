@@ -16,6 +16,7 @@ abstract class Resource implements ResourceInterface {
     const EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s for %s";
     const THIS_REQUIRES = [];
     const THIS_SETS_LAZY = [];
+    const TYPE_ANY = 'any';
     const TYPE_ARRAY = 'array';
     const TYPE_INSTANCE = 'instance';
     const TYPE_STRING = 'string';
@@ -47,6 +48,17 @@ abstract class Resource implements ResourceInterface {
 
         // Configuration test
         $this->configurationTests();
+    }
+
+    /**
+     * Any test
+     *
+     * @param mixed $value
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     */
+    private function configurationAnyTest($value): bool {
+        return isset($value);
     }
 
     /**
