@@ -71,8 +71,8 @@ interface RepositoryRequestInterface extends PrototypeInterface {
      * Add an or between
      *
      * @param string $identifier
-     * @param int|float|string $min
-     * @param int|float|string $max
+     * @param number|string $min
+     * @param number|string $max
      * @return self
      */
     public function orWhereBetween(string $identifier, $min, $max): self;
@@ -107,8 +107,8 @@ interface RepositoryRequestInterface extends PrototypeInterface {
      * Add an or not between
      *
      * @param string $identifier
-     * @param int|float|string $min
-     * @param int|float|string $max
+     * @param number|string $min
+     * @param number|string $max
      * @return self
      */
     public function orWhereNotBetween(string $identifier, $min, $max): self;
@@ -166,8 +166,8 @@ interface RepositoryRequestInterface extends PrototypeInterface {
      * Add an and between
      *
      * @param string $identifier
-     * @param int|float|string $min
-     * @param int|float|string $max
+     * @param number|string $min
+     * @param number|string $max
      * @return self
      */
     public function whereBetween(string $identifier, $min, $max): self;
@@ -202,8 +202,8 @@ interface RepositoryRequestInterface extends PrototypeInterface {
      * Add an and not between
      *
      * @param string $identifier
-     * @param int|float|string $min
-     * @param int|float|string $max
+     * @param number|string $min
+     * @param number|string $max
      * @return self
      */
     public function whereNotBetween(string $identifier, $min, $max): self;

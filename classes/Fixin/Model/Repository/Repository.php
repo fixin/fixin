@@ -14,27 +14,22 @@ use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Resource;
-use Fixin\Resource\ResourceManagerInterface;
 
 class Repository extends Resource implements RepositoryInterface {
 
-    const DEFAULT_ENTITY_ID_PROTOTYPE = 'Model\Entity\EntityId';
-    const DEFAULT_REQUEST_PROTOTYPE = 'Model\Repository\RepositoryRequest';
+    const ENTITY_ID_PROTOTYPE = 'Model\Entity\EntityId';
     const EXCEPTION_INVALID_ID = "Invalid ID";
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
     const NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
+    const REQUEST_PROTOTYPE = 'Model\Repository\RepositoryRequest';
     const THIS_REQUIRES = [
-        self::OPTION_ENTITY_ID_PROTOTYPE => self::TYPE_INSTANCE,
         self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
         self::OPTION_NAME => self::TYPE_STRING,
         self::OPTION_PRIMARY_KEY => self::TYPE_ARRAY,
-        self::OPTION_REQUEST_PROTOTYPE => self::TYPE_INSTANCE,
         self::OPTION_STORAGE => self::TYPE_INSTANCE,
     ];
     const THIS_SETS_LAZY = [
-        self::OPTION_ENTITY_ID_PROTOTYPE => EntityIdInterface::class,
         self::OPTION_ENTITY_PROTOTYPE => EntityInterface::class,
-        self::OPTION_REQUEST_PROTOTYPE => RepositoryRequestInterface::class,
         self::OPTION_STORAGE => StorageInterface::class
     ];
 
@@ -42,11 +37,6 @@ class Repository extends Resource implements RepositoryInterface {
      * @var string
      */
     protected $autoIncrementColumn;
-
-    /**
-     * @var EntityIdInterface|false|null
-     */
-    protected $entityIdPrototype;
 
     /**
      * @var EntityInterface|false|null
@@ -64,33 +54,16 @@ class Repository extends Resource implements RepositoryInterface {
     protected $primaryKey = ['id'];
 
     /**
-     * @var RepositoryRequestInterface|false|null
-     */
-    protected $requestPrototype;
-
-    /**
      * @var StorageInterface|false|null
      */
     protected $storage;
-
-    /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     * @param string $name
-     */
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
-        parent::__construct($container, ($options ?? []) + [
-            static::OPTION_ENTITY_ID_PROTOTYPE => static::DEFAULT_ENTITY_ID_PROTOTYPE,
-            static::OPTION_REQUEST_PROTOTYPE => static::DEFAULT_REQUEST_PROTOTYPE
-        ], $name);
-    }
 
     /**
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::all()
      */
     public function all(): EntitySetInterface {
-        return (clone $this->getRequestPrototype())->get();
+        return $this->request()->get();
     }
 
     /**
@@ -134,7 +107,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @return EntityIdInterface
      */
     private function createIdWithArray(array $entityId): EntityIdInterface {
-        return $this->getEntityIdPrototype()->withOptions([
+        return $this->container->clonePrototype(static::ENTITY_ID_PROTOTYPE, [
             EntityIdInterface::OPTION_ENTITY_ID => $entityId
         ]);
     }
@@ -153,17 +126,6 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function getAutoIncrementColumn() {
         return $this->autoIncrementColumn;
-    }
-
-    /**
-     * Get entity ID prototype
-     *
-     * @return EntityIdInterface
-     */
-    protected function getEntityIdPrototype(): EntityIdInterface {
-        return $this->entityIdPrototype ?: $this->loadLazyProperty(static::OPTION_ENTITY_ID_PROTOTYPE, [
-            EntityIdInterface::OPTION_REPOSITORY => $this
-        ]);
     }
 
     /**
@@ -191,17 +153,6 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function getPrimaryKey(): array {
         return $this->primaryKey;
-    }
-
-    /**
-     * Get request prototype
-     *
-     * @return RepositoryRequestInterface
-     */
-    protected function getRequestPrototype(): RepositoryRequestInterface {
-        return $this->requestPrototype ?: $this->loadLazyProperty(static::OPTION_REQUEST_PROTOTYPE, [
-            RepositoryRequestInterface::OPTION_REPOSITORY => $this
-        ]);
     }
 
     /**
@@ -254,7 +205,9 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::request()
      */
     public function request(): RepositoryRequestInterface {
-        return clone $this->getRequestPrototype();
+        return $this->container->clonePrototype(static::REQUEST_PROTOTYPE, [
+            RepositoryRequestInterface::OPTION_REPOSITORY => $this
+        ]);
     }
 
     /**
