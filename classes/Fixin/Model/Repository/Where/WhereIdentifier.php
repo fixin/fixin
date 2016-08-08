@@ -10,6 +10,9 @@ namespace Fixin\Model\Repository\Where;
 abstract class WhereIdentifier extends Where {
 
     const OPTION_IDENTIFIER = 'identifier';
+    const THIS_REQUIRES = [
+        self::OPTION_IDENTIFIER => self::TYPE_ANY,
+    ];
 
     /**
      * @var string|RepositoryRequestInterface|\Closure
