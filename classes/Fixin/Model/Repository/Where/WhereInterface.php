@@ -14,6 +14,7 @@ interface WhereInterface extends PrototypeInterface {
     const JOIN_AND = 'and';
     const JOIN_OR = 'or';
     const OPTION_JOIN = 'join';
+    const OPTION_NEGATED = 'negated';
 
     /**
      * Get join
@@ -21,4 +22,11 @@ interface WhereInterface extends PrototypeInterface {
      * @return string
      */
     public function getJoin(): string;
+
+    /**
+     * Is negated
+     *
+     * @return boolean
+     */
+    public function isNegated(): boolean;
 }
