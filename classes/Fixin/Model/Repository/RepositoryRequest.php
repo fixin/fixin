@@ -9,6 +9,7 @@ namespace Fixin\Model\Repository;
 
 use Fixin\Resource\Prototype;
 use Fixin\Model\Repository\Where\WhereBetween;
+use Fixin\Model\Repository\Where\WhereCompare;
 
 class RepositoryRequest extends Prototype implements RepositoryRequestInterface {
 
@@ -115,6 +116,20 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
             WhereBetween::OPTION_IDENTIFIER => $identifier,
             WhereBetween::OPTION_MIN => $min,
             WhereBetween::OPTION_MAX => $max
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::whereCompare($left, $operator, $right)
+     */
+    public function whereCompare($left, $operator, $right) {
+        $this->where[] = $this->container->clonePrototype(static::WHERE_COMPARE_PROTOTYPE, [
+            WhereCompare::OPTION_LEFT => $left,
+            WhereCompare::OPTION_OPERATOR => $operator,
+            WhereCompare::OPTION_RIGHT => $right
         ]);
 
         return $this;

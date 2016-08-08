@@ -9,14 +9,13 @@ namespace Fixin\Model\Repository\Where;
 
 class WhereBetween extends WhereIdentifier {
 
+    const OPTION_MAX = 'max';
+    const OPTION_MIN = 'min';
     const THIS_REQUIRES = [
         self::OPTION_IDENTIFIER => self::TYPE_ANY,
         self::OPTION_MAX => self::TYPE_ANY,
         self::OPTION_MIN => self::TYPE_ANY,
     ];
-
-    const OPTION_MAX = 'max';
-    const OPTION_MIN = 'min';
 
     /**
      * @var number|string
