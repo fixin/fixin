@@ -31,6 +31,6 @@ abstract class WhereIdentifier extends Where {
      * @param string|RepositoryRequestInterface|\Closure $identifier
      */
     protected function setIdentifier($identifier) {
-        $this->identifier = $identifier;
+        $this->identifier = $identifier instanceof \Closure ? $this->closureToRequest($identifier) : $identifier;
     }
 }
