@@ -251,6 +251,14 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::request()
+     */
+    public function request(): RepositoryRequestInterface {
+        return clone $this->getRequestPrototype();
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::selectEntities($request)
      */
     public function selectEntities(RepositoryRequestInterface $request): EntitySetInterface {
@@ -305,13 +313,5 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function update(array $set, RepositoryRequestInterface $request): int {
         return $this->isValidRequest($request) && $this->getStorage()->update($set, $request);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::where($where)
-     */
-    public function where($where): RepositoryRequestInterface {
-        return (clone $this->getRequestPrototype())->where($where);
     }
 }

@@ -92,6 +92,13 @@ interface RepositoryInterface extends ResourceInterface {
     public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int;
 
     /**
+     * New request
+     *
+     * @return RepositoryRequestInterface
+     */
+    public function request(): RepositoryRequestInterface;
+
+    /**
      * Select entities
      *
      * @param RepositoryRequestInterface $request
@@ -115,13 +122,4 @@ interface RepositoryInterface extends ResourceInterface {
      * @return int
      */
     public function update(array $set, RepositoryRequestInterface $request): int;
-
-    /**
-     * New request
-     *
-     * @param mixed $where
-     * @return RepositoryRequestInterface
-     */
-    public function where($where): RepositoryRequestInterface;
-
 }
