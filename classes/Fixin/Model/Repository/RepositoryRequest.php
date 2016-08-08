@@ -8,14 +8,19 @@
 namespace Fixin\Model\Repository;
 
 use Fixin\Resource\Prototype;
-use Fixin\Model\Entity\EntitySetInterface;
-use Fixin\Model\Storage\StorageResultInterface;
+use Fixin\Model\Repository\Where\WhereBetween;
 
 class RepositoryRequest extends Prototype implements RepositoryRequestInterface {
 
     const THIS_REQUIRES = [
         self::OPTION_REPOSITORY => self::TYPE_INSTANCE
     ];
+    const WHERE_BETWEEN_PROTOTYPE = 'Model\Repository\Where\WhereBetween';
+    const WHERE_COMPARE_PROTOTYPE = 'Model\Repository\Where\WhereCompare';
+    const WHERE_EXISTS_PROTOTYPE = 'Model\Repository\Where\WhereExists';
+    const WHERE_IN_PROTOTYPE = 'Model\Repository\Where\WhereIn';
+    const WHERE_NULL_PROTOTYPE = 'Model\Repository\Where\WhereNull';
+    const WHERE_REQUEST_PROTOTYPE = 'Model\Repository\Where\WhereRequest';
 
     /**
      * @var int|null
@@ -26,6 +31,11 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
      * @var RepositoryInterface
      */
     protected $repository;
+
+    /**
+     * @var array
+     */
+    protected $wheres = [];
 
     /**
      * {@inheritDoc}
@@ -98,10 +108,14 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryRequestInterface::where($where)
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::whereBetween($identifier, $min, $max)
      */
-    public function where($where): RepositoryRequestInterface {
-        // TODO
+    public function whereBetween(string $identifier, $min, $max): RepositoryRequestInterface {
+        $this->where[] = $this->container->clonePrototype(static::WHERE_BETWEEN_PROTOTYPE, [
+            WhereBetween::OPTION_IDENTIFIER => $identifier,
+            WhereBetween::OPTION_MIN => $min,
+            WhereBetween::OPTION_MAX => $max
+        ]);
 
         return $this;
     }
