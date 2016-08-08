@@ -80,9 +80,9 @@ interface RepositoryRequestInterface extends PrototypeInterface {
     /**
      * Add an or where compare
      *
-     * @param string|self|\Closure $left
+     * @param number|string|self|\Closure $left
      * @param string $operator
-     * @param string|self|\Closure|array $right
+     * @param number|string|self|\Closure|array $right
      * @return self
      */
     public function orWhereCompare($left, string $operator, $right): self;
@@ -175,9 +175,9 @@ interface RepositoryRequestInterface extends PrototypeInterface {
     /**
      * Add an and where compare
      *
-     * @param string|self|\Closure $left
+     * @param number|string|self|\Closure $left
      * @param string $operator
-     * @param string|self|\Closure|array $right
+     * @param number|string|self|\Closure|array $right
      * @return self
      */
     public function whereCompare($left, string $operator, $right): self;

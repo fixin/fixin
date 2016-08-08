@@ -10,6 +10,9 @@ namespace Fixin\Model\Repository;
 use Fixin\Resource\Prototype;
 use Fixin\Model\Repository\Where\WhereBetween;
 use Fixin\Model\Repository\Where\WhereCompare;
+use Fixin\Model\Repository\Where\WhereIn;
+use Fixin\Model\Repository\Where\WhereNull;
+use Fixin\Model\Repository\Where\WhereExists;
 
 class RepositoryRequest extends Prototype implements RepositoryRequestInterface {
 
@@ -112,7 +115,7 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
      * @see \Fixin\Model\Repository\RepositoryRequestInterface::whereBetween($identifier, $min, $max)
      */
     public function whereBetween(string $identifier, $min, $max): RepositoryRequestInterface {
-        $this->where[] = $this->container->clonePrototype(static::WHERE_BETWEEN_PROTOTYPE, [
+        $this->wheres[] = $this->container->clonePrototype(static::WHERE_BETWEEN_PROTOTYPE, [
             WhereBetween::OPTION_IDENTIFIER => $identifier,
             WhereBetween::OPTION_MIN => $min,
             WhereBetween::OPTION_MAX => $max
@@ -126,10 +129,47 @@ class RepositoryRequest extends Prototype implements RepositoryRequestInterface 
      * @see \Fixin\Model\Repository\RepositoryRequestInterface::whereCompare($left, $operator, $right)
      */
     public function whereCompare($left, $operator, $right) {
-        $this->where[] = $this->container->clonePrototype(static::WHERE_COMPARE_PROTOTYPE, [
+        $this->wheres[] = $this->container->clonePrototype(static::WHERE_COMPARE_PROTOTYPE, [
             WhereCompare::OPTION_LEFT => $left,
             WhereCompare::OPTION_OPERATOR => $operator,
             WhereCompare::OPTION_RIGHT => $right
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::whereExists($request)
+     */
+    public function whereExists($request) {
+        $this->wheres[] = $this->container->clonePrototype(static::WHERE_EXISTS_PROTOTYPE, [
+            WhereExists::OPTION_REQUEST => $request
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::whereIn($identifier, $values)
+     */
+    public function whereIn($identifier, $values) {
+        $this->wheres[] = $this->container->clonePrototype(static::WHERE_IN_PROTOTYPE, [
+            WhereIn::OPTION_IDENTIFIER => $identifier,
+            WhereIn::OPTION_VALUES => $values
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryRequestInterface::whereNull($identifier)
+     */
+    public function whereNull($identifier) {
+        $this->wheres[] = $this->container->clonePrototype(static::WHERE_NULL_PROTOTYPE, [
+            WhereNull::OPTION_IDENTIFIER => $identifier
         ]);
 
         return $this;
