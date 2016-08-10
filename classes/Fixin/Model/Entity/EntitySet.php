@@ -142,7 +142,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::prefetchAll()
      */
     public function prefetchAll(): EntitySetInterface {
-        // TODO
+        // TODO: implementation
 
         return $this;
     }

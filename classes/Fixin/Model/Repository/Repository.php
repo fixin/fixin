@@ -215,7 +215,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::selectEntities($request)
      */
     public function selectEntities(RepositoryRequestInterface $request): EntitySetInterface {
-        return null; // TODO
+        return null; // TODO implementation
     }
 
     /**
