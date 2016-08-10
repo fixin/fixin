@@ -87,9 +87,7 @@ class VariableInspector extends DoNotCreate {
             return sprintf(static::VALUE_TEMPLATE, $color, $var);
         }
 
-        // strtr -> str_replace: segmentation fault on some systems with strtr
-        $swaps = ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'];
-        return sprintf(static::VALUE_TEMPLATE, '#c00', '"' . htmlspecialchars(str_replace(array_keys($swaps), array_values($swaps), (string) $var)) . '"');
+        return sprintf(static::VALUE_TEMPLATE, '#c00', '"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"');
     }
 
     /**
