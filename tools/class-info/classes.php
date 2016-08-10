@@ -8,7 +8,7 @@
  */
 
 $topDir = dirname(__DIR__, 2);
-include "$topDir/cheats/tools.php";
+include_once "$topDir/cheats/tools.php";
 
 use \Fixin\Support\VariableInspector;
 

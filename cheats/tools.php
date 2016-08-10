@@ -10,6 +10,6 @@ return (function() {
 
     // Autoloader
     $classesPath = "{$fixinPath}/classes";
-    require "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
+    require_once "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
     new \Fixin\Base\Autoloader\SimpleAutoloader(['Fixin' => "{$classesPath}/Fixin", 'FixinTools' => "{$fixinPath}/tools/classes/FixinTools"]);
 })();
