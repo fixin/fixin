@@ -19,10 +19,10 @@ abstract class Where extends Prototype implements WhereInterface {
     /**
      * @var string
      */
-    protected $join = static::JOIN_AND;
+    protected $join = self::JOIN_AND;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $negated = false;
 
@@ -51,7 +51,7 @@ abstract class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\Where\WhereInterface::isNegated()
      */
-    public function isNegated(): boolean {
+    public function isNegated(): bool {
         return $this->negated;
     }
 
@@ -67,9 +67,9 @@ abstract class Where extends Prototype implements WhereInterface {
     /**
      * Set negated
      *
-     * @param boolean $negated
+     * @param bool $negated
      */
-    protected function setNegated(boolean $negated) {
+    protected function setNegated(bool $negated) {
         $this->negated = $negated;
     }
 }

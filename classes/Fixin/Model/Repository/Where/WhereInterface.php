@@ -26,7 +26,7 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Is negated
      *
-     * @return boolean
+     * @return bool
      */
-    public function isNegated(): boolean;
+    public function isNegated(): bool;
 }
