@@ -34,7 +34,7 @@ abstract class Where extends Prototype implements WhereInterface {
      */
     protected function closureToRequest(\Closure $closure) {
         $request = new static();
-        $where($request);
+        $closure($request);
 
         return $request;
     }
