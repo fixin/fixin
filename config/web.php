@@ -78,7 +78,6 @@ return [
                         'Delivery\Node\ThrowableToText',
                         'errorLayoutViewWrapper',
                         'Delivery\Node\ViewRender',
-                        'Delivery\Node\ArrayToJson'
                     ]
                 ]
             ],
