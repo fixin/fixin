@@ -92,11 +92,12 @@ abstract class Entity extends Prototype implements EntityInterface {
     public function save(): EntityInterface {
         if ($this->entityId) {
             $this->getRepository()->where($this->entityId)->update($this->collectSaveData());
-        }
-        else {
-            $this->entityId = $this->getRepository()->insert($this->collectSaveData());
+            $this->deleted = false;
+
+            return $this;
         }
 
+        $this->entityId = $this->getRepository()->insert($this->collectSaveData());
         $this->deleted = false;
 
         return $this;

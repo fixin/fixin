@@ -18,6 +18,11 @@ use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Model\Repository\Where\WhereInterface;
 use Fixin\Model\Repository\Where\WhereRequest;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class RepositoryRequest extends Prototype implements RepositoryRequestInterface {
 
     const THIS_REQUIRES = [

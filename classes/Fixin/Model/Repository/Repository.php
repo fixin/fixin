@@ -170,13 +170,13 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function insert(array $set): EntityIdInterface {
         if ($this->getStorage()->insert($set)) {
-            $id = Arrays::intersectByKeys($set, $this->primaryKey);
+            $rowId = Arrays::intersectByKeys($set, $this->primaryKey);
 
             if (isset($this->autoIncrementColumn)) {
-                $id[$this->autoIncrementColumn] = $this->storage->getLastInsertValue();
+                $rowId[$this->autoIncrementColumn] = $this->storage->getLastInsertValue();
             }
 
-            return $this->createIdWithArray($id);
+            return $this->createIdWithArray($rowId);
         }
 
         return null;
