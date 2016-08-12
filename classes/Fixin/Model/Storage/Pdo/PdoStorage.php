@@ -30,6 +30,11 @@ class PdoStorage extends Resource implements StorageInterface {
     protected $password;
 
     /**
+     * @var \PDO
+     */
+    protected $resource;
+
+    /**
      * @var string
      */
     protected $username;
@@ -47,7 +52,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::getLastInsertValue()
      */
     public function getLastInsertValue(): int {
-        // todo
+        return $this->resource->lastInsertId();
     }
 
     /**
