@@ -17,8 +17,6 @@ use \Fixin\Support\VariableInspector;
 </td>
 <td class="Parameter Value"><?=
 $parameter->isOptional() && $parameter->isDefaultValueAvailable()
-    ? ($parameter->isDefaultValueConstant()
-        ? htmlspecialchars($parameter->getDefaultValueConstantName())
-        : VariableInspector::valueInfo($parameter->getDefaultValue()))
+    ? VariableInspector::valueInfo($parameter->getDefaultValue())
     : '';
 ?></td>
