@@ -24,7 +24,7 @@ interface RepositoryRequestInterface extends PrototypeInterface {
     public function delete(): int;
 
     /**
-     * First record
+     * First entity
      *
      * @return EntityInterface|null
      */
