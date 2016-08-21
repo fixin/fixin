@@ -25,6 +25,11 @@ class PdoStorage extends Resource implements StorageInterface {
     protected $dsn;
 
     /**
+     * @var GrammarInterface
+     */
+    protected $grammar;
+
+    /**
      * @var string
      */
     protected $password;
@@ -44,6 +49,10 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::delete($request)
      */
     public function delete(RepositoryRequestInterface $request): int {
+        return $this->execute($this->grammar->delete($request));
+    }
+
+    protected function execute(string $script): int {
         // todo
     }
 
@@ -57,10 +66,10 @@ class PdoStorage extends Resource implements StorageInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\StorageInterface::insert($set)
+     * @see \Fixin\Model\Storage\StorageInterface::insert($repository, $set)
      */
     public function insert(RepositoryInterface $repository, array $set): int {
-        // todo
+        return $this->execute($this->grammar->insert($repository, $set));
     }
 
     /**
@@ -68,6 +77,10 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::insertInto($repository, $request)
      */
     public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int {
+        return $this->execute($this->grammar->insertInto($repository, $request));
+    }
+
+    protected function query(string $script): StorageResultInterface {
         // todo
     }
 
@@ -76,7 +89,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::select($request)
      */
     public function select(RepositoryRequestInterface $request): StorageResultInterface {
-        // todo
+        return $this->query($this->grammar->select($request));
     }
 
     /**
@@ -111,6 +124,6 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::update($set, $request)
      */
     public function update(array $set, RepositoryRequestInterface $request): int {
-        // todo
+        return $this->execute($this->grammar->update($set, $request));
     }
 }
