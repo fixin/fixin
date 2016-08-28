@@ -5,9 +5,9 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository\Where;
+namespace Fixin\Model\Request\Where\Tag;
 
-class WhereBetween extends WhereIdentifier {
+class BetweenTag extends IdentifierTag {
 
     const OPTION_MAX = 'max';
     const OPTION_MIN = 'min';

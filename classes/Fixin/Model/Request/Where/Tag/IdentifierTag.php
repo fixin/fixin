@@ -5,9 +5,11 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository\Where;
+namespace Fixin\Model\Request\Where\Tag;
 
-abstract class WhereIdentifier extends Where {
+use Fixin\Model\Request\RequestInterface;
+
+abstract class IdentifierTag extends Tag {
 
     const OPTION_IDENTIFIER = 'identifier';
     const THIS_REQUIRES = [
@@ -15,14 +17,14 @@ abstract class WhereIdentifier extends Where {
     ];
 
     /**
-     * @var string|RepositoryRequestInterface|\Closure
+     * @var string|RequestInterface|\Closure
      */
     protected $identifier;
 
     /**
      * Get identifier
      *
-     * @return string|RepositoryRequestInterface|\Closure
+     * @return string|RequestInterface|\Closure
      */
     public function getIdentifier() {
         return $this->identifier;
@@ -31,7 +33,7 @@ abstract class WhereIdentifier extends Where {
     /**
      * Set identifier
      *
-     * @param string|RepositoryRequestInterface|\Closure $identifier
+     * @param string|RequestInterface|\Closure $identifier
      */
     protected function setIdentifier($identifier) {
         $this->identifier = $identifier instanceof \Closure ? $this->closureToRequest($identifier) : $identifier;

@@ -5,11 +5,11 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository\Where;
+namespace Fixin\Model\Request\Where\Tag;
 
-use Fixin\Model\Repository\RepositoryRequestInterface;
+use Fixin\Model\Request\RequestInterface;
 
-class WhereIn extends WhereIdentifier {
+class InTag extends IdentifierTag {
 
     const OPTION_VALUES = 'values';
     const THIS_REQUIRES = [
@@ -18,14 +18,14 @@ class WhereIn extends WhereIdentifier {
     ];
 
     /**
-     * @var array|RepositoryRequestInterface
+     * @var array|RequestInterface
      */
     protected $values;
 
     /**
      * Get values
      *
-     * @return \Fixin\Model\Repository\RepositoryRequestInterface
+     * @return RequestInterface
      */
     public function getValues() {
         return $this->values;
@@ -34,7 +34,7 @@ class WhereIn extends WhereIdentifier {
     /**
      * Set values
      *
-     * @param array|RepositoryRequestInterface|\Closure $values
+     * @param array|RequestInterface|\Closure $values
      */
     protected function setValues($values) {
         $this->values = $values instanceof \Closure ? $this->closureToRequest($values) : $values;

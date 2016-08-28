@@ -5,11 +5,11 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository\Where;
+namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Resource\PrototypeInterface;
 
-interface WhereInterface extends PrototypeInterface {
+interface TagInterface extends PrototypeInterface {
 
     const JOIN_AND = 'and';
     const JOIN_OR = 'or';

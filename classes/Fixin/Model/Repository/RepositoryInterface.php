@@ -10,6 +10,7 @@ namespace Fixin\Model\Repository;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\ResourceInterface;
 
@@ -46,10 +47,10 @@ interface RepositoryInterface extends ResourceInterface {
     /**
      * Delete
      *
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return int
      */
-    public function delete(RepositoryRequestInterface $request): int;
+    public function delete(RequestInterface $request): int;
 
     /**
      * Get auto-increment column
@@ -84,40 +85,40 @@ interface RepositoryInterface extends ResourceInterface {
      * Insert into
      *
      * @param RepositoryInterface $repository
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return int
      */
-    public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int;
+    public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
 
     /**
      * New request
      *
-     * @return RepositoryRequestInterface
+     * @return RequestInterface
      */
-    public function request(): RepositoryRequestInterface;
+    public function request(): RequestInterface;
 
     /**
      * Select entities
      *
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return EntitySetInterface
      */
-    public function selectEntities(RepositoryRequestInterface $request): EntitySetInterface;
+    public function selectEntities(RequestInterface $request): EntitySetInterface;
 
     /**
      * Select raw data
      *
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return StorageResultInterface
      */
-    public function selectRawData(RepositoryRequestInterface $request): StorageResultInterface;
+    public function selectRawData(RequestInterface $request): StorageResultInterface;
 
     /**
      * Update
      *
      * @param array $set
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return int
      */
-    public function update(array $set, RepositoryRequestInterface $request): int;
+    public function update(array $set, RequestInterface $request): int;
 }

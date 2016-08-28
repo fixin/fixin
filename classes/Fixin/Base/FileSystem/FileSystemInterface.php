@@ -20,7 +20,7 @@ interface FileSystemInterface extends ResourceInterface {
     public function delete(string $filename): bool;
 
     /**
-     * Check the file exists
+     * Check file existence
      *
      * @param string $path
      * @return bool

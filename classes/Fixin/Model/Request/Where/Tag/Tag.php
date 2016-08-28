@@ -5,12 +5,12 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository\Where;
+namespace Fixin\Model\Request\Where\Tag;
 
+use Fixin\Model\Request\RequestInterface;
 use Fixin\Resource\Prototype;
-use Fixin\Model\Repository\RepositoryRequestInterface;
 
-abstract class Where extends Prototype implements WhereInterface {
+abstract class Tag extends Prototype implements TagInterface {
 
     const THIS_REQUIRES = [
         self::OPTION_JOIN => self::TYPE_STRING
@@ -30,9 +30,9 @@ abstract class Where extends Prototype implements WhereInterface {
      * Closure to request process
      *
      * @param \Closure $closure
-     * @return RepositoryRequestInterface
+     * @return RequestInterface
      */
-    protected function closureToRequest(\Closure $closure) {
+    protected function closureToRequest(\Closure $closure): RequestInterface {
         $request = new static();
         $closure($request);
 
@@ -41,7 +41,7 @@ abstract class Where extends Prototype implements WhereInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\Where\WhereInterface::getJoin()
+     * @see \Fixin\Model\Request\Where\Tag\TagInterface::getJoin()
      */
     public function getJoin(): string {
         return $this->join;
@@ -49,7 +49,7 @@ abstract class Where extends Prototype implements WhereInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\Where\WhereInterface::isNegated()
+     * @see \Fixin\Model\Request\Where\Tag\TagInterface::isNegated()
      */
     public function isNegated(): bool {
         return $this->negated;

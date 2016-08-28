@@ -5,11 +5,11 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository\Where;
+namespace Fixin\Model\Request\Where\Tag;
 
-use Fixin\Model\Repository\RepositoryRequestInterface;
+use Fixin\Model\Request\RequestInterface;
 
-class WhereRequest extends Where {
+class RequestTag extends Tag {
 
     const OPTION_REQUEST = 'request';
     const THIS_REQUIRES = [
@@ -17,25 +17,25 @@ class WhereRequest extends Where {
     ];
 
     /**
-     * @var RepositoryRequestInterface
+     * @var RequestInterface
      */
     protected $request;
 
     /**
      * Get request
      *
-     * @return RepositoryRequestInterface
+     * @return RequestInterface
      */
-    public function getRequest(): RepositoryRequestInterface {
+    public function getRequest(): RequestInterface {
         return $this->request;
     }
 
     /**
      * Set request
      *
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      */
-    protected function setRequest(RepositoryRequestInterface $request) {
+    protected function setRequest(RequestInterface $request) {
         $this->request = $request;
     }
 }
