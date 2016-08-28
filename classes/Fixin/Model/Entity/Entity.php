@@ -91,10 +91,17 @@ abstract class Entity extends Prototype implements EntityInterface {
      */
     public function save(): EntityInterface {
         if ($this->entityId) {
+<<<<<<< HEAD
             $this->getRepository()->where($this->entityId)->update($this->collectSaveData());
             $this->deleted = false;
 
             return $this;
+=======
+            $this->getRepository()->request()->where($this->entityId)->update($this->collectSaveData());
+        }
+        else {
+            $this->entityId = $this->getRepository()->insert($this->collectSaveData());
+>>>>>>> refs/remotes/origin/PdoStorage-dev
         }
 
         $this->entityId = $this->getRepository()->insert($this->collectSaveData());
