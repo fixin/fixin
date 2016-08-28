@@ -7,8 +7,8 @@
 
 namespace Fixin\Model\Request\Where;
 
-use Fixin\Resource\PrototypeInterface;
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Resource\PrototypeInterface;
 
 interface WhereInterface extends PrototypeInterface {
 

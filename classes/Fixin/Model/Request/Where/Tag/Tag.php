@@ -7,7 +7,6 @@
 
 namespace Fixin\Model\Request\Where\Tag;
 
-use Fixin\Model\Request\RequestInterface;
 use Fixin\Resource\Prototype;
 
 abstract class Tag extends Prototype implements TagInterface {
@@ -25,19 +24,6 @@ abstract class Tag extends Prototype implements TagInterface {
      * @var bool
      */
     protected $negated = false;
-
-    /**
-     * Closure to request process
-     *
-     * @param \Closure $closure
-     * @return RequestInterface
-     */
-    protected function closureToRequest(\Closure $closure): RequestInterface {
-        $request = new static();
-        $closure($request);
-
-        return $request;
-    }
 
     /**
      * {@inheritDoc}

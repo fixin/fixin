@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Request\Where;
 
+use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\Where\Tag\BetweenTag;
 use Fixin\Model\Request\Where\Tag\CompareTag;
 use Fixin\Model\Request\Where\Tag\ExistsTag;

@@ -5,7 +5,9 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository;
+return;
+
+//namespace Fixin\Model\Repository;
 
 use Fixin\Model\Repository\Where\WhereCompare;
 use Fixin\Model\Repository\Where\WhereIn;
