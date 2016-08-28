@@ -15,12 +15,6 @@ use Fixin\Model\Request\Where\WhereInterface;
 
 class Request extends Prototype implements RequestInterface {
 
-    const BETWEEN_TAG_PROTOTYPE = 'Model\Request\Where\Tag\BetweenTag';
-    const COMPARE_TAG_PROTOTYPE = 'Model\Request\Where\Tag\CompareTag';
-    const EXISTS_TAG_PROTOTYPE = 'Model\Request\Where\Tag\ExistsTag';
-    const IN_TAG_PROTOTYPE = 'Model\Request\Where\Tag\InTag';
-    const NULL_TAG_PROTOTYPE = 'Model\Request\Where\Tag\NullTag';
-    const REQUEST_TAG_PROTOTYPE = 'Model\Request\Where\Tag\RequestTag';
     const THIS_REQUIRES = [
         self::OPTION_REPOSITORY => self::TYPE_INSTANCE
     ];
@@ -45,11 +39,6 @@ class Request extends Prototype implements RequestInterface {
      * @var WhereInterface
      */
     protected $where;
-
-    /**
-     * @var array
-     */
-    protected $wheres = [];
 
     /**
      * {@inheritDoc}
