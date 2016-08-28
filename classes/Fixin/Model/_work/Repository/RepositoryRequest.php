@@ -5,11 +5,19 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository;
+return;
 
+<<<<<<< HEAD
 use Fixin\Model\Repository\Where\WhereBetween;
+=======
+//namespace Fixin\Model\Repository;
+
+>>>>>>> refs/remotes/origin/RepositoryRequest-dev
 use Fixin\Model\Repository\Where\WhereCompare;
+<<<<<<< HEAD
 use Fixin\Model\Repository\Where\WhereExists;
+=======
+>>>>>>> refs/remotes/origin/RepositoryRequest-dev
 use Fixin\Model\Repository\Where\WhereIn;
 use Fixin\Model\Repository\Where\WhereInterface;
 use Fixin\Model\Repository\Where\WhereNull;
@@ -36,7 +44,11 @@ class RepositoryRequest extends Prototype implements RequestInterface {
     protected function addWhere(string $join, $where) {
         // Request, Closure
         if ($where instanceof RequestInterface || $where instanceof \Closure) {
+<<<<<<< HEAD
             $this->wheres[] = $this->container->clonePrototype(static::WHERE_REQUEST_PROTOTYPE, [
+=======
+            $this->tags[] = $this->container->clonePrototype(static::WHERE_REQUEST_PROTOTYPE, [
+>>>>>>> refs/remotes/origin/RepositoryRequest-dev
                 WhereRequest::OPTION_REQUEST => $where
             ]);
 
@@ -86,14 +98,23 @@ class RepositoryRequest extends Prototype implements RequestInterface {
 
     /**
      * {@inheritDoc}
+<<<<<<< HEAD
      * @see \Fixin\Model\Repository\RequestInterface::orWhere($where)
+=======
+     * @see \Fixin\Model\Repository\RequestInterface::or($where)
+>>>>>>> refs/remotes/origin/RepositoryRequest-dev
      */
+<<<<<<< HEAD
     public function orWhere($where): RequestInterface {
+=======
+    public function or($where): self {
+>>>>>>> refs/remotes/origin/RepositoryRequest-dev
         $this->addWhere(WhereInterface::JOIN_OR, $where);
 
         return $this;
     }
 
+<<<<<<< HEAD
     /**
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RequestInterface::orWhereBetween($identifier, $min, $max)
@@ -108,11 +129,18 @@ class RepositoryRequest extends Prototype implements RequestInterface {
 
         return $this;
     }
+=======
+>>>>>>> refs/remotes/origin/RepositoryRequest-dev
 
     /**
      * {@inheritDoc}
+<<<<<<< HEAD
      * @see \Fixin\Model\Repository\RequestInterface::orWhereCompare($left, $operator, $right)
+=======
+     * @see \Fixin\Model\Repository\RequestInterface::where($where)
+>>>>>>> refs/remotes/origin/RepositoryRequest-dev
      */
+<<<<<<< HEAD
     public function orWhereCompare($left, string $operator, $right): RequestInterface {
         $this->wheres[] = $this->container->clonePrototype(static::WHERE_COMPARE_PROTOTYPE, [
             WhereCompare::OPTION_JOIN => WhereInterface::JOIN_OR,
@@ -236,11 +264,15 @@ class RepositoryRequest extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Repository\RequestInterface::where($where)
      */
     public function where($where): RequestInterface {
+=======
+    public function where($where): self {
+>>>>>>> refs/remotes/origin/RepositoryRequest-dev
         $this->addWhere(WhereInterface::JOIN_AND, $where);
 
         return $this;
     }
 
+<<<<<<< HEAD
     /**
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RequestInterface::whereBetween($identifier, $min, $max)
@@ -360,4 +392,6 @@ class RepositoryRequest extends Prototype implements RequestInterface {
 
         return $this;
     }
+=======
+>>>>>>> refs/remotes/origin/RepositoryRequest-dev
 }

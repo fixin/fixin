@@ -33,9 +33,9 @@ abstract class IdentifierTag extends Tag {
     /**
      * Set identifier
      *
-     * @param string|RequestInterface|\Closure $identifier
+     * @param string $identifier
      */
-    protected function setIdentifier($identifier) {
-        $this->identifier = $identifier instanceof \Closure ? $this->closureToRequest($identifier) : $identifier;
+    protected function setIdentifier(string $identifier) {
+        $this->identifier = $identifier;
     }
 }

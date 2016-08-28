@@ -22,7 +22,7 @@ class Repository extends Resource implements RepositoryInterface {
     const EXCEPTION_INVALID_ID = "Invalid ID";
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
     const NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
-    const REQUEST_PROTOTYPE = 'Model\Repository\RepositoryRequest';
+    const REQUEST_PROTOTYPE = 'Model\Request\Request';
     const THIS_REQUIRES = [
         self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
         self::OPTION_NAME => self::TYPE_STRING,
