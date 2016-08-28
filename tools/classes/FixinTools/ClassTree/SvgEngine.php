@@ -46,6 +46,11 @@ class SvgEngine {
      */
     protected $ratio;
 
+    /**
+     * @var array
+     */
+    protected $stopAtClasses = [];
+
     public function __construct(Processor $processor) {
         $this->processor = $processor;
     }
@@ -120,7 +125,7 @@ class SvgEngine {
 
             $this->items[$item->getName()] = $item;
 
-            if ($children = $item->getChildren()) {
+            if (!in_array($item->getName(), $this->stopAtClasses) && ($children = $item->getChildren())) {
                 $childrenStep = min(max($angleStep / 1.3, 160 / count($children) / 1.3), 180);
 
                 $this->placeItems($children, $px, $py, $angle - $childrenStep, $angle + $childrenStep);
@@ -212,6 +217,12 @@ class SvgEngine {
     public function setRatio(int $ratio): self {
         $this->ratio = $ratio;
         $this->calculateFontSize();
+
+        return $this;
+    }
+
+    public function setStopAtClasses(array $stopAtClasses): self {
+        $this->stopAtClasses = $stopAtClasses;
 
         return $this;
     }
