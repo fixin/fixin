@@ -12,6 +12,7 @@ use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\PrototypeInterface;
+use Fixin\Model\Request\Where\WhereInterface;
 
 interface RequestInterface extends PrototypeInterface {
 
@@ -53,6 +54,13 @@ interface RequestInterface extends PrototypeInterface {
     public function getRepository(): RepositoryInterface;
 
     /**
+     * Having
+     *
+     * @return WhereInterface
+     */
+    public function having(): WhereInterface;
+
+    /**
      * Limit count
      *
      * @param int $limit
@@ -67,6 +75,13 @@ interface RequestInterface extends PrototypeInterface {
      * @return int
      */
     public function update(array $set): int;
+
+    /**
+     * Where
+     *
+     * @return WhereInterface
+     */
+    public function where(): WhereInterface;
 
     /*
      * avg

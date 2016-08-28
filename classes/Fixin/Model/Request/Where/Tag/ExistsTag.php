@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository\Where;
+namespace Fixin\Model\Request\Where\Tag;
 
-class WhereExists extends WhereRequest {
+class ExistsTag extends RequestTag {
 }

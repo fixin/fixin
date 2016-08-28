@@ -5,11 +5,11 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository\Where;
+namespace Fixin\Model\Request\Where\Tag;
 
-use Fixin\Model\Repository\RepositoryRequestInterface;
+use Fixin\Model\Request\RequestInterface;
 
-class WhereCompare extends Where {
+class CompareTag extends Tag {
 
     const OPTION_LEFT = 'left';
     const OPTION_OPERATOR = 'operator';
@@ -21,7 +21,7 @@ class WhereCompare extends Where {
     ];
 
     /**
-     * @var number|string|RepositoryRequestInterface
+     * @var number|string|RequestInterface
      */
     protected $left;
 
@@ -31,14 +31,14 @@ class WhereCompare extends Where {
     protected $operator;
 
     /**
-     * @var number|string|RepositoryRequestInterface|array
+     * @var number|string|RequestInterface|array
      */
     protected $right;
 
     /**
      * Get left side
      *
-     * @return number|string|RepositoryRequestInterface
+     * @return number|string|RequestInterface
      */
     public function getLeft() {
         return $this->left;
@@ -56,7 +56,7 @@ class WhereCompare extends Where {
     /**
      * Get right side
      *
-     * @return number|string|RepositoryRequestInterface
+     * @return number|string|RequestInterface
      */
     public function getRight() {
         return $this->right;
@@ -65,7 +65,7 @@ class WhereCompare extends Where {
     /**
      * Set left side
      *
-     * @param number|string|RepositoryRequestInterface $left
+     * @param number|string|RequestInterface $left
      */
     protected function setLeft($left) {
         $this->left = $left instanceof \Closure ? $this->closureToRequest($left) : $left;
@@ -83,7 +83,7 @@ class WhereCompare extends Where {
     /**
      * Set right side
      *
-     * @param number|string|RepositoryRequestInterface|array $right
+     * @param number|string|RequestInterface|array $right
      */
     protected function setRight($right) {
         $this->right = $right instanceof \Closure ? $this->closureToRequest($right) : $right;

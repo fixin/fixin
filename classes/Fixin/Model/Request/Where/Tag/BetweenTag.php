@@ -7,7 +7,7 @@
 
 namespace Fixin\Model\Request\Where\Tag;
 
-abstract class BetweenTag extends IdentifierTag {
+class BetweenTag extends IdentifierTag {
 
     const OPTION_MAX = 'max';
     const OPTION_MIN = 'min';

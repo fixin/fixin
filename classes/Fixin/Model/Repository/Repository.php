@@ -11,6 +11,7 @@ use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Resource;
@@ -116,7 +117,7 @@ class Repository extends Resource implements RepositoryInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::delete($request)
      */
-    public function delete(RepositoryRequestInterface $request): int {
+    public function delete(RequestInterface $request): int {
         return $this->isValidRequest($request) && $this->getStorage()->delete($request);
     }
 
@@ -186,17 +187,17 @@ class Repository extends Resource implements RepositoryInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::insertInto($repository, $request)
      */
-    public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int {
+    public function insertInto(RepositoryInterface $repository, RequestInterface $request): int {
         return $this->isValidRequest($request) && $this->getStorage()->insertInto($repository, $request);
     }
 
     /**
      * Check request validity
      *
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return bool
      */
-    protected function isValidRequest(RepositoryRequestInterface $request): bool {
+    protected function isValidRequest(RequestInterface $request): bool {
         return $request->getRepository() === $this;
     }
 
@@ -204,9 +205,9 @@ class Repository extends Resource implements RepositoryInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::request()
      */
-    public function request(): RepositoryRequestInterface {
+    public function request(): RequestInterface {
         return $this->container->clonePrototype(static::REQUEST_PROTOTYPE, [
-            RepositoryRequestInterface::OPTION_REPOSITORY => $this
+            RequestInterface::OPTION_REPOSITORY => $this
         ]);
     }
 
@@ -214,7 +215,7 @@ class Repository extends Resource implements RepositoryInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::selectEntities($request)
      */
-    public function selectEntities(RepositoryRequestInterface $request): EntitySetInterface {
+    public function selectEntities(RequestInterface $request): EntitySetInterface {
         return null; // TODO implementation
     }
 
@@ -222,7 +223,7 @@ class Repository extends Resource implements RepositoryInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::selectRawData($request)
      */
-    public function selectRawData(RepositoryRequestInterface $request): StorageResultInterface {
+    public function selectRawData(RequestInterface $request): StorageResultInterface {
         return $this->getStorage()->select($request);
     }
 
@@ -264,7 +265,7 @@ class Repository extends Resource implements RepositoryInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::update($set, $request)
      */
-    public function update(array $set, RepositoryRequestInterface $request): int {
+    public function update(array $set, RequestInterface $request): int {
         return $this->isValidRequest($request) && $this->getStorage()->update($set, $request);
     }
 }
