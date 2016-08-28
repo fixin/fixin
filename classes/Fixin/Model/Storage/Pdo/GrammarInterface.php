@@ -7,19 +7,19 @@
 
 namespace Fixin\Model\Storage\Pdo;
 
-use Fixin\Resource\ResourceInterface;
-use Fixin\Model\Repository\RepositoryRequestInterface;
 use Fixin\Model\Repository\RepositoryInterface;
+use Fixin\Model\Request\RequestInterface;
+use Fixin\Resource\ResourceInterface;
 
 interface GrammarInterface extends ResourceInterface {
 
     /**
      * Delete
      *
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return string
      */
-    public function delete(RepositoryRequestInterface $request): string;
+    public function delete(RequestInterface $request): string;
 
     /**
      * Insert
@@ -34,25 +34,25 @@ interface GrammarInterface extends ResourceInterface {
      * Insert into
      *
      * @param RepositoryInterface $repository
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return string
      */
-    public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): string;
+    public function insertInto(RepositoryInterface $repository, RequestInterface $request): string;
 
     /**
      * Select
      *
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return string
      */
-    public function select(RepositoryRequestInterface $request): string;
+    public function select(RequestInterface $request): string;
 
     /**
      * Update
      *
      * @param array $set
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return string
      */
-    public function update(array $set, RepositoryRequestInterface $request): string;
+    public function update(array $set, RequestInterface $request): string;
 }

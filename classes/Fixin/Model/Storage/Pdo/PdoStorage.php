@@ -8,10 +8,10 @@
 namespace Fixin\Model\Storage\Pdo;
 
 use Fixin\Model\Repository\RepositoryInterface;
-use Fixin\Model\Repository\RepositoryRequestInterface;
+use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageInterface;
-use Fixin\Resource\Resource;
 use Fixin\Model\Storage\StorageResultInterface;
+use Fixin\Resource\Resource;
 
 class PdoStorage extends Resource implements StorageInterface {
 
@@ -48,7 +48,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Storage\StorageInterface::delete($request)
      */
-    public function delete(RepositoryRequestInterface $request): int {
+    public function delete(RequestInterface $request): int {
         return $this->execute($this->grammar->delete($request));
     }
 
@@ -76,7 +76,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Storage\StorageInterface::insertInto($repository, $request)
      */
-    public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int {
+    public function insertInto(RepositoryInterface $repository, RequestInterface $request): int {
         return $this->execute($this->grammar->insertInto($repository, $request));
     }
 
@@ -88,7 +88,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Storage\StorageInterface::select($request)
      */
-    public function select(RepositoryRequestInterface $request): StorageResultInterface {
+    public function select(RequestInterface $request): StorageResultInterface {
         return $this->query($this->grammar->select($request));
     }
 
@@ -123,7 +123,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Storage\StorageInterface::update($set, $request)
      */
-    public function update(array $set, RepositoryRequestInterface $request): int {
+    public function update(array $set, RequestInterface $request): int {
         return $this->execute($this->grammar->update($set, $request));
     }
 }

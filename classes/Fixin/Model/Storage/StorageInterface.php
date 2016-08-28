@@ -8,7 +8,7 @@
 namespace Fixin\Model\Storage;
 
 use Fixin\Model\Repository\RepositoryInterface;
-use Fixin\Model\Repository\RepositoryRequestInterface;
+use Fixin\Model\Request\RequestInterface;
 use Fixin\Resource\ResourceInterface;
 
 interface StorageInterface extends ResourceInterface {
@@ -16,10 +16,10 @@ interface StorageInterface extends ResourceInterface {
     /**
      * Delete
      *
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return int
      */
-    public function delete(RepositoryRequestInterface $request): int;
+    public function delete(RequestInterface $request): int;
 
     /**
      * Get last insert value
@@ -44,15 +44,15 @@ interface StorageInterface extends ResourceInterface {
      * @param StorageRequestInterface $request
      * @return int
      */
-    public function insertInto(RepositoryInterface $repository, RepositoryRequestInterface $request): int;
+    public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
 
     /**
      * Select
      *
-     * @param RepositoryRequestInterface $request
+     * @param RequestInterface $request
      * @return StorageResultInterface
      */
-    public function select(RepositoryRequestInterface $request): StorageResultInterface;
+    public function select(RequestInterface $request): StorageResultInterface;
 
     /**
      * Update
@@ -61,5 +61,5 @@ interface StorageInterface extends ResourceInterface {
      * @param StorageRequestInterface $request
      * @return int
      */
-    public function update(array $set, RepositoryRequestInterface $request): int;
+    public function update(array $set, RequestInterface $request): int;
 }
