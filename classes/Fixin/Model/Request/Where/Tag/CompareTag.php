@@ -38,7 +38,7 @@ class CompareTag extends Tag {
     /**
      * Get left side
      *
-     * @return number|string|RequestInterface
+     * @return number|string
      */
     public function getLeft() {
         return $this->left;
@@ -56,7 +56,7 @@ class CompareTag extends Tag {
     /**
      * Get right side
      *
-     * @return number|string|RequestInterface
+     * @return number|string|array
      */
     public function getRight() {
         return $this->right;
@@ -65,10 +65,10 @@ class CompareTag extends Tag {
     /**
      * Set left side
      *
-     * @param number|string|RequestInterface $left
+     * @param number|string $left
      */
     protected function setLeft($left) {
-        $this->left = $left instanceof \Closure ? $this->closureToRequest($left) : $left;
+        $this->left = $left;
     }
 
     /**
@@ -83,9 +83,9 @@ class CompareTag extends Tag {
     /**
      * Set right side
      *
-     * @param number|string|RequestInterface|array $right
+     * @param number|string|array $right
      */
     protected function setRight($right) {
-        $this->right = $right instanceof \Closure ? $this->closureToRequest($right) : $right;
+        $this->right = $right;
     }
 }

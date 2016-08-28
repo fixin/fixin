@@ -8,6 +8,7 @@
 namespace Fixin\Model\Request\Where;
 
 use Fixin\Resource\PrototypeInterface;
+use Fixin\Model\Request\RequestInterface;
 
 interface WhereInterface extends PrototypeInterface {
 
@@ -24,9 +25,9 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: and compare
      *
-     * @param number|string|self|\Closure $left
+     * @param number|string $left
      * @param string $operator
-     * @param number|string|self|\Closure|array $right
+     * @param number|string|array $right
      * @return self
      */
     public function compare($left, string $operator, $right): self;
@@ -34,10 +35,10 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: and exists
      *
-     * @param callable $callback
+     * @param RequestInterface $request
      * @return self
      */
-    public function exists(callable $callback): self;
+    public function exists(RequestInterface $request): self;
 
     /**
      * Add: and in
@@ -48,7 +49,15 @@ interface WhereInterface extends PrototypeInterface {
     public function in(string $identifier, array $values): self;
 
     /**
-     * Add an and not between
+     * Add: and nested where
+     *
+     * @param callable $callback
+     * @return self
+     */
+    public function nested(callable $callback): self;
+
+    /**
+     * Add: and not between
      *
      * @param string $identifier
      * @param number|string $min
@@ -60,10 +69,10 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: and not exists
      *
-     * @param callable $callback
+     * @param RequestInterface $request
      * @return self
      */
-    public function notExists(callable $callback): self;
+    public function notExists(RequestInterface $request): self;
 
     /**
      * Add: and not in
@@ -73,6 +82,14 @@ interface WhereInterface extends PrototypeInterface {
      * @return self
      */
     public function notIn(string $identifier, array $values): self;
+
+    /**
+     * Add: and not nested where
+     *
+     * @param callable $callback
+     * @return self
+     */
+    public function notNested(callable $callback): self;
 
     /**
      * Add: and not null
@@ -103,9 +120,9 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: or compare
      *
-     * @param number|string|self|\Closure $left
+     * @param number|string $left
      * @param string $operator
-     * @param number|string|self|\Closure|array $right
+     * @param number|string|array $right
      * @return self
      */
     public function orCompare($left, string $operator, $right): self;
@@ -113,10 +130,10 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: or exists
      *
-     * @param callable $callback
+     * @param RequestInterface $request
      * @return self
      */
-    public function orExists(callable $callback): self;
+    public function orExists(RequestInterface $request): self;
 
     /**
      * Add: or in
@@ -125,6 +142,14 @@ interface WhereInterface extends PrototypeInterface {
      * @return self
      */
     public function orIn(string $identifier, array $values): self;
+
+    /**
+     * Add: or nested where
+     *
+     * @param callable $callback
+     * @return self
+     */
+    public function orNested(callable $callback): self;
 
     /**
      * Add: or not between
@@ -139,10 +164,10 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: or not exists
      *
-     * @param callable $callback
+     * @param RequestInterface $request
      * @return self
      */
-    public function orNotExists(callable $callback): self;
+    public function orNotExists(RequestInterface $request): self;
 
     /**
      * Add: or not in
@@ -160,6 +185,14 @@ interface WhereInterface extends PrototypeInterface {
      * @return self
      */
     public function orNotNull(string $identifier): self;
+
+    /**
+     * Add: or not nested where
+     *
+     * @param callable $callback
+     * @return self
+     */
+    public function orNotNested(callable $callback): self;
 
     /**
      * Add: or null

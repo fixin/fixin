@@ -34,9 +34,9 @@ class InTag extends IdentifierTag {
     /**
      * Set values
      *
-     * @param array|RequestInterface|\Closure $values
+     * @param array $values
      */
     protected function setValues($values) {
-        $this->values = $values instanceof \Closure ? $this->closureToRequest($values) : $values;
+        $this->values = $values;
     }
 }
