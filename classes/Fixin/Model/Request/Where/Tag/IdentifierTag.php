@@ -7,8 +7,6 @@
 
 namespace Fixin\Model\Request\Where\Tag;
 
-use Fixin\Model\Request\RequestInterface;
-
 abstract class IdentifierTag extends Tag {
 
     const OPTION_IDENTIFIER = 'identifier';
@@ -17,14 +15,14 @@ abstract class IdentifierTag extends Tag {
     ];
 
     /**
-     * @var string|RequestInterface|\Closure
+     * @var string
      */
     protected $identifier;
 
     /**
      * Get identifier
      *
-     * @return string|RequestInterface|\Closure
+     * @return string
      */
     public function getIdentifier() {
         return $this->identifier;
