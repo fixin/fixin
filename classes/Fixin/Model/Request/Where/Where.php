@@ -34,6 +34,33 @@ class Where extends Prototype implements WhereInterface {
     protected $tags = [];
 
     /**
+     * Add items
+     *
+     * @param Where $where
+     * @param array $array
+     */
+    protected function addItems(Where $where, array $array) {
+        foreach ($array as $key => $value) {
+            // Simple where (no key)
+            if (is_numeric($key)) {
+                $where->sub($value);
+
+                continue;
+            }
+
+            // Key - array value
+            if (is_array($value)) {
+                $where->in($key, $value);
+
+                continue;
+            }
+
+            // Key - any value
+            $where->compare($key, CompareTag::OPERATOR_EQUAL, $value);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::between($identifier, $min, $max)
      */
@@ -86,39 +113,15 @@ class Where extends Prototype implements WhereInterface {
         return $this;
     }
 
-    /* TODO: items
-    protected function addItems(Where $where, array $array) {
-        foreach ($array as $key => $value) {
-            // Simple where (no key)
-            if (is_numeric($key)) {
-                $request->request($where);
-
-                continue;
-            }
-
-            // Key - array value
-            if (is_array($value)) {
-                $where->in($key, $value);
-
-                continue;
-            }
-
-            // Key - any value
-            $where->compare($key, static::OPERATOR_EQUALS, $value);
-        }
-    }
-
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\Where\WhereInterface::items($array)
+     */
     public function items(array $array): WhereInterface {
         return $this->nested(function(Where $where) use ($array) {
             $this->addItems($where, $array);
         });
     }
-
-    public function orItems(array $array): WhereInterface {
-        return $this->orNested(function(Where $where) use ($array) {
-            $this->addItems($where, $array);
-        });
-    }*/
 
     /**
      * {@inheritDoc}
@@ -277,6 +280,16 @@ class Where extends Prototype implements WhereInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Request\Where\WhereInterface::orItems($array)
+     */
+    public function orItems(array $array): WhereInterface {
+        return $this->orNested(function(Where $where) use ($array) {
+            $this->addItems($where, $array);
+        });
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::orNested($callback)
      */
     public function orNested(callable $callback): WhereInterface {
@@ -375,6 +388,31 @@ class Where extends Prototype implements WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::NULL_TAG_PROTOTYPE, [
             NullTag::OPTION_JOIN => TagInterface::JOIN_OR,
             NullTag::OPTION_IDENTIFIER => $identifier
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\Where\WhereInterface::orSub($where)
+     */
+    public function orSub(WhereInterface $where): WhereInterface {
+        $this->tags[] = $this->container->clonePrototype(static::WHERE_TAG_PROTOTYPE, [
+            WhereTag::OPTION_JOIN => TagInterface::JOIN_OR,
+            WhereTag::OPTION_WHERE => $where
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\Where\WhereInterface::sub($where)
+     */
+    public function sub(WhereInterface $where): WhereInterface {
+        $this->tags[] = $this->container->clonePrototype(static::WHERE_TAG_PROTOTYPE, [
+            WhereTag::OPTION_WHERE => $where
         ]);
 
         return $this;

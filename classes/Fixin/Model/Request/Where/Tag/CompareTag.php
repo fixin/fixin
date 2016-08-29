@@ -11,6 +11,12 @@ use Fixin\Model\Request\RequestInterface;
 
 class CompareTag extends Tag {
 
+    const OPERATOR_EQUAL = '=';
+    const OPERATOR_GREATER_THAN = '>';
+    const OPERATOR_GREATER_THAN_OR_EQUAL = '>=';
+    const OPERATOR_LOWER_THAN = '<';
+    const OPERATOR_LOWER_THAN_OR_EQUAL = '<=';
+    const OPERATOR_NOT_EQUAL = '!=';
     const OPTION_LEFT = 'left';
     const OPTION_OPERATOR = 'operator';
     const OPTION_RIGHT = 'right';

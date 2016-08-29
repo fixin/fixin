@@ -49,6 +49,14 @@ interface WhereInterface extends PrototypeInterface {
     public function in(string $identifier, array $values): self;
 
     /**
+     * Add: and items from array
+     *
+     * @param array $array
+     * @return self
+     */
+    public function items(array $array): self;
+
+    /**
      * Add: and nested where
      *
      * @param callable $callback
@@ -144,6 +152,14 @@ interface WhereInterface extends PrototypeInterface {
     public function orIn(string $identifier, array $values): self;
 
     /**
+     * Add: or items from array
+     *
+     * @param array $array
+     * @return self
+     */
+    public function orItems(array $array): self;
+
+    /**
      * Add: or nested where
      *
      * @param callable $callback
@@ -201,4 +217,19 @@ interface WhereInterface extends PrototypeInterface {
      * @return self
      */
     public function orNull(string $identifier): self;
+
+    /**
+     * Add: or sub where
+     * @param self $where
+     * @return self
+     */
+    public function orSub(self $where): self;
+
+    /**
+     * Add: and sub where
+     *
+     * @param self $where
+     * @return self
+     */
+    public function sub(self $where): self;
 }
