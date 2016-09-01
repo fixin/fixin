@@ -17,42 +17,42 @@ interface GrammarInterface extends ResourceInterface {
      * Delete
      *
      * @param RequestInterface $request
-     * @return string
+     * @return QueryInterface
      */
-    public function delete(RequestInterface $request): string;
+    public function delete(RequestInterface $request): QueryInterface;
 
     /**
      * Insert
      *
      * @param RepositoryInterface $repository
      * @param array $set
-     * @return string
+     * @return QueryInterface
      */
-    public function insert(RepositoryInterface $repository, array $set): string;
+    public function insert(RepositoryInterface $repository, array $set): QueryInterface;
 
     /**
      * Insert into
      *
      * @param RepositoryInterface $repository
      * @param RequestInterface $request
-     * @return string
+     * @return QueryInterface
      */
-    public function insertInto(RepositoryInterface $repository, RequestInterface $request): string;
+    public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface;
 
     /**
      * Select
      *
      * @param RequestInterface $request
-     * @return string
+     * @return QueryInterface
      */
-    public function select(RequestInterface $request): string;
+    public function select(RequestInterface $request): QueryInterface;
 
     /**
      * Update
      *
      * @param array $set
      * @param RequestInterface $request
-     * @return string
+     * @return QueryInterface
      */
-    public function update(array $set, RequestInterface $request): string;
+    public function update(array $set, RequestInterface $request): QueryInterface;
 }

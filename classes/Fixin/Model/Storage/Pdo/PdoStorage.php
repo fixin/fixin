@@ -84,11 +84,12 @@ class PdoStorage extends Resource implements StorageInterface {
         return $this->execute($this->grammar->delete($request));
     }
 
-    protected function execute(string $script): int {
+    protected function execute(QueryInterface $query) {
         echo '<pre>';
-        echo $script;
+        echo $query->getText();
         die;
         // todo
+
     }
 
     /**
