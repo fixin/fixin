@@ -45,6 +45,13 @@ interface RepositoryInterface extends ResourceInterface {
     public function createId(...$entityId): EntityIdInterface;
 
     /**
+     * Create request
+     *
+     * @return RequestInterface
+     */
+    public function createRequest(): RequestInterface;
+
+    /**
      * Delete
      *
      * @param RequestInterface $request
@@ -89,13 +96,6 @@ interface RepositoryInterface extends ResourceInterface {
      * @return int
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
-
-    /**
-     * New request
-     *
-     * @return RequestInterface
-     */
-    public function request(): RequestInterface;
 
     /**
      * Select entities

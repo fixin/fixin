@@ -115,6 +115,16 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::createRequest()
+     */
+    public function createRequest(): RequestInterface {
+        return $this->container->clonePrototype(static::REQUEST_PROTOTYPE, [
+            RequestInterface::OPTION_REPOSITORY => $this
+        ]);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::delete($request)
      */
     public function delete(RequestInterface $request): int {
@@ -199,16 +209,6 @@ class Repository extends Resource implements RepositoryInterface {
      */
     protected function isValidRequest(RequestInterface $request): bool {
         return $request->getRepository() === $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::request()
-     */
-    public function request(): RequestInterface {
-        return $this->container->clonePrototype(static::REQUEST_PROTOTYPE, [
-            RequestInterface::OPTION_REPOSITORY => $this
-        ]);
     }
 
     /**
