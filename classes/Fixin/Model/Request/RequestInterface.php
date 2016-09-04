@@ -29,9 +29,10 @@ interface RequestInterface extends PrototypeInterface {
      * Add cross join
      *
      * @param RepositoryInterface $repository
+     * @param string $alias
      * @return self
      */
-    public function crossJoin(RepositoryInterface $repository): self;
+    public function crossJoin(RepositoryInterface $repository, string $alias = null): self;
 
     /**
      * Delete
@@ -146,6 +147,13 @@ interface RequestInterface extends PrototypeInterface {
      * @return RepositoryInterface
      */
     public function getRepository(): RepositoryInterface;
+
+    /**
+     * Get unions
+     *
+     * @return array
+     */
+    public function getUnions(): array;
 
     /**
      * Get where
