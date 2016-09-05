@@ -21,6 +21,7 @@ class Request extends Prototype implements RequestInterface {
     const THIS_REQUIRES = [
         self::OPTION_REPOSITORY => self::TYPE_INSTANCE
     ];
+    const UNION_PROTOTYPE = 'Model\Request\Union';
     const WHERE_PROTOTYPE = 'Model\Request\Where\Where';
 
     /**
@@ -135,6 +136,22 @@ class Request extends Prototype implements RequestInterface {
     }
 
     /**
+     * Add union
+     *
+     * @param string $type
+     * @param RequestInterface $request
+     * @return self
+     */
+    protected function addUnion(string $type, RequestInterface $request) {
+        $this->unions[] = $this->container->clonePrototype(static::UNION_PROTOTYPE, [
+            UnionInterface::OPTION_TYPE => $type,
+            UnionInterface::OPTION_REQUEST => $request
+        ]);
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Model\Request\RequestInterface::count()
      */
@@ -191,9 +208,8 @@ class Request extends Prototype implements RequestInterface {
      */
     public function fetchColumn(string $column): array {
         $copy = clone $this;
-        $copy->setColumns([$column]);
 
-        // TODO
+        return $this->repository->selectColumn($copy->setColumns([$column]));
     }
 
     /**
@@ -220,9 +236,8 @@ class Request extends Prototype implements RequestInterface {
      */
     public function fetchValue($column) {
         $copy = clone $this;
-        $copy->setColumns([$column]);
 
-        $result = $this->repository->selectRawData($copy);
+        $result = $this->repository->selectRawData($copy->setColumns([$column]));
 
         return count($result) ? reset($result[0]) : null;
     }
@@ -474,7 +489,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::union($request)
      */
     public function union(RequestInterface $request): RequestInterface {
-        // TODO
+        return $this->addUnion(UnionInterface::TYPE_NORMAL, $request);
     }
 
     /**
@@ -482,7 +497,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::unionAll($request)
      */
     public function unionAll(RequestInterface $request): RequestInterface {
-        // TODO
+        return $this->addUnion(UnionInterface::TYPE_ALL, $request);
     }
 
     /**
