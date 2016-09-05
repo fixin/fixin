@@ -25,12 +25,12 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: and compare
      *
-     * @param number|string $left
+     * @param string $left
      * @param string $operator
      * @param number|string|array $right
      * @return self
      */
-    public function compare($left, string $operator, $right): self;
+    public function compare(string $left, string $operator, $right): self;
 
     /**
      * Add: and exists
@@ -128,12 +128,12 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: or compare
      *
-     * @param number|string $left
+     * @param string $left
      * @param string $operator
      * @param number|string|array $right
      * @return self
      */
-    public function orCompare($left, string $operator, $right): self;
+    public function orCompare(string $left, string $operator, $right): self;
 
     /**
      * Add: or exists

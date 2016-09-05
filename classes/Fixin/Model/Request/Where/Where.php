@@ -13,7 +13,6 @@ use Fixin\Model\Request\Where\Tag\CompareTag;
 use Fixin\Model\Request\Where\Tag\ExistsTag;
 use Fixin\Model\Request\Where\Tag\InTag;
 use Fixin\Model\Request\Where\Tag\NullTag;
-use Fixin\Model\Request\Where\Tag\RequestTag;
 use Fixin\Model\Request\Where\Tag\TagInterface;
 use Fixin\Model\Request\Where\Tag\WhereTag;
 use Fixin\Resource\Prototype;
@@ -25,7 +24,6 @@ class Where extends Prototype implements WhereInterface {
     const EXISTS_TAG_PROTOTYPE = 'Model\Request\Where\Tag\ExistsTag';
     const IN_TAG_PROTOTYPE = 'Model\Request\Where\Tag\InTag';
     const NULL_TAG_PROTOTYPE = 'Model\Request\Where\Tag\NullTag';
-    const REQUEST_TAG_PROTOTYPE = 'Model\Request\Where\Tag\RequestTag';
     const WHERE_TAG_PROTOTYPE = 'Model\Request\Where\Tag\WhereTag';
 
     /**
@@ -78,7 +76,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::compare($left, $operator, $right)
      */
-    public function compare($left, string $operator, $right): WhereInterface {
+    public function compare(string $left, string $operator, $right): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::COMPARE_TAG_PROTOTYPE, [
             CompareTag::OPTION_LEFT => $left,
             CompareTag::OPTION_OPERATOR => $operator,
@@ -240,7 +238,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::orCompare($left, $operator, $right)
      */
-    public function orCompare($left, string $operator, $right): WhereInterface {
+    public function orCompare(string $left, string $operator, $right): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::COMPARE_TAG_PROTOTYPE, [
             CompareTag::OPTION_JOIN => TagInterface::JOIN_OR,
             CompareTag::OPTION_LEFT => $left,

@@ -45,12 +45,27 @@ interface RepositoryInterface extends ResourceInterface {
     public function createId(...$entityId): EntityIdInterface;
 
     /**
+     * Create request
+     *
+     * @return RequestInterface
+     */
+    public function createRequest(): RequestInterface;
+
+    /**
      * Delete
      *
      * @param RequestInterface $request
      * @return int
      */
     public function delete(RequestInterface $request): int;
+
+    /**
+     * Exists TODO: better name?
+     *
+     * @param RequestInterface $request
+     * @return bool
+     */
+    public function exists(RequestInterface $request): bool;
 
     /**
      * Get auto-increment column
@@ -89,13 +104,6 @@ interface RepositoryInterface extends ResourceInterface {
      * @return int
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
-
-    /**
-     * New request
-     *
-     * @return RequestInterface
-     */
-    public function request(): RequestInterface;
 
     /**
      * Select entities
