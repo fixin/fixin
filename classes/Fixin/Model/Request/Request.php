@@ -16,6 +16,7 @@ use Fixin\Model\Repository\Repository;
 
 class Request extends Prototype implements RequestInterface {
 
+    const COUNT_EXPRESSION = 'COUNT(%s)';
     const JOIN_PROTOTYPE = 'Model\Request\Join';
     const THIS_REQUIRES = [
         self::OPTION_REPOSITORY => self::TYPE_INSTANCE
@@ -138,7 +139,18 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::count()
      */
     public function count(): int {
-        // TODO
+        return $this->fetchValue($this->createExpression(sprintf(static::COUNT_EXPRESSION, implode(',', $this->columns ?: ['*']))));
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::createExpression($expression, $parameters)
+     */
+    public function createExpression(string $expression, array $parameters = []): ExpressionInterface {
+        return $this->container->clonePrototype(static::EXPRESSION_PROTOTYPE, [
+            ExpressionInterface::OPTION_EXPRESSION => $expression,
+            ExpressionInterface::OPTION_PARAMETERS => $parameters
+        ]);
     }
 
     /**
@@ -162,7 +174,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::exists()
      */
     public function exists(): bool {
-        // TODO
+        return $this->repository->exists($this);
     }
 
     /**
@@ -178,6 +190,9 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::fetchColumn($column)
      */
     public function fetchColumn(string $column): array {
+        $copy = clone $this;
+        $copy->setColumns([$column]);
+
         // TODO
     }
 
