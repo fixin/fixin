@@ -60,6 +60,14 @@ interface RepositoryInterface extends ResourceInterface {
     public function delete(RequestInterface $request): int;
 
     /**
+     * Exists TODO: better name?
+     *
+     * @param RequestInterface $request
+     * @return bool
+     */
+    public function exists(RequestInterface $request): bool;
+
+    /**
      * Get auto-increment column
      *
      * @return string|null

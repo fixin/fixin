@@ -64,7 +64,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::all()
      */
     public function all(): EntitySetInterface {
-        return $this->request()->get();
+        return $this->createRequest()->get();
     }
 
     /**
@@ -129,6 +129,14 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function delete(RequestInterface $request): int {
         return $this->isValidRequest($request) && $this->getStorage()->delete($request);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::exists($request)
+     */
+    public function exists(RequestInterface $request): bool {
+        return $this->isValidRequest($request) && $this->getStorage()->exists($request);
     }
 
     /**
