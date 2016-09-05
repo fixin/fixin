@@ -12,9 +12,12 @@ use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Resource;
+use Fixin\Exception\RuntimeException;
 
 class PdoStorage extends Resource implements StorageInterface {
 
+    const EXCEPTION_CONNECTION_ERROR = "Connection error: %s";
+    const GRAMMAR_CLASS_MASK = 'Model\Storage\Pdo\%sGrammar';
     const OPTION_DSN = 'dsn';
     const OPTION_PASSWORD = 'password';
     const OPTION_USERNAME = 'username';
@@ -45,15 +48,48 @@ class PdoStorage extends Resource implements StorageInterface {
     protected $username;
 
     /**
+     * Connect
+     *
+     * @throws RuntimeException
+     * @return self
+     */
+    public function connect(): self {
+        if ($this->resource) {
+            return $this;
+        }
+
+        try {
+            $this->resource =
+            $resource = new \PDO($this->dsn, $this->username, $this->password);
+            $resource->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->password = null;
+
+            $class = ucfirst(strtolower($resource->getAttribute(\PDO::ATTR_DRIVER_NAME)));
+            $this->grammar = $this->container->get(sprintf(static::GRAMMAR_CLASS_MASK , $class));
+        }
+        catch (\PDOException $e) {
+            throw new RuntimeException(sprintf(static::EXCEPTION_CONNECTION_ERROR, $e->getMessage()));
+        }
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Model\Storage\StorageInterface::delete($request)
      */
     public function delete(RequestInterface $request): int {
+        $this->connect();
+
         return $this->execute($this->grammar->delete($request));
     }
 
-    protected function execute(string $script): int {
+    protected function execute(QueryInterface $query) {
+        echo '<pre>';
+        echo $query->getText();
+        die;
         // todo
+
     }
 
     /**
@@ -69,6 +105,8 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::insert($repository, $set)
      */
     public function insert(RepositoryInterface $repository, array $set): int {
+        $this->connect();
+
         return $this->execute($this->grammar->insert($repository, $set));
     }
 
@@ -77,6 +115,8 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::insertInto($repository, $request)
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int {
+        $this->connect();
+
         return $this->execute($this->grammar->insertInto($repository, $request));
     }
 
@@ -89,6 +129,8 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::select($request)
      */
     public function select(RequestInterface $request): StorageResultInterface {
+        $this->connect();
+
         return $this->query($this->grammar->select($request));
     }
 
@@ -124,6 +166,8 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::update($set, $request)
      */
     public function update(array $set, RequestInterface $request): int {
+        $this->connect();
+
         return $this->execute($this->grammar->update($set, $request));
     }
 }
