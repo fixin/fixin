@@ -17,12 +17,13 @@ use Fixin\Model\Repository\Repository;
 class Request extends Prototype implements RequestInterface {
 
     const COUNT_EXPRESSION = 'COUNT(%s)';
-    const JOIN_PROTOTYPE = 'Model\Request\Join';
+    const PROTOTYPE_EXPRESSION = 'Model\Request\Expression';
+    const PROTOTYPE_JOIN = 'Model\Request\Join';
+    const PROTOTYPE_UNION = 'Model\Request\Union';
+    const PROTOTYPE_WHERE = 'Model\Request\Where\Where';
     const THIS_REQUIRES = [
         self::OPTION_REPOSITORY => self::TYPE_INSTANCE
     ];
-    const UNION_PROTOTYPE = 'Model\Request\Union';
-    const WHERE_PROTOTYPE = 'Model\Request\Where\Where';
 
     /**
      * @var string
@@ -96,7 +97,7 @@ class Request extends Prototype implements RequestInterface {
      * @return self
      */
     protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null) {
-        return $this->addJoinItem($type, $repository, $this->container->clonePrototype(static::WHERE_PROTOTYPE)->compare($left, $operator, $right), $alias);
+        return $this->addJoinItem($type, $repository, $this->container->clonePrototype(static::PROTOTYPE_WHERE)->compare($left, $operator, $right), $alias);
     }
 
     /**
@@ -109,7 +110,7 @@ class Request extends Prototype implements RequestInterface {
      * @return self
      */
     protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null) {
-        $this->joins[] = $this->container->clonePrototype(static::JOIN_PROTOTYPE, [
+        $this->joins[] = $this->container->clonePrototype(static::PROTOTYPE_JOIN, [
             JoinInterface::OPTION_TYPE => $type,
             JoinInterface::OPTION_REPOSITORY => $repository,
             JoinInterface::OPTION_ALIAS => $alias ?? $repository->getName(),
@@ -129,7 +130,7 @@ class Request extends Prototype implements RequestInterface {
      * @return self
      */
     protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null) {
-        $where = $this->container->clonePrototype(static::WHERE_PROTOTYPE);
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
         return $this->addJoinItem($type, $repository, $where, $alias);
@@ -143,7 +144,7 @@ class Request extends Prototype implements RequestInterface {
      * @return self
      */
     protected function addUnion(string $type, RequestInterface $request) {
-        $this->unions[] = $this->container->clonePrototype(static::UNION_PROTOTYPE, [
+        $this->unions[] = $this->container->clonePrototype(static::PROTOTYPE_UNION, [
             UnionInterface::OPTION_TYPE => $type,
             UnionInterface::OPTION_REQUEST => $request
         ]);
@@ -164,7 +165,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::createExpression($expression, $parameters)
      */
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface {
-        return $this->container->clonePrototype(static::EXPRESSION_PROTOTYPE, [
+        return $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
             ExpressionInterface::OPTION_EXPRESSION => $expression,
             ExpressionInterface::OPTION_PARAMETERS => $parameters
         ]);
@@ -271,7 +272,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::getHaving()
      */
     public function getHaving(): WhereInterface {
-        return $this->having ?? ($this->having = $this->container->clonePrototype(static::WHERE_PROTOTYPE));
+        return $this->having ?? ($this->having = $this->container->clonePrototype(static::PROTOTYPE_WHERE));
     }
 
     /**
@@ -327,7 +328,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::getWhere()
      */
     public function getWhere(): WhereInterface {
-        return $this->where ?? ($this->where = $this->container->clonePrototype(static::WHERE_PROTOTYPE));
+        return $this->where ?? ($this->where = $this->container->clonePrototype(static::PROTOTYPE_WHERE));
     }
 
     /**
