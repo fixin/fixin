@@ -26,6 +26,15 @@ interface RequestInterface extends PrototypeInterface {
     public function count(): int;
 
     /**
+     * Create expression
+     *
+     * @param string $expression
+     * @param array $parameters
+     * @return ExpressionInterface
+     */
+    public function createExpression(string $expression, array $parameters = []): ExpressionInterface;
+
+    /**
      * Add cross join
      *
      * @param RepositoryInterface $repository
