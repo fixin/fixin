@@ -22,6 +22,14 @@ interface GrammarInterface extends ResourceInterface {
     public function delete(RequestInterface $request): QueryInterface;
 
     /**
+     * Exists
+     *
+     * @param RequestInterface $request
+     * @return QueryInterface
+     */
+    public function exists(RequestInterface $request): QueryInterface;
+
+    /**
      * Insert
      *
      * @param RepositoryInterface $repository
