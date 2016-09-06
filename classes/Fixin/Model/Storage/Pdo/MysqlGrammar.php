@@ -7,8 +7,11 @@
 
 namespace Fixin\Model\Storage\Pdo;
 
+use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Model\Request\Where\Tag\CompareTag;
+use Fixin\Model\Request\Where\Tag\NullTag;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\Resource;
 
@@ -21,8 +24,6 @@ class MysqlGrammar extends Resource implements GrammarInterface {
     const ADD_LIMIT = 'limit';
     const ADD_ORDER_BY = 'orderBy';
     const ADD_WHERE = 'where';
-    const ALIAS_MASK = '%s AS %s';
-    const ASCENDING = 'ASC';
     const CLAUSE_FROM = 'FROM';
     const CLAUSE_GROUP_BY = 'GROUP BY';
     const CLAUSE_HAVING = 'HAVING';
@@ -31,14 +32,20 @@ class MysqlGrammar extends Resource implements GrammarInterface {
     const CLAUSE_LIMIT = 'LIMIT';
     const CLAUSE_ORDER_BY = 'ORDER BY';
     const CLAUSE_WHERE = 'WHERE';
-    const DESCENDING = 'DESC';
     const LIST_SEPARATOR = ', ';
-    const ORDER_BY_MASK = '%s %s';
+    const MASK_ALIAS = '%s AS %s';
+    const MASK_ORDER_BY = '%s %s';
+    const METHOD_CLAUSE = 'Clause';
+    const METHOD_WHERE_TAG = 'where';
+    const ORDER_ASCENDING = 'ASC';
+    const ORDER_DESCENDING = 'DESC';
     const PROTOTYPE_QUERY = 'Model\Storage\Pdo\Query';
     const STATEMENT_DELETE = 'DELETE';
     const STATEMENT_INSERT = 'INSERT';
     const STATEMENT_SELECT = 'SELECT';
     const STATEMENT_UPDATE = 'UPDATE';
+    const TAG_IS_NULL = [false => 'IS NOT NULL', true => 'IS NULL'];
+    const TAG_NEGATE = [false => '', true => 'NOT'];
 
     /**
      * Name with alias (if needed)
@@ -49,7 +56,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      */
     protected function aliasedNameString(string $name, string $alias): string {
         if ($name !== $alias) {
-            $name = sprintf(static::ALIAS_MASK, $name, $alias);
+            $name = sprintf(static::MASK_ALIAS, $name, $alias);
         }
 
         return $name;
@@ -61,6 +68,14 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      */
     public function delete(RequestInterface $request): QueryInterface {
         return $this->makeQuery(static::STATEMENT_DELETE, $request, [static::ADD_FROM, static::ADD_WHERE, static::ADD_ORDER_BY, static::ADD_LIMIT]);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\Pdo\GrammarInterface::exists($request)
+     */
+    public function exists(RequestInterface $request): QueryInterface {
+        // TODO
     }
 
     /**
@@ -177,10 +192,10 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      * @return QueryInterface
      */
     protected function makeQuery(string $statement, RequestInterface $request, array $tags) {
-        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)->appendText($statement . ' ');
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)->appendWord($statement);
 
         foreach ($tags as $tag) {
-            $this->{$tag . 'Clause'}($request, $query);
+            $this->{$tag . static::METHOD_CLAUSE}($request, $query);
         }
 
         return $query;
@@ -203,7 +218,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
                 continue;
             }
 
-            $orderBy[] = sprintf(static::ORDER_BY_MASK, $key, strtoupper($value) === static::DESCENDING ? static::DESCENDING : static::ASCENDING);
+            $orderBy[] = sprintf(static::MASK_ORDER_BY, $key, strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
         }
 
         if ($orderBy) {
@@ -248,15 +263,48 @@ class MysqlGrammar extends Resource implements GrammarInterface {
     }
 
     /**
+     * Where compare tag
+     *
+     * @param CompareTag $tag
+     * @param QueryInterface $query
+     */
+    protected function whereCompareTag(CompareTag $tag, QueryInterface $query) {
+        $query->appendString($tag->getLeft() . ' ' . $tag->getOperator() . ' ' . $tag->getRight());
+    }
+
+    /**
+     * Where null tag
+     *
+     * @param NullTag $tag
+     * @param QueryInterface $query
+     */
+    protected function whereNullTag(NullTag $tag, QueryInterface $query) {
+        $query->appendString($tag->getIdentifier() . ' ' . static::TAG_IS_NULL[!$tag->isNegated()]);
+    }
+
+    /**
      * Generate where string
      *
      * @param string $clause
      * @param WhereInterface $where
      * @param QueryInterface $query
-     * @return string
      */
-    protected function whereString(string $clause, WhereInterface $where, QueryInterface $query): string {
+    protected function whereString(string $clause, WhereInterface $where, QueryInterface $query) {
+        if ($tags = $where->getTags()) {
+            $query->appendWord($clause);
 
-        return '';
+            foreach ($tags as $index => $tag) {
+                if ($index) {
+                    $query->appendWord(PHP_EOL . strtoupper($tag->getJoin()));
+                }
+
+                $class = get_class($tag);
+                $shortName = substr($class, strrpos($class, '\\') + 1);
+
+                $this->{static::METHOD_WHERE_TAG . $shortName}($tag, $query);
+            }
+
+            $query->appendString(PHP_EOL);
+        }
     }
 }
