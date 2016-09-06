@@ -13,7 +13,6 @@ class Expression extends Prototype implements ExpressionInterface {
 
     const THIS_REQUIRES = [
         self::OPTION_EXPRESSION => self::TYPE_STRING,
-        self::OPTION_PARAMETERS => self::TYPE_ARRAY
     ];
 
     /**
