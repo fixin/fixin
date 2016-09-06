@@ -48,10 +48,20 @@ class Query extends Prototype implements QueryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\QueryInterface::appendText($string)
+     * @see \Fixin\Model\Storage\Pdo\QueryInterface::appendString($string)
      */
-    public function appendText(string $string): QueryInterface {
+    public function appendString(string $string): QueryInterface {
         $this->text .= $string;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\Pdo\QueryInterface::appendWord($word)
+     */
+    public function appendWord(string $word): QueryInterface {
+        $this->text .= $word . ' ';
 
         return $this;
     }
