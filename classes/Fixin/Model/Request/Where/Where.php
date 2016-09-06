@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Request\Where;
 
+use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\Where\Tag\BetweenTag;
 use Fixin\Model\Request\Where\Tag\CompareTag;
@@ -22,6 +23,7 @@ class Where extends Prototype implements WhereInterface {
     const PROTOTYPE_BETWEEN_TAG = 'Model\Request\Where\Tag\BetweenTag';
     const PROTOTYPE_COMPARE_TAG = 'Model\Request\Where\Tag\CompareTag';
     const PROTOTYPE_EXISTS_TAG = 'Model\Request\Where\Tag\ExistsTag';
+    const PROTOTYPE_EXPRESSION = 'Model\Request\Expression';
     const PROTOTYPE_IN_TAG = 'Model\Request\Where\Tag\InTag';
     const PROTOTYPE_NULL_TAG = 'Model\Request\Where\Tag\NullTag';
     const PROTOTYPE_WHERE_TAG = 'Model\Request\Where\Tag\WhereTag';
@@ -30,6 +32,40 @@ class Where extends Prototype implements WhereInterface {
      * @var array
      */
     protected $tags = [];
+
+    /**
+     * Add compare tag
+     *
+     * @param string $join
+     * @param unknown $left
+     * @param string $operator
+     * @param unknown $right
+     * @param string $leftType
+     * @param string $rightType
+     * @return self
+     */
+    protected function addCompare(string $join, $left, string $operator, $right, string $leftType, string $rightType): self {
+        if (!$left instanceof ExpressionInterface && $leftType === static::TYPE_IDENTIFIER) {
+            $left = $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
+                ExpressionInterface::OPTION_EXPRESSION => $left
+            ]);
+        }
+
+        if (!$right instanceof ExpressionInterface && $rightType === static::TYPE_IDENTIFIER) {
+            $right = $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
+                ExpressionInterface::OPTION_EXPRESSION => $right
+            ]);
+        }
+
+        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_COMPARE_TAG, [
+            CompareTag::OPTION_JOIN => $join,
+            CompareTag::OPTION_LEFT => $left,
+            CompareTag::OPTION_OPERATOR => $operator,
+            CompareTag::OPTION_RIGHT => $right
+        ]);
+
+        return $this;
+    }
 
     /**
      * Add items
@@ -74,16 +110,10 @@ class Where extends Prototype implements WhereInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::compare($left, $operator, $right)
+     * @see \Fixin\Model\Request\Where\WhereInterface::compare($left, $operator, $right, $leftType, $rightType)
      */
-    public function compare(string $left, string $operator, $right): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_COMPARE_TAG, [
-            CompareTag::OPTION_LEFT => $left,
-            CompareTag::OPTION_OPERATOR => $operator,
-            CompareTag::OPTION_RIGHT => $right
-        ]);
-
-        return $this;
+    public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface {
+        return $this->addCompare(TagInterface::JOIN_AND, $left, $operator, $right, $leftType, $rightType);
     }
 
     /**
@@ -96,6 +126,14 @@ class Where extends Prototype implements WhereInterface {
         ]);
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\Where\WhereInterface::getTags()
+     */
+    public function getTags(): array {
+        return $this->tags;
     }
 
     /**
@@ -236,17 +274,10 @@ class Where extends Prototype implements WhereInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orCompare($left, $operator, $right)
+     * @see \Fixin\Model\Request\Where\WhereInterface::orCompare($left, $operator, $right, $leftType, $rightType)
      */
-    public function orCompare(string $left, string $operator, $right): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_COMPARE_TAG, [
-            CompareTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            CompareTag::OPTION_LEFT => $left,
-            CompareTag::OPTION_OPERATOR => $operator,
-            CompareTag::OPTION_RIGHT => $right
-        ]);
-
-        return $this;
+    public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface {
+        return $this->addCompare(TagInterface::JOIN_OR, $left, $operator, $right, $leftType, $rightType);
     }
 
     /**

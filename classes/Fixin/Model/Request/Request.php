@@ -8,11 +8,11 @@
 namespace Fixin\Model\Request;
 
 use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Model\Repository\Repository;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Prototype;
-use Fixin\Model\Repository\Repository;
 
 class Request extends Prototype implements RequestInterface {
 
@@ -97,7 +97,7 @@ class Request extends Prototype implements RequestInterface {
      * @return self
      */
     protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null) {
-        return $this->addJoinItem($type, $repository, $this->container->clonePrototype(static::PROTOTYPE_WHERE)->compare($left, $operator, $right), $alias);
+        return $this->addJoinItem($type, $repository, $this->container->clonePrototype(static::PROTOTYPE_WHERE)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
     }
 
     /**
