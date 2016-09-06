@@ -333,6 +333,22 @@ class Request extends Prototype implements RequestInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::hasHaving()
+     */
+    public function hasHaving(): bool {
+        return isset($this->having);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::hasWhere()
+     */
+    public function hasWhere(): bool {
+        return isset($this->where);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Request\RequestInterface::insertInto($repository)
      */
     public function insertInto(RepositoryInterface $repository): int {

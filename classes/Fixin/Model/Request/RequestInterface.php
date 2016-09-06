@@ -172,6 +172,20 @@ interface RequestInterface extends PrototypeInterface {
     public function getWhere(): WhereInterface;
 
     /**
+     * Has having
+     *
+     * @return bool
+     */
+    public function hasHaving(): bool;
+
+    /**
+     * Has where
+     *
+     * @return bool
+     */
+    public function hasWhere(): bool;
+
+    /**
      * Insert into repository
      *
      * @param RepositoryInterface $repository
