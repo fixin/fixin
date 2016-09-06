@@ -32,6 +32,8 @@ class MysqlGrammar extends Resource implements GrammarInterface {
     const CLAUSE_LIMIT = 'LIMIT';
     const CLAUSE_ORDER_BY = 'ORDER BY';
     const CLAUSE_WHERE = 'WHERE';
+    const IDENTIFIER_QUOTE = '`';
+    const IDENTIFIER_SEPARATOR = '.';
     const LIST_SEPARATOR = ', ';
     const MASK_ALIAS = '%s AS %s';
     const MASK_ORDER_BY = '%s %s';
@@ -56,10 +58,10 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      */
     protected function aliasedNameString(string $name, string $alias): string {
         if ($name !== $alias) {
-            $name = sprintf(static::MASK_ALIAS, $name, $alias);
+            return sprintf(static::MASK_ALIAS, $this->quoteIdentifier($name), $this->quoteIdentifier($alias));
         }
 
-        return $name;
+        return $this->quoteIdentifier($name);
     }
 
     /**
@@ -76,6 +78,43 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      */
     public function exists(RequestInterface $request): QueryInterface {
         // TODO
+    }
+
+    /**
+     * Expression string
+     *
+     * @param number|string|array|ExpressionInterface $expression
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function expressionString($expression, QueryInterface $query): string {
+        // Expression
+        if ($expression instanceof ExpressionInterface) {
+            $query->addParameters($expression->getParameters());
+
+            return $expression->getExpression();
+        }
+
+        $query->addParameter($expression);
+
+        return '?';
+    }
+
+    /**
+     * Identifier string
+     *
+     * @param number|string|ExpressionInterface $identifier
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function identifierString($identifier, QueryInterface $query): string {
+        if ($identifier instanceof ExpressionInterface) {
+            $query->addParameters($identifier->getParameters());
+
+            $identifier = $identifier->getExpression();
+        }
+
+        return $this->quoteIdentifier($identifier);
     }
 
     /**
@@ -102,7 +141,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
         $groupBy = [];
 
         foreach ($request->getGroupBy() as $value) {
-            $groupBy[] = $value instanceof ExpressionInterface ? $value->getExpression() : $value;
+            $groupBy[] = $this->identifierString($value, $query);
         }
 
         if ($groupBy) {
@@ -213,12 +252,12 @@ class MysqlGrammar extends Resource implements GrammarInterface {
 
         foreach ($request->getOrderBy() as $key => $value) {
             if (is_numeric($key)) {
-                $orderBy[] = $value instanceof ExpressionInterface ? $value->getExpression() : $value;
+                $orderBy[] = $this->identifierString($value, $query);
 
                 continue;
             }
 
-            $orderBy[] = sprintf(static::MASK_ORDER_BY, $key, strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
+            $orderBy[] = sprintf(static::MASK_ORDER_BY, $this->quoteIdentifier($key), strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
         }
 
         if ($orderBy) {
@@ -226,6 +265,33 @@ class MysqlGrammar extends Resource implements GrammarInterface {
         }
 
         return $this;
+    }
+
+    /**
+     * Quote expression
+     *
+     * @param string $expression
+     * @return string
+     */
+    protected function quoteExpression(string $expression): string {
+        return $expression;
+    }
+
+    /**
+     * Quote identifier
+     *
+     * @param string $identifier
+     * @return string
+     */
+    protected function quoteIdentifier(string $identifier): string {
+        $tags = explode(static::IDENTIFIER_SEPARATOR, $identifier);
+        foreach ($tags as &$tag) {
+            if ($tag[0] !== static::IDENTIFIER_QUOTE) {
+                $tag = static::IDENTIFIER_QUOTE . $tag . static::IDENTIFIER_QUOTE;
+            }
+        }
+
+        return implode(static::IDENTIFIER_SEPARATOR, $tags);
     }
 
     /**
@@ -269,7 +335,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      * @param QueryInterface $query
      */
     protected function whereCompareTag(CompareTag $tag, QueryInterface $query) {
-        $query->appendString($tag->getLeft() . ' ' . $tag->getOperator() . ' ' . $tag->getRight());
+        $query->appendString($this->expressionString($tag->getLeft(), $query) . ' ' . $tag->getOperator() . ' ' . $this->expressionString($tag->getRight(), $query));
     }
 
     /**
@@ -279,7 +345,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      * @param QueryInterface $query
      */
     protected function whereNullTag(NullTag $tag, QueryInterface $query) {
-        $query->appendString($tag->getIdentifier() . ' ' . static::TAG_IS_NULL[!$tag->isNegated()]);
+        $query->appendString($this->identifierString($tag->getIdentifier(), $query) . ' ' . static::TAG_IS_NULL[!$tag->isNegated()]);
     }
 
     /**
