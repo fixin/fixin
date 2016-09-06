@@ -7,9 +7,10 @@
 
 namespace Fixin\Model\Storage\Pdo;
 
-use Fixin\Model\Request\RequestInterface;
-use Fixin\Resource\Resource;
 use Fixin\Model\Request\ExpressionInterface;
+use Fixin\Model\Request\RequestInterface;
+use Fixin\Model\Request\Where\WhereInterface;
+use Fixin\Resource\Resource;
 
 class MysqlGrammar extends Resource implements GrammarInterface {
 
@@ -24,8 +25,12 @@ class MysqlGrammar extends Resource implements GrammarInterface {
     const ASCENDING = 'ASC';
     const CLAUSE_FROM = 'FROM';
     const CLAUSE_GROUP_BY = 'GROUP BY';
+    const CLAUSE_HAVING = 'HAVING';
+    const CLAUSE_JOIN = 'JOIN';
+    const CLAUSE_JOIN_ON = 'ON';
     const CLAUSE_LIMIT = 'LIMIT';
     const CLAUSE_ORDER_BY = 'ORDER BY';
+    const CLAUSE_WHERE = 'WHERE';
     const DESCENDING = 'DESC';
     const LIST_SEPARATOR = ', ';
     const ORDER_BY_MASK = '%s %s';
@@ -100,7 +105,9 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      * @return self
      */
     protected function havingClause(RequestInterface $request, QueryInterface $query): self {
-        // TODO
+        if ($request->hasHaving()) {
+            $this->whereString(static::CLAUSE_HAVING, $request->getHaving(), $query);
+        }
 
         return $this;
     }
@@ -112,7 +119,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
     public function insert(RepositoryInterface $repository, array $set): QueryInterface {
         // TODO
     }
-    
+
     /**
      * {@inheritDoc}
      * @see \Fixin\Model\Storage\Pdo\GrammarInterface::insertInto($repository, $request)
@@ -120,7 +127,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface {
         // TODO
     }
-    
+
     /**
      * JOIN clause
      *
@@ -129,7 +136,11 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      * @return self
      */
     protected function joinClause(RequestInterface $request, QueryInterface $query): self {
-        // TODO
+        foreach ($request->getJoins() as $join) {
+            $query->appendClause(static::CLAUSE_JOIN, $this->aliasedNameString($join->getRepository()->getName(), $join->getAlias()));
+
+            $on = $this->whereString(static::CLAUSE_JOIN_ON, $join->getWhere(), $query);
+        }
 
         return $this;
     }
@@ -229,8 +240,23 @@ class MysqlGrammar extends Resource implements GrammarInterface {
      * @return self
      */
     protected function whereClause(RequestInterface $request, QueryInterface $query): self {
-        $where = '';
+        if ($request->hasWhere()) {
+            $this->whereString(static::CLAUSE_WHERE, $request->getWhere(), $query);
+        }
 
         return $this;
+    }
+
+    /**
+     * Generate where string
+     *
+     * @param string $clause
+     * @param WhereInterface $where
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function whereString(string $clause, WhereInterface $where, QueryInterface $query): string {
+
+        return '';
     }
 }
