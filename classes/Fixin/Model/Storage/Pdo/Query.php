@@ -9,6 +9,7 @@ namespace Fixin\Model\Storage\Pdo;
 
 use Fixin\Resource\Prototype;
 use Fixin\Support\Ground;
+use Fixin\Support\VariableInspector;
 
 class Query extends Prototype implements QueryInterface {
 
@@ -23,15 +24,25 @@ class Query extends Prototype implements QueryInterface {
     protected $text = '';
 
     public function __toString(): string {
-        return Ground::debugText($this->text);
+        return Ground::debugText($this->text) . Ground::debugText(VariableInspector::arrayInfo($this->parameters));
     }
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\QueryInterface::addParameter($value)
+     * @see \Fixin\Model\Storage\Pdo\QueryInterface::addParameter($parameter)
      */
-    public function addParameter($value): QueryInterface {
-        $this->parameters[] = $value;
+    public function addParameter($parameter): QueryInterface {
+        $this->parameters[] = $parameter;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\Pdo\QueryInterface::addParameters($parameters)
+     */
+    public function addParameters(array $parameters): QueryInterface {
+        $this->parameters = array_merge($this->parameters, $parameters);
 
         return $this;
     }
