@@ -248,7 +248,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::getAlias()
      */
     public function getAlias(): string {
-        return $this->alias;
+        return $this->alias ?? ($this->alias = $this->repository->getName());
     }
 
     /**
