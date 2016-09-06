@@ -20,6 +20,15 @@ interface QueryInterface extends PrototypeInterface {
     public function addParameter($value): self;
 
     /**
+     * Append clause
+     *
+     * @param string $clause
+     * @param string $string
+     * @return self
+     */
+    public function appendClause(string $clause, string $string): self;
+
+    /**
      * Append text
      *
      * @param string $string

@@ -8,18 +8,40 @@
 namespace Fixin\Model\Storage\Pdo;
 
 use Fixin\Resource\Prototype;
+use Fixin\Support\Ground;
 
 class Query extends Prototype implements QueryInterface {
 
-    protected $paramters = [];
+    /**
+     * @var array
+     */
+    protected $parameters = [];
+
+    /**
+     * @var string
+     */
     protected $text = '';
+
+    public function __toString(): string {
+        return Ground::debugText($this->text);
+    }
 
     /**
      * {@inheritDoc}
      * @see \Fixin\Model\Storage\Pdo\QueryInterface::addParameter($value)
      */
     public function addParameter($value): QueryInterface {
-        $this->paramters[] = $value;
+        $this->parameters[] = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\Pdo\QueryInterface::appendClause($clause, $string)
+     */
+    public function appendClause(string $clause, string $string): QueryInterface {
+        $this->text .= $clause . ' ' . $string . PHP_EOL;
 
         return $this;
     }
@@ -29,7 +51,7 @@ class Query extends Prototype implements QueryInterface {
      * @see \Fixin\Model\Storage\Pdo\QueryInterface::appendText($string)
      */
     public function appendText(string $string): QueryInterface {
-        $this->text .= $string . PHP_EOL;
+        $this->text .= $string;
 
         return $this;
     }
@@ -39,7 +61,7 @@ class Query extends Prototype implements QueryInterface {
      * @see \Fixin\Model\Storage\Pdo\QueryInterface::getParameters()
      */
     public function getParameters(): array {
-        return $this->paramters;
+        return $this->parameters;
     }
 
     /**
