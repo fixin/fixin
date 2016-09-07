@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Storage\Pdo;
+namespace Fixin\Base\Query;
 
 use Fixin\Resource\Prototype;
 use Fixin\Support\Ground;
@@ -29,7 +29,7 @@ class Query extends Prototype implements QueryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\QueryInterface::addParameter($parameter)
+     * @see \Fixin\Base\Query\QueryInterface::addParameter($parameter)
      */
     public function addParameter($parameter): QueryInterface {
         $this->parameters[] = $parameter;
@@ -39,7 +39,7 @@ class Query extends Prototype implements QueryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\QueryInterface::addParameters($parameters)
+     * @see \Fixin\Base\Query\QueryInterface::addParameters($parameters)
      */
     public function addParameters(array $parameters): QueryInterface {
         $this->parameters = array_merge($this->parameters, $parameters);
@@ -49,7 +49,7 @@ class Query extends Prototype implements QueryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\QueryInterface::appendClause($clause, $string)
+     * @see \Fixin\Base\Query\QueryInterface::appendClause($clause, $string)
      */
     public function appendClause(string $clause, string $string): QueryInterface {
         $this->text .= $clause . ' ' . $string . PHP_EOL;
@@ -59,7 +59,7 @@ class Query extends Prototype implements QueryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\QueryInterface::appendString($string)
+     * @see \Fixin\Base\Query\QueryInterface::appendString($string)
      */
     public function appendString(string $string): QueryInterface {
         $this->text .= $string;
@@ -69,7 +69,7 @@ class Query extends Prototype implements QueryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\QueryInterface::appendWord($word)
+     * @see \Fixin\Base\Query\QueryInterface::appendWord($word)
      */
     public function appendWord(string $word): QueryInterface {
         $this->text .= $word . ' ';
@@ -79,7 +79,7 @@ class Query extends Prototype implements QueryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\QueryInterface::getParameters()
+     * @see \Fixin\Base\Query\QueryInterface::getParameters()
      */
     public function getParameters(): array {
         return $this->parameters;
@@ -87,7 +87,7 @@ class Query extends Prototype implements QueryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\QueryInterface::getText()
+     * @see \Fixin\Base\Query\QueryInterface::getText()
      */
     public function getText(): string {
         return $this->text;
