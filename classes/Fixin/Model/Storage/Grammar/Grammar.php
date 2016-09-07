@@ -5,8 +5,9 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Storage\Pdo;
+namespace Fixin\Model\Storage\Grammar;
 
+use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
@@ -15,7 +16,7 @@ use Fixin\Model\Request\Where\Tag\NullTag;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\Resource;
 
-class MysqlGrammar extends Resource implements GrammarInterface {
+abstract class Grammar extends Resource implements GrammarInterface {
 
     const ADD_FROM = 'from';
     const ADD_GROUP_BY = 'groupBy';
@@ -41,7 +42,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
     const METHOD_WHERE_TAG = 'where';
     const ORDER_ASCENDING = 'ASC';
     const ORDER_DESCENDING = 'DESC';
-    const PROTOTYPE_QUERY = 'Model\Storage\Pdo\Query';
+    const PROTOTYPE_QUERY = 'Base\Query\Query';
     const STATEMENT_DELETE = 'DELETE';
     const STATEMENT_INSERT = 'INSERT';
     const STATEMENT_SELECT = 'SELECT';
@@ -66,7 +67,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\GrammarInterface::delete($request)
+     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::delete($request)
      */
     public function delete(RequestInterface $request): QueryInterface {
         return $this->makeQuery(static::STATEMENT_DELETE, $request, [static::ADD_FROM, static::ADD_WHERE, static::ADD_ORDER_BY, static::ADD_LIMIT]);
@@ -74,7 +75,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\GrammarInterface::exists($request)
+     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::exists($request)
      */
     public function exists(RequestInterface $request): QueryInterface {
         // TODO
@@ -98,23 +99,6 @@ class MysqlGrammar extends Resource implements GrammarInterface {
         $query->addParameter($expression);
 
         return '?';
-    }
-
-    /**
-     * Identifier string
-     *
-     * @param number|string|ExpressionInterface $identifier
-     * @param QueryInterface $query
-     * @return string
-     */
-    protected function identifierString($identifier, QueryInterface $query): string {
-        if ($identifier instanceof ExpressionInterface) {
-            $query->addParameters($identifier->getParameters());
-
-            $identifier = $identifier->getExpression();
-        }
-
-        return $this->quoteIdentifier($identifier);
     }
 
     /**
@@ -167,8 +151,25 @@ class MysqlGrammar extends Resource implements GrammarInterface {
     }
 
     /**
+     * Identifier string
+     *
+     * @param number|string|ExpressionInterface $identifier
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function identifierString($identifier, QueryInterface $query): string {
+        if ($identifier instanceof ExpressionInterface) {
+            $query->addParameters($identifier->getParameters());
+
+            $identifier = $identifier->getExpression();
+        }
+
+        return $this->quoteIdentifier($identifier);
+    }
+
+    /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\GrammarInterface::insert($repository, $set)
+     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::insert($repository, $set)
      */
     public function insert(RepositoryInterface $repository, array $set): QueryInterface {
         // TODO
@@ -176,7 +177,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\GrammarInterface::insertInto($repository, $request)
+     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::insertInto($repository, $request)
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface {
         // TODO
@@ -296,7 +297,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\GrammarInterface::select($request)
+     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::select($request)
      */
     public function select(RequestInterface $request): QueryInterface {
         echo $this->makeQuery(static::STATEMENT_SELECT, $request, [static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_GROUP_BY, static::ADD_HAVING, static::ADD_ORDER_BY, static::ADD_LIMIT]);
@@ -307,7 +308,7 @@ class MysqlGrammar extends Resource implements GrammarInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Pdo\GrammarInterface::update($set, $request)
+     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::update($set, $request)
      */
     public function update(array $set, RequestInterface $request): QueryInterface {
         // TODO
