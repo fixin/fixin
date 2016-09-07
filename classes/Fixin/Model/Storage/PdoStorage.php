@@ -5,19 +5,19 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Storage\Pdo;
+namespace Fixin\Model\Storage;
 
+use Fixin\Base\Query\QueryInterface;
+use Fixin\Exception\RuntimeException;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
-use Fixin\Model\Storage\StorageInterface;
-use Fixin\Model\Storage\StorageResultInterface;
+use Fixin\Model\Storage\Grammar\GrammarInterface;
 use Fixin\Resource\Resource;
-use Fixin\Exception\RuntimeException;
 
 class PdoStorage extends Resource implements StorageInterface {
 
     const EXCEPTION_CONNECTION_ERROR = "Connection error: %s";
-    const GRAMMAR_CLASS_MASK = 'Model\Storage\Pdo\%sGrammar';
+    const GRAMMAR_CLASS_MASK = 'Model\Storage\Grammar\%sGrammar';
     const OPTION_DSN = 'dsn';
     const OPTION_PASSWORD = 'password';
     const OPTION_USERNAME = 'username';
