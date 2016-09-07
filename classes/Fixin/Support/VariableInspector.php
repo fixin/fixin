@@ -7,6 +7,8 @@
 
 namespace Fixin\Support;
 
+use Fixin\Resource\ResourceManagerInterface;
+
 class VariableInspector extends DoNotCreate {
 
     const SCALAR_VALUE_COLORS = [
@@ -40,6 +42,11 @@ class VariableInspector extends DoNotCreate {
         foreach ($var as $key => $value) {
             if (is_scalar($value) && stripos($key, 'password') !== false) {
                 $value = '*****';
+            }
+            elseif ($value instanceof ResourceManagerInterface) {
+                $info .= "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . get_class($value) . "\n";
+
+                continue;
             }
 
             $info .= "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . str_replace("\n", "\n    ", static::valueInfo($value)) . "\n";

@@ -14,18 +14,43 @@ interface QueryInterface extends PrototypeInterface {
     /**
      * Add parameter
      *
-     * @param mixed $value
+     * @param mixed $parameter
      * @return self
      */
-    public function addParameter($value): self;
+    public function addParameter($parameter): self;
 
     /**
-     * Append text
+     * Add parameters
+     *
+     * @param array $parameters
+     * @return self
+     */
+    public function addParameters(array $parameters): self;
+
+    /**
+     * Append clause
+     *
+     * @param string $clause
+     * @param string $string
+     * @return self
+     */
+    public function appendClause(string $clause, string $string): self;
+
+    /**
+     * Append string
      *
      * @param string $string
      * @return self
      */
-    public function appendText(string $string): self;
+    public function appendString(string $string): self;
+
+    /**
+     * Append word
+     *
+     * @param string $word
+     * @return self
+     */
+    public function appendWord(string $word): self;
 
     /**
      * Get parameters

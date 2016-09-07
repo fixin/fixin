@@ -12,6 +12,9 @@ use Fixin\Resource\PrototypeInterface;
 
 interface WhereInterface extends PrototypeInterface {
 
+    const TYPE_IDENTIFIER = 'identifier';
+    const TYPE_VALUE = 'value';
+
     /**
      * Add: and between
      *
@@ -25,12 +28,14 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: and compare
      *
-     * @param string $left
+     * @param string|number|bool $left
      * @param string $operator
-     * @param number|string|array $right
+     * @param string|number|bool|array $right
+     * @param string $leftType
+     * @param string $rightType
      * @return self
      */
-    public function compare(string $left, string $operator, $right): self;
+    public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): self;
 
     /**
      * Add: and exists
@@ -39,6 +44,13 @@ interface WhereInterface extends PrototypeInterface {
      * @return self
      */
     public function exists(RequestInterface $request): self;
+
+    /**
+     * Get tags
+     *
+     * @return array
+     */
+    public function getTags(): array;
 
     /**
      * Add: and in
@@ -128,12 +140,14 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: or compare
      *
-     * @param string $left
+     * @param string|number|bool $left
      * @param string $operator
-     * @param number|string|array $right
+     * @param string|number|bool|array $right
+     * @param string $leftType
+     * @param string $rightType
      * @return self
      */
-    public function orCompare(string $left, string $operator, $right): self;
+    public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): self;
 
     /**
      * Add: or exists

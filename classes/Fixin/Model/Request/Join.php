@@ -14,7 +14,7 @@ use Fixin\Resource\Prototype;
 class Join extends Prototype implements JoinInterface {
 
     const THIS_REQUIRES = [
-        self::OPTION_ALIAS => self::TYPE_INSTANCE,
+        self::OPTION_ALIAS => self::TYPE_STRING,
         self::OPTION_REPOSITORY => self::TYPE_INSTANCE,
         self::OPTION_TYPE => self::TYPE_STRING
     ];
