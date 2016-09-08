@@ -341,13 +341,9 @@ abstract class Grammar extends Resource implements GrammarInterface {
         $query = $this->makeQuery(static::STATEMENT_INSERT, $request, [static::ADD_INTO, static::ADD_COLUMN_NAMES]);
         $selectQuery = $this->select($request);
 
-        $query
+        return $query
         ->appendString($selectQuery->getText())
         ->addParameters($selectQuery->getParameters());
-
-        echo $query;
-
-        die;
     }
 
     /**
