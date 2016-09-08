@@ -84,6 +84,17 @@ class PdoStorage extends Resource implements StorageInterface {
         return $this->execute($this->grammar->delete($request));
     }
 
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\StorageInterface::exists($request)
+     */
+    public function exists(RequestInterface $request): bool {
+        $this->connect();
+
+        return $this->query($this->grammar->exists($request)); // TODO to value
+    }
+
     protected function execute(QueryInterface $query) {
         echo '<pre>';
         echo $query->getText();
@@ -120,7 +131,10 @@ class PdoStorage extends Resource implements StorageInterface {
         return $this->execute($this->grammar->insertInto($repository, $request));
     }
 
-    protected function query(string $script): StorageResultInterface {
+    protected function query(QueryInterface $query): StorageResultInterface {
+        echo '<pre>';
+        echo $query->getText();
+        die;
         // todo
     }
 

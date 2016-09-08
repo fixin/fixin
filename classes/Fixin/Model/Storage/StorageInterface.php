@@ -29,6 +29,14 @@ interface StorageInterface extends ResourceInterface {
     public function getLastInsertValue(): int;
 
     /**
+     * Check existance
+     *
+     * @param RequestInterface $request
+     * @return bool
+     */
+    public function exists(RequestInterface $request): bool;
+
+    /**
      * Insert
      *
      * @param RepositoryInterface $repository

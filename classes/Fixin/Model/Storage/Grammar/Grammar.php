@@ -38,6 +38,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
     const EXPRESSION_SEPARATORS = "\n\r\t ()+-*/<>!=&|^.,?";
     const LIST_SEPARATOR = ', ';
     const MASK_ALIAS = '%s AS %s';
+    const MASK_EXISTS = 'SELECT EXISTS(?)';
     const MASK_ORDER_BY = '%s %s';
     const METHOD_CLAUSE = 'Clause';
     const METHOD_WHERE_TAG = 'where';
@@ -79,7 +80,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::exists($request)
      */
     public function exists(RequestInterface $request): QueryInterface {
-        // TODO
+        return $this->container->clonePrototype(static::PROTOTYPE_QUERY)->appendString(sprintf(static::MASK_EXISTS, $this->select($request)->getText()));
     }
 
     /**
