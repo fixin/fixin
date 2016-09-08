@@ -37,6 +37,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
     const CLAUSE_LIMIT = 'LIMIT';
     const CLAUSE_ORDER_BY = 'ORDER BY';
     const CLAUSE_SELECT = 'SELECT';
+    const CLAUSE_VALUES = 'VALUES';
     const CLAUSE_WHERE = 'WHERE';
     const IDENTIFIER_QUOTE_CLOSE ="`";
     const IDENTIFIER_QUOTE_OPEN ="`";
@@ -47,6 +48,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
     const MASK_COLUMN_NAMES = "\t(%s)";
     const MASK_EXISTS = 'SELECT EXISTS(%s)';
     const MASK_ORDER_BY = '%s %s';
+    const MASK_VALUES = '(%s)';
     const METHOD_CLAUSE = 'clause';
     const METHOD_WHERE_TAG = 'whereTag';
     const ORDER_ASCENDING = 'ASC';
@@ -73,6 +75,32 @@ abstract class Grammar extends Resource implements GrammarInterface {
         }
 
         return $this->quoteIdentifier($name);
+    }
+
+    /**
+     * Append where
+     *
+     * @param string $clause
+     * @param WhereInterface $where
+     * @param QueryInterface $query
+     */
+    protected function appendWhere(string $clause, WhereInterface $where, QueryInterface $query) {
+        if ($tags = $where->getTags()) {
+            $query->appendWord($clause);
+
+            foreach ($tags as $index => $tag) {
+                if ($index) {
+                    $query->appendWord(static::TAG_SEPARATOR . strtoupper($tag->getJoin()));
+                }
+
+                $class = get_class($tag);
+                $shortName = substr($class, strrpos($class, '\\') + 1, -3);
+
+                $this->{static::METHOD_WHERE_TAG . $shortName}($tag, $query);
+            }
+
+            $query->appendString(PHP_EOL);
+        }
     }
 
     /**
@@ -164,7 +192,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      */
     protected function clauseHaving(RequestInterface $request, QueryInterface $query): self {
         if ($request->hasHaving()) {
-            $this->whereString(static::CLAUSE_HAVING, $request->getHaving(), $query);
+            $this->appendWhere(static::CLAUSE_HAVING, $request->getHaving(), $query);
         }
 
         return $this;
@@ -194,7 +222,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
         foreach ($request->getJoins() as $join) {
             $query->appendClause(static::CLAUSE_JOIN, $this->aliasedNameString($join->getRepository()->getName(), $join->getAlias()));
 
-            $on = $this->whereString(static::CLAUSE_JOIN_ON, $join->getWhere(), $query);
+            $this->appendWhere(static::CLAUSE_JOIN_ON, $join->getWhere(), $query);
         }
 
         return $this;
@@ -259,7 +287,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      */
     protected function clauseWhere(RequestInterface $request, QueryInterface $query): self {
         if ($request->hasWhere()) {
-            $this->whereString(static::CLAUSE_WHERE, $request->getWhere(), $query);
+            $this->appendWhere(static::CLAUSE_WHERE, $request->getWhere(), $query);
         }
 
         return $this;
@@ -330,7 +358,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::insert($repository, $set)
      */
     public function insert(RepositoryInterface $repository, array $set): QueryInterface {
-        // TODO
+        return $this->insertMultiple($repository, [$set]);
     }
 
     /**
@@ -344,6 +372,40 @@ abstract class Grammar extends Resource implements GrammarInterface {
         return $query
         ->appendString($selectQuery->getText())
         ->addParameters($selectQuery->getParameters());
+    }
+
+    /**
+     * Insert rows
+     *
+     * @param RepositoryInterface $repository
+     * @param array $rows
+     * @return QueryInterface
+     */
+    protected function insertMultiple(RepositoryInterface $repository, array $rows): QueryInterface {
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
+        ->appendWord(static::STATEMENT_INSERT)
+        ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
+
+        // Columns
+        $list = [];
+        foreach (reset($rows) as $key => $value) {
+            $list[] = $this->identifierString($key, $query);
+        }
+
+        $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)) . PHP_EOL);
+
+        // Rows
+        $source = [];
+        foreach ($rows as $set) {
+            $list = [];
+            foreach ($set as $value) {
+                $list[] = $this->expressionString($value, $query);
+            }
+
+            $source[] = sprintf(static::MASK_VALUES, implode(static::LIST_SEPARATOR, $list));
+        }
+
+        return $query->appendClause(static::CLAUSE_VALUES, implode(static::LIST_SEPARATOR_MULTI_LINE, $source));
     }
 
     /**
@@ -422,32 +484,6 @@ abstract class Grammar extends Resource implements GrammarInterface {
      */
     public function update(array $set, RequestInterface $request): QueryInterface {
         // TODO
-    }
-
-    /**
-     * Generate where string
-     *
-     * @param string $clause
-     * @param WhereInterface $where
-     * @param QueryInterface $query
-     */
-    protected function whereString(string $clause, WhereInterface $where, QueryInterface $query) {
-        if ($tags = $where->getTags()) {
-            $query->appendWord($clause);
-
-            foreach ($tags as $index => $tag) {
-                if ($index) {
-                    $query->appendWord(static::TAG_SEPARATOR . strtoupper($tag->getJoin()));
-                }
-
-                $class = get_class($tag);
-                $shortName = substr($class, strrpos($class, '\\') + 1, -3);
-
-                $this->{static::METHOD_WHERE_TAG . $shortName}($tag, $query);
-            }
-
-            $query->appendString(PHP_EOL);
-        }
     }
 
     /**
