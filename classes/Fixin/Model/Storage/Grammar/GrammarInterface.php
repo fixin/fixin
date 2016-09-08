@@ -14,6 +14,10 @@ use Fixin\Resource\ResourceInterface;
 
 interface GrammarInterface extends ResourceInterface {
 
+    const IDENTIFIER_QUOTE = '`';
+    const IDENTIFIER_SEPARATOR = '.';
+    const STRING_QUOTE = '"';
+
     /**
      * Delete
      *

@@ -33,8 +33,9 @@ abstract class Grammar extends Resource implements GrammarInterface {
     const CLAUSE_LIMIT = 'LIMIT';
     const CLAUSE_ORDER_BY = 'ORDER BY';
     const CLAUSE_WHERE = 'WHERE';
-    const IDENTIFIER_QUOTE = '`';
-    const IDENTIFIER_SEPARATOR = '.';
+    const EXPRESSION_KEYWORDS = ['and', 'or', 'not', 'xor', 'in', 'like', 'null', 'is'];
+    const EXPRESSION_QUOTES = '\'"`';
+    const EXPRESSION_SEPARATORS = "\n\r\t ()+-*/<>!=&|^.,?";
     const LIST_SEPARATOR = ', ';
     const MASK_ALIAS = '%s AS %s';
     const MASK_ORDER_BY = '%s %s';
@@ -93,7 +94,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
         if ($expression instanceof ExpressionInterface) {
             $query->addParameters($expression->getParameters());
 
-            return $expression->getExpression();
+            return $this->quoteExpression($expression->getExpression());
         }
 
         $query->addParameter($expression);
@@ -275,7 +276,51 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @return string
      */
     protected function quoteExpression(string $expression): string {
-        return $expression;
+        $result = '';
+
+        $l = strlen($expression);
+        $x = 0;
+
+        $quote = static::IDENTIFIER_QUOTE;
+        $doubleQuote = $quote . $quote;
+
+        while ($x < $l) {
+            $ch = $expression[$x];
+
+            // Quotes
+            if (strpos(static::EXPRESSION_QUOTES, $ch) !== false) {
+                $x2 = strpos($expression, $ch, $x + 1) ?: $l;
+                $result .= substr($expression, $x, $x2 - $x + 1);
+                $x = $x2 + 1;
+
+                continue;
+            }
+
+            // Non-separators
+            if (strpos(static::EXPRESSION_SEPARATORS, $ch) === false) {
+                $x2 = strcspn($expression, static::EXPRESSION_SEPARATORS, $x);
+
+                $word = substr($expression, $x, $x2);
+                $x += $x2;
+                $next = substr($expression, $x, 1);
+                $x++;
+
+                if ($next !== '(' && !is_numeric($word . '0') && !in_array(strtolower($word), static::EXPRESSION_KEYWORDS)) {
+                    $result .= $quote . str_replace($quote, $doubleQuote, $word) . $quote . $next;
+
+                    continue;
+                }
+
+                $result .= $word . $next;
+
+                continue;
+            }
+
+            $result .= $ch;
+            $x++;
+        }
+
+        return $result;
     }
 
     /**
