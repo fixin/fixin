@@ -16,7 +16,7 @@ interface GrammarInterface extends ResourceInterface {
 
     const IDENTIFIER_QUOTE = '`';
     const IDENTIFIER_SEPARATOR = '.';
-    const STRING_QUOTE = '"';
+    const STRING_QUOTE = "'";
 
     /**
      * Delete
