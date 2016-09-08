@@ -5,13 +5,18 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Storage\Pdo;
+namespace Fixin\Model\Storage\Grammar;
 
+use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Resource\ResourceInterface;
 
 interface GrammarInterface extends ResourceInterface {
+
+    const IDENTIFIER_QUOTE = '`';
+    const IDENTIFIER_SEPARATOR = '.';
+    const STRING_QUOTE = '"';
 
     /**
      * Delete

@@ -5,7 +5,7 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Storage\Pdo;
+namespace Fixin\Base\Query;
 
 use Fixin\Resource\PrototypeInterface;
 
