@@ -11,6 +11,7 @@ use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;
@@ -22,6 +23,7 @@ class Repository extends Resource implements RepositoryInterface {
     const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
     const NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
     const PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId';
+    const PROTOTYPE_EXPRESSION = 'Model\Request\Expression';
     const PROTOTYPE_REQUEST = 'Model\Request\Request';
     const THIS_REQUIRES = [
         self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
@@ -73,6 +75,17 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function create(): EntityInterface {
         return clone $this->getEntityPrototype();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::createExpression($expression, $parameters)
+     */
+    public function createExpression(string $expression, array $parameters = []): ExpressionInterface {
+        return $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
+            ExpressionInterface::OPTION_EXPRESSION => $expression,
+            ExpressionInterface::OPTION_PARAMETERS => $parameters
+        ]);
     }
 
     /**
@@ -188,7 +201,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::insert($set)
      */
     public function insert(array $set): EntityIdInterface {
-        if ($this->getStorage()->insert($set)) {
+        if ($this->getStorage()->insert($this, $set)) {
             $rowId = Arrays::intersectByKeys($set, $this->primaryKey);
 
             if (isset($this->autoIncrementColumn)) {
