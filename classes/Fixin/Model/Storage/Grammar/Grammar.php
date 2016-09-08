@@ -37,6 +37,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
     const CLAUSE_LIMIT = 'LIMIT';
     const CLAUSE_ORDER_BY = 'ORDER BY';
     const CLAUSE_SELECT = 'SELECT';
+    const CLAUSE_SET = 'SET';
     const CLAUSE_VALUES = 'VALUES';
     const CLAUSE_WHERE = 'WHERE';
     const IDENTIFIER_QUOTE_CLOSE ="`";
@@ -75,6 +76,17 @@ abstract class Grammar extends Resource implements GrammarInterface {
         }
 
         return $this->quoteIdentifier($name);
+    }
+
+    /**
+     * Append name (with alias)
+     * 
+     * @param string $clause
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function appendName(string $clause, RequestInterface $request, QueryInterface $query) {
+        $query->appendClause($clause, $this->aliasedNameString($request->getRepository()->getName(), $request->getAlias()));
     }
 
     /**
@@ -157,7 +169,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @return self
      */
     protected function clauseFrom(RequestInterface $request, QueryInterface $query): self {
-        $query->appendClause(static::CLAUSE_FROM, $this->aliasedNameString($request->getRepository()->getName(), $request->getAlias()));
+        $this->appendName(static::CLAUSE_FROM, $request, $query);
 
         return $this;
     }
@@ -206,7 +218,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @return self
      */
     protected function clauseInto(RequestInterface $request, QueryInterface $query): self {
-        $query->appendClause(static::CLAUSE_INTO, $this->aliasedNameString($request->getRepository()->getName(), $request->getAlias()));
+        $this->appendName(static::CLAUSE_INTO, $request, $query);
 
         return $this;
     }
@@ -483,7 +495,22 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::update($set, $request)
      */
     public function update(array $set, RequestInterface $request): QueryInterface {
-        // TODO
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY);
+
+        $this->appendName(static::STATEMENT_UPDATE, $request, $query);
+
+        // Set
+        $list = [];
+        foreach ($set as $key => $value) {
+            $list[] = $this->identifierString($key, $query) . ' = ' . $this->expressionString($value, $query);
+        }
+
+        $query->appendClause(static::CLAUSE_SET, implode(static::LIST_SEPARATOR, $list));
+
+        // Where
+        $this->clauseWhere($request, $query);
+
+        return $query;
     }
 
     /**
