@@ -46,23 +46,11 @@ class Where extends Prototype implements WhereInterface {
      * @return self
      */
     protected function addCompare(string $join, $left, string $operator, $right, string $leftType, string $rightType): self {
-        if (!$left instanceof ExpressionInterface && $leftType === static::TYPE_IDENTIFIER) {
-            $left = $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
-                ExpressionInterface::OPTION_EXPRESSION => $left
-            ]);
-        }
-
-        if (!$right instanceof ExpressionInterface && $rightType === static::TYPE_IDENTIFIER) {
-            $right = $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
-                ExpressionInterface::OPTION_EXPRESSION => $right
-            ]);
-        }
-
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_COMPARE_TAG, [
             CompareTag::OPTION_JOIN => $join,
-            CompareTag::OPTION_LEFT => $left,
+            CompareTag::OPTION_LEFT => $this->compareSidePrepare($left, $leftType),
             CompareTag::OPTION_OPERATOR => $operator,
-            CompareTag::OPTION_RIGHT => $right
+            CompareTag::OPTION_RIGHT => $this->compareSidePrepare($right, $rightType)
         ]);
 
         return $this;
@@ -115,6 +103,23 @@ class Where extends Prototype implements WhereInterface {
      */
     public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface {
         return $this->addCompare(TagInterface::JOIN_AND, $left, $operator, $right, $leftType, $rightType);
+    }
+
+    /**
+     * Compare side prepare
+     *
+     * @param mixed $value
+     * @param string $type
+     * @return mixed
+     */
+    protected function compareSidePrepare($value, string $type) {
+        if (!$value instanceof ExpressionInterface && !$value instanceof RequestInterface && $type === static::TYPE_IDENTIFIER) {
+            return $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
+                ExpressionInterface::OPTION_EXPRESSION => $value
+            ]);
+        }
+
+        return $value;
     }
 
     /**
