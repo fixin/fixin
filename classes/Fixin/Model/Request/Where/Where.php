@@ -26,6 +26,7 @@ class Where extends Prototype implements WhereInterface {
     const PROTOTYPE_EXPRESSION = 'Model\Request\Expression';
     const PROTOTYPE_IN_TAG = 'Model\Request\Where\Tag\InTag';
     const PROTOTYPE_NULL_TAG = 'Model\Request\Where\Tag\NullTag';
+    const PROTOTYPE_WHERE = 'Model\Request\Where\Where';
     const PROTOTYPE_WHERE_TAG = 'Model\Request\Where\Tag\WhereTag';
 
     /**
@@ -164,7 +165,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::nested($callback)
      */
     public function nested(callable $callback): WhereInterface {
-        $where = new static();
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
@@ -221,7 +222,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::notNested($callback)
      */
     public function notNested(callable $callback): WhereInterface {
-        $where = new static();
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
@@ -322,7 +323,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNested($callback)
      */
     public function orNested(callable $callback): WhereInterface {
-        $where = new static();
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
@@ -383,7 +384,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNotNested($callback)
      */
     public function orNotNested(callable $callback): WhereInterface {
-        $where = new static();
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
