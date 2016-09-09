@@ -141,7 +141,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::in($identifier, $values)
      */
-    public function in(string $identifier, array $values): WhereInterface {
+    public function in(string $identifier, $values): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
             InTag::OPTION_IDENTIFIER => $identifier,
             InTag::OPTION_VALUES => $values
@@ -207,7 +207,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::notIn($identifier, $values)
      */
-    public function notIn(string $identifier, array $values): WhereInterface {
+    public function notIn(string $identifier, $values): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
             InTag::OPTION_NEGATED => true,
             InTag::OPTION_IDENTIFIER => $identifier,
@@ -298,7 +298,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::orIn($identifier, $values)
      */
-    public function orIn(string $identifier, array $values): WhereInterface {
+    public function orIn(string $identifier, $values): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
             InTag::OPTION_JOIN => TagInterface::JOIN_OR,
             InTag::OPTION_IDENTIFIER => $identifier,
@@ -368,7 +368,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::orNotIn($identifier, $values)
      */
-    public function orNotIn(string $identifier, array $values): WhereInterface {
+    public function orNotIn(string $identifier, $values): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
             InTag::OPTION_JOIN => TagInterface::JOIN_OR,
             InTag::OPTION_NEGATED => true,
