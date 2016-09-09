@@ -76,6 +76,21 @@ class Request extends Prototype implements RequestInterface {
     protected $repository;
 
     /**
+     * @var int|null
+     */
+    protected $unionLimit;
+
+    /**
+     * @var integer
+     */
+    protected $unionOffset = 0;
+
+    /**
+     * @var array
+     */
+    protected $unionOrderBy = [];
+
+    /**
      * @var array
      */
     protected $unions = [];
@@ -317,6 +332,30 @@ class Request extends Prototype implements RequestInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::getUnionLimit()
+     */
+    public function getUnionLimit() {
+        return $this->unionLimit;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::getUnionOffset()
+     */
+    public function getUnionOffset(): int {
+        return $this->unionOffset;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::getUnionOrderBy()
+     */
+    public function getUnionOrderBy(): array {
+        return $this->unionOrderBy;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Request\RequestInterface::getUnions()
      */
     public function getUnions(): array {
@@ -499,6 +538,47 @@ class Request extends Prototype implements RequestInterface {
      */
     protected function setRepository(RepositoryInterface $repository) {
         $this->repository = $repository;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::setUnionLimit($unionLimit)
+     */
+    public function setUnionLimit($unionLimit): RequestInterface {
+        $this->unionLimit = $unionLimit;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::setUnionLimitForPage($page, $itemsPerPage)
+     */
+    public function setUnionLimitForPage(int $page, int $itemsPerPage): RequestInterface {
+        $this->unionOffset = $page * $itemsPerPage;
+        $this->unionLimit = $itemsPerPage;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::setUnionOffset($unionOffset)
+     */
+    public function setUnionOffset(int $unionOffset): RequestInterface {
+        $this->unionOffset = $unionOffset;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::setUnionOrderBy($unionOrderBy)
+     */
+    public function setUnionOrderBy(array $unionOrderBy): RequestInterface {
+        $this->unionOrderBy = $unionOrderBy;
+
+        return $this;
     }
 
     /**

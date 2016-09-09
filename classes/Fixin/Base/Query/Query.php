@@ -79,6 +79,16 @@ class Query extends Prototype implements QueryInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Base\Query\QueryInterface::applyMask($mask)
+     */
+    public function applyMask(string $mask): QueryInterface {
+        $this->text = sprintf($mask, $this->text);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Base\Query\QueryInterface::getParameters()
      */
     public function getParameters(): array {
