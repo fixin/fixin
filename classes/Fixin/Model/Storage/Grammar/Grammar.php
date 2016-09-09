@@ -22,51 +22,55 @@ use Fixin\Resource\Resource;
 
 abstract class Grammar extends Resource implements GrammarInterface {
 
-    const ADD_COLUMNS = 'columns';
-    const ADD_FROM = 'from';
-    const ADD_GROUP_BY = 'groupBy';
-    const ADD_HAVING = 'having';
-    const ADD_JOIN = 'join';
-    const ADD_LIMIT = 'limit';
-    const ADD_ORDER_BY = 'orderBy';
-    const ADD_WHERE = 'where';
-    const CLAUSE_FROM = 'FROM';
-    const CLAUSE_GROUP_BY = 'GROUP BY';
-    const CLAUSE_HAVING = 'HAVING';
-    const CLAUSE_INTO = 'INTO';
-    const CLAUSE_JOIN = 'JOIN';
-    const CLAUSE_JOIN_ON = "\tON";
-    const CLAUSE_LIMIT = 'LIMIT';
-    const CLAUSE_ORDER_BY = 'ORDER BY';
-    const CLAUSE_SET = 'SET';
-    const CLAUSE_VALUES = 'VALUES';
-    const CLAUSE_WHERE = 'WHERE';
-    const EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@";
-    const IDENTIFIER_QUOTE_CLOSE ="`";
-    const IDENTIFIER_QUOTE_OPEN ="`";
-    const LIST_SEPARATOR = ', ';
-    const LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t";
-    const MASK_ALIAS = '%s AS %s';
-    const MASK_BETWEEN = 'BETWEEN %s AND %s';
-    const MASK_COLUMN_NAMES = "\t(%s)";
-    const MASK_EXISTS = 'EXISTS(%s)';
-    const MASK_IN = [false => 'IN (%s)', true => 'IN %s'];
-    const MASK_NESTED = "(%s)";
-    const MASK_NESTED_MULTI_LINE = "(\n\t%s)\n";
-    const MASK_ORDER_BY = '%s %s';
-    const MASK_VALUES = '(%s)';
-    const METHOD_CLAUSE = 'clause';
-    const METHOD_WHERE_TAG = 'whereTag';
-    const ORDER_ASCENDING = 'ASC';
-    const ORDER_DESCENDING = 'DESC';
-    const PROTOTYPE_QUERY = 'Base\Query\Query';
-    const STATEMENT_DELETE = 'DELETE';
-    const STATEMENT_INSERT = 'INSERT';
-    const STATEMENT_SELECT = [false => 'SELECT', true => 'SELECT DISTINCT'];
-    const STATEMENT_UPDATE = 'UPDATE';
-    const WHERE_TAG_IS_NULL = [false => 'IS NOT NULL', true => 'IS NULL'];
-    const WHERE_TAG_NEGATE = [false => '', true => 'NOT '];
-    const WHERE_TAG_SEPARATOR = PHP_EOL . "\t %s ";
+    const ADD_COLUMNS = 'columns',
+        ADD_FROM = 'from',
+        ADD_GROUP_BY = 'groupBy',
+        ADD_HAVING = 'having',
+        ADD_JOIN = 'join',
+        ADD_LIMIT = 'limit',
+        ADD_ORDER_BY = 'orderBy',
+        ADD_WHERE = 'where',
+        ALL_COLUMNS = '*',
+        CLAUSE_FROM = 'FROM',
+        CLAUSE_GROUP_BY = 'GROUP BY',
+        CLAUSE_HAVING = 'HAVING',
+        CLAUSE_INTO = 'INTO',
+        CLAUSE_JOIN = 'JOIN',
+        CLAUSE_JOIN_ON = "\tON",
+        CLAUSE_LIMIT = 'LIMIT',
+        CLAUSE_ORDER_BY = 'ORDER BY',
+        CLAUSE_SET = 'SET',
+        CLAUSE_VALUES = 'VALUES',
+        CLAUSE_WHERE = 'WHERE',
+        EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@",
+        IDENTIFIER_QUOTE_CLOSE ="`",
+        IDENTIFIER_QUOTE_OPEN ="`",
+        LIST_SEPARATOR = ', ',
+        LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t",
+        MASK_ALIAS = '%s AS %s',
+        MASK_BETWEEN = 'BETWEEN %s AND %s',
+        MASK_COLUMN_NAMES = "\t(%s)",
+        MASK_EXISTS = 'EXISTS(%s)',
+        MASK_IN = [false => 'IN (%s)', true => 'IN %s'],
+        MASK_LIMIT = '%s',
+        MASK_LIMIT_OFFSET = '%s, %s',
+        MASK_NESTED = "(%s)",
+        MASK_NESTED_MULTI_LINE = "(\n\t%s)\n",
+        MASK_ORDER_BY = '%s %s',
+        MASK_VALUES = '(%s)',
+        METHOD_CLAUSE = 'clause',
+        METHOD_WHERE_TAG = 'whereTag',
+        ORDER_ASCENDING = 'ASC',
+        ORDER_DESCENDING = 'DESC',
+        PLACEHOLDER = '?',
+        PROTOTYPE_QUERY = 'Base\Query\Query',
+        STATEMENT_DELETE = 'DELETE',
+        STATEMENT_INSERT = 'INSERT',
+        STATEMENT_SELECT = [false => 'SELECT', true => 'SELECT DISTINCT'],
+        STATEMENT_UPDATE = 'UPDATE',
+        WHERE_TAG_IS_NULL = [false => 'IS NOT NULL', true => 'IS NULL'],
+        WHERE_TAG_NEGATE = [false => '', true => 'NOT '],
+        WHERE_TAG_SEPARATOR = PHP_EOL . "\t %s ";
 
     /**
      * COLUMNS clause
@@ -89,7 +93,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
         }
 
         // All
-        $query->appendWord('*');
+        $query->appendWord(static::ALL_COLUMNS);
     }
 
     /**
@@ -155,14 +159,16 @@ abstract class Grammar extends Resource implements GrammarInterface {
     protected function clauseLimit(RequestInterface $request, QueryInterface $query) {
         if ($limit = $request->getLimit()) {
             if ($offset = $request->getOffset()) {
-                $limit = "$offset, $limit";
+                $query->appendClause(static::CLAUSE_LIMIT, sprintf(static::MASK_LIMIT_OFFSET, $offset, $limit));
+
+                return;
             }
 
-            $query->appendClause(static::CLAUSE_LIMIT, $limit);
+            $query->appendClause(static::CLAUSE_LIMIT, sprintf(static::MASK_LIMIT, $limit));
         }
         // Offset-only
         elseif ($offset = $request->getOffset()) {
-            $query->appendClause(static::CLAUSE_LIMIT, $offset . ', ' . PHP_INT_MAX);
+            $query->appendClause(static::CLAUSE_LIMIT, sprintf(static::MASK_LIMIT_OFFSET, $offset, PHP_INT_MAX));
         }
     }
 
@@ -242,7 +248,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
 
         $query->addParameter($expression);
 
-        return '?';
+        return static::PLACEHOLDER;
     }
 
     /**
