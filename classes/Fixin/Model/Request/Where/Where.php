@@ -26,6 +26,7 @@ class Where extends Prototype implements WhereInterface {
     const PROTOTYPE_EXPRESSION = 'Model\Request\Expression';
     const PROTOTYPE_IN_TAG = 'Model\Request\Where\Tag\InTag';
     const PROTOTYPE_NULL_TAG = 'Model\Request\Where\Tag\NullTag';
+    const PROTOTYPE_WHERE = 'Model\Request\Where\Where';
     const PROTOTYPE_WHERE_TAG = 'Model\Request\Where\Tag\WhereTag';
 
     /**
@@ -45,23 +46,11 @@ class Where extends Prototype implements WhereInterface {
      * @return self
      */
     protected function addCompare(string $join, $left, string $operator, $right, string $leftType, string $rightType): self {
-        if (!$left instanceof ExpressionInterface && $leftType === static::TYPE_IDENTIFIER) {
-            $left = $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
-                ExpressionInterface::OPTION_EXPRESSION => $left
-            ]);
-        }
-
-        if (!$right instanceof ExpressionInterface && $rightType === static::TYPE_IDENTIFIER) {
-            $right = $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
-                ExpressionInterface::OPTION_EXPRESSION => $right
-            ]);
-        }
-
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_COMPARE_TAG, [
             CompareTag::OPTION_JOIN => $join,
-            CompareTag::OPTION_LEFT => $left,
+            CompareTag::OPTION_LEFT => $this->compareSidePrepare($left, $leftType),
             CompareTag::OPTION_OPERATOR => $operator,
-            CompareTag::OPTION_RIGHT => $right
+            CompareTag::OPTION_RIGHT => $this->compareSidePrepare($right, $rightType)
         ]);
 
         return $this;
@@ -117,6 +106,23 @@ class Where extends Prototype implements WhereInterface {
     }
 
     /**
+     * Compare side prepare
+     *
+     * @param mixed $value
+     * @param string $type
+     * @return mixed
+     */
+    protected function compareSidePrepare($value, string $type) {
+        if (!$value instanceof ExpressionInterface && !$value instanceof RequestInterface && $type === static::TYPE_IDENTIFIER) {
+            return $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
+                ExpressionInterface::OPTION_EXPRESSION => $value
+            ]);
+        }
+
+        return $value;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::exists($request)
      */
@@ -140,7 +146,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::in($identifier, $values)
      */
-    public function in(string $identifier, array $values): WhereInterface {
+    public function in(string $identifier, $values): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
             InTag::OPTION_IDENTIFIER => $identifier,
             InTag::OPTION_VALUES => $values
@@ -164,7 +170,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::nested($callback)
      */
     public function nested(callable $callback): WhereInterface {
-        $where = new static();
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
@@ -206,7 +212,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::notIn($identifier, $values)
      */
-    public function notIn(string $identifier, array $values): WhereInterface {
+    public function notIn(string $identifier, $values): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
             InTag::OPTION_NEGATED => true,
             InTag::OPTION_IDENTIFIER => $identifier,
@@ -221,7 +227,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::notNested($callback)
      */
     public function notNested(callable $callback): WhereInterface {
-        $where = new static();
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
@@ -297,7 +303,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::orIn($identifier, $values)
      */
-    public function orIn(string $identifier, array $values): WhereInterface {
+    public function orIn(string $identifier, $values): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
             InTag::OPTION_JOIN => TagInterface::JOIN_OR,
             InTag::OPTION_IDENTIFIER => $identifier,
@@ -322,7 +328,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNested($callback)
      */
     public function orNested(callable $callback): WhereInterface {
-        $where = new static();
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
@@ -367,7 +373,7 @@ class Where extends Prototype implements WhereInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::orNotIn($identifier, $values)
      */
-    public function orNotIn(string $identifier, array $values): WhereInterface {
+    public function orNotIn(string $identifier, $values): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
             InTag::OPTION_JOIN => TagInterface::JOIN_OR,
             InTag::OPTION_NEGATED => true,
@@ -383,7 +389,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNotNested($callback)
      */
     public function orNotNested(callable $callback): WhereInterface {
-        $where = new static();
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [

@@ -29,6 +29,14 @@ interface StorageInterface extends ResourceInterface {
     public function getLastInsertValue(): int;
 
     /**
+     * Check existance
+     *
+     * @param RequestInterface $request
+     * @return bool
+     */
+    public function exists(RequestInterface $request): bool;
+
+    /**
      * Insert
      *
      * @param RepositoryInterface $repository
@@ -45,6 +53,15 @@ interface StorageInterface extends ResourceInterface {
      * @return int
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
+
+    /**
+     * Insert multiple
+     *
+     * @param RepositoryInterface $repository
+     * @param array $rows
+     * @return int
+     */
+    public function insertMultiple(RepositoryInterface $repository, array $rows): int;
 
     /**
      * Select

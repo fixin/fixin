@@ -10,6 +10,7 @@ namespace Fixin\Model\Repository;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\ResourceInterface;
@@ -35,6 +36,15 @@ interface RepositoryInterface extends ResourceInterface {
      * @return EntityInterface
      */
     public function create(): EntityInterface;
+
+    /**
+     * Create expression
+     *
+     * @param string $expression
+     * @param array $parameters
+     * @return ExpressionInterface
+     */
+    public function createExpression(string $expression, array $parameters = []): ExpressionInterface;
 
     /**
      * Create entity ID
@@ -104,6 +114,14 @@ interface RepositoryInterface extends ResourceInterface {
      * @return int
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
+
+    /**
+     * Insert multiple
+     *
+     * @param array $rows
+     * @return int
+     */
+    public function insertMultiple(array $rows): int;
 
     /**
      * Select entities

@@ -16,7 +16,7 @@ interface GrammarInterface extends ResourceInterface {
 
     const IDENTIFIER_QUOTE = '`';
     const IDENTIFIER_SEPARATOR = '.';
-    const STRING_QUOTE = '"';
+    const STRING_QUOTE = "'";
 
     /**
      * Delete
@@ -51,6 +51,15 @@ interface GrammarInterface extends ResourceInterface {
      * @return QueryInterface
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface;
+
+    /**
+     * Insert multiple
+     *
+     * @param RepositoryInterface $repository
+     * @param array $rows
+     * @return QueryInterface
+     */
+    public function insertMultiple(RepositoryInterface $repository, array $rows): QueryInterface;
 
     /**
      * Select

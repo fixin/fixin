@@ -11,59 +11,201 @@ use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Model\Request\Where\Tag\BetweenTag;
 use Fixin\Model\Request\Where\Tag\CompareTag;
+use Fixin\Model\Request\Where\Tag\ExistsTag;
+use Fixin\Model\Request\Where\Tag\InTag;
 use Fixin\Model\Request\Where\Tag\NullTag;
+use Fixin\Model\Request\Where\Tag\WhereTag;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\Resource;
 
 abstract class Grammar extends Resource implements GrammarInterface {
 
-    const ADD_FROM = 'from';
-    const ADD_GROUP_BY = 'groupBy';
-    const ADD_HAVING = 'having';
-    const ADD_JOIN = 'join';
-    const ADD_LIMIT = 'limit';
-    const ADD_ORDER_BY = 'orderBy';
-    const ADD_WHERE = 'where';
-    const CLAUSE_FROM = 'FROM';
-    const CLAUSE_GROUP_BY = 'GROUP BY';
-    const CLAUSE_HAVING = 'HAVING';
-    const CLAUSE_JOIN = 'JOIN';
-    const CLAUSE_JOIN_ON = 'ON';
-    const CLAUSE_LIMIT = 'LIMIT';
-    const CLAUSE_ORDER_BY = 'ORDER BY';
-    const CLAUSE_WHERE = 'WHERE';
-    const EXPRESSION_KEYWORDS = ['and', 'or', 'not', 'xor', 'in', 'like', 'null', 'is'];
-    const EXPRESSION_QUOTES = '\'"`';
-    const EXPRESSION_SEPARATORS = "\n\r\t ()+-*/<>!=&|^.,?";
-    const LIST_SEPARATOR = ', ';
-    const MASK_ALIAS = '%s AS %s';
-    const MASK_ORDER_BY = '%s %s';
-    const METHOD_CLAUSE = 'Clause';
-    const METHOD_WHERE_TAG = 'where';
-    const ORDER_ASCENDING = 'ASC';
-    const ORDER_DESCENDING = 'DESC';
-    const PROTOTYPE_QUERY = 'Base\Query\Query';
-    const STATEMENT_DELETE = 'DELETE';
-    const STATEMENT_INSERT = 'INSERT';
-    const STATEMENT_SELECT = 'SELECT';
-    const STATEMENT_UPDATE = 'UPDATE';
-    const TAG_IS_NULL = [false => 'IS NOT NULL', true => 'IS NULL'];
-    const TAG_NEGATE = [false => '', true => 'NOT'];
+    const ADD_COLUMNS = 'columns',
+        ADD_FROM = 'from',
+        ADD_GROUP_BY = 'groupBy',
+        ADD_HAVING = 'having',
+        ADD_JOIN = 'join',
+        ADD_LIMIT = 'limit',
+        ADD_ORDER_BY = 'orderBy',
+        ADD_WHERE = 'where',
+        ALL_COLUMNS = '*',
+        CLAUSE_FROM = 'FROM',
+        CLAUSE_GROUP_BY = 'GROUP BY',
+        CLAUSE_HAVING = 'HAVING',
+        CLAUSE_INTO = 'INTO',
+        CLAUSE_JOIN = 'JOIN',
+        CLAUSE_JOIN_ON = "\tON",
+        CLAUSE_LIMIT = 'LIMIT',
+        CLAUSE_ORDER_BY = 'ORDER BY',
+        CLAUSE_SET = 'SET',
+        CLAUSE_VALUES = 'VALUES',
+        CLAUSE_WHERE = 'WHERE',
+        EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@",
+        IDENTIFIER_QUOTE_CLOSE ="`",
+        IDENTIFIER_QUOTE_OPEN ="`",
+        LIST_SEPARATOR = ', ',
+        LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t",
+        MASK_ALIAS = '%s AS %s',
+        MASK_BETWEEN = 'BETWEEN %s AND %s',
+        MASK_COLUMN_NAMES = "\t(%s)",
+        MASK_EXISTS = 'EXISTS(%s)',
+        MASK_IN = [false => 'IN (%s)', true => 'IN %s'],
+        MASK_LIMIT = '%s',
+        MASK_LIMIT_OFFSET = '%s, %s',
+        MASK_NESTED = "(%s)",
+        MASK_NESTED_MULTI_LINE = "(\n\t%s)\n",
+        MASK_ORDER_BY = '%s %s',
+        MASK_VALUES = '(%s)',
+        METHOD_CLAUSE = 'clause',
+        METHOD_WHERE_TAG = 'whereTag',
+        ORDER_ASCENDING = 'ASC',
+        ORDER_DESCENDING = 'DESC',
+        PLACEHOLDER = '?',
+        PROTOTYPE_QUERY = 'Base\Query\Query',
+        STATEMENT_DELETE = 'DELETE',
+        STATEMENT_INSERT = 'INSERT',
+        STATEMENT_SELECT = [false => 'SELECT', true => 'SELECT DISTINCT'],
+        STATEMENT_UPDATE = 'UPDATE',
+        WHERE_TAG_IS_NULL = [false => 'IS NOT NULL', true => 'IS NULL'],
+        WHERE_TAG_NEGATE = [false => '', true => 'NOT '],
+        WHERE_TAG_SEPARATOR = PHP_EOL . "\t %s ";
 
     /**
-     * Name with alias (if needed)
+     * COLUMNS clause
      *
-     * @param string $name
-     * @param string $alias
-     * @return string
+     * @param RequestInterface $request
+     * @param QueryInterface $query
      */
-    protected function aliasedNameString(string $name, string $alias): string {
-        if ($name !== $alias) {
-            return sprintf(static::MASK_ALIAS, $this->quoteIdentifier($name), $this->quoteIdentifier($alias));
+    protected function clauseColumns(RequestInterface $request, QueryInterface $query) {
+        // Selected columns
+        if ($columns = $request->getColumns()) {
+            $list = [];
+
+            foreach ($columns as $alias => $identifier) {
+                $list[] = $this->nameToString($this->identifierToString($identifier, $query), is_numeric($alias) ? null : $alias);
+            }
+
+            $query->appendString(implode(static::LIST_SEPARATOR_MULTI_LINE, $list) . PHP_EOL);
+
+            return;
         }
 
-        return $this->quoteIdentifier($name);
+        // All
+        $query->appendWord(static::ALL_COLUMNS);
+    }
+
+    /**
+     * FROM clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseFrom(RequestInterface $request, QueryInterface $query) {
+        $query->appendClause(static::CLAUSE_FROM, $this->requestNameToString($request));
+    }
+
+    /**
+     * HAVING clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseHaving(RequestInterface $request, QueryInterface $query) {
+        if ($request->hasHaving()) {
+            $query->appendString($this->whereToString(static::CLAUSE_HAVING, $request->getHaving(), $query));
+        }
+    }
+
+    /**
+     * GROUP BY clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseGroupBy(RequestInterface $request, QueryInterface $query) {
+        $groupBy = [];
+
+        foreach ($request->getGroupBy() as $value) {
+            $groupBy[] = $this->identifierToString($value, $query);
+        }
+
+        if ($groupBy) {
+            $query->appendClause(static::CLAUSE_GROUP_BY, implode(static::LIST_SEPARATOR, $groupBy));
+        }
+    }
+
+    /**
+     * JOIN clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseJoin(RequestInterface $request, QueryInterface $query) {
+        foreach ($request->getJoins() as $join) {
+            $query
+            ->appendClause(static::CLAUSE_JOIN, $this->nameToString($join->getRepository()->getName(), $join->getAlias()))
+            ->appendString($this->whereToString(static::CLAUSE_JOIN_ON, $join->getWhere(), $query));
+        }
+    }
+
+    /**
+     * LIMIT clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseLimit(RequestInterface $request, QueryInterface $query) {
+        if ($limit = $request->getLimit()) {
+            if ($offset = $request->getOffset()) {
+                $query->appendClause(static::CLAUSE_LIMIT, sprintf(static::MASK_LIMIT_OFFSET, $offset, $limit));
+
+                return;
+            }
+
+            $query->appendClause(static::CLAUSE_LIMIT, sprintf(static::MASK_LIMIT, $limit));
+        }
+        // Offset-only
+        elseif ($offset = $request->getOffset()) {
+            $query->appendClause(static::CLAUSE_LIMIT, sprintf(static::MASK_LIMIT_OFFSET, $offset, PHP_INT_MAX));
+        }
+    }
+
+    /**
+     * ORDER BY clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseOrderBy(RequestInterface $request, QueryInterface $query) {
+        $orderBy = [];
+
+        foreach ($request->getOrderBy() as $key => $value) {
+            if (is_numeric($key)) {
+                $orderBy[] = $this->identifierToString($value, $query);
+
+                continue;
+            }
+
+            $orderBy[] = sprintf(static::MASK_ORDER_BY, $this->quoteIdentifier($key), strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
+        }
+
+        if ($orderBy) {
+            $query->appendClause(static::CLAUSE_ORDER_BY, implode(static::LIST_SEPARATOR, $orderBy));
+        }
+    }
+
+    /**
+     * WHERE clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseWhere(RequestInterface $request, QueryInterface $query) {
+        if ($request->hasWhere()) {
+            $query->appendString($this->whereToString(static::CLAUSE_WHERE, $request->getWhere(), $query));
+        }
     }
 
     /**
@@ -79,17 +221,19 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::exists($request)
      */
     public function exists(RequestInterface $request): QueryInterface {
-        // TODO
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY);
+
+        return $query->appendClause(static::STATEMENT_SELECT[false], sprintf(static::MASK_EXISTS, $this->requestToString($request, $query)));
     }
 
     /**
      * Expression string
      *
-     * @param number|string|array|ExpressionInterface $expression
+     * @param number|string|array|ExpressionInterface|RequestInterface $expression
      * @param QueryInterface $query
      * @return string
      */
-    protected function expressionString($expression, QueryInterface $query): string {
+    protected function expressionToString($expression, QueryInterface $query): string {
         // Expression
         if ($expression instanceof ExpressionInterface) {
             $query->addParameters($expression->getParameters());
@@ -97,72 +241,33 @@ abstract class Grammar extends Resource implements GrammarInterface {
             return $this->quoteExpression($expression->getExpression());
         }
 
+        // Request
+        if ($expression instanceof RequestInterface) {
+            return sprintf(static::MASK_NESTED, $this->requestToString($expression, $query));
+        }
+
         $query->addParameter($expression);
 
-        return '?';
-    }
-
-    /**
-     * FROM clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     * @return self
-     */
-    protected function fromClause(RequestInterface $request, QueryInterface $query): self {
-        $query->appendClause(static::CLAUSE_FROM, $this->aliasedNameString($request->getRepository()->getName(), $request->getAlias()));
-
-        return $this;
-    }
-
-    /**
-     * GROUP BY clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     * @return self
-     */
-    protected function groupByClause(RequestInterface $request, QueryInterface $query): self {
-        $groupBy = [];
-
-        foreach ($request->getGroupBy() as $value) {
-            $groupBy[] = $this->identifierString($value, $query);
-        }
-
-        if ($groupBy) {
-            $query->appendClause(static::CLAUSE_GROUP_BY, implode(static::LIST_SEPARATOR, $groupBy));
-        }
-
-        return $this;
-    }
-
-    /**
-     * HAVING clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     * @return self
-     */
-    protected function havingClause(RequestInterface $request, QueryInterface $query): self {
-        if ($request->hasHaving()) {
-            $this->whereString(static::CLAUSE_HAVING, $request->getHaving(), $query);
-        }
-
-        return $this;
+        return static::PLACEHOLDER;
     }
 
     /**
      * Identifier string
      *
-     * @param number|string|ExpressionInterface $identifier
+     * @param number|string|ExpressionInterface|RequestInterface $identifier
      * @param QueryInterface $query
      * @return string
      */
-    protected function identifierString($identifier, QueryInterface $query): string {
+    protected function identifierToString($identifier, QueryInterface $query): string {
+        // Expression
         if ($identifier instanceof ExpressionInterface) {
             $query->addParameters($identifier->getParameters());
 
             $identifier = $identifier->getExpression();
+        }
+        // Request
+        elseif ($identifier instanceof RequestInterface) {
+            return sprintf(static::MASK_NESTED, $this->requestToString($identifier, $query));
         }
 
         return $this->quoteIdentifier($identifier);
@@ -173,7 +278,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::insert($repository, $set)
      */
     public function insert(RepositoryInterface $repository, array $set): QueryInterface {
-        // TODO
+        return $this->insertMultiple($repository, [$set]);
     }
 
     /**
@@ -181,47 +286,55 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::insertInto($repository, $request)
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface {
-        // TODO
-    }
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
+        ->appendWord(static::STATEMENT_INSERT)
+        ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
 
-    /**
-     * JOIN clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     * @return self
-     */
-    protected function joinClause(RequestInterface $request, QueryInterface $query): self {
-        foreach ($request->getJoins() as $join) {
-            $query->appendClause(static::CLAUSE_JOIN, $this->aliasedNameString($join->getRepository()->getName(), $join->getAlias()));
-
-            $on = $this->whereString(static::CLAUSE_JOIN_ON, $join->getWhere(), $query);
-        }
-
-        return $this;
-    }
-
-    /**
-     * LIMIT clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     * @return self
-     */
-    protected function limitClause(RequestInterface $request, QueryInterface $query): self {
-        if ($limit = $request->getLimit()) {
-            if ($offset = $request->getOffset()) {
-                $limit = "$offset, $limit";
+        // Columns
+        if ($columns = $request->getColumns()) {
+            $list = [];
+            foreach ($columns as $alias => $identifier) {
+                $list[] = $this->identifierToString(is_numeric($alias) ? $identifier : $alias, $query);
             }
 
-            $query->appendClause(static::CLAUSE_LIMIT, $limit);
-        }
-        // Offset-only
-        elseif ($offset = $request->getOffset()) {
-            $query->appendClause(static::CLAUSE_LIMIT, $offset . ', ' . PHP_INT_MAX);
+            $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)) . PHP_EOL);
         }
 
-        return $this;
+        // Select
+        $query->appendString($this->requestToString($request, $query));
+
+        return $query;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::insertMultiple($repository, $rows)
+     */
+    public function insertMultiple(RepositoryInterface $repository, array $rows): QueryInterface {
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
+        ->appendWord(static::STATEMENT_INSERT)
+        ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
+
+        // Columns
+        $list = [];
+        foreach (reset($rows) as $key => $value) {
+            $list[] = $this->identifierToString($key, $query);
+        }
+
+        $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)) . PHP_EOL);
+
+        // Rows
+        $source = [];
+        foreach ($rows as $set) {
+            $list = [];
+            foreach ($set as $value) {
+                $list[] = $this->expressionToString($value, $query);
+            }
+
+            $source[] = sprintf(static::MASK_VALUES, implode(static::LIST_SEPARATOR, $list));
+        }
+
+        return $query->appendClause(static::CLAUSE_VALUES, implode(static::LIST_SEPARATOR_MULTI_LINE, $source));
     }
 
     /**
@@ -236,91 +349,43 @@ abstract class Grammar extends Resource implements GrammarInterface {
         $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)->appendWord($statement);
 
         foreach ($tags as $tag) {
-            $this->{$tag . static::METHOD_CLAUSE}($request, $query);
+            $this->{static::METHOD_CLAUSE . $tag}($request, $query);
         }
 
         return $query;
     }
 
     /**
-     * ORDER BY clause
+     * Name (with alias)
      *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     * @return self
+     * @param string $name
+     * @param string $alias
+     * @return string
      */
-    protected function orderByClause(RequestInterface $request, QueryInterface $query): self {
-        $orderBy = [];
-
-        foreach ($request->getOrderBy() as $key => $value) {
-            if (is_numeric($key)) {
-                $orderBy[] = $this->identifierString($value, $query);
-
-                continue;
-            }
-
-            $orderBy[] = sprintf(static::MASK_ORDER_BY, $this->quoteIdentifier($key), strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
+    protected function nameToString(string $name, string $alias = null): string {
+        if ($name !== $alias && !is_null($alias)) {
+            return sprintf(static::MASK_ALIAS, $this->quoteIdentifier($name), $this->quoteIdentifier($alias));
         }
 
-        if ($orderBy) {
-            $query->appendClause(static::CLAUSE_ORDER_BY, implode(static::LIST_SEPARATOR, $orderBy));
-        }
-
-        return $this;
+        return $this->quoteIdentifier($name);
     }
 
     /**
-     * Quote expression
+     * Quote expression (detects identifier-only expressions)
      *
      * @param string $expression
      * @return string
      */
     protected function quoteExpression(string $expression): string {
-        $result = '';
+        $trimmed = trim($expression);
 
-        $l = strlen($expression);
-        $x = 0;
-
-        $quote = static::IDENTIFIER_QUOTE;
-        $doubleQuote = $quote . $quote;
-
-        while ($x < $l) {
-            $ch = $expression[$x];
-
-            // Quotes
-            if (strpos(static::EXPRESSION_QUOTES, $ch) !== false) {
-                $x2 = strpos($expression, $ch, $x + 1) ?: $l;
-                $result .= substr($expression, $x, $x2 - $x + 1);
-                $x = $x2 + 1;
-
-                continue;
-            }
-
-            // Non-separators
-            if (strpos(static::EXPRESSION_SEPARATORS, $ch) === false) {
-                $x2 = strcspn($expression, static::EXPRESSION_SEPARATORS, $x);
-
-                $word = substr($expression, $x, $x2);
-                $x += $x2;
-                $next = substr($expression, $x, 1);
-                $x++;
-
-                if ($next !== '(' && !is_numeric($word . '0') && !in_array(strtolower($word), static::EXPRESSION_KEYWORDS)) {
-                    $result .= $quote . str_replace($quote, $doubleQuote, $word) . $quote . $next;
-
-                    continue;
-                }
-
-                $result .= $word . $next;
-
-                continue;
-            }
-
-            $result .= $ch;
-            $x++;
+        // There is no terminal characters in the trimmed
+        if (strcspn($trimmed, static::EXPRESSION_TERMINALS) === strlen($trimmed)) {
+            return $this->quoteIdentifier($trimmed);
         }
 
-        return $result;
+        // Complex expression
+        return $expression;
     }
 
     /**
@@ -330,14 +395,47 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @return string
      */
     protected function quoteIdentifier(string $identifier): string {
-        $tags = explode(static::IDENTIFIER_SEPARATOR, $identifier);
-        foreach ($tags as &$tag) {
-            if ($tag[0] !== static::IDENTIFIER_QUOTE) {
-                $tag = static::IDENTIFIER_QUOTE . $tag . static::IDENTIFIER_QUOTE;
+        $trimmed = trim($identifier);
+
+        // There is no terminal characters in the trimmed
+        if (strcspn($trimmed, static::EXPRESSION_TERMINALS) === strlen($trimmed)) {
+            $tags = explode(static::IDENTIFIER_SEPARATOR, $trimmed);
+
+            foreach ($tags as &$tag) {
+                if ($tag[0] !== static::IDENTIFIER_QUOTE_OPEN) {
+                    $tag = static::IDENTIFIER_QUOTE_OPEN . $tag . static::IDENTIFIER_QUOTE_CLOSE;
+                }
             }
+
+            return implode(static::IDENTIFIER_SEPARATOR, $tags);
         }
 
-        return implode(static::IDENTIFIER_SEPARATOR, $tags);
+        return $identifier;
+    }
+
+    /**
+     * Request name string (with alias)
+     *
+     * @param RequestInterface $request
+     * @return string
+     */
+    protected function requestNameToString(RequestInterface $request): string {
+        return $this->nameToString($request->getRepository()->getName(), $request->getAlias());
+    }
+
+    /**
+     * Request string
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function requestToString(RequestInterface $request, QueryInterface $query): string {
+        $selectQuery = $this->select($request);
+
+        $query->addParameters($selectQuery->getParameters());
+
+        return $selectQuery->getText();
     }
 
     /**
@@ -345,10 +443,9 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::select($request)
      */
     public function select(RequestInterface $request): QueryInterface {
-        echo $this->makeQuery(static::STATEMENT_SELECT, $request, [static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_GROUP_BY, static::ADD_HAVING, static::ADD_ORDER_BY, static::ADD_LIMIT]);
+        return $this->makeQuery(static::STATEMENT_SELECT[$request->isDistinctResult()], $request, [static::ADD_COLUMNS, static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_GROUP_BY, static::ADD_HAVING, static::ADD_ORDER_BY, static::ADD_LIMIT]);
 
         // TODO: unions
-        die;
     }
 
     /**
@@ -356,22 +453,33 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::update($set, $request)
      */
     public function update(array $set, RequestInterface $request): QueryInterface {
-        // TODO
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
+        ->appendClause(static::STATEMENT_UPDATE, $this->requestNameToString($request));
+
+        // Set
+        $list = [];
+        foreach ($set as $key => $value) {
+            $list[] = $this->identifierToString($key, $query) . ' = ' . $this->expressionToString($value, $query);
+        }
+
+        $query->appendClause(static::CLAUSE_SET, implode(static::LIST_SEPARATOR_MULTI_LINE, $list));
+
+        // Where
+        $this->clauseWhere($request, $query);
+
+        return $query;
     }
 
     /**
-     * WHERE clause
+     * Where BETWEEN tag
      *
-     * @param RequestInterface $request
+     * @param BetweenTag $tag
      * @param QueryInterface $query
-     * @return self
+     * @return string
      */
-    protected function whereClause(RequestInterface $request, QueryInterface $query): self {
-        if ($request->hasWhere()) {
-            $this->whereString(static::CLAUSE_WHERE, $request->getWhere(), $query);
-        }
-
-        return $this;
+    protected function whereTagBetween(BetweenTag $tag, QueryInterface $query): string {
+        return $this->identifierToString($tag->getIdentifier(), $query) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_BETWEEN, $this->expressionToString($tag->getMin(), $query)
+            , $this->expressionToString($tag->getMax(), $query));
     }
 
     /**
@@ -379,9 +487,34 @@ abstract class Grammar extends Resource implements GrammarInterface {
      *
      * @param CompareTag $tag
      * @param QueryInterface $query
+     * @return string
      */
-    protected function whereCompareTag(CompareTag $tag, QueryInterface $query) {
-        $query->appendString($this->expressionString($tag->getLeft(), $query) . ' ' . $tag->getOperator() . ' ' . $this->expressionString($tag->getRight(), $query));
+    protected function whereTagCompare(CompareTag $tag, QueryInterface $query): string {
+        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . $this->expressionToString($tag->getLeft(), $query) . ' ' . $tag->getOperator() . ' ' . $this->expressionToString($tag->getRight(), $query);
+    }
+
+    /**
+     * Where EXISTS tag
+     *
+     * @param ExistsTag $tag
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function whereTagExists(ExistsTag $tag, QueryInterface $query): string {
+        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_EXISTS, $this->requestToString($tag->getRequest(), $query));
+    }
+
+    /**
+     * Where IN tag
+     *
+     * @param InTag $tag
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function whereTagIn(InTag $tag, QueryInterface $query): string {
+        $values = $tag->getValues();
+
+        return $this->identifierToString($tag->getIdentifier(), $query) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_IN[$values instanceof RequestInterface], $this->expressionToString($values, $query));
     }
 
     /**
@@ -389,34 +522,49 @@ abstract class Grammar extends Resource implements GrammarInterface {
      *
      * @param NullTag $tag
      * @param QueryInterface $query
+     * @return string
      */
-    protected function whereNullTag(NullTag $tag, QueryInterface $query) {
-        $query->appendString($this->identifierString($tag->getIdentifier(), $query) . ' ' . static::TAG_IS_NULL[!$tag->isNegated()]);
+    protected function whereTagNull(NullTag $tag, QueryInterface $query): string {
+        return $this->identifierToString($tag->getIdentifier(), $query) . ' ' . static::WHERE_TAG_IS_NULL[!$tag->isNegated()];
     }
 
     /**
-     * Generate where string
+     * Where nested tag
+     *
+     * @param WhereTag $tag
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function whereTagWhere(WhereTag $tag, QueryInterface $query): string {
+        return sprintf(static::MASK_NESTED_MULTI_LINE, $this->whereToString('', $tag->getWhere(), $query));
+    }
+
+    /**
+     * Where to string
      *
      * @param string $clause
      * @param WhereInterface $where
      * @param QueryInterface $query
+     * @return string
      */
-    protected function whereString(string $clause, WhereInterface $where, QueryInterface $query) {
+    protected function whereToString(string $clause, WhereInterface $where, QueryInterface $query): string {
         if ($tags = $where->getTags()) {
-            $query->appendWord($clause);
+            $result = $clause !== '' ? $clause . ' ' : '';
 
             foreach ($tags as $index => $tag) {
                 if ($index) {
-                    $query->appendWord(PHP_EOL . strtoupper($tag->getJoin()));
+                    $result .= sprintf(static::WHERE_TAG_SEPARATOR, strtoupper($tag->getJoin()));
                 }
 
                 $class = get_class($tag);
-                $shortName = substr($class, strrpos($class, '\\') + 1);
+                $shortName = substr($class, strrpos($class, '\\') + 1, -3);
 
-                $this->{static::METHOD_WHERE_TAG . $shortName}($tag, $query);
+                $result .= $this->{static::METHOD_WHERE_TAG . $shortName}($tag, $query);
             }
 
-            $query->appendString(PHP_EOL);
+            return $result . PHP_EOL;
         }
+
+        return '';
     }
 }
