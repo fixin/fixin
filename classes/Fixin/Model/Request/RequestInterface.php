@@ -158,6 +158,27 @@ interface RequestInterface extends PrototypeInterface {
     public function getRepository(): RepositoryInterface;
 
     /**
+     * Get union limit
+     *
+     * @return int|null
+     */
+    public function getUnionLimit();
+
+    /**
+     * Get union offset
+     *
+     * @return int
+     */
+    public function getUnionOffset(): int;
+
+    /**
+     * Get union order by
+     *
+     * @return array
+     */
+    public function getUnionOrderBy(): array;
+
+    /**
      * Get unions
      *
      * @return array
@@ -330,6 +351,39 @@ interface RequestInterface extends PrototypeInterface {
      * @return self
      */
     public function setOrderBy(array $orderBy): self;
+
+    /**
+     * Set union limit
+     *
+     * @param int|null $unionLimit
+     * @return self
+     */
+    public function setUnionLimit($unionLimit): self;
+
+    /**
+     * Set union limit for page
+     *
+     * @param int $page
+     * @param int $itemsPerPage
+     * @return self
+     */
+    public function setUnionLimitForPage(int $page, int $itemsPerPage): self;
+
+    /**
+     * Set union offset
+     *
+     * @param int $unionOffset
+     * @return self
+     */
+    public function setUnionOffset(int $unionOffset): self;
+
+    /**
+     * Set order by
+     *
+     * @param array $unionOrderBy
+     * @return self
+     */
+    public function setUnionOrderBy(array $unionOrderBy): self;
 
     /**
      * Add a union

@@ -11,6 +11,7 @@ use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Model\Request\UnionInterface;
 use Fixin\Model\Request\Where\Tag\BetweenTag;
 use Fixin\Model\Request\Where\Tag\CompareTag;
 use Fixin\Model\Request\Where\Tag\ExistsTag;
@@ -37,9 +38,8 @@ abstract class Grammar extends Resource implements GrammarInterface {
         CLAUSE_INTO = 'INTO',
         CLAUSE_JOIN = 'JOIN',
         CLAUSE_JOIN_ON = "\tON",
-        CLAUSE_LIMIT = 'LIMIT',
-        CLAUSE_ORDER_BY = 'ORDER BY',
         CLAUSE_SET = 'SET',
+        CLAUSE_UNION = [UnionInterface::TYPE_NORMAL => 'UNION', UnionInterface::TYPE_ALL => 'UNION ALL'],
         CLAUSE_VALUES = 'VALUES',
         CLAUSE_WHERE = 'WHERE',
         EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@",
@@ -49,14 +49,17 @@ abstract class Grammar extends Resource implements GrammarInterface {
         LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t",
         MASK_ALIAS = '%s AS %s',
         MASK_BETWEEN = 'BETWEEN %s AND %s',
-        MASK_COLUMN_NAMES = "\t(%s)",
+        MASK_COLUMN_NAMES = "\t(%s)" . PHP_EOL,
         MASK_EXISTS = 'EXISTS(%s)',
         MASK_IN = [false => 'IN (%s)', true => 'IN %s'],
-        MASK_LIMIT = '%s',
-        MASK_LIMIT_OFFSET = '%s, %s',
+        MASK_LIMIT = 'LIMIT %s' . PHP_EOL,
         MASK_NESTED = "(%s)",
-        MASK_NESTED_MULTI_LINE = "(\n\t%s)\n",
-        MASK_ORDER_BY = '%s %s',
+        MASK_NESTED_MULTI_LINE = '(' . PHP_EOL . "\t%s)" . PHP_EOL,
+        MASK_OFFSET = 'OFFSET %s' . PHP_EOL,
+        MASK_ORDER_BY = 'ORDER BY %s' . PHP_EOL,
+        MASK_ORDER_BY_ITEM = '%s %s',
+        MASK_UNION = '%s' . PHP_EOL . '(%s)' . PHP_EOL,
+        MASK_UNION_FIRST = '(%s)' . PHP_EOL,
         MASK_VALUES = '(%s)',
         METHOD_CLAUSE = 'clause',
         METHOD_WHERE_TAG = 'whereTag',
@@ -157,19 +160,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @param QueryInterface $query
      */
     protected function clauseLimit(RequestInterface $request, QueryInterface $query) {
-        if ($limit = $request->getLimit()) {
-            if ($offset = $request->getOffset()) {
-                $query->appendClause(static::CLAUSE_LIMIT, sprintf(static::MASK_LIMIT_OFFSET, $offset, $limit));
-
-                return;
-            }
-
-            $query->appendClause(static::CLAUSE_LIMIT, sprintf(static::MASK_LIMIT, $limit));
-        }
-        // Offset-only
-        elseif ($offset = $request->getOffset()) {
-            $query->appendClause(static::CLAUSE_LIMIT, sprintf(static::MASK_LIMIT_OFFSET, $offset, PHP_INT_MAX));
-        }
+        $query->appendString($this->limitsToString($request->getOffset(), $request->getLimit()));
     }
 
     /**
@@ -179,21 +170,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @param QueryInterface $query
      */
     protected function clauseOrderBy(RequestInterface $request, QueryInterface $query) {
-        $orderBy = [];
-
-        foreach ($request->getOrderBy() as $key => $value) {
-            if (is_numeric($key)) {
-                $orderBy[] = $this->identifierToString($value, $query);
-
-                continue;
-            }
-
-            $orderBy[] = sprintf(static::MASK_ORDER_BY, $this->quoteIdentifier($key), strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
-        }
-
-        if ($orderBy) {
-            $query->appendClause(static::CLAUSE_ORDER_BY, implode(static::LIST_SEPARATOR, $orderBy));
-        }
+        $query->appendString($this->orderByToString($request->getOrderBy(), $query));
     }
 
     /**
@@ -297,7 +274,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
                 $list[] = $this->identifierToString(is_numeric($alias) ? $identifier : $alias, $query);
             }
 
-            $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)) . PHP_EOL);
+            $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)));
         }
 
         // Select
@@ -321,7 +298,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
             $list[] = $this->identifierToString($key, $query);
         }
 
-        $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)) . PHP_EOL);
+        $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)));
 
         // Rows
         $source = [];
@@ -335,6 +312,26 @@ abstract class Grammar extends Resource implements GrammarInterface {
         }
 
         return $query->appendClause(static::CLAUSE_VALUES, implode(static::LIST_SEPARATOR_MULTI_LINE, $source));
+    }
+
+    /**
+     * Limit and offset string
+     * @param int $offset
+     * @param int|null $limit
+     * @return string
+     */
+    protected function limitsToString(int $offset, $limit): string {
+        $result = '';
+
+        if ($offset) {
+            $result .= sprintf(static::MASK_OFFSET, $offset);
+        }
+
+        if ($limit) {
+            $result .= sprintf(static::MASK_LIMIT, $limit);
+        }
+
+        return $result;
     }
 
     /**
@@ -368,6 +365,33 @@ abstract class Grammar extends Resource implements GrammarInterface {
         }
 
         return $this->quoteIdentifier($name);
+    }
+
+    /**
+     * ORDER BY string
+     *
+     * @param array $orderBy
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function orderByToString(array $orderBy, QueryInterface $query): string {
+        if ($orderBy) {
+            $list = [];
+
+            foreach ($orderBy as $key => $value) {
+                if (is_numeric($key)) {
+                    $list[] = $this->identifierToString($value, $query);
+
+                    continue;
+                }
+
+                $list[] = sprintf(static::MASK_ORDER_BY_ITEM, $this->quoteIdentifier($key), strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
+            }
+
+            return sprintf(static::MASK_ORDER_BY, implode(static::LIST_SEPARATOR, $list));
+        }
+
+        return '';
     }
 
     /**
@@ -443,9 +467,24 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::select($request)
      */
     public function select(RequestInterface $request): QueryInterface {
-        return $this->makeQuery(static::STATEMENT_SELECT[$request->isDistinctResult()], $request, [static::ADD_COLUMNS, static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_GROUP_BY, static::ADD_HAVING, static::ADD_ORDER_BY, static::ADD_LIMIT]);
+        $query = $this->makeQuery(static::STATEMENT_SELECT[$request->isDistinctResult()], $request, [static::ADD_COLUMNS, static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_GROUP_BY, static::ADD_HAVING, static::ADD_ORDER_BY, static::ADD_LIMIT]);
 
-        // TODO: unions
+        // Unions
+        if ($unions = $request->getUnions()) {
+            $query->applyMask(static::MASK_UNION_FIRST);
+
+            foreach ($unions as $union) {
+                $query->appendString(sprintf(static::MASK_UNION, static::CLAUSE_UNION[$union->getType()], $this->requestToString($union->getRequest(), $query)));
+            }
+
+            // Union order by
+            $query->appendString($this->orderByToString($request->getUnionOrderBy(), $query));
+
+            // Union offset and limit
+            $query->appendString($this->limitsToString($request->getUnionOffset(), $request->getUnionLimit()));
+        }
+
+        return $query;
     }
 
     /**
