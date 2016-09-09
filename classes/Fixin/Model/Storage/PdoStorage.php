@@ -97,7 +97,7 @@ class PdoStorage extends Resource implements StorageInterface {
 
     protected function execute(QueryInterface $query) {
         echo '<pre>';
-        echo $query->getText();
+        echo $query;
         die;
         // todo
 
@@ -131,9 +131,19 @@ class PdoStorage extends Resource implements StorageInterface {
         return $this->execute($this->grammar->insertInto($repository, $request));
     }
 
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\StorageInterface::insertMultiple($repository, $rows)
+     */
+    public function insertMultiple(RepositoryInterface $repository, array $rows): int {
+        $this->connect();
+
+        return $this->execute($this->grammar->insertMultiple($repository, $rows));
+    }
+
     protected function query(QueryInterface $query): StorageResultInterface {
         echo '<pre>';
-        echo $query->getText();
+        echo $query;
         die;
         // todo
     }

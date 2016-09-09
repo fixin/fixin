@@ -55,6 +55,15 @@ interface StorageInterface extends ResourceInterface {
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
 
     /**
+     * Insert multiple
+     *
+     * @param RepositoryInterface $repository
+     * @param array $rows
+     * @return int
+     */
+    public function insertMultiple(RepositoryInterface $repository, array $rows): int;
+
+    /**
      * Select
      *
      * @param RequestInterface $request

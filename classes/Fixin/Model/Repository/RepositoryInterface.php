@@ -116,6 +116,14 @@ interface RepositoryInterface extends ResourceInterface {
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
 
     /**
+     * Insert multiple
+     *
+     * @param array $rows
+     * @return int
+     */
+    public function insertMultiple(array $rows): int;
+
+    /**
      * Select entities
      *
      * @param RequestInterface $request

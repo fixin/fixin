@@ -223,6 +223,14 @@ class Repository extends Resource implements RepositoryInterface {
     }
 
     /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::insertMultiple($rows)
+     */
+    public function insertMultiple(array $rows): int {
+        return $this->getStorage()->insertMultiple($this, $rows);
+    }
+
+    /**
      * Check request validity
      *
      * @param RequestInterface $request

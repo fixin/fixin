@@ -53,6 +53,15 @@ interface GrammarInterface extends ResourceInterface {
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface;
 
     /**
+     * Insert multiple
+     *
+     * @param RepositoryInterface $repository
+     * @param array $rows
+     * @return QueryInterface
+     */
+    public function insertMultiple(RepositoryInterface $repository, array $rows): QueryInterface;
+
+    /**
      * Select
      *
      * @param RequestInterface $request
