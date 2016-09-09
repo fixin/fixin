@@ -53,6 +53,14 @@ interface QueryInterface extends PrototypeInterface {
     public function appendWord(string $word): self;
 
     /**
+     * Apply mask
+     *
+     * @param string $mask
+     * @return self
+     */
+    public function applyMask(string $mask): self;
+
+    /**
      * Get parameters
      *
      * @return array
