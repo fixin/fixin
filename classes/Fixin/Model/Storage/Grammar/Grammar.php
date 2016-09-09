@@ -11,8 +11,11 @@ use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Model\Request\Where\Tag\BetweenTag;
 use Fixin\Model\Request\Where\Tag\CompareTag;
+use Fixin\Model\Request\Where\Tag\InTag;
 use Fixin\Model\Request\Where\Tag\NullTag;
+use Fixin\Model\Request\Where\Tag\WhereTag;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\Resource;
 
@@ -46,12 +49,16 @@ abstract class Grammar extends Resource implements GrammarInterface {
     const LIST_SEPARATOR = ', ';
     const LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t";
     const MASK_ALIAS = '%s AS %s';
+    const MASK_BETWEEN = 'BETWEEN %s AND %s';
     const MASK_COLUMN_NAMES = "\t(%s)";
     const MASK_EXISTS = 'SELECT EXISTS(%s)';
+    const MASK_IN = 'IN (%s)';
     const MASK_ORDER_BY = '%s %s';
     const MASK_VALUES = '(%s)';
     const METHOD_CLAUSE = 'clause';
     const METHOD_WHERE_TAG = 'whereTag';
+    const NESTED_CLOSE = ")\n";
+    const NESTED_OPEN = "(\n\t";
     const ORDER_ASCENDING = 'ASC';
     const ORDER_DESCENDING = 'DESC';
     const PROTOTYPE_QUERY = 'Base\Query\Query';
@@ -60,7 +67,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
     const STATEMENT_SELECT = [false => 'SELECT', true => 'SELECT DISTINCT'];
     const STATEMENT_UPDATE = 'UPDATE';
     const TAG_IS_NULL = [false => 'IS NOT NULL', true => 'IS NULL'];
-    const TAG_NEGATE = [false => '', true => 'NOT'];
+    const TAG_NEGATE = [false => '', true => 'NOT '];
     const TAG_SEPARATOR = PHP_EOL . "\t";
 
     /**
@@ -80,7 +87,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
 
     /**
      * Append name (with alias)
-     * 
+     *
      * @param string $clause
      * @param RequestInterface $request
      * @param QueryInterface $query
@@ -98,7 +105,9 @@ abstract class Grammar extends Resource implements GrammarInterface {
      */
     protected function appendWhere(string $clause, WhereInterface $where, QueryInterface $query) {
         if ($tags = $where->getTags()) {
-            $query->appendWord($clause);
+            if ($clause !== '') {
+                $query->appendWord($clause);
+            }
 
             foreach ($tags as $index => $tag) {
                 if ($index) {
@@ -485,7 +494,8 @@ abstract class Grammar extends Resource implements GrammarInterface {
      * @see \Fixin\Model\Storage\Grammar\GrammarInterface::select($request)
      */
     public function select(RequestInterface $request): QueryInterface {
-        return $this->makeQuery(static::STATEMENT_SELECT[$request->isDistinctResult()], $request, [static::ADD_COLUMNS, static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_GROUP_BY, static::ADD_HAVING, static::ADD_ORDER_BY, static::ADD_LIMIT]);
+        echo $this->makeQuery(static::STATEMENT_SELECT[$request->isDistinctResult()], $request, [static::ADD_COLUMNS, static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_GROUP_BY, static::ADD_HAVING, static::ADD_ORDER_BY, static::ADD_LIMIT]);
+        die;
 
         // TODO: unions
     }
@@ -514,13 +524,34 @@ abstract class Grammar extends Resource implements GrammarInterface {
     }
 
     /**
+     * Where BETWEEN tag
+     *
+     * @param BetweenTag $tag
+     * @param QueryInterface $query
+     */
+    protected function whereTagBetween(BetweenTag $tag, QueryInterface $query) {
+        $query->appendString($this->identifierString($tag->getIdentifier(), $query) . ' ' . static::TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_BETWEEN, $this->expressionString($tag->getMin(), $query)
+            , $this->expressionString($tag->getMax(), $query)));
+    }
+
+    /**
      * Where compare tag
      *
      * @param CompareTag $tag
      * @param QueryInterface $query
      */
     protected function whereTagCompare(CompareTag $tag, QueryInterface $query) {
-        $query->appendString($this->expressionString($tag->getLeft(), $query) . ' ' . $tag->getOperator() . ' ' . $this->expressionString($tag->getRight(), $query));
+        $query->appendString(static::TAG_NEGATE[$tag->isNegated()] . $this->expressionString($tag->getLeft(), $query) . ' ' . $tag->getOperator() . ' ' . $this->expressionString($tag->getRight(), $query));
+    }
+
+    /**
+     * Where IN tag
+     *
+     * @param CompareTag $tag
+     * @param QueryInterface $query
+     */
+    protected function whereTagIn(InTag $tag, QueryInterface $query) {
+        $query->appendString($this->identifierString($tag->getIdentifier(), $query) . ' ' . static::TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_IN, $this->expressionString($tag->getValues(), $query)));
     }
 
     /**
@@ -531,5 +562,19 @@ abstract class Grammar extends Resource implements GrammarInterface {
      */
     protected function whereTagNull(NullTag $tag, QueryInterface $query) {
         $query->appendString($this->identifierString($tag->getIdentifier(), $query) . ' ' . static::TAG_IS_NULL[!$tag->isNegated()]);
+    }
+
+    /**
+     * Where nested tag
+     *
+     * @param WhereTag $tag
+     * @param QueryInterface $query
+     */
+    protected function whereTagWhere(WhereTag $tag, QueryInterface $query) {
+        $query->appendString(static::NESTED_OPEN);
+
+        $this->appendWhere('', $tag->getWhere(), $query);
+
+        $query->appendString(static::NESTED_CLOSE);
     }
 }
