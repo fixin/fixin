@@ -9,7 +9,7 @@ namespace Fixin\Model\Storage;
 
 use Countable;
 use Fixin\Resource\PrototypeInterface;
-use Traversable;
+use Iterator;
 
-interface StorageResultInterface extends PrototypeInterface, Traversable, Countable {
+interface StorageResultInterface extends PrototypeInterface, Iterator, Countable {
 }
