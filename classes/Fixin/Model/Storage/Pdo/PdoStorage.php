@@ -5,22 +5,27 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Storage;
+namespace Fixin\Model\Storage\Pdo;
 
 use Fixin\Base\Query\QueryInterface;
 use Fixin\Exception\RuntimeException;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\Grammar\GrammarInterface;
+use Fixin\Model\Storage\StorageInterface;
+use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Resource;
 
 class PdoStorage extends Resource implements StorageInterface {
 
-    const EXCEPTION_CONNECTION_ERROR = "Connection error: %s";
-    const GRAMMAR_CLASS_MASK = 'Model\Storage\Grammar\%sGrammar';
-    const OPTION_DSN = 'dsn';
-    const OPTION_PASSWORD = 'password';
-    const OPTION_USERNAME = 'username';
+    const
+        EXCEPTION_CONNECTION_ERROR = "Connection error: %s",
+        GRAMMAR_CLASS_MASK = 'Model\Storage\Grammar\%sGrammar',
+        OPTION_DSN = 'dsn',
+        OPTION_PASSWORD = 'password',
+        OPTION_USERNAME = 'username',
+        PROTOTYPE_STORAGE_RESULT = 'Model\Storage\Pdo\PdoStorageResult'
+    ;
 
     /**
      * @var string
@@ -84,6 +89,18 @@ class PdoStorage extends Resource implements StorageInterface {
         return $this->execute($this->grammar->delete($request));
     }
 
+    /**
+     * Execute query
+     *
+     * @param QueryInterface $query
+     * @return int
+     */
+    protected function execute(QueryInterface $query): int {
+        $statement = $this->resource->prepare($query->getText());
+        $statement->execute($query->getParameters());
+
+        return $statement->rowCount();
+    }
 
     /**
      * {@inheritDoc}
@@ -93,14 +110,6 @@ class PdoStorage extends Resource implements StorageInterface {
         $this->connect();
 
         return $this->query($this->grammar->exists($request)); // TODO to value
-    }
-
-    protected function execute(QueryInterface $query) {
-        echo '<pre>';
-        echo $query;
-        die;
-        // todo
-
     }
 
     /**
@@ -141,11 +150,19 @@ class PdoStorage extends Resource implements StorageInterface {
         return $this->execute($this->grammar->insertMultiple($repository, $rows));
     }
 
+    /**
+     * Query
+     *
+     * @param QueryInterface $query
+     * @return StorageResultInterface
+     */
     protected function query(QueryInterface $query): StorageResultInterface {
-        echo '<pre>';
-        echo $query;
-        die;
-        // todo
+        $statement = $this->resource->prepare($query->getText());
+        $statement->execute($query->getParameters());
+
+        return $this->container->clonePrototype(static::PROTOTYPE_STORAGE_RESULT, [
+            PdoStorageResult::OPTION_STATEMENT => $statement
+        ]);
     }
 
     /**
