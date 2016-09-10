@@ -161,7 +161,7 @@ class PdoStorage extends Resource implements StorageInterface {
         $statement->execute($query->getParameters());
 
         return $this->container->clonePrototype(static::PROTOTYPE_STORAGE_RESULT, [
-            StorageResultInterface::OPTION_DATA_SOURCE => $statement
+            PdoStorageResult::OPTION_STATEMENT => $statement
         ]);
     }
 
