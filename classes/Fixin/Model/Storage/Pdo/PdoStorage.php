@@ -84,9 +84,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::delete($request)
      */
     public function delete(RequestInterface $request): int {
-        $this->connect();
-
-        return $this->execute($this->grammar->delete($request));
+        return $this->execute($this->getGrammar()->delete($request));
     }
 
     /**
@@ -96,10 +94,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * @return int
      */
     protected function execute(QueryInterface $query): int {
-        $statement = $this->resource->prepare($query->getText());
-        $statement->execute($query->getParameters());
-
-        return $statement->rowCount();
+        return $this->prepareStatement($query)->rowCount();
     }
 
     /**
@@ -107,9 +102,18 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::exists($request)
      */
     public function exists(RequestInterface $request): bool {
+        return (bool) $this->prepareStatement($this->getGrammar()->exists($request))->fetchColumn();
+    }
+
+    /**
+     * Get grammar
+     *
+     * @return GrammarInterface
+     */
+    protected function getGrammar(): GrammarInterface {
         $this->connect();
 
-        return $this->query($this->grammar->exists($request)); // TODO to value
+        return $this->grammar;
     }
 
     /**
@@ -125,9 +129,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::insert($repository, $set)
      */
     public function insert(RepositoryInterface $repository, array $set): int {
-        $this->connect();
-
-        return $this->execute($this->grammar->insert($repository, $set));
+        return $this->execute($this->getGrammar()->insert($repository, $set));
     }
 
     /**
@@ -135,9 +137,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::insertInto($repository, $request)
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int {
-        $this->connect();
-
-        return $this->execute($this->grammar->insertInto($repository, $request));
+        return $this->execute($this->getGrammar()->insertInto($repository, $request));
     }
 
     /**
@@ -145,9 +145,20 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::insertMultiple($repository, $rows)
      */
     public function insertMultiple(RepositoryInterface $repository, array $rows): int {
-        $this->connect();
+        return $this->execute($this->getGrammar()->insertMultiple($repository, $rows));
+    }
 
-        return $this->execute($this->grammar->insertMultiple($repository, $rows));
+    /**
+     * Prepare statement
+     *
+     * @param QueryInterface $query
+     * @return \PDOStatement
+     */
+    protected function prepareStatement(QueryInterface $query): \PDOStatement {
+        $statement = $this->resource->prepare($query->getText());
+        $statement->execute($query->getParameters());
+
+        return $statement;
     }
 
     /**
@@ -191,9 +202,7 @@ class PdoStorage extends Resource implements StorageInterface {
      * @return StorageResultInterface
      */
     protected function selectRequest(RequestInterface $request, array $mode): StorageResultInterface {
-        $this->connect();
-
-        return $this->query($this->grammar->select($request), $mode);
+        return $this->query($this->getGrammar()->select($request), $mode);
     }
 
     /**
@@ -228,8 +237,6 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::update($set, $request)
      */
     public function update(array $set, RequestInterface $request): int {
-        $this->connect();
-
-        return $this->execute($this->grammar->update($set, $request));
+        return $this->execute($this->getGrammar()->update($set, $request));
     }
 }
