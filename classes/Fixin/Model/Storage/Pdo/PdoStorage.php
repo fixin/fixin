@@ -154,10 +154,12 @@ class PdoStorage extends Resource implements StorageInterface {
      * Query
      *
      * @param QueryInterface $query
+     * @param array $mode
      * @return StorageResultInterface
      */
-    protected function query(QueryInterface $query): StorageResultInterface {
+    protected function query(QueryInterface $query, array $mode): StorageResultInterface {
         $statement = $this->resource->prepare($query->getText());
+        call_user_func_array([$statement, 'setFetchMode'], $mode);
         $statement->execute($query->getParameters());
 
         return $this->container->clonePrototype(static::PROTOTYPE_STORAGE_RESULT, [
@@ -170,9 +172,28 @@ class PdoStorage extends Resource implements StorageInterface {
      * @see \Fixin\Model\Storage\StorageInterface::select($request)
      */
     public function select(RequestInterface $request): StorageResultInterface {
+        return $this->selectRequest($request, [\PDO::FETCH_ASSOC]);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\StorageInterface::selectColumn($request)
+     */
+    public function selectColumn(RequestInterface $request): StorageResultInterface {
+        return $this->selectRequest($request, [\PDO::FETCH_COLUMN, 0]);
+    }
+
+    /**
+     * Select request
+     *
+     * @param RequestInterface $request
+     * @param array $mode
+     * @return StorageResultInterface
+     */
+    protected function selectRequest(RequestInterface $request, array $mode): StorageResultInterface {
         $this->connect();
 
-        return $this->query($this->grammar->select($request));
+        return $this->query($this->grammar->select($request), $mode);
     }
 
     /**

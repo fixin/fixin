@@ -10,11 +10,12 @@ namespace Fixin\Model\Storage\Pdo;
 use Fixin\Exception\RuntimeException;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Prototype;
+use Fixin\Support\Ground;
 
 class PdoStorageResult extends Prototype implements StorageResultInterface {
-
     const
         EXCEPTION_REWIND_IS_NOT_ALLOWED = 'Rewind is not allowed',
+        MASK_TO_STRING = '%s {' . PHP_EOL . "    Position: %d" . PHP_EOL . "    Count: %d" . PHP_EOL . '}' . PHP_EOL,
         OPTION_STATEMENT = 'statement',
         THIS_REQUIRES = [
             self::OPTION_STATEMENT => self::TYPE_INSTANCE
@@ -41,11 +42,15 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
      */
     protected $statement;
 
+    public function __toString(): string {
+        return Ground::debugText(sprintf(static::MASK_TO_STRING, get_class($this), $this->position, $this->count()));
+    }
+
     /**
      * {@inheritDoc}
      * @see Countable::count()
      */
-    public function count() {
+    public function count(): int {
         return $this->statement->rowCount();
     }
 
