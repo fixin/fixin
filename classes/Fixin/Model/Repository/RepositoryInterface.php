@@ -124,6 +124,14 @@ interface RepositoryInterface extends ResourceInterface {
     public function insertMultiple(array $rows): int;
 
     /**
+     * Select column
+     *
+     * @param RequestInterface $request
+     * @return StorageResultInterface
+     */
+    public function selectColumn(RequestInterface $request): StorageResultInterface;
+
+    /**
      * Select entities
      *
      * @param RequestInterface $request
