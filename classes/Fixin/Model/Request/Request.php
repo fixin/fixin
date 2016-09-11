@@ -16,14 +16,16 @@ use Fixin\Resource\Prototype;
 
 class Request extends Prototype implements RequestInterface {
 
-    const COUNT_EXPRESSION = 'COUNT(%s)';
-    const PROTOTYPE_EXPRESSION = 'Model\Request\Expression';
-    const PROTOTYPE_JOIN = 'Model\Request\Join';
-    const PROTOTYPE_UNION = 'Model\Request\Union';
-    const PROTOTYPE_WHERE = 'Model\Request\Where\Where';
-    const THIS_REQUIRES = [
-        self::OPTION_REPOSITORY => self::TYPE_INSTANCE
-    ];
+    const
+        COUNT_EXPRESSION = 'COUNT(%s)',
+        FETCH_ALIAS = 'result',
+        PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
+        PROTOTYPE_JOIN = 'Model\Request\Join',
+        PROTOTYPE_UNION = 'Model\Request\Union',
+        PROTOTYPE_WHERE = 'Model\Request\Where\Where',
+        THIS_REQUIRES = [
+            self::OPTION_REPOSITORY => self::TYPE_INSTANCE
+        ];
 
     /**
      * @var string
@@ -222,7 +224,7 @@ class Request extends Prototype implements RequestInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Request\RequestInterface::fetchColumn($column)
      */
-    public function fetchColumn(string $column): array {
+    public function fetchColumn($column): StorageResultInterface {
         $copy = clone $this;
 
         return $this->repository->selectColumn($copy->setColumns([$column]));
@@ -253,9 +255,9 @@ class Request extends Prototype implements RequestInterface {
     public function fetchValue($column) {
         $copy = clone $this;
 
-        $result = $this->repository->selectRawData($copy->setColumns([$column]));
+        $result = $this->repository->selectRawData($copy->setColumns([static::FETCH_ALIAS => $column]));
 
-        return count($result) ? reset($result[0]) : null;
+        return count($result) ? $result->current()[static::FETCH_ALIAS] : null;
     }
 
     /**

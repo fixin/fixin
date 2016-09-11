@@ -67,10 +67,10 @@ interface RequestInterface extends PrototypeInterface {
     /**
      * Fetch column values
      *
-     * @param string $column
-     * @return array
+     * @param string|ExpressionInterface|RequestInterface $column
+     * @return StorageResultInterface
      */
-    public function fetchColumn(string $column): array;
+    public function fetchColumn($column): StorageResultInterface;
 
     /**
      * Fetch first entity
@@ -89,7 +89,7 @@ interface RequestInterface extends PrototypeInterface {
     /**
      * Fetch value
      *
-     * @param string $column
+     * @param string|ExpressionInterface|RequestInterface $column
      * @return mixed|null
      */
     public function fetchValue($column);
