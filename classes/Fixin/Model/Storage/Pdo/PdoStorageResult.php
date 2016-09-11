@@ -7,9 +7,9 @@
 
 namespace Fixin\Model\Storage\Pdo;
 
-use Fixin\Resource\Prototype;
-use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Exception\RuntimeException;
+use Fixin\Model\Storage\StorageResultInterface;
+use Fixin\Resource\Prototype;
 
 class PdoStorageResult extends Prototype implements StorageResultInterface {
 
@@ -45,7 +45,7 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
      * {@inheritDoc}
      * @see Countable::count()
      */
-    public function count(): int {
+    public function count() {
         return $this->statement->rowCount();
     }
 
@@ -90,6 +90,9 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
         if ($this->position > 0) {
             throw new RuntimeException(static::EXCEPTION_REWIND_IS_NOT_ALLOWED);
         }
+
+        $this->currentData = $this->statement->fetch();
+        $this->currentFetched = true;
     }
 
     /**
@@ -106,6 +109,6 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
      * @see Iterator::valid()
      */
     public function valid() {
-        return isset($this->currentData);
+        return $this->currentData !== false;
     }
 }
