@@ -18,7 +18,6 @@ class Request extends Prototype implements RequestInterface {
 
     const
         COUNT_EXPRESSION = 'COUNT(%s)',
-        FETCH_ALIAS = 'result',
         PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
         PROTOTYPE_JOIN = 'Model\Request\Join',
         PROTOTYPE_UNION = 'Model\Request\Union',
@@ -225,9 +224,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::fetchColumn($column)
      */
     public function fetchColumn($column): StorageResultInterface {
-        $copy = clone $this;
-
-        return $this->repository->selectColumn($copy->setColumns([$column]));
+        return $this->repository->selectColumn((clone $this)->setColumns([$column]));
     }
 
     /**
@@ -253,11 +250,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::fetchValue($column)
      */
     public function fetchValue($column) {
-        $copy = clone $this;
-
-        $result = $this->repository->selectRawData($copy->setColumns([static::FETCH_ALIAS => $column]));
-
-        return count($result) ? $result->current()[static::FETCH_ALIAS] : null;
+        return $this->fetchColumn($column)->current();
     }
 
     /**
