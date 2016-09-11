@@ -242,6 +242,14 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::selectColumn($request)
+     */
+    public function selectColumn(RequestInterface $request): StorageResultInterface {
+        return $this->getStorage()->selectColumn($request);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::selectEntities($request)
      */
     public function selectEntities(RequestInterface $request): EntitySetInterface {

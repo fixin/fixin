@@ -72,6 +72,14 @@ interface StorageInterface extends ResourceInterface {
     public function select(RequestInterface $request): StorageResultInterface;
 
     /**
+     * Select column
+     *
+     * @param RequestInterface $request
+     * @return StorageResultInterface
+     */
+    public function selectColumn(RequestInterface $request): StorageResultInterface;
+
+    /**
      * Update
      *
      * @param array $set
