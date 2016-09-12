@@ -16,25 +16,29 @@ use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Resource;
+use Fixin\Support\Arrays;
 
 class Repository extends Resource implements RepositoryInterface {
 
-    const EXCEPTION_INVALID_ID = "Invalid ID";
-    const EXCEPTION_INVALID_NAME = "Invalid name '%s'";
-    const NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
-    const PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId';
-    const PROTOTYPE_EXPRESSION = 'Model\Request\Expression';
-    const PROTOTYPE_REQUEST = 'Model\Request\Request';
-    const THIS_REQUIRES = [
-        self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
-        self::OPTION_NAME => self::TYPE_STRING,
-        self::OPTION_PRIMARY_KEY => self::TYPE_ARRAY,
-        self::OPTION_STORAGE => self::TYPE_INSTANCE,
-    ];
-    const THIS_SETS_LAZY = [
-        self::OPTION_ENTITY_PROTOTYPE => EntityInterface::class,
-        self::OPTION_STORAGE => StorageInterface::class
-    ];
+    const
+        EXCEPTION_INVALID_ID = "Invalid ID",
+        EXCEPTION_INVALID_NAME = "Invalid name '%s'",
+        NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
+        PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
+        PROTOTYPE_ENTITY_SET = 'Model\Entity\EntitySet',
+        PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
+        PROTOTYPE_REQUEST = 'Model\Request\Request',
+        THIS_REQUIRES = [
+            self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
+            self::OPTION_NAME => self::TYPE_STRING,
+            self::OPTION_PRIMARY_KEY => self::TYPE_ARRAY,
+            self::OPTION_STORAGE => self::TYPE_INSTANCE,
+        ],
+        THIS_SETS_LAZY = [
+            self::OPTION_ENTITY_PROTOTYPE => EntityInterface::class,
+            self::OPTION_STORAGE => StorageInterface::class
+        ]
+    ;
 
     /**
      * @var string
@@ -60,14 +64,6 @@ class Repository extends Resource implements RepositoryInterface {
      * @var StorageInterface|false|null
      */
     protected $storage;
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::all()
-     */
-    public function all(): EntitySetInterface {
-        return $this->createRequest()->get();
-    }
 
     /**
      * {@inheritDoc}
@@ -242,18 +238,52 @@ class Repository extends Resource implements RepositoryInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::selectColumn($request)
+     * @see \Fixin\Model\Repository\RepositoryInterface::select($request)
      */
-    public function selectColumn(RequestInterface $request): StorageResultInterface {
-        return $this->getStorage()->selectColumn($request);
+    public function select(RequestInterface $request): EntitySetInterface {
+        $fetchRequest = clone $request;
+        $fetchRequest->setColumns($fetchRequest->isIdFetchEnabled() ? $this->primaryKey : []);
+
+        return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_SET, [
+            EntitySetInterface::OPTION_REPOSITORY => $this,
+            EntitySetInterface::OPTION_ID_FETCH => $fetchRequest->isIdFetchEnabled(),
+            EntitySetInterface::OPTION_STORAGE_RESULT => $this->selectRawData($fetchRequest)
+        ]);
     }
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::selectEntities($request)
+     * @see \Fixin\Model\Repository\RepositoryInterface::selectAll()
      */
-    public function selectEntities(RequestInterface $request): EntitySetInterface {
-        return null; // TODO implementation
+    public function selectAll(): EntitySetInterface {
+        return $this->createRequest()->fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::selectById($id)
+     */
+    public function selectById(EntityIdInterface $id) {
+        return $this->selectByIds([$id])->current();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::selectByIds($ids)
+     */
+    public function selectByIds(array $ids) {
+        $request = $this->createRequest();
+        $request->getWhere()->in($this->primaryKey, $ids);
+
+        return $this->select($request);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::selectColumn($request)
+     */
+    public function selectColumn(RequestInterface $request): StorageResultInterface {
+        return $this->getStorage()->selectColumn($request);
     }
 
     /**

@@ -17,18 +17,13 @@ use Fixin\Resource\ResourceInterface;
 
 interface RepositoryInterface extends ResourceInterface {
 
-    const OPTION_AUTO_INCREMENT_COLUMN = 'autoIncrementColumn';
-    const OPTION_ENTITY_PROTOTYPE = 'entityPrototype';
-    const OPTION_NAME = 'name';
-    const OPTION_PRIMARY_KEY = 'primaryKey';
-    const OPTION_STORAGE = 'storage';
-
-    /**
-     * All entities
-     *
-     * @return EntitySetInterface
-     */
-    public function all(): EntitySetInterface;
+    const
+        OPTION_AUTO_INCREMENT_COLUMN = 'autoIncrementColumn',
+        OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
+        OPTION_NAME = 'name',
+        OPTION_PRIMARY_KEY = 'primaryKey',
+        OPTION_STORAGE = 'storage'
+    ;
 
     /**
      * Create entity for the repository
@@ -70,7 +65,7 @@ interface RepositoryInterface extends ResourceInterface {
     public function delete(RequestInterface $request): int;
 
     /**
-     * Exists TODO: better name?
+     * Exists
      *
      * @param RequestInterface $request
      * @return bool
@@ -124,20 +119,43 @@ interface RepositoryInterface extends ResourceInterface {
     public function insertMultiple(array $rows): int;
 
     /**
+     * Select entities
+     *
+     * @param RequestInterface $request
+     * @return EntitySetInterface
+     */
+    public function select(RequestInterface $request): EntitySetInterface;
+
+    /**
+     * Select all entities
+     *
+     * @return EntitySetInterface
+     */
+    public function selectAll(): EntitySetInterface;
+
+    /**
+     * Select entity by id
+     *
+     * @param EntityIdInterface $id
+     * @return EntityInterface|null
+     */
+    public function selectById(EntityIdInterface $id);
+
+    /**
+     * Select entities by ids
+     *
+     * @param array $ids
+     * @return EntitySetInterface
+     */
+    public function selectByIds(array $ids): EntitySetInterface;
+
+    /**
      * Select column
      *
      * @param RequestInterface $request
      * @return StorageResultInterface
      */
     public function selectColumn(RequestInterface $request): StorageResultInterface;
-
-    /**
-     * Select entities
-     *
-     * @param RequestInterface $request
-     * @return EntitySetInterface
-     */
-    public function selectEntities(RequestInterface $request): EntitySetInterface;
 
     /**
      * Select raw data
