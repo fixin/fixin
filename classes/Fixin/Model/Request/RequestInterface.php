@@ -222,6 +222,13 @@ interface RequestInterface extends PrototypeInterface {
     public function isDistinctResult(): bool;
 
     /**
+     * Is id fetch enabled
+     *
+     * @return bool
+     */
+    public function isIdFetchEnabled(): bool;
+
+    /**
      * Add join
      *
      * @param RepositoryInterface $repository
@@ -318,6 +325,13 @@ interface RequestInterface extends PrototypeInterface {
      * @return self
      */
     public function setGroupBy(array $groupBy): self;
+
+    /**
+     * Set id fetch enabled
+     *
+     * @return self
+     */
+    public function setIdFetchEnabled($idFetchEnabled): self;
 
     /**
      * Set limit
