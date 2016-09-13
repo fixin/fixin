@@ -7,28 +7,17 @@
 
 namespace Fixin\Model\Entity;
 
-use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\PrototypeInterface;
+use Fixin\Model\Repository\RepositoryInterface;
 
 interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable {
 
-    const OPTION_REPOSITORY = 'repository';
-
-    /**
-     * Append another entity set
-     *
-     * @param self $entitySet
-     * @return self
-     */
-    public function append(self $entitySet): self;
-
-    /**
-     * Get column values
-     *
-     * @param string $name
-     * @return array
-     */
-    public function getColumn(string $name): array;
+    const
+        OPTION_ID_FETCH = 'idFetch',
+        OPTION_PREFETCH_SIZE = 'prefetchSize',
+        OPTION_REPOSITORY = 'repository',
+        OPTION_STORAGE_RESULT = 'storageResult'
+    ;
 
     /**
      * Get entity IDs of all items
@@ -36,6 +25,13 @@ interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable {
      * @return EntityIdInterface[]
      */
     public function getEntityIds(): array;
+
+    /**
+     * Get prefetch size
+     *
+     * @return int
+     */
+    public function getPrefetchSize(): int;
 
     /**
      * Get repository

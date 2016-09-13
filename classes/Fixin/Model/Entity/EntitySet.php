@@ -7,19 +7,35 @@
 
 namespace Fixin\Model\Entity;
 
-use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Repository\RepositoryInterface;
+use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Prototype;
 
 class EntitySet extends Prototype implements EntitySetInterface {
 
-    const EXCEPTION_INVALID_ENTITY_SET = "Invalid entity set parameter '%s', EntitySet allowed";
     const THIS_REQUIRES = [
-        self::OPTION_REPOSITORY => self::TYPE_INSTANCE
+        self::OPTION_REPOSITORY => self::TYPE_INSTANCE,
+        self::OPTION_ID_FETCH => self::TYPE_BOOL
     ];
+
     const THIS_SETS_LAZY = [
         self::OPTION_REPOSITORY => RepositoryInterface::class
     ];
+
+    /**
+     * @var int
+     */
+    protected $fetchPosition = 0;
+
+    /**
+     * @var bool
+     */
+    protected $idFetch = false;
+
+    /**
+     * @var int
+     */
+    protected $itemCount = 0;
 
     /**
      * @var array
@@ -27,40 +43,31 @@ class EntitySet extends Prototype implements EntitySetInterface {
     protected $items = [];
 
     /**
-     * @var integer
+     * @var int
      */
     protected $position = 0;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $prefetchSize = 0;
 
     /**
-     * @var RepositoryInterface|false|null
+     * @var RepositoryInterface
      */
     protected $repository;
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntitySetInterface::append($entitySet)
+     * @var StorageResultInterface
      */
-    public function append(EntitySetInterface $entitySet): EntitySetInterface {
-        if ($entitySet instanceof self) {
-            $this->items = array_merge($this->items, $entitySet->items);
-
-            return $this;
-        }
-
-        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ENTITY_SET, get_class($entitySet)));
-    }
+    protected $storageResult;
 
     /**
      * {@inheritDoc}
      * @see Countable::count()
      */
-    public function count() {
-        return count($this->items);
+    public function count(): int {
+        return $this->itemCount;
     }
 
     /**
@@ -68,33 +75,59 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see Iterator::current()
      */
     public function current() {
+        $this->fetchUntil($this->position);
+
         $result = $this->items[$this->position] ?? null;
 
         if ($result instanceof EntityIdInterface) {
-            // TODO prefetch
+            $this->prefetchNextChunk();
 
-            $result =
-            $this->items[key($this->items)] = $result->getEntity();
+            return $this->items[$this->position];
         }
 
         return $result;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntitySetInterface::getColumn($name)
+     * Fetch all data
      */
-    public function getColumn(string $name): array {
-        $this->prefetchAll();
+    protected function fetchAll() {
+        $this->fetchUntil($this->itemCount);
+    }
 
-        $list = [];
-        $getter = 'get' . $name;
+    /**
+     * Fetch IDs until position
+     *
+     * @param int $position
+     */
+    protected function fetchIdsUntil(int $position) {
+        while ($this->fetchPosition <= $position) {
+            $items[$this->fetchPosition] = $this->getRepository()->createId($this->storageResult->current());
+            $this->fetchPosition++;
 
-        foreach ($this->items as $item) {
-            $list[$item->getEntityId()] = $item->{$getter}();
+            $this->storageResult->next();
+        }
+    }
+
+    /**
+     * Fetch data until position
+     *
+     * @param int $position
+     */
+    protected function fetchUntil(int $position) {
+        $position = min($this->itemCount - 1, $position);
+
+        // Already fetched
+        if ($position < $this->fetchPosition) {
+            return;
         }
 
-        return $list;
+        // ID fetch mode
+        if ($this->idFetch) {
+            $this->fetchIdsUntil($position);
+
+            return;
+        }
     }
 
     /**
@@ -102,13 +135,19 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::getEntityIds()
      */
     public function getEntityIds(): array {
-        $list = [];
+        $this->fetchAll();
 
-        foreach ($this->items as $item) {
-            $list[] = $item instanceof EntityInterface ? $item->getEntityId() : $item;
-        }
+        return array_map(function($item) {
+            return $item instanceof EntityInterface ? $item->getEntityId() : $item;
+        }, $this->items);
+    }
 
-        return $list;
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntitySetInterface::getPrefetchSize()
+     */
+    public function getPrefetchSize(): int {
+        return $this->prefetchSize;
     }
 
     /**
@@ -131,10 +170,8 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * {@inheritDoc}
      * @see Iterator::next()
      */
-    public function next(): EntitySetInterface {
+    public function next() {
         $this->position++;
-
-        return $this;
     }
 
     /**
@@ -142,19 +179,40 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::prefetchAll()
      */
     public function prefetchAll(): EntitySetInterface {
-        // TODO: implementation
+        $this->prefetchBlock(0, $this->itemCount - 1);
 
         return $this;
+    }
+
+    /**
+     * Prefetch block of items
+     *
+     * @param int $offset
+     * @param int $length
+     */
+    protected function prefetchBlock(int $offset, int $length) {
+        $this->fetchUntil($offset + $length - 1);
+
+        $entities = $this->getRepository()->fetchEntities(array_filter(array_slice($this->items, $offset, $length), function($item) {
+            return $item instanceof EntityIdInterface;
+        }));
+
+        // TODO: implementation
+    }
+
+    /**
+     * Prefecth next chunk
+     */
+    protected function prefetchNextChunk() {
+        $this->prefetchBlock($this->position, $this->prefetchSize);
     }
 
     /**
      * {@inheritDoc}
      * @see Iterator::rewind()
      */
-    public function rewind(): EntitySetInterface {
+    public function rewind() {
         $this->position = 0;
-
-        return $this;
     }
 
     /**
@@ -172,6 +230,8 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::shuffle()
      */
     public function shuffle(): EntitySetInterface {
+        $this->fetchAll();
+
         shuffle($this->items);
 
         return $this;
@@ -182,6 +242,8 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see Iterator::valid()
      */
     public function valid(): bool {
+        $this->fetchUntil($this->position);
+
         return isset($this->items[$this->position]);
     }
 }
