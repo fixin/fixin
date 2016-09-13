@@ -8,6 +8,7 @@
 namespace Fixin\Model\Repository;
 
 use Fixin\Exception\InvalidArgumentException;
+use Fixin\Model\Entity\EntityCacheInterface;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
@@ -24,6 +25,7 @@ class Repository extends Resource implements RepositoryInterface {
         EXCEPTION_INVALID_ID = "Invalid ID",
         EXCEPTION_INVALID_NAME = "Invalid name '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
+        PROTOTYPE_ENTITY_CACHE = 'Model\Entity\EntityCache',
         PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
         PROTOTYPE_ENTITY_SET = 'Model\Entity\EntitySet',
         PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
@@ -44,6 +46,11 @@ class Repository extends Resource implements RepositoryInterface {
      * @var string
      */
     protected $autoIncrementColumn;
+
+    /**
+     * @var EntityCacheInterface|null
+     */
+    protected $entityCache;
 
     /**
      * @var EntityInterface|false|null
@@ -157,6 +164,17 @@ class Repository extends Resource implements RepositoryInterface {
     }
 
     /**
+     * Get entity cache
+     *
+     * @return EntityCacheInterface
+     */
+    protected function getEntityCache(): EntityCacheInterface {
+        return $this->entityCache ?: $this->container->clonePrototype(static::PROTOTYPE_ENTITY_CACHE, [
+            EntityCacheInterface::OPTION_REPOSITORY => $this
+        ]);
+    }
+
+    /**
      * Get entity prototype
      *
      * @return EntityInterface
@@ -246,8 +264,9 @@ class Repository extends Resource implements RepositoryInterface {
 
         return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_SET, [
             EntitySetInterface::OPTION_REPOSITORY => $this,
-            EntitySetInterface::OPTION_ID_FETCH => $fetchRequest->isIdFetchEnabled(),
-            EntitySetInterface::OPTION_STORAGE_RESULT => $this->selectRawData($fetchRequest)
+            EntitySetInterface::OPTION_ENTITY_CACHE => $this->getEntityCache(),
+            EntitySetInterface::OPTION_STORAGE_RESULT => $this->selectRawData($fetchRequest),
+            EntitySetInterface::OPTION_ID_FETCH_MODE => $fetchRequest->isIdFetchEnabled()
         ]);
     }
 
@@ -272,10 +291,7 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::selectByIds($ids)
      */
     public function selectByIds(array $ids): EntitySetInterface {
-        $request = $this->createRequest();
-        $request->getWhere()->in($this->primaryKey, $ids);
-
-        return $this->select($request);
+        // TODO: implementation
     }
 
     /**

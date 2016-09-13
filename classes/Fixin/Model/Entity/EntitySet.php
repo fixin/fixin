@@ -13,14 +13,15 @@ use Fixin\Resource\Prototype;
 
 class EntitySet extends Prototype implements EntitySetInterface {
 
-    const THIS_REQUIRES = [
-        self::OPTION_REPOSITORY => self::TYPE_INSTANCE,
-        self::OPTION_ID_FETCH => self::TYPE_BOOL
+    const THIS_SETS_LAZY = [
+        self::OPTION_REPOSITORY => RepositoryInterface::class,
+        self::OPTION_ENTITY_CACHE => EntityCacheInterface::class
     ];
 
-    const THIS_SETS_LAZY = [
-        self::OPTION_REPOSITORY => RepositoryInterface::class
-    ];
+    /**
+     * @var EntityCacheInterface
+     */
+    protected $entityCache;
 
     /**
      * @var int
@@ -30,7 +31,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
     /**
      * @var bool
      */
-    protected $idFetch = false;
+    protected $idFetchMode = false;
 
     /**
      * @var int
@@ -96,6 +97,19 @@ class EntitySet extends Prototype implements EntitySetInterface {
     }
 
     /**
+     * Fetch entities until position
+     *
+     * @param int $position
+     */
+    protected function fetchEntitiesUntil(int $position) {
+        while ($this->fetchPosition <= $position) {
+            $items[$this->fetchPosition] = $this->getEntityCache()->fetchResultEntity($this->storageResult);
+
+            $this->fetchPosition++;
+        }
+    }
+
+    /**
      * Fetch IDs until position
      *
      * @param int $position
@@ -103,9 +117,9 @@ class EntitySet extends Prototype implements EntitySetInterface {
     protected function fetchIdsUntil(int $position) {
         while ($this->fetchPosition <= $position) {
             $items[$this->fetchPosition] = $this->getRepository()->createId($this->storageResult->current());
-            $this->fetchPosition++;
-
             $this->storageResult->next();
+
+            $this->fetchPosition++;
         }
     }
 
@@ -123,11 +137,22 @@ class EntitySet extends Prototype implements EntitySetInterface {
         }
 
         // ID fetch mode
-        if ($this->idFetch) {
+        if ($this->idFetchMode) {
             $this->fetchIdsUntil($position);
 
             return;
         }
+
+        $this->fetchEntitiesUntil($position);
+    }
+
+    /**
+     * Get entity cache
+     *
+     * @return EntityCacheInterface
+     */
+    protected function getEntityCache(): EntityCacheInterface {
+		// TODO
     }
 
     /**
@@ -191,13 +216,12 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @param int $length
      */
     protected function prefetchBlock(int $offset, int $length) {
+        $length = min($length, $this->itemCount - $offset);
         $this->fetchUntil($offset + $length - 1);
 
-        $entities = $this->getRepository()->fetchEntities(array_filter(array_slice($this->items, $offset, $length), function($item) {
+        array_splice($input, $offset, $length, $this->getEntityCache()->getByIds(array_filter(array_slice($this->items, $offset, $length), function($item) {
             return $item instanceof EntityIdInterface;
-        }));
-
-        // TODO: implementation
+        })));
     }
 
     /**
@@ -235,6 +259,24 @@ class EntitySet extends Prototype implements EntitySetInterface {
         shuffle($this->items);
 
         return $this;
+    }
+
+    /**
+     * Set id fetch mode
+     *
+     * @param bool $idFetchMode
+     */
+    protected function setIdFetchMode(bool $idFetchMode) {
+        $this->idFetchMode = $idFetchMode;
+    }
+
+    /**
+     * Set storage result
+     *
+     * @param StorageResultInterface $storageResult
+     */
+    protected function setStorageResult(StorageResultInterface $storageResult) {
+        $this->storageResult = $storageResult;
     }
 
     /**
