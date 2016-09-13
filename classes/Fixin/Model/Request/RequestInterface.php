@@ -329,9 +329,10 @@ interface RequestInterface extends PrototypeInterface {
     /**
      * Set id fetch enabled
      *
+     * @param bool $idFetchEnabled
      * @return self
      */
-    public function setIdFetchEnabled($idFetchEnabled): self;
+    public function setIdFetchEnabled(bool $idFetchEnabled): self;
 
     /**
      * Set limit
