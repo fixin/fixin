@@ -80,11 +80,8 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
      * @see Iterator::next()
      */
     public function next() {
-        $this->currentData = $this->statement->fetch();
-        $this->currentFetched = true;
         $this->position++;
-
-        return $this->currentData;
+        $this->currentFetched = false;
     }
 
     /**
