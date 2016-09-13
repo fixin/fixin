@@ -271,7 +271,7 @@ class Repository extends Resource implements RepositoryInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::selectByIds($ids)
      */
-    public function selectByIds(array $ids) {
+    public function selectByIds(array $ids): EntitySetInterface {
         $request = $this->createRequest();
         $request->getWhere()->in($this->primaryKey, $ids);
 
