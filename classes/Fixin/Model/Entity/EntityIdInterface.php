@@ -23,6 +23,13 @@ interface EntityIdInterface extends PrototypeInterface {
     public function deleteEntity(): bool;
 
     /**
+     * Get array copy
+     *
+     * @return array
+     */
+    public function getArrayCopy(): array;
+
+    /**
      * Get entity of ID
      *
      * @return EntityInterface|null
