@@ -12,7 +12,10 @@ use Fixin\Resource\PrototypeInterface;
 
 interface EntityCacheInterface extends PrototypeInterface {
 
-    const OPTION_REPOSITORY = 'repository';
+    const
+        OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
+    	OPTION_REPOSITORY = 'repository'
+    ;
 
     public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface;
 
