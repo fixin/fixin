@@ -20,6 +20,7 @@ use Fixin\Model\Request\Where\Tag\NullTag;
 use Fixin\Model\Request\Where\Tag\WhereTag;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\Resource;
+use Fixin\Model\Entity\EntityIdInterface;
 
 abstract class Grammar extends Resource implements GrammarInterface {
 
@@ -48,10 +49,11 @@ abstract class Grammar extends Resource implements GrammarInterface {
         LIST_SEPARATOR = ', ',
         LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t",
         MASK_ALIAS = '%s AS %s',
+        MASK_ARRAY = '(%s)',
         MASK_BETWEEN = 'BETWEEN %s AND %s',
         MASK_COLUMN_NAMES = "\t(%s)" . PHP_EOL,
         MASK_EXISTS = 'EXISTS(%s)',
-        MASK_IN = [false => 'IN (%s)', true => 'IN %s'],
+        MASK_IN = 'IN %s',
         MASK_LIMIT = 'LIMIT %s' . PHP_EOL,
         MASK_NESTED = "(%s)",
         MASK_NESTED_MULTI_LINE = '(' . PHP_EOL . "\t%s)" . PHP_EOL,
@@ -204,6 +206,22 @@ abstract class Grammar extends Resource implements GrammarInterface {
     }
 
     /**
+     * Expression array string
+     *
+     * @param array $expression
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function expressionArrayToString(array $expression, QueryInterface $query): string {
+        $result = [];
+        foreach ($expression as $item) {
+            $result[] = $this->expressionToString($item, $query);
+        }
+
+        return sprintf(static::MASK_ARRAY, implode(static::LIST_SEPARATOR, $result));
+    }
+
+    /**
      * Expression string
      *
      * @param number|string|array|ExpressionInterface|RequestInterface $expression
@@ -221,6 +239,21 @@ abstract class Grammar extends Resource implements GrammarInterface {
         // Request
         if ($expression instanceof RequestInterface) {
             return sprintf(static::MASK_NESTED, $this->requestToString($expression, $query));
+        }
+
+        // Array
+        if (is_array($expression)) {
+            return $this->expressionArrayToString($expression, $query);
+        }
+
+        // ID
+        if ($expression instanceof EntityIdInterface) {
+            $expression = $expression->getArrayCopy();
+            if (count($expression) > 1) {
+                return $this->expressionArrayToString($expression, $query);
+            }
+
+            $expression = reset($expression);
         }
 
         $query->addParameter($expression);
@@ -245,6 +278,9 @@ abstract class Grammar extends Resource implements GrammarInterface {
         // Request
         elseif ($identifier instanceof RequestInterface) {
             return sprintf(static::MASK_NESTED, $this->requestToString($identifier, $query));
+        }
+        elseif (is_array($identifier)) {
+            return $this->quoteArrayIdentifier($identifier);
         }
 
         return $this->quoteIdentifier($identifier);
@@ -392,6 +428,20 @@ abstract class Grammar extends Resource implements GrammarInterface {
         }
 
         return '';
+    }
+
+    /**
+     * Quote array identifier
+     *
+     * @param array $identifier
+     * @return string
+     */
+    protected function quoteArrayIdentifier(array $identifier) {
+        if (count($identifier) > 1) {
+            return sprintf(static::MASK_ARRAY, implode(static::LIST_SEPARATOR, array_map([$this, 'quoteIdentifier'], $identifier)));
+        }
+
+        return $this->quoteIdentifier(reset($identifier));
     }
 
     /**
@@ -553,7 +603,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
     protected function whereTagIn(InTag $tag, QueryInterface $query): string {
         $values = $tag->getValues();
 
-        return $this->identifierToString($tag->getIdentifier(), $query) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_IN[$values instanceof RequestInterface], $this->expressionToString($values, $query));
+        return $this->identifierToString($tag->getIdentifier(), $query) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_IN, $this->expressionToString($values, $query));
     }
 
     /**
