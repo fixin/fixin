@@ -14,8 +14,8 @@ use Fixin\Resource\Prototype;
 class EntitySet extends Prototype implements EntitySetInterface {
 
     const THIS_SETS_LAZY = [
-        self::OPTION_REPOSITORY => RepositoryInterface::class,
-        self::OPTION_ENTITY_CACHE => EntityCacheInterface::class
+        self::OPTION_ENTITY_CACHE => EntityCacheInterface::class,
+        self::OPTION_REPOSITORY => RepositoryInterface::class
     ];
 
     /**
@@ -76,17 +76,9 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see Iterator::current()
      */
     public function current() {
-        $this->fetchUntil($this->position);
+        $this->prefetch();
 
-        $result = $this->items[$this->position] ?? null;
-
-        if ($result instanceof EntityIdInterface) {
-            $this->prefetchNextChunk();
-
-            return $this->items[$this->position];
-        }
-
-        return $result;
+        return $this->items[$this->position] ?? null;
     }
 
     /**
@@ -103,7 +95,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     protected function fetchEntitiesUntil(int $position) {
         while ($this->fetchPosition <= $position) {
-            $items[$this->fetchPosition] = $this->getEntityCache()->fetchResultEntity($this->storageResult);
+            $this->items[$this->fetchPosition] = $this->getEntityCache()->fetchResultEntity($this->storageResult);
 
             $this->fetchPosition++;
         }
@@ -116,7 +108,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     protected function fetchIdsUntil(int $position) {
         while ($this->fetchPosition <= $position) {
-            $items[$this->fetchPosition] = $this->getRepository()->createId($this->storageResult->current());
+            $this->items[$this->fetchPosition] = $this->getRepository()->createId($this->storageResult->current());
             $this->storageResult->next();
 
             $this->fetchPosition++;
@@ -152,7 +144,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @return EntityCacheInterface
      */
     protected function getEntityCache(): EntityCacheInterface {
-		// TODO
+        return $this->entityCache ?: $this->loadLazyProperty(static::OPTION_ENTITY_CACHE);
     }
 
     /**
@@ -197,6 +189,16 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     public function next() {
         $this->position++;
+
+        $this->prefetch();
+    }
+
+    /**
+     * Prefetch
+     */
+    protected function prefetch() {
+        $this->fetchUntil($this->position);
+        $this->prefetchBlock($this->position, $this->prefetchSize ?: 1);
     }
 
     /**
@@ -204,7 +206,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::prefetchAll()
      */
     public function prefetchAll(): EntitySetInterface {
-        $this->prefetchBlock(0, $this->itemCount - 1);
+        $this->prefetchBlock(0, $this->itemCount);
 
         return $this;
     }
@@ -217,18 +219,19 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     protected function prefetchBlock(int $offset, int $length) {
         $length = min($length, $this->itemCount - $offset);
-        $this->fetchUntil($offset + $length - 1);
 
-        array_splice($input, $offset, $length, $this->getEntityCache()->getByIds(array_filter(array_slice($this->items, $offset, $length), function($item) {
+        // Search ids
+        $ids = array_filter(array_slice($this->items, $offset, $length), function($item) {
             return $item instanceof EntityIdInterface;
-        })));
-    }
+        });
 
-    /**
-     * Prefecth next chunk
-     */
-    protected function prefetchNextChunk() {
-        $this->prefetchBlock($this->position, $this->prefetchSize);
+        if (empty($ids)) {
+            return [];
+        }
+
+        foreach ($this->getEntityCache()->getByIds($ids) as $entity) {
+
+        }
     }
 
     /**
@@ -237,6 +240,17 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     public function rewind() {
         $this->position = 0;
+
+        $this->prefetch();
+    }
+
+    /**
+     * Set id fetch mode
+     *
+     * @param bool $idFetchMode
+     */
+    protected function setIdFetchMode(bool $idFetchMode) {
+        $this->idFetchMode = $idFetchMode;
     }
 
     /**
@@ -247,6 +261,16 @@ class EntitySet extends Prototype implements EntitySetInterface {
         $this->prefetchSize = $prefetchSize;
 
         return $this;
+    }
+
+    /**
+     * Set storage result
+     *
+     * @param StorageResultInterface $storageResult
+     */
+    protected function setStorageResult(StorageResultInterface $storageResult) {
+        $this->storageResult = $storageResult;
+        $this->itemCount = $storageResult->count();
     }
 
     /**
@@ -262,29 +286,11 @@ class EntitySet extends Prototype implements EntitySetInterface {
     }
 
     /**
-     * Set id fetch mode
-     *
-     * @param bool $idFetchMode
-     */
-    protected function setIdFetchMode(bool $idFetchMode) {
-        $this->idFetchMode = $idFetchMode;
-    }
-
-    /**
-     * Set storage result
-     *
-     * @param StorageResultInterface $storageResult
-     */
-    protected function setStorageResult(StorageResultInterface $storageResult) {
-        $this->storageResult = $storageResult;
-    }
-
-    /**
      * {@inheritDoc}
      * @see Iterator::valid()
      */
     public function valid(): bool {
-        $this->fetchUntil($this->position);
+        $this->prefetch();
 
         return isset($this->items[$this->position]);
     }
