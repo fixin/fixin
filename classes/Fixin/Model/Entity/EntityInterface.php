@@ -12,7 +12,10 @@ use Fixin\Resource\PrototypeInterface;
 
 interface EntityInterface extends PrototypeInterface {
 
-    const OPTION_REPOSITORY = 'repository';
+    const
+        OPTION_ENTITY_ID = 'entityId',
+        OPTION_REPOSITORY = 'repository'
+    ;
 
     /**
      * Delete from the repository

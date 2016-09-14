@@ -103,4 +103,13 @@ abstract class Entity extends Prototype implements EntityInterface {
 
         return $this;
     }
+
+    /**
+     * Set entity id
+     *
+     * @param EntityIdInterface $entityId
+     */
+    protected function setEntityId(EntityIdInterface $entityId) {
+        $this->entityId = $entityId;
+    }
 }
