@@ -100,7 +100,7 @@ class Repository extends Resource implements RepositoryInterface {
 
         // Array
         if (is_array($entityId[0])) {
-            $entityId = array_intersect_key(array_flip($this->primaryKey), $entityId);
+            $entityId = array_intersect_key($entityId[0], array_flip($this->primaryKey));
 
             if (count($entityId) === $columnCount) {
                 return $this->createIdWithArray($entityId);
@@ -125,7 +125,8 @@ class Repository extends Resource implements RepositoryInterface {
      */
     private function createIdWithArray(array $entityId): EntityIdInterface {
         return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_ID, [
-            EntityIdInterface::OPTION_ENTITY_ID => $entityId
+            EntityIdInterface::OPTION_ENTITY_ID => $entityId,
+            EntityIdInterface::OPTION_REPOSITORY => $this
         ]);
     }
 
@@ -170,7 +171,8 @@ class Repository extends Resource implements RepositoryInterface {
      */
     protected function getEntityCache(): EntityCacheInterface {
         return $this->entityCache ?: $this->container->clonePrototype(static::PROTOTYPE_ENTITY_CACHE, [
-            EntityCacheInterface::OPTION_REPOSITORY => $this
+            EntityCacheInterface::OPTION_REPOSITORY => $this,
+            EntityCacheInterface::OPTION_ENTITY_PROTOTYPE => $this->getEntityPrototype()
         ]);
     }
 
