@@ -170,10 +170,10 @@ class Repository extends Resource implements RepositoryInterface {
      * @return EntityCacheInterface
      */
     protected function getEntityCache(): EntityCacheInterface {
-        return $this->entityCache ?: $this->container->clonePrototype(static::PROTOTYPE_ENTITY_CACHE, [
+        return $this->entityCache ?? ($this->entityCache = $this->container->clonePrototype(static::PROTOTYPE_ENTITY_CACHE, [
             EntityCacheInterface::OPTION_REPOSITORY => $this,
             EntityCacheInterface::OPTION_ENTITY_PROTOTYPE => $this->getEntityPrototype()
-        ]);
+        ]));
     }
 
     /**
@@ -286,7 +286,7 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function selectById(EntityIdInterface $id) {
         $entities = $this->getEntityCache()->getByIds([$id]);
-        
+
         return reset($entities);
     }
 

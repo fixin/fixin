@@ -33,7 +33,7 @@ class EntityCache extends Prototype implements EntityCacheInterface {
     /**
      * @var array
      */
-    protected $invalidatedEntities = [];
+    protected $invalidEntities = [];
 
     /**
      * @var array
@@ -50,13 +50,33 @@ class EntityCache extends Prototype implements EntityCacheInterface {
      * @see \Fixin\Model\Entity\EntityCacheInterface::fetchResultEntity($storageResult)
      */
     public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface {
+        // Fetch
         $data = $storageResult->current();
         $storageResult->next();
 
-        // TODO: cache test
+        // Id
+        $id = $this->repository->createId(array_intersect_key($data, $this->primaryKeyFlipped));
+        $key = (string) $id;
 
-        return $this->entityPrototype->withOptions([
-            EntityInterface::OPTION_ENTITY_ID => $this->repository->createId(array_intersect_key($data, $this->primaryKeyFlipped))
+        // Invalid entity (needs update)
+        if (isset($this->invalidEntities[$key])) {
+            $entity = $this->invalidEntities[$key];
+            unset($this->invalidEntities[$key]);
+
+            return $this->entities[$key] = $entity->exchangeArray($data);
+        }
+
+        // Active entity
+        if (isset($this->entities[$key])) {
+            $entity = $this->entities[$key];
+            unset($this->entities[$key]);
+
+            // Move to the end
+            return $this->entities[$key] = $entity;
+        }
+
+        return $this->entities[$key] = $this->entityPrototype->withOptions([
+            EntityInterface::OPTION_ENTITY_ID => $id
         ])->exchangeArray($data);
     }
 
@@ -66,12 +86,15 @@ class EntityCache extends Prototype implements EntityCacheInterface {
      */
     public function getByIds(array $ids): array {
         if ($ids) {
-            $list = array_fill_keys(array_map(function($item) { return $item; }, $ids), null);
+            $ids = array_combine($ids, $ids);
+            $list = array_fill_keys(array_keys($ids), null);
 
-            // TODO: cache test
+            // Cached entities
+            $cached = array_intersect_key($this->entities, $list);
+            $list = array_replace($list, $cached);
 
-            // Fetch data
-            if ($ids) {
+            // Fetch required data
+            if ($ids = array_diff_key($ids, $cached)) {
                 $request = $this->repository->createRequest();
                 $request->getWhere()->in($this->repository->getPrimaryKey(), $ids);
 
