@@ -36,11 +36,11 @@ class EntityId extends Prototype implements EntityIdInterface {
      * @var string
      */
     protected $string;
-    
+
     public function __toString() {
         return $this->string;
     }
-    
+
     /**
      * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityIdInterface::deleteEntity()
@@ -65,7 +65,7 @@ class EntityId extends Prototype implements EntityIdInterface {
      * @see \Fixin\Model\Entity\EntityIdInterface::getEntity()
      */
     public function getEntity() {
-        return $this->getRepository()->selectEntityById($this);
+        return $this->getRepository()->selectById($this);
     }
 
     /**

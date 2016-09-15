@@ -285,7 +285,9 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::selectById($id)
      */
     public function selectById(EntityIdInterface $id) {
-        return $this->selectByIds([$id])->current();
+        $entities = $this->getEntityCache()->getByIds([$id]);
+        
+        return reset($entities);
     }
 
     /**
@@ -293,7 +295,11 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::selectByIds($ids)
      */
     public function selectByIds(array $ids): EntitySetInterface {
-        // TODO: implementation
+        return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_SET, [
+            EntitySetInterface::OPTION_REPOSITORY => $this,
+            EntitySetInterface::OPTION_ENTITY_CACHE => $this->getEntityCache(),
+            EntitySetInterface::OPTION_ITEMS => $this->getEntityCache()->getByIds($ids)
+        ]);
     }
 
     /**
