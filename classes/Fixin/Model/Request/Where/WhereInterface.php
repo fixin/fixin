@@ -54,11 +54,11 @@ interface WhereInterface extends PrototypeInterface {
 
     /**
      * Add: and in
-     * @param string $identifier
+     * @param string|array $identifier
      * @param array|RequestInterface $values
      * @return self
      */
-    public function in(string $identifier, $values): self;
+    public function in($identifier, $values): self;
 
     /**
      * Add: and items from array
@@ -97,11 +97,11 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: and not in
      *
-     * @param string $identifier
+     * @param string|array $identifier
      * @param array|RequestInterface $values
      * @return self
      */
-    public function notIn(string $identifier, $values): self;
+    public function notIn($identifier, $values): self;
 
     /**
      * Add: and not nested where
@@ -160,11 +160,11 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: or in
      *
-     * @param string $identifier
+     * @param string|array $identifier
      * @param array|RequestInterface $values
      * @return self
      */
-    public function orIn(string $identifier, $values): self;
+    public function orIn($identifier, $values): self;
 
     /**
      * Add: or items from array
@@ -203,11 +203,11 @@ interface WhereInterface extends PrototypeInterface {
     /**
      * Add: or not in
      *
-     * @param string $identifier
+     * @param string|array $identifier
      * @param array|RequestInterface $values
      * @return self
      */
-    public function orNotIn(string $identifier, $values): self;
+    public function orNotIn($identifier, $values): self;
 
     /**
      * Add: or not null

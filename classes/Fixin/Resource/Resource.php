@@ -18,6 +18,7 @@ abstract class Resource implements ResourceInterface {
     const THIS_SETS_LAZY = [];
     const TYPE_ANY = 'any';
     const TYPE_ARRAY = 'array';
+    const TYPE_BOOL = 'bool';
     const TYPE_INSTANCE = 'instance';
     const TYPE_STRING = 'string';
 
@@ -70,6 +71,16 @@ abstract class Resource implements ResourceInterface {
      */
     private function configurationArrayTest($value): bool {
         return is_array($value) && count($value);
+    }
+
+    /**
+     * Bool test
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    private function configurationBoolTest($value): bool {
+        return is_bool($value);
     }
 
     /**

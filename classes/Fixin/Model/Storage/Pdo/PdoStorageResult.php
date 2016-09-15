@@ -59,10 +59,7 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
      * @see Iterator::current()
      */
     public function current() {
-        if (!$this->currentFetched) {
-            $this->currentData = $this->statement->fetch();
-            $this->currentFetched = true;
-        }
+        $this->prefetch();
 
         return $this->currentData;
     }
@@ -80,11 +77,20 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
      * @see Iterator::next()
      */
     public function next() {
-        $this->currentData = $this->statement->fetch();
-        $this->currentFetched = true;
         $this->position++;
+        $this->currentFetched = false;
 
-        return $this->currentData;
+        $this->prefetch();
+    }
+
+    /**
+     * Prefetch data
+     */
+    protected function prefetch() {
+        if (!$this->currentFetched) {
+            $this->currentData = $this->statement->fetch();
+            $this->currentFetched = true;
+        }
     }
 
     /**
@@ -96,8 +102,7 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
             throw new RuntimeException(static::EXCEPTION_REWIND_IS_NOT_ALLOWED);
         }
 
-        $this->currentData = $this->statement->fetch();
-        $this->currentFetched = true;
+        $this->prefetch();
     }
 
     /**
@@ -107,13 +112,16 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
      */
     protected function setStatement(\PDOStatement $statement) {
         $this->statement = $statement;
+        $this->currentFetched = false;
     }
 
     /**
      * {@inheritDoc}
      * @see Iterator::valid()
      */
-    public function valid() {
+    public function valid(): bool {
+        $this->prefetch();
+
         return $this->currentData !== false;
     }
 }

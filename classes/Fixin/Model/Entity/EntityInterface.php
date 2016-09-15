@@ -12,7 +12,10 @@ use Fixin\Resource\PrototypeInterface;
 
 interface EntityInterface extends PrototypeInterface {
 
-    const OPTION_REPOSITORY = 'repository';
+    const
+        OPTION_ENTITY_ID = 'entityId',
+        OPTION_REPOSITORY = 'repository'
+    ;
 
     /**
      * Delete from the repository
@@ -20,6 +23,12 @@ interface EntityInterface extends PrototypeInterface {
      * @return self
      */
     public function delete(): self;
+
+    /**
+     * @param array $data
+     * @return self
+     */
+    public function exchangeArray(array $data): self;
 
     /**
      * Get ID

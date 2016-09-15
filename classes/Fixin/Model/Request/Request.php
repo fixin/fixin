@@ -8,7 +8,6 @@
 namespace Fixin\Model\Request;
 
 use Fixin\Model\Entity\EntitySetInterface;
-use Fixin\Model\Repository\Repository;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Model\Storage\StorageResultInterface;
@@ -17,7 +16,7 @@ use Fixin\Resource\Prototype;
 class Request extends Prototype implements RequestInterface {
 
     const
-        COUNT_EXPRESSION = 'COUNT(%s)',
+        MASK_COUNT = 'COUNT(%s)',
         PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
         PROTOTYPE_JOIN = 'Model\Request\Join',
         PROTOTYPE_UNION = 'Model\Request\Union',
@@ -50,6 +49,11 @@ class Request extends Prototype implements RequestInterface {
      * @var WhereInterface
      */
     protected $having;
+
+    /**
+     * @var bool
+     */
+    protected $idFetchEnabled = true;
 
     /**
      * @var array
@@ -173,7 +177,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::count()
      */
     public function count(): int {
-        return $this->fetchValue($this->createExpression(sprintf(static::COUNT_EXPRESSION, implode(',', $this->columns ?: ['*']))));
+        return $this->fetchValue($this->createExpression(sprintf(static::MASK_COUNT, implode(',', $this->columns ?: ['*']))));
     }
 
     /**
@@ -211,12 +215,12 @@ class Request extends Prototype implements RequestInterface {
         return $this->repository->exists($this);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::fetch()
-     */
+   /**
+    * {@inheritDoc}
+    * @see \Fixin\Model\Request\RequestInterface::fetch()
+    */
     public function fetch(): EntitySetInterface {
-        return $this->repository->selectEntities($this);
+        return $this->repository->select($this);
     }
 
     /**
@@ -232,9 +236,7 @@ class Request extends Prototype implements RequestInterface {
      * @see \Fixin\Model\Request\RequestInterface::fetchFirst()
      */
     public function fetchFirst() {
-        $copy = clone $this;
-
-        return $copy->setLimit(1)->fetch()->current();
+        return (clone $this)->setLimit(1)->fetch()->current();
     }
 
     /**
@@ -399,6 +401,14 @@ class Request extends Prototype implements RequestInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::isIdFetchEnabled()
+     */
+    public function isIdFetchEnabled(): bool {
+        return $this->idFetchEnabled;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Request\RequestInterface::join($repository, $left, $operator, $right, $alias)
      */
     public function join(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface {
@@ -481,6 +491,16 @@ class Request extends Prototype implements RequestInterface {
      */
     public function setGroupBy(array $groupBy): RequestInterface {
         $this->groupBy = $groupBy;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::setIdFetchEnabled($idFetchEnabled)
+     */
+    public function setIdFetchEnabled(bool $idFetchEnabled): RequestInterface {
+        $this->idFetchEnabled = $idFetchEnabled;
 
         return $this;
     }

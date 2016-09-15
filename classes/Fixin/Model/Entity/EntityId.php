@@ -12,12 +12,15 @@ use Fixin\Resource\Prototype;
 
 class EntityId extends Prototype implements EntityIdInterface {
 
-    const THIS_REQUIRES = [
-        self::OPTION_REPOSITORY => self::TYPE_INSTANCE
-    ];
-    const THIS_SETS_LAZY = [
-        self::OPTION_REPOSITORY => RepositoryInterface::class
-    ];
+    const
+        SEPARATOR = ',',
+        THIS_REQUIRES = [
+            self::OPTION_REPOSITORY => self::TYPE_INSTANCE
+        ],
+        THIS_SETS_LAZY = [
+            self::OPTION_REPOSITORY => RepositoryInterface::class
+        ]
+    ;
 
     /**
      * @var array
@@ -30,11 +33,31 @@ class EntityId extends Prototype implements EntityIdInterface {
     protected $repository;
 
     /**
+     * @var string
+     */
+    protected $string;
+
+    public function __toString() {
+        return $this->string;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityIdInterface::deleteEntity()
      */
     public function deleteEntity(): bool {
-        return $this->getRepository()->where($this)->delete() > 0;
+        $request = $this->getRepository()->createRequest();
+        $request->getWhere()->items($this->entityId);
+
+        return $request->delete() > 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntityIdInterface::getArrayCopy()
+     */
+    public function getArrayCopy(): array {
+        return $this->entityId;
     }
 
     /**
@@ -42,7 +65,7 @@ class EntityId extends Prototype implements EntityIdInterface {
      * @see \Fixin\Model\Entity\EntityIdInterface::getEntity()
      */
     public function getEntity() {
-        return $this->getRepository()->where($this)->first();
+        return $this->getRepository()->selectById($this);
     }
 
     /**
@@ -60,5 +83,6 @@ class EntityId extends Prototype implements EntityIdInterface {
      */
     protected function setEntityId(array $entityId) {
         $this->entityId = $entityId;
+        $this->string = implode(static::SEPARATOR, $entityId);
     }
 }

@@ -15,14 +15,14 @@ abstract class IdentifierTag extends Tag {
     ];
 
     /**
-     * @var string
+     * @var string|array
      */
     protected $identifier;
 
     /**
      * Get identifier
      *
-     * @return string
+     * @return string|array
      */
     public function getIdentifier() {
         return $this->identifier;
@@ -31,9 +31,9 @@ abstract class IdentifierTag extends Tag {
     /**
      * Set identifier
      *
-     * @param string $identifier
+     * @param string|array $identifier
      */
-    protected function setIdentifier(string $identifier) {
+    protected function setIdentifier($identifier) {
         $this->identifier = $identifier;
     }
 }
