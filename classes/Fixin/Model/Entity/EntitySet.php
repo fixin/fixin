@@ -46,17 +46,12 @@ class EntitySet extends Prototype implements EntitySetInterface {
     /**
      * @var int
      */
-    protected $lastPrefetchPosition;
-
-    /**
-     * @var int
-     */
     protected $position = 0;
 
     /**
      * @var int
      */
-    protected $prefetchSize = 0;
+    protected $prefetchSize = 1;
 
     /**
      * @var RepositoryInterface
@@ -84,13 +79,6 @@ class EntitySet extends Prototype implements EntitySetInterface {
         $this->prefetch();
 
         return $this->items[$this->position] ?? null;
-    }
-
-    /**
-     * Fetch all data
-     */
-    protected function fetchAll() {
-        $this->fetchUntil($this->itemCount);
     }
 
     /**
@@ -128,11 +116,6 @@ class EntitySet extends Prototype implements EntitySetInterface {
     protected function fetchUntil(int $position) {
         $position = min($this->itemCount - 1, $position);
 
-        // Already fetched
-        if ($position < $this->fetchPosition) {
-            return;
-        }
-
         // ID fetch mode
         if ($this->idFetchMode) {
             $this->fetchIdsUntil($position);
@@ -157,7 +140,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::getEntityIds()
      */
     public function getEntityIds(): array {
-        $this->fetchAll();
+        $this->fetchUntil($this->itemCount - 1);
 
         return array_map(function($item) {
             return $item instanceof EntityInterface ? $item->getEntityId() : $item;
@@ -202,11 +185,14 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * Prefetch
      */
     protected function prefetch() {
-        if ($this->lastPrefetchPosition !== $this->position) {
-            $this->fetchUntil($this->position);
-            $this->prefetchBlock($this->position, $this->prefetchSize ?: 1);
+        if ($this->position < $this->itemCount) {
+            if ($this->fetchPosition <= $this->position) {
+                $this->fetchUntil($this->position + $this->prefetchSize - 1);
+            }
 
-            $this->lastPrefetchPosition = $this->position;
+            if ($this->items[$this->position] instanceof EntityIdInterface) {
+                $this->prefetchBlock($this->position, $this->prefetchSize);
+            }
         }
     }
 
@@ -215,6 +201,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::prefetchAll()
      */
     public function prefetchAll(): EntitySetInterface {
+        $this->fetchUntil($this->itemCount - 1);
         $this->prefetchBlock(0, $this->itemCount);
 
         return $this;
@@ -228,8 +215,6 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     protected function prefetchBlock(int $offset, int $length) {
         $length = min($length, $this->itemCount - $offset);
-
-        $this->fetchUntil($offset + $length - 1);
 
         // Search ids
         $ids = [];
@@ -286,7 +271,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::setPrefetchSize($prefetchSize)
      */
     public function setPrefetchSize(int $prefetchSize): EntitySetInterface {
-        $this->prefetchSize = $prefetchSize;
+        $this->prefetchSize = $prefetchSize ?: 1;
 
         return $this;
     }
@@ -298,6 +283,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     protected function setStorageResult(StorageResultInterface $storageResult) {
         $this->storageResult = $storageResult;
+        $this->items = [];
         $this->itemCount = $storageResult->count();
     }
 
@@ -306,7 +292,7 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * @see \Fixin\Model\Entity\EntitySetInterface::shuffle()
      */
     public function shuffle(): EntitySetInterface {
-        $this->fetchAll();
+        $this->fetchUntil($this->itemCount - 1);
 
         shuffle($this->items);
 
