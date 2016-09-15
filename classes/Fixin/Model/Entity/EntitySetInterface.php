@@ -15,6 +15,7 @@ interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable {
     const
         OPTION_ENTITY_CACHE = 'entityCache',
         OPTION_ID_FETCH_MODE = 'idFetchMode',
+        OPTION_ITEMS = 'items',
         OPTION_PREFETCH_SIZE = 'prefetchSize',
         OPTION_REPOSITORY = 'repository',
         OPTION_STORAGE_RESULT = 'storageResult'

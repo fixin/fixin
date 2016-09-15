@@ -272,6 +272,16 @@ class EntitySet extends Prototype implements EntitySetInterface {
     }
 
     /**
+     * Set items
+     *
+     * @param array $items
+     */
+    protected function setItems(array $items) {
+        $this->items = $items;
+        $this->itemCount = count($items);
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntitySetInterface::setPrefetchSize($prefetchSize)
      */
