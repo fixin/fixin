@@ -20,13 +20,20 @@ class EntityCache extends Prototype implements EntityCacheInterface {
         ]
     ;
 
-    protected $activeEntities = [];
-    protected $invalidatedEntities = [];
+    /**
+     * @var array
+     */
+    protected $entities = [];
 
     /**
      * @var EntityInterface
      */
     protected $entityPrototype;
+
+    /**
+     * @var array
+     */
+    protected $invalidatedEntities = [];
 
     /**
      * @var array
