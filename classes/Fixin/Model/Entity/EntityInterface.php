@@ -25,6 +25,12 @@ interface EntityInterface extends PrototypeInterface {
     public function delete(): self;
 
     /**
+     * @param array $data
+     * @return self
+     */
+    public function exchangeArray(array $data): self;
+
+    /**
      * Get ID
      *
      * @return EntityIdInterface|null

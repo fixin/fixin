@@ -10,13 +10,18 @@ namespace Fixin\Model\Entity;
 use Fixin\Model\Entity\Exception\NotStoredEntityException;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
+use Fixin\Support\ToStringTrait;
 
 abstract class Entity extends Prototype implements EntityInterface {
 
-    const EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity';
-    const THIS_SETS_LAZY = [
-        self::OPTION_REPOSITORY => RepositoryInterface::class
-    ];
+    use ToStringTrait;
+
+    const
+        EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity',
+        THIS_SETS_LAZY = [
+            self::OPTION_REPOSITORY => RepositoryInterface::class
+        ]
+    ;
 
     /**
      * @var bool
@@ -95,11 +100,12 @@ abstract class Entity extends Prototype implements EntityInterface {
             $request->getWhere()->items($this->entityId);
             $request->update($this->collectSaveData());
 
-            return $this;
+            return $this->refresh();
         }
 
         $this->entityId = $this->getRepository()->insert($this->collectSaveData());
-        $this->deleted = false;
+        $this->deleted = false; // <- move to refresh()
+        $this->refresh();
 
         return $this;
     }

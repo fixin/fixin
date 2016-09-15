@@ -55,11 +55,9 @@ class EntityCache extends Prototype implements EntityCacheInterface {
 
         // TODO: cache test
 
-        $entity = $this->entityPrototype->withOptions([
+        return $this->entityPrototype->withOptions([
             EntityInterface::OPTION_ENTITY_ID => $this->repository->createId(array_intersect_key($data, $this->primaryKeyFlipped))
-        ]);
-
-        return $entity;
+        ])->exchangeArray($data);
     }
 
     /**
