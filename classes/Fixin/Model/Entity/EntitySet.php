@@ -46,6 +46,11 @@ class EntitySet extends Prototype implements EntitySetInterface {
     /**
      * @var int
      */
+    protected $lastPrefetchPosition;
+
+    /**
+     * @var int
+     */
     protected $position = 0;
 
     /**
@@ -197,8 +202,12 @@ class EntitySet extends Prototype implements EntitySetInterface {
      * Prefetch
      */
     protected function prefetch() {
-        $this->fetchUntil($this->position);
-        $this->prefetchBlock($this->position, $this->prefetchSize ?: 1);
+        if ($this->lastPrefetchPosition !== $this->position) {
+            $this->fetchUntil($this->position);
+            $this->prefetchBlock($this->position, $this->prefetchSize ?: 1);
+
+            $this->lastPrefetchPosition = $this->position;
+        }
     }
 
     /**
@@ -220,17 +229,26 @@ class EntitySet extends Prototype implements EntitySetInterface {
     protected function prefetchBlock(int $offset, int $length) {
         $length = min($length, $this->itemCount - $offset);
 
-        // Search ids
-        $ids = array_filter(array_slice($this->items, $offset, $length), function($item) {
-            return $item instanceof EntityIdInterface;
-        });
+        $this->fetchUntil($offset + $length - 1);
 
-        if (empty($ids)) {
-            return [];
+        // Search ids
+        $ids = [];
+
+        $p = $offset;
+        while ($length) {
+            $item = $this->items[$p];
+            if ($item instanceof EntityInterface) {
+                break;
+            }
+
+            $ids[] = $item;
+
+            $length--;
+            $p++;
         }
 
-        foreach ($this->getEntityCache()->getByIds($ids) as $entity) {
-
+        if ($ids) {
+            array_splice($this->items, $offset, count($ids), $this->getEntityCache()->getByIds($ids));
         }
     }
 
