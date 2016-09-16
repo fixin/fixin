@@ -32,16 +32,16 @@ class Processor extends Item {
     }
 
     public function __toString(): string {
-         $info = '';
+        $info = '';
 
-         foreach ($this->getGroups() as $name => $group) {
+        foreach ($this->getGroups() as $name => $group) {
             $info .= "\n[$name]\n";
             foreach ($group as $item) {
                 $info .= str_replace("\n", "\n    ", $item);
             }
-         }
+        }
 
-         return $info;
+        return $info;
     }
 
     protected function baseClassTest(string $name, array $baseClasses, \ReflectionClass $item): bool {
@@ -180,8 +180,9 @@ class Processor extends Item {
     }
 
     protected function uniteImplementationsRemoveLoop(Item $current, Item $implementationOf) {
-        if ($implementationOf->isDescendant($current->getParent())) {
-            $parent = $current->getParent();
+        $parent = $current->getParent();
+
+        if ($parent && $implementationOf->isDescendant($parent)) {
             while ($parent !== $implementationOf) {
                 $parent->removeFromParent();
                 $parent = $parent->getParent();

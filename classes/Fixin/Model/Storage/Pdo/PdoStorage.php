@@ -70,7 +70,7 @@ class PdoStorage extends Resource implements StorageInterface {
             $this->password = null;
 
             $class = ucfirst(strtolower($resource->getAttribute(\PDO::ATTR_DRIVER_NAME)));
-            $this->grammar = $this->container->get(sprintf(static::GRAMMAR_CLASS_MASK , $class));
+            $this->grammar = $this->container->get(sprintf(static::GRAMMAR_CLASS_MASK, $class));
         }
         catch (\PDOException $e) {
             throw new RuntimeException(sprintf(static::EXCEPTION_CONNECTION_ERROR, $e->getMessage()));

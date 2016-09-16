@@ -49,8 +49,9 @@ abstract class Entity extends Prototype implements EntityInterface {
      */
     public function delete(): EntityInterface {
         if ($this->isStored()) {
-            $this->deleted = $this->entityId->deleteEntity();
-            $this->entityId = null;
+            if ($this->deleted = $this->entityId->deleteEntity()) {
+                $this->entityId = null;
+            }
 
             return $this;
         }
@@ -95,6 +96,8 @@ abstract class Entity extends Prototype implements EntityInterface {
      * @see \Fixin\Model\Entity\EntityInterface::save()
      */
     public function save(): EntityInterface {
+        // TODO
+
         if ($this->entityId) {
             $request = $this->getRepository()->createRequest();
             $request->getWhere()->items($this->entityId);
@@ -105,7 +108,7 @@ abstract class Entity extends Prototype implements EntityInterface {
 
         $this->entityId = $this->getRepository()->insert($this->collectSaveData());
         $this->deleted = false; // <- move to refresh()
-        $this->refresh();
+        $this->refresh(); // TODO
 
         return $this;
     }

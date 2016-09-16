@@ -44,8 +44,8 @@ abstract class Grammar extends Resource implements GrammarInterface {
         CLAUSE_VALUES = 'VALUES',
         CLAUSE_WHERE = 'WHERE',
         EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@",
-        IDENTIFIER_QUOTE_CLOSE ="`",
-        IDENTIFIER_QUOTE_OPEN ="`",
+        IDENTIFIER_QUOTE_CLOSE = "`",
+        IDENTIFIER_QUOTE_OPEN = "`",
         LIST_SEPARATOR = ', ',
         LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t",
         MASK_ALIAS = '%s AS %s',
@@ -375,7 +375,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      *
      * @param string $statement
      * @param RequestInterface $request
-     * @param array $tags
+     * @param string[] $tags
      * @return QueryInterface
      */
     protected function makeQuery(string $statement, RequestInterface $request, array $tags) {

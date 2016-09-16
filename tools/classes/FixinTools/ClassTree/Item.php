@@ -151,7 +151,7 @@ class Item {
         return $this->parent;
     }
 
-   public function getReflection(): ReflectionClass {
+    public function getReflection(): ReflectionClass {
         return $this->reflection;
     }
 

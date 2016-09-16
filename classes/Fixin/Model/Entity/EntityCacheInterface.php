@@ -14,10 +14,22 @@ interface EntityCacheInterface extends PrototypeInterface {
 
     const
         OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
-    	OPTION_REPOSITORY = 'repository'
+        OPTION_REPOSITORY = 'repository'
     ;
 
+    /**
+     * Fetch result entity
+     *
+     * @param StorageResultInterface $storageResult
+     * @return EntityInterface
+     */
     public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface;
 
+    /**
+     * Get entities by IDs
+     *
+     * @param array $ids
+     * @return array
+     */
     public function getByIds(array $ids): array;
 }

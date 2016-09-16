@@ -215,10 +215,10 @@ class Request extends Prototype implements RequestInterface {
         return $this->repository->exists($this);
     }
 
-   /**
-    * {@inheritDoc}
-    * @see \Fixin\Model\Request\RequestInterface::fetch()
-    */
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::fetch()
+     */
     public function fetch(): EntitySetInterface {
         return $this->repository->select($this);
     }
