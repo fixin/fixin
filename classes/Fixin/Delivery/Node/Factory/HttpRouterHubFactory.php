@@ -67,7 +67,7 @@ class HttpRouterHubFactory extends Factory {
             $this->addRoutesFromDefinition($options[static::OPTION_ROUTES], '/', '');
 
             // Hub
-            if (count($this->routeTree)) {
+            if ($this->routeTree) {
                 return new HttpRouterHub($this->container, [
                     HttpRouterHub::OPTION_ROUTE_TREE => $this->routeTree,
                     HttpRouterHub::OPTION_ROUTE_URIS => $this->routeUris,

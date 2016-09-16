@@ -235,16 +235,16 @@ interface WhereInterface extends PrototypeInterface {
 
     /**
      * Add: or sub where
-     * @param self $where
+     * @param WhereInterface $where
      * @return self
      */
-    public function orSub(self $where): self;
+    public function orSub(WhereInterface $where): self;
 
     /**
      * Add: and sub where
      *
-     * @param self $where
+     * @param WhereInterface $where
      * @return self
      */
-    public function sub(self $where): self;
+    public function sub(WhereInterface $where): self;
 }

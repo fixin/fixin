@@ -171,7 +171,7 @@ class Item {
         return !$this->reflection->isInterface();
     }
 
-    public function isDescendant(self $item): bool {
+    public function isDescendant(Item $item): bool {
         if (in_array($item, $this->children, true)) {
             return true;
         }
@@ -209,7 +209,7 @@ class Item {
         return $this->reflection->isSubclassOf('Fixin\Resource\ResourceInterface');
     }
 
-    public function isSubclassOf(self $item): bool {
+    public function isSubclassOf(Item $item): bool {
         return $this->reflection->isSubclassOf($item->reflection);
     }
 
@@ -227,7 +227,7 @@ class Item {
         return $this;
     }
 
-    public function unite(self $item): self {
+    public function unite(Item $item): self {
         $item->removeFromParent();
         $this->reflection = $item->reflection;
 

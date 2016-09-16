@@ -25,7 +25,7 @@ class InTag extends IdentifierTag {
     /**
      * Get values
      *
-     * @return RequestInterface
+     * @return array|RequestInterface
      */
     public function getValues() {
         return $this->values;
@@ -34,7 +34,7 @@ class InTag extends IdentifierTag {
     /**
      * Set values
      *
-     * @param array $values
+     * @param array|RequestInterface $values
      */
     protected function setValues($values) {
         $this->values = $values;

@@ -43,7 +43,7 @@ class Arrays extends DoNotCreate {
     public static function set(array &$array, array $path, $data) {
         $current = array_shift($path);
 
-        if (count($path)) {
+        if ($path) {
             if (!isset($array[$current]) || !is_array($array[$current])) {
                 $array[$current] = [];
             }
