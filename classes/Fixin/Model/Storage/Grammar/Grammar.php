@@ -340,16 +340,16 @@ abstract class Grammar extends Resource implements GrammarInterface {
         ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
 
         // Columns
-        $list = array_map(function($item, $key) use ($query) {
-            return $this->identifierToString($key, $query);
-        }, reset($rows));
+        $list = array_map(function($identifier) use ($query) {
+            return $this->identifierToString($identifier, $query);
+        }, array_keys(reset($rows)));
 
         $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)));
 
         // Rows
         $source = [];
         foreach ($rows as $set) {
-            $list = array_map(function ($item) use ($query) {
+            $list = array_map(function($value) use ($query) {
                 return $this->expressionToString($value, $query);
             }, $set);
 

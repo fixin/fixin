@@ -84,6 +84,27 @@ class Where extends Prototype implements WhereInterface {
     }
 
     /**
+     * Add nested where
+     *
+     * @param string $join
+     * @param bool $negated
+     * @param callable $callback
+     * @return self
+     */
+    protected function addNested(string $join, bool $negated, callable $callback) {
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
+        $callback($where);
+
+        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
+            WhereTag::OPTION_JOIN => $join,
+            WhereTag::OPTION_NEGATED => $negated,
+            WhereTag::OPTION_WHERE => $where
+        ]);
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::between($identifier, $min, $max)
      */
@@ -170,14 +191,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::nested($callback)
      */
     public function nested(callable $callback): WhereInterface {
-        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
-        $callback($where);
-
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
-            WhereTag::OPTION_WHERE => $where
-        ]);
-
-        return $this;
+        return $this->addNested(WhereTag::JOIN_AND, false, $callback);
     }
 
     /**
@@ -227,15 +241,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::notNested($callback)
      */
     public function notNested(callable $callback): WhereInterface {
-        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
-        $callback($where);
-
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
-            WhereTag::OPTION_NEGATED => true,
-            WhereTag::OPTION_WHERE => $where
-        ]);
-
-        return $this;
+        return $this->addNested(WhereTag::JOIN_AND, true, $callback);
     }
 
     /**
@@ -328,15 +334,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNested($callback)
      */
     public function orNested(callable $callback): WhereInterface {
-        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
-        $callback($where);
-
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
-            WhereTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            WhereTag::OPTION_WHERE => $where
-        ]);
-
-        return $this;
+        return $this->addNested(WhereTag::JOIN_OR, false, $callback);
     }
 
     /**
@@ -389,16 +387,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNotNested($callback)
      */
     public function orNotNested(callable $callback): WhereInterface {
-        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
-        $callback($where);
-
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
-            WhereTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            WhereTag::OPTION_NEGATED => true,
-            WhereTag::OPTION_WHERE => $where
-        ]);
-
-        return $this;
+        return $this->addNested(WhereTag::JOIN_OR, true, $callback);
     }
 
     /**
