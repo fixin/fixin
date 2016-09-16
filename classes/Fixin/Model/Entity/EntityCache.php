@@ -81,30 +81,30 @@ class EntityCache extends Prototype implements EntityCacheInterface {
      * @see \Fixin\Model\Entity\EntityCacheInterface::getByIds($ids)
      */
     public function getByIds(array $ids): array {
-        if ($ids) {
-            $ids = array_combine($ids, $ids);
-            $list = array_fill_keys(array_keys($ids), null);
-
-            // Cached entities
-            $cached = array_intersect_key($this->entities, $list);
-            $list = array_replace($list, $cached);
-
-            // Fetch required data
-            if ($ids = array_diff_key($ids, $cached)) {
-                $request = $this->repository->createRequest();
-                $request->getWhere()->in($this->repository->getPrimaryKey(), $ids);
-
-                $storageResult = $this->repository->selectRawData($request);
-                while ($storageResult->valid()) {
-                    $entity = $this->fetchResultEntity($storageResult);
-                    $list[(string) $entity->getEntityId()] = $entity;
-                }
-            }
-
-            return array_filter($list);
+        if (!$ids) {
+            return [];
         }
 
-        return [];
+        $ids = array_combine($ids, $ids);
+        $list = array_fill_keys(array_keys($ids), null);
+
+        // Cached entities
+        $cached = array_intersect_key($this->entities, $list);
+        $list = array_replace($list, $cached);
+
+        // Fetch required data
+        if ($ids = array_diff_key($ids, $cached)) {
+            $request = $this->repository->createRequest();
+            $request->getWhere()->in($this->repository->getPrimaryKey(), $ids);
+
+            $storageResult = $this->repository->selectRawData($request);
+            while ($storageResult->valid()) {
+                $entity = $this->fetchResultEntity($storageResult);
+                $list[(string) $entity->getEntityId()] = $entity;
+            }
+        }
+
+        return array_filter($list);
     }
 
     /**
