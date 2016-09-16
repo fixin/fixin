@@ -215,8 +215,6 @@ class EntitySet extends Prototype implements EntitySetInterface {
      */
     protected function prefetchBlock(int $offset, int $length) {
         $length = min($length, $this->itemCount - $offset);
-
-        // Search ids
         $ids = [];
 
         $p = $offset;
@@ -227,7 +225,6 @@ class EntitySet extends Prototype implements EntitySetInterface {
             }
 
             $ids[] = $item;
-
             $length--;
             $p++;
         }

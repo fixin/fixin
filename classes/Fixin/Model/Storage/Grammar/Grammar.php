@@ -222,6 +222,22 @@ abstract class Grammar extends Resource implements GrammarInterface {
     }
 
     /**
+     * Expression ID to string
+     *
+     * @param EntityIdInterface $expression
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function expressionIdToString(EntityIdInterface $expression, QueryInterface $query) {
+        $expression = $expression->getArrayCopy();
+        if (count($expression) > 1) {
+            return $this->expressionArrayToString($expression, $query);
+        }
+
+        return $this->expressionToString(reset($expression), $query);
+    }
+
+    /**
      * Expression string
      *
      * @param number|string|array|ExpressionInterface|RequestInterface $expression
@@ -248,12 +264,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
 
         // ID
         if ($expression instanceof EntityIdInterface) {
-            $expression = $expression->getArrayCopy();
-            if (count($expression) > 1) {
-                return $this->expressionArrayToString($expression, $query);
-            }
-
-            $expression = reset($expression);
+            return $this->expressionIdToString($expression, $query);
         }
 
         $query->addParameter($expression);
@@ -329,20 +340,18 @@ abstract class Grammar extends Resource implements GrammarInterface {
         ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
 
         // Columns
-        $list = [];
-        foreach (reset($rows) as $key => $value) {
-            $list[] = $this->identifierToString($key, $query);
-        }
+        $list = array_map(function($item, $key) use ($query) {
+            return $this->identifierToString($key, $query);
+        }, reset($rows));
 
         $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)));
 
         // Rows
         $source = [];
         foreach ($rows as $set) {
-            $list = [];
-            foreach ($set as $value) {
-                $list[] = $this->expressionToString($value, $query);
-            }
+            $list = array_map(function ($item) use ($query) {
+                return $this->expressionToString($value, $query);
+            }, $set);
 
             $source[] = sprintf(static::MASK_VALUES, implode(static::LIST_SEPARATOR, $list));
         }
@@ -638,7 +647,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
      */
     protected function whereToString(string $clause, WhereInterface $where, QueryInterface $query): string {
         if ($tags = $where->getTags()) {
-            $result = $clause !== '' ? $clause . ' ' : '';
+            $result = rtrim($clause . ' ');
 
             foreach ($tags as $index => $tag) {
                 if ($index) {

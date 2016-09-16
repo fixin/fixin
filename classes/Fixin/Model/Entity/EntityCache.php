@@ -50,11 +50,9 @@ class EntityCache extends Prototype implements EntityCacheInterface {
      * @see \Fixin\Model\Entity\EntityCacheInterface::fetchResultEntity($storageResult)
      */
     public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface {
-        // Fetch
         $data = $storageResult->current();
         $storageResult->next();
 
-        // Id
         $id = $this->repository->createId(array_intersect_key($data, $this->primaryKeyFlipped));
         $key = (string) $id;
 
@@ -87,8 +85,6 @@ class EntityCache extends Prototype implements EntityCacheInterface {
 
         $ids = array_combine($ids, $ids);
         $list = array_fill_keys(array_keys($ids), null);
-
-        // Cached entities
         $cached = array_intersect_key($this->entities, $list);
         $list = array_replace($list, $cached);
 
