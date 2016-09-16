@@ -25,7 +25,7 @@ class Repository extends Resource implements RepositoryInterface {
         EXCEPTION_INVALID_ID = "Invalid ID",
         EXCEPTION_INVALID_NAME = "Invalid name '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
-        PROTOTYPE_ENTITY_CACHE = 'Model\Entity\EntityCache',
+        PROTOTYPE_ENTITY_CACHE = 'Model\Entity\EntityCache', // TODO
         PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
         PROTOTYPE_ENTITY_SET = 'Model\Entity\EntitySet',
         PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
