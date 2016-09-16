@@ -68,11 +68,7 @@ class EntityCache extends Prototype implements EntityCacheInterface {
 
         // Active entity
         if (isset($this->entities[$key])) {
-            $entity = $this->entities[$key];
-            unset($this->entities[$key]);
-
-            // Move to the end
-            return $this->entities[$key] = $entity;
+            return $this->entities[$key];
         }
 
         return $this->entities[$key] = $this->entityPrototype->withOptions([
