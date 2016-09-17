@@ -57,6 +57,23 @@ class Where extends Prototype implements WhereInterface {
     }
 
     /**
+     * Add exists
+     *
+     * @param string $join
+     * @param bool $negated
+     * @param RequestInterface $request
+     * @return self
+     */
+    protected function addExists(string $join, bool $negated, RequestInterface $request) {
+        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_EXISTS_TAG, [
+            ExistsTag::OPTION_JOIN => $join,
+            ExistsTag::OPTION_NEGATED => $negated,
+            ExistsTag::OPTION_REQUEST => $request
+        ]);
+
+        return $this;
+    }
+    /**
      * Add items
      *
      * @param Where $where
@@ -99,6 +116,24 @@ class Where extends Prototype implements WhereInterface {
             WhereTag::OPTION_JOIN => $join,
             WhereTag::OPTION_NEGATED => $negated,
             WhereTag::OPTION_WHERE => $where
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * Add null
+     *
+     * @param string $join
+     * @param bool $negated
+     * @param mixed $identifier
+     * @return self
+     */
+    protected function addNull(string $join, bool $negated, $identifier) {
+        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_NULL_TAG, [
+            NullTag::OPTION_JOIN => $join,
+            NullTag::OPTION_NEGATED => $negated,
+            NullTag::OPTION_IDENTIFIER => $identifier
         ]);
 
         return $this;
@@ -148,11 +183,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::exists($request)
      */
     public function exists(RequestInterface $request): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_EXISTS_TAG, [
-            ExistsTag::OPTION_REQUEST => $request
-        ]);
-
-        return $this;
+        return $this->addExists(ExistsTag::JOIN_AND, false, $request);
     }
 
     /**
@@ -214,12 +245,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::notExists($request)
      */
     public function notExists(RequestInterface $request): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_EXISTS_TAG, [
-            ExistsTag::OPTION_NEGATED => true,
-            ExistsTag::OPTION_REQUEST => $request
-        ]);
-
-        return $this;
+        return $this->addExists(ExistsTag::JOIN_AND, true, $request);
     }
 
     /**
@@ -249,12 +275,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::notNull($identifier)
      */
     public function notNull(string $identifier): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_NULL_TAG, [
-            NullTag::OPTION_NEGATED => true,
-            NullTag::OPTION_IDENTIFIER => $identifier
-        ]);
-
-        return $this;
+        return $this->addNull(NullTag::JOIN_AND, true, $identifier);
     }
 
     /**
@@ -262,11 +283,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::null($identifier)
      */
     public function null(string $identifier): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_NULL_TAG, [
-            NullTag::OPTION_IDENTIFIER => $identifier
-        ]);
-
-        return $this;
+        return $this->addNull(NullTag::JOIN_AND, false, $identifier);
     }
 
     /**
@@ -297,12 +314,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orExists($request)
      */
     public function orExists(RequestInterface $request): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_EXISTS_TAG, [
-            ExistsTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            ExistsTag::OPTION_REQUEST => $request
-        ]);
-
-        return $this;
+        return $this->addExists(ExistsTag::JOIN_OR, false, $request);
     }
 
     /**
@@ -358,13 +370,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNotExists($request)
      */
     public function orNotExists(RequestInterface $request): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_EXISTS_TAG, [
-            ExistsTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            ExistsTag::OPTION_NEGATED => true,
-            ExistsTag::OPTION_REQUEST => $request
-        ]);
-
-        return $this;
+        return $this->addExists(ExistsTag::JOIN_OR, true, $request);
     }
 
     /**
@@ -395,13 +401,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNotNull($identifier)
      */
     public function orNotNull(string $identifier): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_NULL_TAG, [
-            NullTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            NullTag::OPTION_NEGATED => true,
-            NullTag::OPTION_IDENTIFIER => $identifier
-        ]);
-
-        return $this;
+        return $this->addNull(NullTag::JOIN_OR, true, $identifier);
     }
 
     /**
@@ -409,12 +409,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNull($identifier)
      */
     public function orNull(string $identifier): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_NULL_TAG, [
-            NullTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            NullTag::OPTION_IDENTIFIER => $identifier
-        ]);
-
-        return $this;
+        return $this->addNull(NullTag::JOIN_OR, false, $identifier);
     }
 
     /**
