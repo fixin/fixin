@@ -8,70 +8,23 @@
 namespace Fixin\Model\Repository;
 
 use Fixin\Exception\InvalidArgumentException;
-use Fixin\Model\Entity\EntityCacheInterface;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
-use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;
-use Fixin\Resource\Resource;
 use Fixin\Support\Arrays;
 
-class Repository extends Resource implements RepositoryInterface {
+class Repository extends RepositoryBase {
 
     const
         EXCEPTION_INVALID_ID = "Invalid ID",
-        EXCEPTION_INVALID_NAME = "Invalid name '%s'",
         EXCEPTION_INVALID_REQUEST = "Invalid request, repository mismatch '%s' '%s'",
-        NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
-        PROTOTYPE_ENTITY_CACHE = 'Model\Entity\EntityCache', // TODO
         PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
         PROTOTYPE_ENTITY_SET = 'Model\Entity\EntitySet',
         PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
-        PROTOTYPE_REQUEST = 'Model\Request\Request',
-        THIS_REQUIRES = [
-            self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
-            self::OPTION_NAME => self::TYPE_STRING,
-            self::OPTION_PRIMARY_KEY => self::TYPE_ARRAY,
-            self::OPTION_STORAGE => self::TYPE_INSTANCE,
-        ],
-        THIS_SETS_LAZY = [
-            self::OPTION_ENTITY_PROTOTYPE => EntityInterface::class,
-            self::OPTION_STORAGE => StorageInterface::class
-        ]
-    ;
-
-    /**
-     * @var string
-     */
-    protected $autoIncrementColumn;
-
-    /**
-     * @var EntityCacheInterface|null
-     */
-    protected $entityCache;
-
-    /**
-     * @var EntityInterface|false|null
-     */
-    protected $entityPrototype;
-
-    /**
-     * @var string
-     */
-    protected $name = '';
-
-    /**
-     * @var string[]
-     */
-    protected $primaryKey = ['id'];
-
-    /**
-     * @var StorageInterface|false|null
-     */
-    protected $storage;
+        PROTOTYPE_REQUEST = 'Model\Request\Request';
 
     /**
      * {@inheritDoc}
@@ -159,62 +112,6 @@ class Repository extends Resource implements RepositoryInterface {
         $this->validateRequest($request);
 
         return $this->getStorage()->exists($request);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::getAutoIncrementColumn()
-     */
-    public function getAutoIncrementColumn() {
-        return $this->autoIncrementColumn;
-    }
-
-    /**
-     * Get entity cache
-     *
-     * @return EntityCacheInterface
-     */
-    protected function getEntityCache(): EntityCacheInterface {
-        return $this->entityCache ?? ($this->entityCache = $this->container->clonePrototype(static::PROTOTYPE_ENTITY_CACHE, [
-            EntityCacheInterface::OPTION_REPOSITORY => $this,
-            EntityCacheInterface::OPTION_ENTITY_PROTOTYPE => $this->getEntityPrototype()
-        ]));
-    }
-
-    /**
-     * Get entity prototype
-     *
-     * @return EntityInterface
-     */
-    protected function getEntityPrototype(): EntityInterface {
-        return $this->entityPrototype ?: $this->loadLazyProperty(static::OPTION_ENTITY_PROTOTYPE, [
-            EntityInterface::OPTION_REPOSITORY => $this
-        ]);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::getName()
-     */
-    public function getName(): string {
-        return $this->name;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::getPrimaryKey()
-     */
-    public function getPrimaryKey(): array {
-        return $this->primaryKey;
-    }
-
-    /**
-     * Get storage instance
-     *
-     * @return StorageInterface
-     */
-    protected function getStorage(): StorageInterface {
-        return $this->storage ?: $this->loadLazyProperty(static::OPTION_STORAGE);
     }
 
     /**
@@ -313,40 +210,6 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function selectRawData(RequestInterface $request): StorageResultInterface {
         return $this->getStorage()->select($request);
-    }
-
-    /**
-     * Set auto-increment column
-     *
-     * @param string $autoIncrementColumn
-     */
-    protected function setAutoIncrementColumn(string $autoIncrementColumn) {
-        $this->autoIncrementColumn = $autoIncrementColumn;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @throws InvalidArgumentException
-     */
-    protected function setName(string $name) {
-        if (preg_match(static::NAME_PATTERN, $name)) {
-            $this->name = $name;
-
-            return;
-        }
-
-        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NAME, $name));
-    }
-
-    /**
-     * Set primary key
-     *
-     * @param string[] $primaryKey
-     */
-    protected function setPrimaryKey(array $primaryKey) {
-        $this->primaryKey = $primaryKey;
     }
 
     /**
