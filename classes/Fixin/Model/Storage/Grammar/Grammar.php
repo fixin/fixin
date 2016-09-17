@@ -10,18 +10,150 @@ namespace Fixin\Model\Storage\Grammar;
 use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Model\Request\UnionInterface;
 
 abstract class Grammar extends GrammarBase {
 
     const
+        ADD_COLUMNS = 'columns',
+        ALL_COLUMNS = '*',
+        ADD_FROM = 'from',
+        ADD_GROUP_BY = 'groupBy',
+        ADD_HAVING = 'having',
+        ADD_JOIN = 'join',
+        ADD_LIMIT = 'limit',
+        ADD_ORDER_BY = 'orderBy',
+        ADD_WHERE = 'where',
+        CLAUSE_FROM = 'FROM',
+        CLAUSE_GROUP_BY = 'GROUP BY',
+        CLAUSE_HAVING = 'HAVING',
+        CLAUSE_INTO = 'INTO',
+        CLAUSE_JOIN = 'JOIN',
+        CLAUSE_JOIN_ON = "\tON",
+        CLAUSE_SET = 'SET',
+        CLAUSE_UNION = [UnionInterface::TYPE_NORMAL => 'UNION', UnionInterface::TYPE_ALL => 'UNION ALL'],
+        CLAUSE_VALUES = 'VALUES',
+        CLAUSE_WHERE = 'WHERE',
         MASK_COLUMN_NAMES = "\t(%s)" . PHP_EOL,
         MASK_UNION = '%s' . PHP_EOL . '(%s)' . PHP_EOL,
         MASK_UNION_FIRST = '(%s)' . PHP_EOL,
         MASK_VALUES = '(%s)',
+        METHOD_CLAUSE = 'clause',
+        PROTOTYPE_QUERY = 'Base\Query\Query',
         STATEMENT_DELETE = 'DELETE',
         STATEMENT_INSERT = 'INSERT',
         STATEMENT_SELECT = [false => 'SELECT', true => 'SELECT DISTINCT'],
         STATEMENT_UPDATE = 'UPDATE';
+
+    /**
+     * COLUMNS clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseColumns(RequestInterface $request, QueryInterface $query) {
+        // Selected columns
+        if ($columns = $request->getColumns()) {
+            $list = [];
+
+            foreach ($columns as $alias => $identifier) {
+                $list[] = $this->nameToString($this->identifierToString($identifier, $query), is_numeric($alias) ? null : $alias);
+            }
+
+            $query->appendString(implode(static::LIST_SEPARATOR_MULTI_LINE, $list) . PHP_EOL);
+
+            return;
+        }
+
+        // All
+        $query->appendWord(static::ALL_COLUMNS);
+    }
+
+    /**
+     * FROM clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseFrom(RequestInterface $request, QueryInterface $query) {
+        $query->appendClause(static::CLAUSE_FROM, $this->requestNameToString($request));
+    }
+
+    /**
+     * HAVING clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseHaving(RequestInterface $request, QueryInterface $query) {
+        if ($request->hasHaving()) {
+            $query->appendString($this->whereToString(static::CLAUSE_HAVING, $request->getHaving(), $query));
+        }
+    }
+
+    /**
+     * GROUP BY clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseGroupBy(RequestInterface $request, QueryInterface $query) {
+        $groupBy = [];
+
+        foreach ($request->getGroupBy() as $value) {
+            $groupBy[] = $this->identifierToString($value, $query);
+        }
+
+        if ($groupBy) {
+            $query->appendClause(static::CLAUSE_GROUP_BY, implode(static::LIST_SEPARATOR, $groupBy));
+        }
+    }
+
+    /**
+     * JOIN clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseJoin(RequestInterface $request, QueryInterface $query) {
+        foreach ($request->getJoins() as $join) {
+            $query
+            ->appendClause(static::CLAUSE_JOIN, $this->nameToString($join->getRepository()->getName(), $join->getAlias()))
+            ->appendString($this->whereToString(static::CLAUSE_JOIN_ON, $join->getWhere(), $query));
+        }
+    }
+
+    /**
+     * LIMIT clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseLimit(RequestInterface $request, QueryInterface $query) {
+        $query->appendString($this->limitsToString($request->getOffset(), $request->getLimit()));
+    }
+
+    /**
+     * ORDER BY clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseOrderBy(RequestInterface $request, QueryInterface $query) {
+        $query->appendString($this->orderByToString($request->getOrderBy(), $query));
+    }
+
+    /**
+     * WHERE clause
+     *
+     * @param RequestInterface $request
+     * @param QueryInterface $query
+     */
+    protected function clauseWhere(RequestInterface $request, QueryInterface $query) {
+        if ($request->hasWhere()) {
+            $query->appendString($this->whereToString(static::CLAUSE_WHERE, $request->getWhere(), $query));
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -97,6 +229,24 @@ abstract class Grammar extends GrammarBase {
         }
 
         return $query->appendClause(static::CLAUSE_VALUES, implode(static::LIST_SEPARATOR_MULTI_LINE, $source));
+    }
+
+    /**
+     * Make query
+     *
+     * @param string $statement
+     * @param RequestInterface $request
+     * @param string[] $tags
+     * @return QueryInterface
+     */
+    protected function makeQuery(string $statement, RequestInterface $request, array $tags) {
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)->appendWord($statement);
+
+        foreach ($tags as $tag) {
+            $this->{static::METHOD_CLAUSE . $tag}($request, $query);
+        }
+
+        return $query;
     }
 
     /**
