@@ -62,7 +62,7 @@ class Processor extends Item {
 
     /**
      * @param string $name
-     * @return Item
+     * @return Item|null
      */
     public function getItem(string $name) {
         return $this->items[$name] ?? null;

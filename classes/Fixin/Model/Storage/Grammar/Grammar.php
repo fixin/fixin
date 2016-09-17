@@ -14,6 +14,10 @@ use Fixin\Model\Request\RequestInterface;
 abstract class Grammar extends GrammarBase {
 
     const
+        MASK_COLUMN_NAMES = "\t(%s)" . PHP_EOL,
+        MASK_UNION = '%s' . PHP_EOL . '(%s)' . PHP_EOL,
+        MASK_UNION_FIRST = '(%s)' . PHP_EOL,
+        MASK_VALUES = '(%s)',
         STATEMENT_DELETE = 'DELETE',
         STATEMENT_INSERT = 'INSERT',
         STATEMENT_SELECT = [false => 'SELECT', true => 'SELECT DISTINCT'],
