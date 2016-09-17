@@ -212,13 +212,13 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
     }
 
     /**
-     * Expression string
+     * Expression object to string
      *
-     * @param number|string|array|ExpressionInterface|RequestInterface $expression
+     * @param object $expression
      * @param QueryInterface $query
      * @return string
      */
-    protected function expressionToString($expression, QueryInterface $query): string {
+    protected function expressionObjectToString($expression, QueryInterface $query): string {
         // Expression
         if ($expression instanceof ExpressionInterface) {
             $query->addParameters($expression->getParameters());
@@ -228,18 +228,28 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
 
         // Request
         if ($expression instanceof RequestInterface) {
-//             return sprintf(static::MASK_NESTED, $this->requestToString($expression, $query));
-return '';
-        }
-
-        // Array
-        if (is_array($expression)) {
-            return $this->expressionArrayToString($expression, $query);
+            return sprintf(static::MASK_NESTED, $this->requestToString($expression, $query));
         }
 
         // ID
         if ($expression instanceof EntityIdInterface) {
             return $this->expressionIdToString($expression, $query);
+        }
+
+        return (string) $expression;
+    }
+
+    /**
+     * Expression string
+     *
+     * @param number|string|array|ExpressionInterface|RequestInterface $expression
+     * @param QueryInterface $query
+     * @return string
+     */
+    protected function expressionToString($expression, QueryInterface $query): string {
+        // Array
+        if (is_array($expression)) {
+            return $this->expressionArrayToString($expression, $query);
         }
 
         $query->addParameter($expression);
