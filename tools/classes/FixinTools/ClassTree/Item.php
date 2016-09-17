@@ -38,13 +38,9 @@ class Item {
     }
 
     public function __toString(): string {
-        $info = "\n" . $this->getShortName() . "\n";
-
-        foreach ($this->children as $index => $child) {
-            $info .= str_replace("\n", "\n    ", $child);
-        }
-
-        return $info;
+        return "\n" . $this->getShortName() . "\n" . array_reduce($this->children, function ($carry, $child) {
+            return $carry . str_replace("\n", "\n    ", $child);
+        });
     }
 
     public function addChild(Item $child): self {
@@ -71,7 +67,8 @@ class Item {
         $namespace = $this->reflection->getNamespaceName();
 
         // Factory
-        if ($factoryOf = $this->getFactoryOf()) {
+        $factoryOf = Strings::endsWith($this->getName(), 'Factory') ? $this->processor->getItem(implode('\\', explode('\\', $this->reflection->getNamespaceName(), -1)) . '\\' . mb_substr($this->getShortName(), 0, -7)) : null;
+        if ($factoryOf) {
             return $factoryOf;
         }
 
@@ -88,13 +85,6 @@ class Item {
 
     public function getChildren(): array {
         return $this->children;
-    }
-
-    /**
-     * @return self|null
-     */
-    protected function getFactoryOf() {
-        return Strings::endsWith($this->getName(), 'Factory') ? $this->processor->getItem(implode('\\', explode('\\', $this->reflection->getNamespaceName(), -1)) . '\\' . mb_substr($this->getShortName(), 0, -7)) : null;
     }
 
     public function getGroup(): string {
@@ -221,8 +211,6 @@ class Item {
     public function removeFromParent(): self {
         if ($this->parent) {
             unset($this->parent->children[$this->getName()]);
-
-            return $this;
         }
 
         return $this;

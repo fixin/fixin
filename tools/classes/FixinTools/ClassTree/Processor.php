@@ -29,8 +29,8 @@ class Processor extends Item {
 
         foreach ($this->getGroups() as $name => $group) {
             $info .= "\n[$name]\n" . array_reduce($group, function($carry, $item) {
-                $carry .= str_replace("\n", "\n    ", $item);
-            }, '');
+                return $carry . str_replace("\n", "\n    ", $item);
+            });
         }
 
         return $info;
