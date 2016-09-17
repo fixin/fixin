@@ -20,7 +20,7 @@ use Fixin\Resource\Prototype;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  *
  */
 class Where extends Prototype implements WhereInterface {

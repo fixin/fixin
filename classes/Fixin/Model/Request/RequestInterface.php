@@ -41,7 +41,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param string $alias
      * @return self
      */
-    public function crossJoin(RepositoryInterface $repository, string $alias = null): self;
+    public function crossJoin(RepositoryInterface $repository, string $alias = null): RequestInterface;
 
     /**
      * Delete
@@ -238,7 +238,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param string $alias
      * @return self
      */
-    public function join(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): self;
+    public function join(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface;
 
     /**
      * Add join by where callback
@@ -248,7 +248,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param string $alias
      * @return self
      */
-    public function joinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): self;
+    public function joinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface;
 
     /**
      * Add left join
@@ -260,7 +260,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param string $alias
      * @return self
      */
-    public function leftJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): self;
+    public function leftJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface;
 
     /**
      * Add left join by where callback
@@ -270,7 +270,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param string $alias
      * @return self
      */
-    public function leftJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): self;
+    public function leftJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface;
 
     /**
      * Add right join
@@ -282,7 +282,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param string $alias
      * @return self
      */
-    public function rightJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): self;
+    public function rightJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface;
 
     /**
      * Add right join by where callback
@@ -292,7 +292,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param string $alias
      * @return self
      */
-    public function rightJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): self;
+    public function rightJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface;
 
     /**
      * Set alias
@@ -300,7 +300,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param string $alias
      * @return self
      */
-    public function setAlias(string $alias): self;
+    public function setAlias(string $alias): RequestInterface;
 
     /**
      * Set columns
@@ -308,7 +308,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param array $columns
      * @return self
      */
-    public function setColumns(array $columns): self;
+    public function setColumns(array $columns): RequestInterface;
 
     /**
      * Set distinct result
@@ -316,7 +316,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param bool $disctinctResult
      * @return self
      */
-    public function setDistinctResult(bool $disctinctResult): self;
+    public function setDistinctResult(bool $disctinctResult): RequestInterface;
 
     /**
      * Set group by
@@ -324,7 +324,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param array $groupBy
      * @return self
      */
-    public function setGroupBy(array $groupBy): self;
+    public function setGroupBy(array $groupBy): RequestInterface;
 
     /**
      * Set id fetch enabled
@@ -332,7 +332,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param bool $idFetchEnabled
      * @return self
      */
-    public function setIdFetchEnabled(bool $idFetchEnabled): self;
+    public function setIdFetchEnabled(bool $idFetchEnabled): RequestInterface;
 
     /**
      * Set limit
@@ -340,7 +340,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param int|null $limit
      * @return self
      */
-    public function setLimit($limit): self;
+    public function setLimit($limit): RequestInterface;
 
     /**
      * Set limit for page
@@ -349,7 +349,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param int $itemsPerPage
      * @return self
      */
-    public function setLimitForPage(int $page, int $itemsPerPage): self;
+    public function setLimitForPage(int $page, int $itemsPerPage): RequestInterface;
 
     /**
      * Set offset
@@ -357,7 +357,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param int $offset
      * @return self
      */
-    public function setOffset(int $offset): self;
+    public function setOffset(int $offset): RequestInterface;
 
     /**
      * Set order by
@@ -365,7 +365,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param array $orderBy
      * @return self
      */
-    public function setOrderBy(array $orderBy): self;
+    public function setOrderBy(array $orderBy): RequestInterface;
 
     /**
      * Set union limit
@@ -373,7 +373,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param int|null $unionLimit
      * @return self
      */
-    public function setUnionLimit($unionLimit): self;
+    public function setUnionLimit($unionLimit): RequestInterface;
 
     /**
      * Set union limit for page
@@ -382,7 +382,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param int $itemsPerPage
      * @return self
      */
-    public function setUnionLimitForPage(int $page, int $itemsPerPage): self;
+    public function setUnionLimitForPage(int $page, int $itemsPerPage): RequestInterface;
 
     /**
      * Set union offset
@@ -390,7 +390,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param int $unionOffset
      * @return self
      */
-    public function setUnionOffset(int $unionOffset): self;
+    public function setUnionOffset(int $unionOffset): RequestInterface;
 
     /**
      * Set order by
@@ -398,7 +398,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param array $unionOrderBy
      * @return self
      */
-    public function setUnionOrderBy(array $unionOrderBy): self;
+    public function setUnionOrderBy(array $unionOrderBy): RequestInterface;
 
     /**
      * Add a union
@@ -406,7 +406,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param RequestInterface $request
      * @return self
      */
-    public function union(RequestInterface $request): self;
+    public function union(RequestInterface $request): RequestInterface;
 
     /**
      * Add a union all
@@ -414,7 +414,7 @@ interface RequestInterface extends PrototypeInterface {
      * @param RequestInterface $request
      * @return self
      */
-    public function unionAll(RequestInterface $request): self;
+    public function unionAll(RequestInterface $request): RequestInterface;
 
     /**
      * Update

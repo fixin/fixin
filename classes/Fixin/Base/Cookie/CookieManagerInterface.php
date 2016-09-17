@@ -21,7 +21,7 @@ interface CookieManagerInterface extends PrototypeInterface {
      * @param string $domain
      * @return self
      */
-    public function expire(string $name, string $path = '', string $domain = ''): self;
+    public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface;
 
     /**
      * Get cookie value

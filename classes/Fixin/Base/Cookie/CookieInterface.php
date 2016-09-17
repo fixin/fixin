@@ -59,7 +59,7 @@ interface CookieInterface extends PrototypeInterface {
      * @param string $name
      * @return self
      */
-    public function sendAs(string $name): self;
+    public function sendAs(string $name): CookieInterface;
 
     /**
      * Set domain
@@ -67,7 +67,7 @@ interface CookieInterface extends PrototypeInterface {
      * @param string $domain
      * @return self
      */
-    public function setDomain(string $domain): self;
+    public function setDomain(string $domain): CookieInterface;
 
     /**
      * Set expire in minutes
@@ -75,7 +75,7 @@ interface CookieInterface extends PrototypeInterface {
      * @param int $expire
      * @return self
      */
-    public function setExpire(int $expire): self;
+    public function setExpire(int $expire): CookieInterface;
 
     /**
      * Set HTTP only
@@ -83,7 +83,7 @@ interface CookieInterface extends PrototypeInterface {
      * @param bool $httpOnly
      * @return self
      */
-    public function setHttpOnly(bool $httpOnly): self;
+    public function setHttpOnly(bool $httpOnly): CookieInterface;
 
     /**
      * Set path
@@ -91,7 +91,7 @@ interface CookieInterface extends PrototypeInterface {
      * @param string $path
      * @return self
      */
-    public function setPath(string $path): self;
+    public function setPath(string $path): CookieInterface;
 
     /**
      * Set secure
@@ -99,7 +99,7 @@ interface CookieInterface extends PrototypeInterface {
      * @param bool $secure
      * @return self
      */
-    public function setSecure(bool $secure): self;
+    public function setSecure(bool $secure): CookieInterface;
 
     /**
      * Set value
@@ -107,5 +107,5 @@ interface CookieInterface extends PrototypeInterface {
      * @param string $value
      * @return self
      */
-    public function setValue(string $value): self;
+    public function setValue(string $value): CookieInterface;
 }

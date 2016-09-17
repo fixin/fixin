@@ -17,7 +17,7 @@ interface QueryInterface extends PrototypeInterface {
      * @param mixed $parameter
      * @return self
      */
-    public function addParameter($parameter): self;
+    public function addParameter($parameter): QueryInterface;
 
     /**
      * Add parameters
@@ -25,7 +25,7 @@ interface QueryInterface extends PrototypeInterface {
      * @param array $parameters
      * @return self
      */
-    public function addParameters(array $parameters): self;
+    public function addParameters(array $parameters): QueryInterface;
 
     /**
      * Append clause
@@ -34,7 +34,7 @@ interface QueryInterface extends PrototypeInterface {
      * @param string $string
      * @return self
      */
-    public function appendClause(string $clause, string $string): self;
+    public function appendClause(string $clause, string $string): QueryInterface;
 
     /**
      * Append string
@@ -42,7 +42,7 @@ interface QueryInterface extends PrototypeInterface {
      * @param string $string
      * @return self
      */
-    public function appendString(string $string): self;
+    public function appendString(string $string): QueryInterface;
 
     /**
      * Append word
@@ -50,7 +50,7 @@ interface QueryInterface extends PrototypeInterface {
      * @param string $word
      * @return self
      */
-    public function appendWord(string $word): self;
+    public function appendWord(string $word): QueryInterface;
 
     /**
      * Apply mask
@@ -58,7 +58,7 @@ interface QueryInterface extends PrototypeInterface {
      * @param string $mask
      * @return self
      */
-    public function applyMask(string $mask): self;
+    public function applyMask(string $mask): QueryInterface;
 
     /**
      * Get parameters

@@ -47,7 +47,7 @@ interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable {
      *
      * @return self
      */
-    public function prefetchAll(): self;
+    public function prefetchAll(): EntitySetInterface;
 
     /**
      * Set count of entities for prefetch
@@ -55,12 +55,12 @@ interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable {
      * @param int $prefetchSize
      * @return self
      */
-    public function setPrefetchSize(int $prefetchSize): self;
+    public function setPrefetchSize(int $prefetchSize): EntitySetInterface;
 
     /**
      * Shuffle entities
      *
      * @return self
      */
-    public function shuffle(): self;
+    public function shuffle(): EntitySetInterface;
 }

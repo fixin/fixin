@@ -22,13 +22,13 @@ interface EntityInterface extends PrototypeInterface {
      *
      * @return self
      */
-    public function delete(): self;
+    public function delete(): EntityInterface;
 
     /**
      * @param array $data
      * @return self
      */
-    public function exchangeArray(array $data): self;
+    public function exchangeArray(array $data): EntityInterface;
 
     /**
      * Get ID
@@ -63,5 +63,5 @@ interface EntityInterface extends PrototypeInterface {
      *
      * @return self
      */
-    public function save(): self;
+    public function save(): EntityInterface;
 }
