@@ -7,125 +7,15 @@
 
 namespace Fixin\Model\Request\Where;
 
-use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\Where\Tag\BetweenTag;
-use Fixin\Model\Request\Where\Tag\CompareTag;
 use Fixin\Model\Request\Where\Tag\ExistsTag;
 use Fixin\Model\Request\Where\Tag\InTag;
 use Fixin\Model\Request\Where\Tag\NullTag;
 use Fixin\Model\Request\Where\Tag\TagInterface;
 use Fixin\Model\Request\Where\Tag\WhereTag;
-use Fixin\Resource\Prototype;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- *
- */
-class Where extends Prototype implements WhereInterface {
-
-    const PROTOTYPE_BETWEEN_TAG = 'Model\Request\Where\Tag\BetweenTag';
-    const PROTOTYPE_COMPARE_TAG = 'Model\Request\Where\Tag\CompareTag';
-    const PROTOTYPE_EXISTS_TAG = 'Model\Request\Where\Tag\ExistsTag';
-    const PROTOTYPE_EXPRESSION = 'Model\Request\Expression';
-    const PROTOTYPE_IN_TAG = 'Model\Request\Where\Tag\InTag';
-    const PROTOTYPE_NULL_TAG = 'Model\Request\Where\Tag\NullTag';
-    const PROTOTYPE_WHERE = 'Model\Request\Where\Where';
-    const PROTOTYPE_WHERE_TAG = 'Model\Request\Where\Tag\WhereTag';
-
-    /**
-     * @var array
-     */
-    protected $tags = [];
-
-    protected function addBetween(string $join, bool $negated, $identifier, $min, $max): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_BETWEEN_TAG, [
-            BetweenTag::OPTION_JOIN => $join,
-            BetweenTag::OPTION_NEGATED => $negated,
-            BetweenTag::OPTION_IDENTIFIER => $identifier,
-            BetweenTag::OPTION_MIN => $min,
-            BetweenTag::OPTION_MAX => $max
-        ]);
-
-        return $this;
-    }
-
-    protected function addCompare(string $join, $left, string $operator, $right, string $leftType, string $rightType): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_COMPARE_TAG, [
-            CompareTag::OPTION_JOIN => $join,
-            CompareTag::OPTION_LEFT => $this->compareSidePrepare($left, $leftType),
-            CompareTag::OPTION_OPERATOR => $operator,
-            CompareTag::OPTION_RIGHT => $this->compareSidePrepare($right, $rightType)
-        ]);
-
-        return $this;
-    }
-
-    protected function addExists(string $join, bool $negated, RequestInterface $request): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_EXISTS_TAG, [
-            ExistsTag::OPTION_JOIN => $join,
-            ExistsTag::OPTION_NEGATED => $negated,
-            ExistsTag::OPTION_REQUEST => $request
-        ]);
-
-        return $this;
-    }
-
-    protected function addIn(string $join, bool $negated, $identifier, $values): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
-            InTag::OPTION_JOIN => $join,
-            InTag::OPTION_NEGATED => $negated,
-            InTag::OPTION_IDENTIFIER => $identifier,
-            InTag::OPTION_VALUES => $values
-        ]);
-
-        return $this;
-    }
-
-    protected function addItems(Where $where, array $array): WhereInterface {
-        foreach ($array as $key => $value) {
-            // Simple where (no key)
-            if (is_numeric($key)) {
-                $where->sub($value);
-
-                continue;
-            }
-
-            // Key - array value
-            if (is_array($value)) {
-                $where->in($key, $value);
-
-                continue;
-            }
-
-            // Key - any value
-            $where->compare($key, CompareTag::OPERATOR_EQUAL, $value);
-        }
-    }
-
-    protected function addNested(string $join, bool $negated, callable $callback): WhereInterface {
-        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
-        $callback($where);
-
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
-            WhereTag::OPTION_JOIN => $join,
-            WhereTag::OPTION_NEGATED => $negated,
-            WhereTag::OPTION_WHERE => $where
-        ]);
-
-        return $this;
-    }
-
-    protected function addNull(string $join, bool $negated, string $identifier): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_NULL_TAG, [
-            NullTag::OPTION_JOIN => $join,
-            NullTag::OPTION_NEGATED => $negated,
-            NullTag::OPTION_IDENTIFIER => $identifier
-        ]);
-
-        return $this;
-    }
+class Where extends WhereBase {
 
     /**
      * {@inheritDoc}
@@ -141,23 +31,6 @@ class Where extends Prototype implements WhereInterface {
      */
     public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface {
         return $this->addCompare(TagInterface::JOIN_AND, $left, $operator, $right, $leftType, $rightType);
-    }
-
-    /**
-     * Compare side prepare
-     *
-     * @param mixed $value
-     * @param string $type
-     * @return mixed
-     */
-    protected function compareSidePrepare($value, string $type) {
-        if (!$value instanceof ExpressionInterface && !$value instanceof RequestInterface && $type === static::TYPE_IDENTIFIER) {
-            return $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
-                ExpressionInterface::OPTION_EXPRESSION => $value
-            ]);
-        }
-
-        return $value;
     }
 
     /**

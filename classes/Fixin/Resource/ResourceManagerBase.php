@@ -95,6 +95,22 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     }
 
     /**
+     * Determine resource creation via an abstract factory is possible
+     *
+     * @param string $name
+     * @return bool
+     */
+    protected function canProduceByAbstractFactory(string $name): bool {
+        foreach ($this->abstractFactories as $abstractFactory) {
+            if ($abstractFactory->canProduce($name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Create object from definition
      *
      * @param string $name
