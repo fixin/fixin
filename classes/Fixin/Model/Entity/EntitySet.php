@@ -142,9 +142,13 @@ class EntitySet extends Prototype implements EntitySetInterface {
     public function getEntityIds(): array {
         $this->fetchUntil($this->itemCount - 1);
 
-        return array_map(function($item) {
-            return $item instanceof EntityInterface ? $item->getEntityId() : $item;
-        }, $this->items);
+        $items = [];
+
+        foreach ($this->items as $item) {
+            $items[] = $item instanceof EntityInterface ? $item->getEntityId() : $item;
+        }
+
+        return $items;
     }
 
     /**

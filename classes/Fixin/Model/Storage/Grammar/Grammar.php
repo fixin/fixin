@@ -216,16 +216,23 @@ abstract class Grammar extends GrammarBase {
         ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
 
         // Columns
-        $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, array_map(function($identifier) use ($query) {
-            return $this->identifierToString($identifier, $query);
-        }, array_keys(reset($rows))))));
+        $columnNames = [];
+        foreach (array_keys(reset($rows)) as $identifier) {
+            $columnNames[] = $this->identifierToString($identifier, $query);
+        }
+        
+        $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $columnNames)));
 
         // Rows
         $source = [];
         foreach ($rows as $set) {
-            $source[] = sprintf(static::MASK_VALUES, implode(static::LIST_SEPARATOR, array_map(function($value) use ($query) {
-                return $this->expressionToString($value, $query);
-            }, $set)));
+            $values = [];
+
+            foreach ($set as $value) {
+                $values[] = $this->expressionToString($value, $query);
+            }
+
+            $source[] = sprintf(static::MASK_VALUES, implode(static::LIST_SEPARATOR, $values));
         }
 
         return $query->appendClause(static::CLAUSE_VALUES, implode(static::LIST_SEPARATOR_MULTI_LINE, $source));

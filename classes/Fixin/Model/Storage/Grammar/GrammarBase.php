@@ -233,9 +233,15 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
 
         // There is no terminal characters in the trimmed
         if (strcspn($trimmed, static::EXPRESSION_TERMINALS) === strlen($trimmed)) {
-            return implode(static::IDENTIFIER_SEPARATOR, array_map(function($tag) {
-                return $tag[0] !== static::IDENTIFIER_QUOTE_OPEN ? static::IDENTIFIER_QUOTE_OPEN . $tag . static::IDENTIFIER_QUOTE_CLOSE : $tag;
-            }, explode(static::IDENTIFIER_SEPARATOR, $trimmed)));
+            $tags = explode(static::IDENTIFIER_SEPARATOR, $trimmed);
+
+            foreach ($tags as &$tag) {
+                if ($tag[0] !== static::IDENTIFIER_QUOTE_OPEN) {
+                    $tag = static::IDENTIFIER_QUOTE_OPEN . $tag . static::IDENTIFIER_QUOTE_CLOSE;
+                }
+            }
+
+            return implode(static::IDENTIFIER_SEPARATOR, $tags);
         }
 
         return $identifier;
