@@ -38,7 +38,7 @@ class Item {
     }
 
     public function __toString(): string {
-        return "\n" . $this->getShortName() . "\n" . array_reduce($this->children, function ($carry, $child) {
+        return "\n" . $this->getShortName() . "\n" . array_reduce($this->children, function($carry, $child) {
             return $carry . str_replace("\n", "\n    ", $child);
         });
     }
