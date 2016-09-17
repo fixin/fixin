@@ -26,34 +26,15 @@ class ClassHelper {
         'private' => 2,
     ];
 
-    /**
-     * @param string $topDir
-     */
-    public function __construct(string $topDir) {
-        // Include all PHP files under classes/
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator("$topDir/classes"));
-        foreach ($iterator as $item) {
-            if ($item->isFile() && strtolower($item->getExtension()) === 'php') {
-                include_once $item;
-            }
-        }
-
+    public function __construct() {
         $this->processElements();
     }
 
-    /**
-     * @param string $name
-     * @return string
-     */
     public function classShortName(string $name): string {
         $result = substr(strrchr($name, '\\'), 1);
         return strlen($result) ? $result : $name;
     }
 
-    /**
-     * @param string $name
-     * @return string
-     */
     public function classLink(string $name): string {
         $name = ltrim($name, '\\');
 

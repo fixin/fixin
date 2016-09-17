@@ -52,6 +52,15 @@ interface FileSystemInterface extends ResourceInterface {
     public function getWithLock(string $filename): string;
 
     /**
+     * Include files recursive
+     *
+     * @param string $path
+     * @param string $extension
+     * @return FileSystemInterface
+     */
+    public function includeFilesRecursive(string $path, string $extension): FileSystemInterface;
+
+    /**
      * Determine if path is a file
      *
      * @param string $path

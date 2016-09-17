@@ -8,12 +8,15 @@
  */
 
 $topDir = dirname(__DIR__, 2);
-include_once "$topDir/cheats/tools.php";
+$resourceManager = include "$topDir/cheats/tools.php";
 
 use \Fixin\Support\VariableInspector;
 
+// Load
+$resourceManager->get('defaultFileSystem')->includeFilesRecursive("$topDir/classes", 'php');
+
 // Functions
-$helper = new \FixinTools\Base\ClassHelper($topDir);
+$helper = new \FixinTools\Base\ClassHelper();
 $showAll = !empty($_GET['all']) || !empty($all);
 
 $showProperties = $showAll ? (ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE) : ReflectionProperty::IS_PUBLIC;

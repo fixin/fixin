@@ -7,6 +7,8 @@
 
 namespace FixinTools\ClassTree;
 
+use Fixin\Base\FileSystem\Local;
+
 class Processor extends Item {
 
     /**
@@ -19,15 +21,7 @@ class Processor extends Item {
      */
     protected $items;
 
-    public function __construct(string $topDir, array $baseClasses) {
-        // Include all PHP files under classes/
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator("$topDir/classes"));
-        foreach ($iterator as $item) {
-            if ($item->isFile() && strtolower($item->getExtension()) === 'php') {
-                include_once $item;
-            }
-        }
-
+    public function __construct(array $baseClasses) {
         $this->processElements($baseClasses);
     }
 

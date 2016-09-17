@@ -86,6 +86,21 @@ class Local extends Resource implements FileSystemInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Base\FileSystem\FileSystemInterface::includeFilesRecursive($path, $extension)
+     */
+    public function includeFilesRecursive(string $path, string $extension): FileSystemInterface {
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
+        foreach ($iterator as $item) {
+            if ($item->isFile() && strtolower($item->getExtension()) === $extension) {
+                include_once $item;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Base\FileSystem\FileSystemInterface::isDirectory($path)
      */
     public function isDirectory(string $path): bool {
