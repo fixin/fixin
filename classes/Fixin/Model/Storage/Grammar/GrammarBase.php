@@ -64,22 +64,6 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
     }
 
     /**
-     * Expression ID to string
-     *
-     * @param EntityIdInterface $expression
-     * @param QueryInterface $query
-     * @return string
-     */
-    protected function expressionIdToString(EntityIdInterface $expression, QueryInterface $query) {
-        $expression = $expression->getArrayCopy();
-        if (count($expression) > 1) {
-            return $this->expressionArrayToString($expression, $query);
-        }
-
-        return $this->expressionToString(reset($expression), $query);
-    }
-
-    /**
      * Expression string
      *
      * @param number|string|array|ExpressionInterface|RequestInterface $expression
@@ -106,7 +90,12 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
 
         // ID
         if ($expression instanceof EntityIdInterface) {
-            return $this->expressionIdToString($expression, $query);
+            $expression = $expression->getArrayCopy();
+            if (count($expression) > 1) {
+                return $this->expressionArrayToString($expression, $query);
+            }
+
+            return $this->expressionToString(reset($expression), $query);
         }
 
         $query->addParameter($expression);
@@ -192,23 +181,13 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
                     continue;
                 }
 
-                $list[] = sprintf(static::MASK_ORDER_BY_ITEM, $this->quoteIdentifier($key), $this->orderDirectionString($value));
+                $list[] = sprintf(static::MASK_ORDER_BY_ITEM, $this->quoteIdentifier($key), strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
             }
 
             return sprintf(static::MASK_ORDER_BY, implode(static::LIST_SEPARATOR, $list));
         }
 
         return '';
-    }
-
-    /**
-     * Order direction string
-     *
-     * @param string $value
-     * @return string
-     */
-    protected function orderDirectionString(string $value): string {
-        return strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING;
     }
 
     /**
@@ -254,15 +233,9 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
 
         // There is no terminal characters in the trimmed
         if (strcspn($trimmed, static::EXPRESSION_TERMINALS) === strlen($trimmed)) {
-            $tags = explode(static::IDENTIFIER_SEPARATOR, $trimmed);
-
-            foreach ($tags as &$tag) {
-                if ($tag[0] !== static::IDENTIFIER_QUOTE_OPEN) {
-                    $tag = static::IDENTIFIER_QUOTE_OPEN . $tag . static::IDENTIFIER_QUOTE_CLOSE;
-                }
-            }
-
-            return implode(static::IDENTIFIER_SEPARATOR, $tags);
+            return implode(static::IDENTIFIER_SEPARATOR, array_map(function($tag) {
+                return $tag[0] !== static::IDENTIFIER_QUOTE_OPEN ? static::IDENTIFIER_QUOTE_OPEN . $tag . static::IDENTIFIER_QUOTE_CLOSE : $tag;
+            }, explode(static::IDENTIFIER_SEPARATOR, $trimmed)));
         }
 
         return $identifier;
