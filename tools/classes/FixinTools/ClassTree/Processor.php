@@ -20,7 +20,8 @@ class Processor extends Item {
     protected $items;
 
     public function __construct(array $baseClasses) {
-        $this->processElements($baseClasses);
+        $this->processElementsItems();
+        $this->processElementsTree($baseClasses);
     }
 
     public function __toString(): string {
@@ -38,12 +39,6 @@ class Processor extends Item {
 
     protected function baseClassTest(string $name, array $baseClasses, \ReflectionClass $item): bool {
         return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->hasItem($item->name);
-    }
-
-    protected function extendsClass($item, array $baseClasses) {
-        $reflection = $item->getReflection();
-
-        return ($parentClass = $reflection->getParentClass()) && $this->baseClassTest($reflection->name, $baseClasses, $parentClass) ? $parentClass : null;
     }
 
     protected function filterInterfaces(Item $item, string $name, array $baseClasses): array {
@@ -91,11 +86,6 @@ class Processor extends Item {
         return isset($this->items[$name]);
     }
 
-    protected function processElements(array $baseClasses) {
-        $this->processElementsItems();
-        $this->processElementsTree($baseClasses);
-    }
-
     protected function processElementsItems() {
         $items = [];
 
@@ -116,7 +106,7 @@ class Processor extends Item {
         $this->children = [];
         foreach ($this->items as $name => $item) {
             // Extends class
-            if ($parentClass = $this->extendsClass($item, $baseClasses)) {
+            if (($parentClass = $item->getReflection()->getParentClass()) && $this->baseClassTest($name, $baseClasses, $parentClass)) {
                 $this->items[$parentClass->name]->addChild($item);
 
                 continue;
