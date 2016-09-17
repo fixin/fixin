@@ -23,7 +23,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param number|string $max
      * @return self
      */
-    public function between(string $identifier, $min, $max): self;
+    public function between(string $identifier, $min, $max): WhereInterface;
 
     /**
      * Add: and compare
@@ -35,7 +35,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param string $rightType
      * @return self
      */
-    public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): self;
+    public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface;
 
     /**
      * Add: and exists
@@ -43,7 +43,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param RequestInterface $request
      * @return self
      */
-    public function exists(RequestInterface $request): self;
+    public function exists(RequestInterface $request): WhereInterface;
 
     /**
      * Get tags
@@ -58,7 +58,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param array|RequestInterface $values
      * @return self
      */
-    public function in($identifier, $values): self;
+    public function in($identifier, $values): WhereInterface;
 
     /**
      * Add: and items from array
@@ -66,7 +66,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param array $array
      * @return self
      */
-    public function items(array $array): self;
+    public function items(array $array): WhereInterface;
 
     /**
      * Add: and nested where
@@ -74,7 +74,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param callable $callback
      * @return self
      */
-    public function nested(callable $callback): self;
+    public function nested(callable $callback): WhereInterface;
 
     /**
      * Add: and not between
@@ -84,7 +84,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param number|string $max
      * @return self
      */
-    public function notBetween(string $identifier, $min, $max): self;
+    public function notBetween(string $identifier, $min, $max): WhereInterface;
 
     /**
      * Add: and not exists
@@ -92,7 +92,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param RequestInterface $request
      * @return self
      */
-    public function notExists(RequestInterface $request): self;
+    public function notExists(RequestInterface $request): WhereInterface;
 
     /**
      * Add: and not in
@@ -101,7 +101,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param array|RequestInterface $values
      * @return self
      */
-    public function notIn($identifier, $values): self;
+    public function notIn($identifier, $values): WhereInterface;
 
     /**
      * Add: and not nested where
@@ -109,7 +109,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param callable $callback
      * @return self
      */
-    public function notNested(callable $callback): self;
+    public function notNested(callable $callback): WhereInterface;
 
     /**
      * Add: and not null
@@ -117,7 +117,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param string $identifier
      * @return self
      */
-    public function notNull(string $identifier): self;
+    public function notNull(string $identifier): WhereInterface;
 
     /**
      * Add an and null
@@ -125,7 +125,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param string $identifier
      * @return self
      */
-    public function null(string $identifier): self;
+    public function null(string $identifier): WhereInterface;
 
     /**
      * Add: or between
@@ -135,7 +135,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param number|string $max
      * @return self
      */
-    public function orBetween(string $identifier, $min, $max): self;
+    public function orBetween(string $identifier, $min, $max): WhereInterface;
 
     /**
      * Add: or compare
@@ -147,7 +147,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param string $rightType
      * @return self
      */
-    public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): self;
+    public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface;
 
     /**
      * Add: or exists
@@ -155,7 +155,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param RequestInterface $request
      * @return self
      */
-    public function orExists(RequestInterface $request): self;
+    public function orExists(RequestInterface $request): WhereInterface;
 
     /**
      * Add: or in
@@ -164,7 +164,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param array|RequestInterface $values
      * @return self
      */
-    public function orIn($identifier, $values): self;
+    public function orIn($identifier, $values): WhereInterface;
 
     /**
      * Add: or items from array
@@ -172,7 +172,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param array $array
      * @return self
      */
-    public function orItems(array $array): self;
+    public function orItems(array $array): WhereInterface;
 
     /**
      * Add: or nested where
@@ -180,7 +180,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param callable $callback
      * @return self
      */
-    public function orNested(callable $callback): self;
+    public function orNested(callable $callback): WhereInterface;
 
     /**
      * Add: or not between
@@ -190,7 +190,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param number|string $max
      * @return self
      */
-    public function orNotBetween(string $identifier, $min, $max): self;
+    public function orNotBetween(string $identifier, $min, $max): WhereInterface;
 
     /**
      * Add: or not exists
@@ -198,7 +198,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param RequestInterface $request
      * @return self
      */
-    public function orNotExists(RequestInterface $request): self;
+    public function orNotExists(RequestInterface $request): WhereInterface;
 
     /**
      * Add: or not in
@@ -207,7 +207,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param array|RequestInterface $values
      * @return self
      */
-    public function orNotIn($identifier, $values): self;
+    public function orNotIn($identifier, $values): WhereInterface;
 
     /**
      * Add: or not null
@@ -215,7 +215,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param string $identifier
      * @return self
      */
-    public function orNotNull(string $identifier): self;
+    public function orNotNull(string $identifier): WhereInterface;
 
     /**
      * Add: or not nested where
@@ -223,7 +223,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param callable $callback
      * @return self
      */
-    public function orNotNested(callable $callback): self;
+    public function orNotNested(callable $callback): WhereInterface;
 
     /**
      * Add: or null
@@ -238,7 +238,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param WhereInterface $where
      * @return self
      */
-    public function orSub(WhereInterface $where): self;
+    public function orSub(WhereInterface $where): WhereInterface;
 
     /**
      * Add: and sub where
@@ -246,5 +246,5 @@ interface WhereInterface extends PrototypeInterface {
      * @param WhereInterface $where
      * @return self
      */
-    public function sub(WhereInterface $where): self;
+    public function sub(WhereInterface $where): WhereInterface;
 }
