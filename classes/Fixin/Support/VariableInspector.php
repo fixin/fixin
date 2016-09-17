@@ -37,22 +37,21 @@ class VariableInspector extends DoNotCreate {
      * @return string
      */
     public static function itemsInfo(array $var, string $color): string {
-        $info = "\n";
+        array_walk($var, function(&$value, $key) use ($color) {
+            if ($value instanceof ResourceManagerInterface) {
+                $value = "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . get_class($value);
 
-        foreach ($var as $key => $value) {
+                return;
+            }
+
             if (is_scalar($value) && stripos($key, 'password') !== false) {
                 $value = '*****';
             }
-            elseif ($value instanceof ResourceManagerInterface) {
-                $info .= "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . get_class($value) . "\n";
 
-                continue;
-            }
+            $value = "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . str_replace(PHP_EOL, PHP_EOL . '    ', static::valueInfo($value));
+        });
 
-            $info .= "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . str_replace("\n", "\n    ", static::valueInfo($value)) . "\n";
-        }
-
-        return $info;
+        return PHP_EOL . implode("\n", $var) . PHP_EOL;
     }
 
     /**
