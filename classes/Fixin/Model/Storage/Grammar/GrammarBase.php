@@ -252,6 +252,11 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
             return $this->expressionArrayToString($expression, $query);
         }
 
+        // Object
+        if (is_object($expression)) {
+            return $this->expressionObjectToString($expression, $query);
+        }
+
         $query->addParameter($expression);
 
         return static::PLACEHOLDER;
