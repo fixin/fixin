@@ -79,23 +79,32 @@ class EntityCache extends Prototype implements EntityCacheInterface {
         }
 
         $ids = array_combine($ids, $ids);
-        $list = array_fill_keys(array_keys($ids), null);
-        $cached = array_intersect_key($this->entities, $list);
-        $list = array_replace($list, $cached);
+        $cached = array_intersect_key($this->entities, $ids);
+        $list = array_replace(array_fill_keys(array_keys($ids), null), $cached);
 
         // Fetch required data
         if ($ids = array_diff_key($ids, $cached)) {
-            $request = $this->repository->createRequest();
-            $request->getWhere()->in($this->repository->getPrimaryKey(), $ids);
-
-            $storageResult = $this->repository->selectRawData($request);
-            while ($storageResult->valid()) {
-                $entity = $this->fetchResultEntity($storageResult);
-                $list[(string) $entity->getEntityId()] = $entity;
-            }
+            $this->loadEntities($list, $ids);
         }
 
         return array_filter($list);
+    }
+
+    /**
+     * Load entities for ids
+     *
+     * @param array $list
+     * @param array $ids
+     */
+    protected function loadEntities(array &$list, array $ids) {
+        $request = $this->repository->createRequest();
+        $request->getWhere()->in($this->repository->getPrimaryKey(), $ids);
+
+        $storageResult = $this->repository->selectRawData($request);
+        while ($storageResult->valid()) {
+            $entity = $this->fetchResultEntity($storageResult);
+            $list[(string) $entity->getEntityId()] = $entity;
+        }
     }
 
     /**
