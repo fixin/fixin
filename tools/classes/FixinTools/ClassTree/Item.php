@@ -104,7 +104,7 @@ class Item {
     }
 
     /**
-     * @return Item|null
+     * @return Item
      */
     public function getImplementationOf() {
         $name = $this->getName();
