@@ -110,6 +110,19 @@ class SvgEngine {
         ], $tspans);
     }
 
+    protected function placeItem(Item $item, float $px, float $py, float $angle, float $angleStep) {
+        $item->px = $px * $this->ratio;
+        $item->py = $py * $this->ratio;
+
+        $this->items[$item->getName()] = $item;
+
+        if (!in_array($item->getName(), $this->stopAtClasses) && ($children = $item->getChildren())) {
+            $childrenStep = min(max($angleStep / 1.3, 160 / count($children) / 1.3), 180);
+
+            $this->placeItems($children, $px, $py, $angle - $childrenStep, $angle + $childrenStep);
+        }
+    }
+
     protected function placeItems(array $items, float $x, float $y, float $startAngle, float $endAngle) {
         $divs = count($items);
         $angleStep = ($endAngle - $startAngle) / $divs;
@@ -120,18 +133,8 @@ class SvgEngine {
             $px = $x + cos($angle * M_PI / 180) * $itemR;
             $py = $y + sin($angle * M_PI / 180) * $itemR * $this->ellipseRatio;
 
-            $item->px = $px * $this->ratio;
-            $item->py = $py * $this->ratio;
+            $this->placeItem($item, $px, $py, $angle, $angleStep);
 
-            $this->items[$item->getName()] = $item;
-
-            if (!in_array($item->getName(), $this->stopAtClasses) && ($children = $item->getChildren())) {
-                $childrenStep = min(max($angleStep / 1.3, 160 / count($children) / 1.3), 180);
-
-                $this->placeItems($children, $px, $py, $angle - $childrenStep, $angle + $childrenStep);
-            }
-
-            // Step
             $angle += $angleStep;
         }
     }
