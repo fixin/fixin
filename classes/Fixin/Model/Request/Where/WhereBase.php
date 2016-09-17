@@ -43,7 +43,7 @@ abstract class WhereBase extends Prototype implements WhereInterface {
         ]);
     }
 
-    protected function addCompare(string $join, $left, string $operator, $right, string $leftType, string $rightType): WhereInterface {
+    protected function addCompare(string $join, bool $negated, $left, string $operator, $right, string $leftType, string $rightType): WhereInterface {
         return $this->addTag(static::PROTOTYPE_COMPARE_TAG, $join, $negated, [
             CompareTag::OPTION_LEFT => $this->compareSidePrepare($left, $leftType),
             CompareTag::OPTION_OPERATOR => $operator,
@@ -102,6 +102,12 @@ abstract class WhereBase extends Prototype implements WhereInterface {
         ]);
     }
 
+    protected function addSub(string $join, bool $negated, WhereInterface $where): WhereInterface {
+        return $this->addTag(static::PROTOTYPE_WHERE_TAG, $join, $negated, [
+            WhereTag::OPTION_WHERE => $where
+        ]);
+    }
+
     protected function addTag(string $prototype, string $join, bool $negated, array $options): WhereInterface {
         $this->tags[] = $this->container->clonePrototype($prototype, [
             TagInterface::OPTION_JOIN => $join,
@@ -120,5 +126,4 @@ abstract class WhereBase extends Prototype implements WhereInterface {
 
         return $value;
     }
-
 }

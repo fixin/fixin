@@ -30,7 +30,7 @@ class Where extends WhereBase {
      * @see \Fixin\Model\Request\Where\WhereInterface::compare($left, $operator, $right, $leftType, $rightType)
      */
     public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface {
-        return $this->addCompare(TagInterface::JOIN_AND, $left, $operator, $right, $leftType, $rightType);
+        return $this->addCompare(TagInterface::JOIN_AND, false, $left, $operator, $right, $leftType, $rightType);
     }
 
     /**
@@ -136,7 +136,7 @@ class Where extends WhereBase {
      * @see \Fixin\Model\Request\Where\WhereInterface::orCompare($left, $operator, $right, $leftType, $rightType)
      */
     public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface {
-        return $this->addCompare(TagInterface::JOIN_OR, $left, $operator, $right, $leftType, $rightType);
+        return $this->addCompare(TagInterface::JOIN_OR, false, $left, $operator, $right, $leftType, $rightType);
     }
 
     /**
@@ -226,12 +226,7 @@ class Where extends WhereBase {
      * @see \Fixin\Model\Request\Where\WhereInterface::orSub($where)
      */
     public function orSub(WhereInterface $where): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
-            WhereTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            WhereTag::OPTION_WHERE => $where
-        ]);
-
-        return $this;
+        return $this->addSub(WhereTag::JOIN_OR, false, $where);
     }
 
     /**
@@ -239,10 +234,6 @@ class Where extends WhereBase {
      * @see \Fixin\Model\Request\Where\WhereInterface::sub($where)
      */
     public function sub(WhereInterface $where): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_WHERE_TAG, [
-            WhereTag::OPTION_WHERE => $where
-        ]);
-
-        return $this;
+        return $this->addSub(WhereTag::JOIN_AND, false, $where);
     }
 }
