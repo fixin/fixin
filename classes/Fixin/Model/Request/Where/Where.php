@@ -18,6 +18,11 @@ use Fixin\Model\Request\Where\Tag\TagInterface;
 use Fixin\Model\Request\Where\Tag\WhereTag;
 use Fixin\Resource\Prototype;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ *
+ */
 class Where extends Prototype implements WhereInterface {
 
     const PROTOTYPE_BETWEEN_TAG = 'Model\Request\Where\Tag\BetweenTag';
@@ -126,10 +131,10 @@ class Where extends Prototype implements WhereInterface {
      *
      * @param string $join
      * @param bool $negated
-     * @param mixed $identifier
+     * @param string $identifier
      * @return self
      */
-    protected function addNull(string $join, bool $negated, $identifier) {
+    protected function addNull(string $join, bool $negated, string $identifier) {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_NULL_TAG, [
             NullTag::OPTION_JOIN => $join,
             NullTag::OPTION_NEGATED => $negated,

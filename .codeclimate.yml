@@ -4,6 +4,10 @@ engines:
     checks:
       CleanCode/StaticAccess:
         enabled: false
+      Naming/ShortMethodName:
+        enabled: false     
+      Naming/ShortVariable:
+        enabled: false   
 ratings:    
     paths:
     - classes/**

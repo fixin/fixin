@@ -22,6 +22,10 @@ use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\Resource;
 use Fixin\Model\Entity\EntityIdInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ *
+ */
 abstract class Grammar extends Resource implements GrammarInterface {
 
     const ADD_COLUMNS = 'columns',
