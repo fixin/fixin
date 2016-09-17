@@ -41,12 +41,6 @@ class Processor extends Item {
         return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->hasItem($item->name);
     }
 
-    protected function filterInterfaces(Item $item, string $name, array $baseClasses): array {
-        return array_filter($item->getInterfaces(), function($item) use ($name, $baseClasses) {
-            return $this->baseClassTest($name, $baseClasses, $item);
-        });
-    }
-
     public function getEngine(): SvgEngine {
         return $this->engine ?? ($this->engine = new SvgEngine($this));
     }
@@ -113,7 +107,11 @@ class Processor extends Item {
             }
 
             // Interface
-            if ($interfaces = $this->filterInterfaces($item, $name, $baseClasses)) {
+            $interfaces = array_filter($item->getInterfaces(), function($item) use ($name, $baseClasses) {
+                return $this->baseClassTest($name, $baseClasses, $item);
+            });
+
+            if ($interfaces) {
                 $this->items[reset($interfaces)->name]->addChild($item);
 
                 continue;
