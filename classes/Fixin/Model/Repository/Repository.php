@@ -24,6 +24,7 @@ class Repository extends Resource implements RepositoryInterface {
     const
         EXCEPTION_INVALID_ID = "Invalid ID",
         EXCEPTION_INVALID_NAME = "Invalid name '%s'",
+        EXCEPTION_INVALID_REQUEST = "Invalid request, repository mismatch '%s' '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
         PROTOTYPE_ENTITY_CACHE = 'Model\Entity\EntityCache', // TODO
         PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
@@ -145,7 +146,9 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::delete($request)
      */
     public function delete(RequestInterface $request): int {
-        return $this->isValidRequest($request) && $this->getStorage()->delete($request);
+        $this->validateRequest($request);
+
+        return $this->getStorage()->delete($request);
     }
 
     /**
@@ -153,7 +156,9 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::exists($request)
      */
     public function exists(RequestInterface $request): bool {
-        return $this->isValidRequest($request) && $this->getStorage()->exists($request);
+        $this->validateRequest($request);
+
+        return $this->getStorage()->exists($request);
     }
 
     /**
@@ -235,7 +240,9 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::insertInto($repository, $request)
      */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int {
-        return $this->isValidRequest($request) && $this->getStorage()->insertInto($repository, $request);
+        $this->validateRequest($request);
+
+        return $this->getStorage()->insertInto($repository, $request);
     }
 
     /**
@@ -244,16 +251,6 @@ class Repository extends Resource implements RepositoryInterface {
      */
     public function insertMultiple(array $rows): int {
         return $this->getStorage()->insertMultiple($this, $rows);
-    }
-
-    /**
-     * Check request validity
-     *
-     * @param RequestInterface $request
-     * @return bool
-     */
-    protected function isValidRequest(RequestInterface $request): bool {
-        return $request->getRepository() === $this;
     }
 
     /**
@@ -357,6 +354,21 @@ class Repository extends Resource implements RepositoryInterface {
      * @see \Fixin\Model\Repository\RepositoryInterface::update($set, $request)
      */
     public function update(array $set, RequestInterface $request): int {
-        return $this->isValidRequest($request) && $this->getStorage()->update($set, $request);
+        $this->validateRequest($request);
+
+        return  $this->getStorage()->update($set, $request);
+    }
+
+    /**
+     * Validate request
+     *
+     * @param RequestInterface $request
+     */
+    protected function validateRequest(RequestInterface $request) {
+        if ($request->getRepository() === $this) {
+            return;
+        }
+
+        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_REQUEST, $this->getName(), $request->getRepository()->getName()));
     }
 }
