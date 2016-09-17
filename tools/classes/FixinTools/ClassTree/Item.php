@@ -108,18 +108,15 @@ class Item {
      */
     public function getImplementationOf() {
         $name = $this->getName();
-        $result = null;
 
         foreach ($this->getInterfaces() as $interface) {
             $interfaceName = $interface->name;
             if (Strings::endsWith($interfaceName, 'Interface') && $name === mb_substr($interfaceName, 0, -9)) {
-                $result = $this->processor->getItem($interfaceName);
-
-                break;
+                return $this->processor->getItem($interfaceName);
             }
         }
 
-        return $result;
+        return null;
     }
 
     public function getInterfaces(): array {

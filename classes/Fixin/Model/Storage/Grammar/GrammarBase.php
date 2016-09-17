@@ -358,13 +358,23 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
                     continue;
                 }
 
-                $list[] = sprintf(static::MASK_ORDER_BY_ITEM, $this->quoteIdentifier($key), strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
+                $list[] = sprintf(static::MASK_ORDER_BY_ITEM, $this->quoteIdentifier($key), $this->orderDirectionString($value));
             }
 
             return sprintf(static::MASK_ORDER_BY, implode(static::LIST_SEPARATOR, $list));
         }
 
         return '';
+    }
+
+    /**
+     * Order direction string
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function orderDirectionString(string $value): string {
+        return strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING;
     }
 
     /**

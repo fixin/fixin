@@ -30,6 +30,17 @@ class VariableInspector extends DoNotCreate {
     }
 
     /**
+     * Is hidden data
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return bool
+     */
+    protected static function isHidden(string $key, $value): bool {
+        return is_scalar($value) && stripos($key, 'password') !== false;
+    }
+
+    /**
      * Return list info
      *
      * @param array $var
@@ -37,21 +48,23 @@ class VariableInspector extends DoNotCreate {
      * @return string
      */
     public static function itemsInfo(array $var, string $color): string {
-        array_walk($var, function(&$value, $key) use ($color) {
-            if ($value instanceof ResourceManagerInterface) {
-                $value = "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . get_class($value);
+        $result = PHP_EOL;
 
-                return;
+        foreach ($var as $key => $value) {
+            if ($value instanceof ResourceManagerInterface) {
+                $result .= "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . get_class($value) . PHP_EOL;
+
+                continue;
             }
 
-            if (is_scalar($value) && stripos($key, 'password') !== false) {
+            if (static::isHidden($key, $value)) {
                 $value = '*****';
             }
 
-            $value = "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . str_replace(PHP_EOL, PHP_EOL . '    ', static::valueInfo($value));
-        });
+            $result .= "    " . sprintf(static::VALUE_TEMPLATE, $color, htmlspecialchars(str_pad($key, 30))) . ' ' . str_replace(PHP_EOL, PHP_EOL . '    ', static::valueInfo($value)) . PHP_EOL;
+        };
 
-        return PHP_EOL . implode("\n", $var) . PHP_EOL;
+        return $result;
     }
 
     /**
