@@ -66,21 +66,18 @@ abstract class WhereBase extends Prototype implements WhereInterface {
 
     protected function addItems(Where $where, array $array): WhereInterface {
         foreach ($array as $key => $value) {
-            // Simple where (no key)
             if (is_numeric($key)) {
                 $where->sub($value);
 
                 continue;
             }
 
-            // Key - array value
             if (is_array($value)) {
                 $where->in($key, $value);
 
                 continue;
             }
 
-            // Key - any value
             $where->compare($key, CompareTag::OPERATOR_EQUAL, $value);
         }
 
