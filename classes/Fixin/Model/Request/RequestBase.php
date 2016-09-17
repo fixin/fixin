@@ -14,6 +14,7 @@ use Fixin\Resource\Prototype;
 abstract class RequestBase extends Prototype implements RequestInterface {
 
     const
+        PROTOTYPE_JOIN = 'Model\Request\Join',
         PROTOTYPE_WHERE = 'Model\Request\Where\Where',
         THIS_REQUIRES = [
             self::OPTION_REPOSITORY => self::TYPE_INSTANCE
@@ -45,6 +46,11 @@ abstract class RequestBase extends Prototype implements RequestInterface {
     protected $having;
 
     /**
+     * @var array
+     */
+    protected $joins = [];
+
+    /**
      * @var int|null
      */
     protected $limit;
@@ -68,6 +74,65 @@ abstract class RequestBase extends Prototype implements RequestInterface {
      * @var WhereInterface
      */
     protected $where;
+
+    /**
+     * Add join
+     *
+     * @param string $type
+     * @param RepositoryInterface $repository
+     * @param string $left
+     * @param string $operator
+     * @param string $right
+     * @param string $alias
+     * @return self
+     */
+    protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null) {
+        return $this->addJoinItem($type, $repository, $this->container->clonePrototype(static::PROTOTYPE_WHERE)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
+    }
+
+    /**
+     * Add join intem
+     *
+     * @param string $type
+     * @param RepositoryInterface $repository
+     * @param WhereInterface $where
+     * @param string $alias
+     * @return self
+     */
+    protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null) {
+        $this->joins[] = $this->container->clonePrototype(static::PROTOTYPE_JOIN, [
+            JoinInterface::OPTION_TYPE => $type,
+            JoinInterface::OPTION_REPOSITORY => $repository,
+            JoinInterface::OPTION_ALIAS => $alias ?? $repository->getName(),
+            JoinInterface::OPTION_WHERE => $where
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * Add join by where callback
+     *
+     * @param string $type
+     * @param RepositoryInterface $repository
+     * @param callable $callback
+     * @param string $alias
+     * @return self
+     */
+    protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null) {
+        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
+        $callback($where);
+
+        return $this->addJoinItem($type, $repository, $where, $alias);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::crossJoin($repository, $alias)
+     */
+    public function crossJoin(RepositoryInterface $repository, string $alias = null): RequestInterface {
+        return $this->addJoinItem(JoinInterface::TYPE_CROSS, $repository, null, $alias);
+    }
 
     /**
      * {@inheritDoc}
@@ -99,6 +164,14 @@ abstract class RequestBase extends Prototype implements RequestInterface {
      */
     public function getHaving(): WhereInterface {
         return $this->having ?? ($this->having = $this->container->clonePrototype(static::PROTOTYPE_WHERE));
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::getJoins()
+     */
+    public function getJoins(): array {
+        return $this->joins;
     }
 
     /**
@@ -163,6 +236,54 @@ abstract class RequestBase extends Prototype implements RequestInterface {
      */
     public function isDistinctResult(): bool {
         return $this->disctinctResult;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::join($repository, $left, $operator, $right, $alias)
+     */
+    public function join(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface {
+        return $this->addJoin(JoinInterface::TYPE_INNER, $repository, $left, $operator, $right, $alias);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::joinWhere($repository, $callback, $alias)
+     */
+    public function joinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface {
+        return $this->addJoinWhere(JoinInterface::TYPE_INNER, $repository, $callback, $alias);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::leftJoin($repository, $left, $operator, $right, $alias)
+     */
+    public function leftJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface {
+        return $this->addJoin(JoinInterface::TYPE_LEFT, $repository, $left, $operator, $right, $alias);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::leftJoinWhere($repository, $callback, $alias)
+     */
+    public function leftJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface {
+        return $this->addJoinWhere(JoinInterface::TYPE_LEFT, $repository, $callback, $alias);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::rightJoin($repository, $left, $operator, $right, $alias)
+     */
+    public function rightJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface {
+        return $this->addJoin(JoinInterface::TYPE_RIGHT, $repository, $left, $operator, $right, $alias);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\RequestInterface::rightJoinWhere($repository, $callback, $alias)
+     */
+    public function rightJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface {
+        return $this->addJoinWhere(JoinInterface::TYPE_RIGHT, $repository, $callback, $alias);
     }
 
     /**
