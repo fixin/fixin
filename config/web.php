@@ -111,8 +111,8 @@ return [
                 'options' => [
                     'routes' => [
                         'index' => [
-                            'uri' => '/services/',
-                            'handler' => 'Controller\Service\Index'
+                            'uri' => '/',
+                            'handler' => 'Controller\Index'
                         ]
                     ],
                     'patterns' => [
