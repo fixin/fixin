@@ -38,9 +38,13 @@ class Item {
     }
 
     public function __toString(): string {
-        return "\n" . $this->getShortName() . "\n" . array_reduce($this->children, function($carry, $child) {
-            return $carry . str_replace("\n", "\n    ", $child);
-        });
+        $result = "\n" . $this->getShortName() . "\n";
+
+        foreach ($this->children as $child) {
+            $result .= str_replace("\n", "\n    ", $child);
+        }
+
+        return $result;
     }
 
     public function addChild(Item $child): self {
@@ -73,10 +77,9 @@ class Item {
         }
 
         // Main Class
-        if ($mainClass = $this->processor->getMainClass($namespace)) {
-            if ($mainClass->getName() !== $this->getName()) {
-                return $mainClass;
-            }
+        $mainClass = $this->processor->getMainClass($namespace);
+        if ($mainClass && $mainClass->getName() !== $this->getName()) {
+            return $mainClass;
         }
 
         // Parent
@@ -117,10 +120,9 @@ class Item {
             $current = array_shift($all);
 
             if ($item = $this->processor->getItem($current->name)) {
-                foreach ($item->getInterfaces() as $name => $interface) {
-                    unset($interfaces[$name]);
-                    unset($all[$name]);
-                }
+                $itemInterfaces = $item->getInterfaces();
+                $interfaces = array_diff_key($interfaces, $itemInterfaces);
+                $all = array_diff_key($all, $itemInterfaces);
             }
         }
 

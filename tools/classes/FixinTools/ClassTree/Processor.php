@@ -28,9 +28,11 @@ class Processor extends Item {
         $info = '';
 
         foreach ($this->getGroups() as $name => $group) {
-            $info .= "\n[$name]\n" . array_reduce($group, function($carry, $item) {
-                return $carry . str_replace("\n", "\n    ", $item);
-            });
+            $info .= "\n[$name]\n";
+
+            foreach ($group as $item) {
+                $info .= str_replace("\n", "\n    ", $item);
+            }
         }
 
         return $info;
@@ -106,12 +108,18 @@ class Processor extends Item {
             }
 
             // Interface
-            $interfaces = array_filter($item->getInterfaces(), function($item) use ($name, $baseClasses) {
-                return $this->baseClassTest($name, $baseClasses, $item);
-            });
+            $found = null;
 
-            if ($interfaces) {
-                $this->items[reset($interfaces)->name]->addChild($item);
+            foreach ($item->getInterfaces() as $interface) {
+                if ($this->baseClassTest($name, $baseClasses, $interface)) {
+                    $found = $interface;
+                    
+                    break;
+                }
+            }
+
+            if ($found) {
+                $this->items[$found->name]->addChild($item);
 
                 continue;
             }

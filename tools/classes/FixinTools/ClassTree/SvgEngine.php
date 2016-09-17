@@ -227,10 +227,12 @@ class SvgEngine {
     }
 
     protected function tag(string $name, array $attributes, string $content = ''): string {
-        array_walk($attributes, function(&$value, $key) {
-            $value = " $key=\"" . htmlspecialchars($value) . '"';
-        });
+        $list = [];
+        
+        foreach ($attributes as $key => $value) {
+            $list[] = " $key=\"" . htmlspecialchars($value) . '"';
+        }
 
-            return "<$name" . implode($attributes) . ">$content</$name>\n";
+        return "<$name" . implode($list) . ">$content</$name>\n";
     }
 }
