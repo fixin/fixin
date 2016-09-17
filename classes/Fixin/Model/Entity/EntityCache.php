@@ -64,14 +64,9 @@ class EntityCache extends Prototype implements EntityCacheInterface {
             return $this->entities[$key] = $entity->exchangeArray($data);
         }
 
-        // Active entity
-        if (isset($this->entities[$key])) {
-            return $this->entities[$key];
-        }
-
-        return $this->entities[$key] = $this->entityPrototype->withOptions([
+        return $this->entities[$key] ?? ($this->entities[$key] = $this->entityPrototype->withOptions([
             EntityInterface::OPTION_ENTITY_ID => $id
-        ])->exchangeArray($data);
+        ])->exchangeArray($data));
     }
 
     /**

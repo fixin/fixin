@@ -24,7 +24,7 @@ use Fixin\Model\Entity\EntityIdInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
- *
+ * @SuppressWarnings(PHPMD.WeightedMethodCount)
  */
 abstract class Grammar extends Resource implements GrammarInterface {
 
@@ -344,20 +344,16 @@ abstract class Grammar extends Resource implements GrammarInterface {
         ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
 
         // Columns
-        $list = array_map(function($identifier) use ($query) {
+        $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, array_map(function($identifier) use ($query) {
             return $this->identifierToString($identifier, $query);
-        }, array_keys(reset($rows)));
-
-        $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)));
+        }, array_keys(reset($rows))))));
 
         // Rows
         $source = [];
         foreach ($rows as $set) {
-            $list = array_map(function($value) use ($query) {
+            $source[] = sprintf(static::MASK_VALUES, implode(static::LIST_SEPARATOR, array_map(function($value) use ($query) {
                 return $this->expressionToString($value, $query);
-            }, $set);
-
-            $source[] = sprintf(static::MASK_VALUES, implode(static::LIST_SEPARATOR, $list));
+            }, $set)));
         }
 
         return $query->appendClause(static::CLAUSE_VALUES, implode(static::LIST_SEPARATOR_MULTI_LINE, $source));

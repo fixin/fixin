@@ -78,6 +78,7 @@ abstract class Resource implements ResourceInterface {
      *
      * @param mixed $value
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
     private function configurationBoolTest($value): bool {
         return is_bool($value);
