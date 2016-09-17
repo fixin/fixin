@@ -1,6 +1,6 @@
 <?php
 
-return (function() {
+return (function($config) {
     $fixinPath = dirname(__DIR__);
 
     // Autoloader
@@ -9,8 +9,10 @@ return (function() {
     $autoloader = new \Fixin\Base\Autoloader\SimpleAutoloader(['Fixin' => "{$classesPath}/Fixin"]);
 
     // Config
-    $config = require "{$fixinPath}/config/web.php";
+    if (!isset($config)) {
+        $config = require "{$fixinPath}/config/web.php";
+    }
 
     // Application
     return new \Fixin\Application\Application($config);
-})();
+})($config ?? null);
