@@ -40,6 +40,12 @@ class Processor extends Item {
         return (in_array($name, $baseClasses) || !in_array($item->name, $baseClasses)) && $this->hasItem($item->name);
     }
 
+    protected function extendsClass($item, array $baseClasses) {
+        $reflection = $item->getReflection();
+
+        return ($parentClass = $reflection->getParentClass()) && $this->baseClassTest($reflection->name, $baseClasses, $parentClass) ? $parentClass : null;
+    }
+
     protected function filterInterfaces(Item $item, string $name, array $baseClasses): array {
         return array_filter($item->getInterfaces(), function($item) use ($name, $baseClasses) {
             return $this->baseClassTest($name, $baseClasses, $item);
@@ -110,7 +116,7 @@ class Processor extends Item {
         $this->children = [];
         foreach ($this->items as $name => $item) {
             // Extends class
-            if (($parentClass = $item->getReflection()->getParentClass()) && $this->baseClassTest($name, $baseClasses, $parentClass)) {
+            if ($parentClass = $this->extendsClass($item, $baseClasses)) {
                 $this->items[$parentClass->name]->addChild($item);
 
                 continue;
