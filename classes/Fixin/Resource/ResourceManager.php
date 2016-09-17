@@ -10,6 +10,22 @@ namespace Fixin\Resource;
 class ResourceManager extends ResourceManagerBase {
 
     /**
+     * Determine resource creation via an abstract factory is possible
+     *
+     * @param string $name
+     * @return bool
+     */
+    protected function canProduceByAbstractFactory(string $name): bool {
+        foreach ($this->abstractFactories as $abstractFactory) {
+            if ($abstractFactory->canProduce($name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Resource\ResourceManagerInterface::clonePrototype()
      */
