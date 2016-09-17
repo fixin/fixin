@@ -231,7 +231,7 @@ interface WhereInterface extends PrototypeInterface {
      * @param string $identifier
      * @return self
      */
-    public function orNull(string $identifier): self;
+    public function orNull(string $identifier): WhereInterface;
 
     /**
      * Add: or sub where
