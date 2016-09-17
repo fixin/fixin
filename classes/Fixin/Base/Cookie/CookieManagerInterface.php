@@ -45,7 +45,7 @@ interface CookieManagerInterface extends PrototypeInterface {
      *
      * @return self
      */
-    public function sendChanges(): self;
+    public function sendChanges(): CookieManagerInterface;
 
     /**
      * Set cookie

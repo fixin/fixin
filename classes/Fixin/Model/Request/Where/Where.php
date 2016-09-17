@@ -39,18 +39,19 @@ class Where extends Prototype implements WhereInterface {
      */
     protected $tags = [];
 
-    /**
-     * Add compare tag
-     *
-     * @param string $join
-     * @param unknown $left
-     * @param string $operator
-     * @param unknown $right
-     * @param string $leftType
-     * @param string $rightType
-     * @return self
-     */
-    protected function addCompare(string $join, $left, string $operator, $right, string $leftType, string $rightType): self {
+    protected function addBetween(string $join, bool $negated, $identifier, $min, $max): WhereInterface {
+        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_BETWEEN_TAG, [
+            BetweenTag::OPTION_JOIN => $join,
+            BetweenTag::OPTION_NEGATED => $negated,
+            BetweenTag::OPTION_IDENTIFIER => $identifier,
+            BetweenTag::OPTION_MIN => $min,
+            BetweenTag::OPTION_MAX => $max
+        ]);
+
+        return $this;
+    }
+
+    protected function addCompare(string $join, $left, string $operator, $right, string $leftType, string $rightType): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_COMPARE_TAG, [
             CompareTag::OPTION_JOIN => $join,
             CompareTag::OPTION_LEFT => $this->compareSidePrepare($left, $leftType),
@@ -61,15 +62,7 @@ class Where extends Prototype implements WhereInterface {
         return $this;
     }
 
-    /**
-     * Add exists
-     *
-     * @param string $join
-     * @param bool $negated
-     * @param RequestInterface $request
-     * @return self
-     */
-    protected function addExists(string $join, bool $negated, RequestInterface $request) {
+    protected function addExists(string $join, bool $negated, RequestInterface $request): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_EXISTS_TAG, [
             ExistsTag::OPTION_JOIN => $join,
             ExistsTag::OPTION_NEGATED => $negated,
@@ -78,13 +71,19 @@ class Where extends Prototype implements WhereInterface {
 
         return $this;
     }
-    /**
-     * Add items
-     *
-     * @param Where $where
-     * @param array $array
-     */
-    protected function addItems(Where $where, array $array) {
+
+    protected function addIn(string $join, bool $negated, $identifier, $values): WhereInterface {
+        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
+            InTag::OPTION_JOIN => $join,
+            InTag::OPTION_NEGATED => $negated,
+            InTag::OPTION_IDENTIFIER => $identifier,
+            InTag::OPTION_VALUES => $values
+        ]);
+
+        return $this;
+    }
+
+    protected function addItems(Where $where, array $array): WhereInterface {
         foreach ($array as $key => $value) {
             // Simple where (no key)
             if (is_numeric($key)) {
@@ -105,15 +104,7 @@ class Where extends Prototype implements WhereInterface {
         }
     }
 
-    /**
-     * Add nested where
-     *
-     * @param string $join
-     * @param bool $negated
-     * @param callable $callback
-     * @return self
-     */
-    protected function addNested(string $join, bool $negated, callable $callback) {
+    protected function addNested(string $join, bool $negated, callable $callback): WhereInterface {
         $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
@@ -126,15 +117,7 @@ class Where extends Prototype implements WhereInterface {
         return $this;
     }
 
-    /**
-     * Add null
-     *
-     * @param string $join
-     * @param bool $negated
-     * @param string $identifier
-     * @return self
-     */
-    protected function addNull(string $join, bool $negated, string $identifier) {
+    protected function addNull(string $join, bool $negated, string $identifier): WhereInterface {
         $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_NULL_TAG, [
             NullTag::OPTION_JOIN => $join,
             NullTag::OPTION_NEGATED => $negated,
@@ -149,13 +132,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::between($identifier, $min, $max)
      */
     public function between(string $identifier, $min, $max): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_BETWEEN_TAG, [
-            BetweenTag::OPTION_IDENTIFIER => $identifier,
-            BetweenTag::OPTION_MIN => $min,
-            BetweenTag::OPTION_MAX => $max
-        ]);
-
-        return $this;
+        return $this->addBetween(BetweenTag::JOIN_AND, false, $identifier, $min, $max);
     }
 
     /**
@@ -204,12 +181,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::in($identifier, $values)
      */
     public function in($identifier, $values): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
-            InTag::OPTION_IDENTIFIER => $identifier,
-            InTag::OPTION_VALUES => $values
-        ]);
-
-        return $this;
+        return $this->addIn(InTag::JOIN_AND, false, $identifier, $values);
     }
 
     /**
@@ -235,14 +207,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::notBetween($identifier, $min, $max)
      */
     public function notBetween(string $identifier, $min, $max): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_BETWEEN_TAG, [
-            BetweenTag::OPTION_NEGATED => true,
-            BetweenTag::OPTION_IDENTIFIER => $identifier,
-            BetweenTag::OPTION_MIN => $min,
-            BetweenTag::OPTION_MAX => $max
-        ]);
-
-        return $this;
+        return $this->addBetween(BetweenTag::JOIN_AND, true, $identifier, $min, $max);
     }
 
     /**
@@ -258,13 +223,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::notIn($identifier, $values)
      */
     public function notIn($identifier, $values): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
-            InTag::OPTION_NEGATED => true,
-            InTag::OPTION_IDENTIFIER => $identifier,
-            InTag::OPTION_VALUES => $values
-        ]);
-
-        return $this;
+        return $this->addIn(InTag::JOIN_AND, true, $identifier, $values);
     }
 
     /**
@@ -296,14 +255,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orBetween($identifier, $min, $max)
      */
     public function orBetween(string $identifier, $min, $max): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_BETWEEN_TAG, [
-            BetweenTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            BetweenTag::OPTION_IDENTIFIER => $identifier,
-            BetweenTag::OPTION_MIN => $min,
-            BetweenTag::OPTION_MAX => $max
-        ]);
-
-        return $this;
+        return $this->addBetween(BetweenTag::JOIN_OR, false, $identifier, $min, $max);
     }
 
     /**
@@ -327,13 +279,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orIn($identifier, $values)
      */
     public function orIn($identifier, $values): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
-            InTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            InTag::OPTION_IDENTIFIER => $identifier,
-            InTag::OPTION_VALUES => $values
-        ]);
-
-        return $this;
+        return $this->addIn(InTag::JOIN_OR, false, $identifier, $values);
     }
 
     /**
@@ -359,15 +305,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNotBetween($identifier, $min, $max)
      */
     public function orNotBetween(string $identifier, $min, $max): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_BETWEEN_TAG, [
-            BetweenTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            BetweenTag::OPTION_NEGATED => true,
-            BetweenTag::OPTION_IDENTIFIER => $identifier,
-            BetweenTag::OPTION_MIN => $min,
-            BetweenTag::OPTION_MAX => $max
-        ]);
-
-        return $this;
+        return $this->addBetween(BetweenTag::JOIN_OR, true, $identifier, $min, $max);
     }
 
     /**
@@ -383,14 +321,7 @@ class Where extends Prototype implements WhereInterface {
      * @see \Fixin\Model\Request\Where\WhereInterface::orNotIn($identifier, $values)
      */
     public function orNotIn($identifier, $values): WhereInterface {
-        $this->tags[] = $this->container->clonePrototype(static::PROTOTYPE_IN_TAG, [
-            InTag::OPTION_JOIN => TagInterface::JOIN_OR,
-            InTag::OPTION_NEGATED => true,
-            InTag::OPTION_IDENTIFIER => $identifier,
-            InTag::OPTION_VALUES => $values
-        ]);
-
-        return $this;
+        return $this->addIn(InTag::JOIN_OR, true, $identifier, $values);
     }
 
     /**
