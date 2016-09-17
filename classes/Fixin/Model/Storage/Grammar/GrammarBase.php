@@ -46,7 +46,6 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
         EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@",
         IDENTIFIER_QUOTE_CLOSE = "`",
         IDENTIFIER_QUOTE_OPEN = "`",
-        IDENTIFIER_SEPARATOR = ', ',
         LIST_SEPARATOR = ', ',
         LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t",
         MASK_ALIAS = '%s AS %s',
@@ -229,7 +228,8 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
 
         // Request
         if ($expression instanceof RequestInterface) {
-            return sprintf(static::MASK_NESTED, $this->requestToString($expression, $query));
+//             return sprintf(static::MASK_NESTED, $this->requestToString($expression, $query));
+return '';
         }
 
         // Array
