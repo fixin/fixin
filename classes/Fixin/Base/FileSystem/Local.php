@@ -10,6 +10,9 @@ namespace Fixin\Base\FileSystem;
 use Fixin\Base\FileSystem\Exception\FileNotFoundException;
 use Fixin\Resource\Resource;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class Local extends Resource implements FileSystemInterface {
 
     const EXCEPTION_FILE_NOT_EXISTS = "File not exists at '%s'";

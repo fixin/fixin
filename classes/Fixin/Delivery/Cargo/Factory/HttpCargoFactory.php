@@ -21,6 +21,8 @@ class HttpCargoFactory extends Factory {
     /**
      * {@inheritDoc}
      * @see \Fixin\Resource\Factory\FactoryInterface::__invoke()
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __invoke(array $options = NULL, string $name = NULL) {
         $container = $this->container;

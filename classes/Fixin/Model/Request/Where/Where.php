@@ -15,6 +15,9 @@ use Fixin\Model\Request\Where\Tag\NullTag;
 use Fixin\Model\Request\Where\Tag\TagInterface;
 use Fixin\Model\Request\Where\Tag\WhereTag;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class Where extends WhereBase {
 
     /**
