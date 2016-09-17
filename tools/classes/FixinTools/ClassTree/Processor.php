@@ -7,8 +7,6 @@
 
 namespace FixinTools\ClassTree;
 
-use Fixin\Base\FileSystem\Local;
-
 class Processor extends Item {
 
     /**

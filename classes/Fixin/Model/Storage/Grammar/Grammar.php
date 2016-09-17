@@ -279,7 +279,7 @@ abstract class Grammar extends Resource implements GrammarInterface {
     /**
      * Identifier string
      *
-     * @param number|string|ExpressionInterface|RequestInterface $identifier
+     * @param number|string|array|ExpressionInterface|RequestInterface $identifier
      * @param QueryInterface $query
      * @return string
      */

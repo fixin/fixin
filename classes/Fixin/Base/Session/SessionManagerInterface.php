@@ -29,12 +29,12 @@ interface SessionManagerInterface extends PrototypeInterface {
      *
      * @return self
      */
-    public function regenerateId(): self;
+    public function regenerateId(): SessionManagerInterface;
 
     /**
      * Start session
      *
      * @return self
      */
-    public function start(): self;
+    public function start(): SessionManagerInterface;
 }
