@@ -13,9 +13,15 @@ use Fixin\Resource\PrototypeInterface;
 interface EntityCacheInterface extends PrototypeInterface {
 
     const
-        OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
-        OPTION_REPOSITORY = 'repository'
-    ;
+    OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
+    OPTION_REPOSITORY = 'repository';
+
+    /**
+     * Clear
+     *
+     * @return EntityCacheInterface
+     */
+    public function clear(): EntityCacheInterface;
 
     /**
      * Fetch result entity
@@ -32,4 +38,11 @@ interface EntityCacheInterface extends PrototypeInterface {
      * @return array
      */
     public function getByIds(array $ids): array;
+
+    /**
+     * Invalidate entities
+     *
+     * @return EntityInterface
+     */
+    public function invalidate(): EntityInterface;
 }

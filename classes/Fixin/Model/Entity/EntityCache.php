@@ -47,6 +47,17 @@ class EntityCache extends Prototype implements EntityCacheInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntityCacheInterface::clear()
+     */
+    public function clear(): EntityCacheInterface {
+        $this->entities = [];
+        $this->invalidEntities = [];
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityCacheInterface::fetchResultEntity($storageResult)
      */
     public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface {
@@ -88,6 +99,17 @@ class EntityCache extends Prototype implements EntityCacheInterface {
         }
 
         return array_filter($list);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Entity\EntityCacheInterface::invalidate()
+     */
+    public function invalidate(): EntityCacheInterface {
+        $this->invalidEntities = $this->entities + $this->invalidEntities;
+        $this->entities = [];
+
+        return $this;
     }
 
     /**
