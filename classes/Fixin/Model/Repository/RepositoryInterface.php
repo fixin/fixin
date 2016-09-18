@@ -18,12 +18,11 @@ use Fixin\Resource\ResourceInterface;
 interface RepositoryInterface extends ResourceInterface {
 
     const
-        OPTION_AUTO_INCREMENT_COLUMN = 'autoIncrementColumn',
-        OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
-        OPTION_NAME = 'name',
-        OPTION_PRIMARY_KEY = 'primaryKey',
-        OPTION_STORAGE = 'storage'
-    ;
+    OPTION_AUTO_INCREMENT_COLUMN = 'autoIncrementColumn',
+    OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
+    OPTION_NAME = 'name',
+    OPTION_PRIMARY_KEY = 'primaryKey',
+    OPTION_STORAGE = 'storage';
 
     /**
      * Create entity for the repository
@@ -117,6 +116,22 @@ interface RepositoryInterface extends ResourceInterface {
      * @return int
      */
     public function insertMultiple(array $rows): int;
+
+    /**
+     * Refresh entity from storage
+     *
+     * @param EntityInterface $entity
+     * @return RepositoryInterface
+     */
+    public function refresh(EntityInterface $entity): RepositoryInterface;
+
+    /**
+     * Save entity to storage
+     *
+     * @param EntityInterface $entity
+     * @return EntityIdInterface
+     */
+    public function save(EntityInterface $entity): EntityIdInterface;
 
     /**
      * Select entities

@@ -152,6 +152,22 @@ class Repository extends RepositoryBase {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::refresh($entity)
+     */
+    public function refresh(EntityInterface $entity): RepositoryInterface {
+        // TODO implementation
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::save($entity)
+     */
+    public function save(EntityInterface $entity): EntityIdInterface {
+        // TODO implementation
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Repository\RepositoryInterface::select($request)
      */
     public function select(RequestInterface $request): EntitySetInterface {
@@ -218,6 +234,8 @@ class Repository extends RepositoryBase {
      */
     public function update(array $set, RequestInterface $request): int {
         $this->validateRequest($request);
+
+        // TODO invalidate cache
 
         return  $this->getStorage()->update($set, $request);
     }

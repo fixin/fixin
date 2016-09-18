@@ -13,9 +13,15 @@ use Fixin\Resource\PrototypeInterface;
 interface EntityInterface extends PrototypeInterface {
 
     const
-        OPTION_ENTITY_ID = 'entityId',
-        OPTION_REPOSITORY = 'repository'
-    ;
+    OPTION_ENTITY_ID = 'entityId',
+    OPTION_REPOSITORY = 'repository';
+
+    /**
+     * Collect data for save
+     *
+     * @return array
+     */
+    abstract public function collectSaveData(): array;
 
     /**
      * Delete from the repository
@@ -25,6 +31,8 @@ interface EntityInterface extends PrototypeInterface {
     public function delete(): EntityInterface;
 
     /**
+     * Exchange array data
+     *
      * @param array $data
      * @return self
      */
@@ -45,18 +53,18 @@ interface EntityInterface extends PrototypeInterface {
     public function getRepository(): RepositoryInterface;
 
     /**
-     * Determine if deleted
-     *
-     * @return bool
-     */
-    public function isDeleted(): bool;
-
-    /**
      * Determine if stored
      *
      * @return bool
      */
     public function isStored(): bool;
+
+    /**
+     * Refresh from repository
+     *
+     * @return self
+     */
+    public function refresh(): EntityInterface;
 
     /**
      * Save changes to the repository
