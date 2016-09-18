@@ -80,14 +80,10 @@ abstract class Entity extends Prototype implements EntityInterface {
      * {@inheritDoc}
      * @see \Fixin\Model\Entity\EntityInterface::refresh()
      */
-    public function refresh() {
-        if ($this->isStored()) {
-            $this->getRepository()->refresh($this);
+    public function refresh(): EntityInterface {
+        $this->getRepository()->refresh($this);
 
-            return $this;
-        }
-
-        throw new NotStoredEntityException(static::EXCEPTION_NOT_STORED_ENTITY);
+        return $this;
     }
 
     /**
