@@ -11,6 +11,7 @@ use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
+use Fixin\Model\Repository\Exception\EntityRefreshFaultException;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageResultInterface;
@@ -19,12 +20,14 @@ use Fixin\Support\Arrays;
 class Repository extends RepositoryBase {
 
     const
-        EXCEPTION_INVALID_ID = "Invalid ID",
-        EXCEPTION_INVALID_REQUEST = "Invalid request, repository mismatch '%s' '%s'",
-        PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
-        PROTOTYPE_ENTITY_SET = 'Model\Entity\EntitySet',
-        PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
-        PROTOTYPE_REQUEST = 'Model\Request\Request';
+    EXCEPTION_ENTITY_REFRESH_ERROR = 'Entity refresh error',
+    EXCEPTION_INVALID_ID = "Invalid ID",
+    EXCEPTION_INVALID_REQUEST = "Invalid request, repository mismatch '%s' '%s'",
+    EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity',
+    PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
+    PROTOTYPE_ENTITY_SET = 'Model\Entity\EntitySet',
+    PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
+    PROTOTYPE_REQUEST = 'Model\Request\Request';
 
     /**
      * {@inheritDoc}
@@ -101,7 +104,11 @@ class Repository extends RepositoryBase {
     public function delete(RequestInterface $request): int {
         $this->validateRequest($request);
 
-        return $this->getStorage()->delete($request);
+        if ($result = $this->getStorage()->delete($request)) {
+            $this->getEntityCache()->invalidate();
+        }
+
+        return $result;
     }
 
     /**
@@ -155,7 +162,22 @@ class Repository extends RepositoryBase {
      * @see \Fixin\Model\Repository\RepositoryInterface::refresh($entity)
      */
     public function refresh(EntityInterface $entity): RepositoryInterface {
-        // TODO implementation
+        if ($entity->isStored()) {
+            $request = $this->createRequest();
+            $request->getWhere()->id($entity->getEntityId());
+            $data = $request->fetchRawData()->current();
+
+            if ($data !== false) {
+                $entity->exchangeArray($data);
+                $this->getEntityCache()->refreshed($entity);
+
+                return $this;
+            }
+
+            throw new EntityRefreshFaultException(static::EXCEPTION_ENTITY_REFRESH_ERROR);
+        }
+
+        throw new EntityRefreshFaultException(static::EXCEPTION_NOT_STORED_ENTITY);
     }
 
     /**
@@ -163,7 +185,24 @@ class Repository extends RepositoryBase {
      * @see \Fixin\Model\Repository\RepositoryInterface::save($entity)
      */
     public function save(EntityInterface $entity): EntityIdInterface {
-        // TODO implementation
+        $set = $entity->collectSaveData();
+
+        // Update
+        if ($oldId = $entity->getEntityId()) {
+            $request = $this->createRequest();
+            $request->getWhere()->id($oldId);
+
+            $this->getStorage()->update($set, $request);
+
+            // New ID
+            $id = $oldId->getArrayCopy();
+            $id += Arrays::intersectByKeys($set, $this->primaryKey);
+
+            return $id === $oldId->getArrayCopy() ? $oldId : $this->createIdWithArray($id);
+        }
+
+        // Insert
+        return $this->insert($set);
     }
 
     /**
@@ -235,9 +274,11 @@ class Repository extends RepositoryBase {
     public function update(array $set, RequestInterface $request): int {
         $this->validateRequest($request);
 
-        // TODO invalidate cache
+        if ($result = $this->getStorage()->update($set, $request)) {
+            $this->getEntityCache()->invalidate();
+        }
 
-        return  $this->getStorage()->update($set, $request);
+        return $result;
     }
 
     /**
