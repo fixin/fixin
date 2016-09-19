@@ -5,12 +5,12 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Entity;
+namespace Fixin\Model\Entity\Cache;
 
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\PrototypeInterface;
 
-interface EntityCacheInterface extends PrototypeInterface {
+interface CacheInterface extends PrototypeInterface {
 
     const
     OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
@@ -19,17 +19,17 @@ interface EntityCacheInterface extends PrototypeInterface {
     /**
      * Clear
      *
-     * @return EntityCacheInterface
+     * @return CacheInterface
      */
-    public function clear(): EntityCacheInterface;
+    public function clear(): CacheInterface;
 
     /**
      * Fetch result entity
      *
      * @param StorageResultInterface $storageResult
-     * @return EntityInterface
+     * @return CacheInterface
      */
-    public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface;
+    public function fetchResultEntity(StorageResultInterface $storageResult): CacheInterface;
 
     /**
      * Get entities by IDs
@@ -42,7 +42,7 @@ interface EntityCacheInterface extends PrototypeInterface {
     /**
      * Invalidate entities
      *
-     * @return EntityInterface
+     * @return CacheInterface
      */
-    public function invalidate(): EntityInterface;
+    public function invalidate(): CacheInterface;
 }
