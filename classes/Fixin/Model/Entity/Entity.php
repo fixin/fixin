@@ -92,9 +92,10 @@ abstract class Entity extends Prototype implements EntityInterface {
      */
     public function save(): EntityInterface {
         $this->entityId = $this->getRepository()->save($this);
-        $this->saveRelated();
 
-        return $this;
+        return $this
+        ->refresh()
+        ->saveRelated();
     }
 
     /**
