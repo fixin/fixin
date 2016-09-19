@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Entity;
 
+use Fixin\Model\Entity\Cache\CacheInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Prototype;
@@ -14,12 +15,12 @@ use Fixin\Resource\Prototype;
 class EntitySet extends Prototype implements EntitySetInterface {
 
     const THIS_SETS_LAZY = [
-        self::OPTION_ENTITY_CACHE => EntityCacheInterface::class,
+        self::OPTION_ENTITY_CACHE => CacheInterface::class,
         self::OPTION_REPOSITORY => RepositoryInterface::class
     ];
 
     /**
-     * @var EntityCacheInterface
+     * @var CacheInterface
      */
     protected $entityCache;
 
@@ -129,9 +130,9 @@ class EntitySet extends Prototype implements EntitySetInterface {
     /**
      * Get entity cache
      *
-     * @return EntityCacheInterface
+     * @return CacheInterface
      */
-    protected function getEntityCache(): EntityCacheInterface {
+    protected function getEntityCache(): CacheInterface {
         return $this->entityCache ?: $this->loadLazyProperty(static::OPTION_ENTITY_CACHE);
     }
 

@@ -8,7 +8,7 @@
 namespace Fixin\Model\Repository;
 
 use Fixin\Exception\InvalidArgumentException;
-use Fixin\Model\Entity\EntityCacheInterface;
+use Fixin\Model\Entity\Cache\CacheInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Resource\Resource;
@@ -18,7 +18,7 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface {
     const
         EXCEPTION_INVALID_NAME = "Invalid name '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
-        PROTOTYPE_ENTITY_CACHE = 'Model\Entity\EntityCache', // TODO
+        PROTOTYPE_ENTITY_CACHE = 'Model\Entity\Cache\RuntimeCache', // TODO
         THIS_REQUIRES = [
             self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
             self::OPTION_NAME => self::TYPE_STRING,
@@ -36,7 +36,7 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface {
     protected $autoIncrementColumn;
 
     /**
-     * @var EntityCacheInterface|null
+     * @var CacheInterface|null
      */
     protected $entityCache;
 
@@ -71,12 +71,14 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface {
     /**
      * Get entity cache
      *
-     * @return EntityCacheInterface
+     * @return CacheInterface
      */
-    protected function getEntityCache(): EntityCacheInterface {
+    protected function getEntityCache(): CacheInterface {
+        // TODO: default class, valahol le van tærolva hogy mi a default, de felulbiralhato (constructorban asszem)
+        // TODO: minden runtimeexception lecserelesre sajatra, ne az Exception\RuntimeException hasznalja kozvetlenul
         return $this->entityCache ?? ($this->entityCache = $this->container->clonePrototype(static::PROTOTYPE_ENTITY_CACHE, [
-            EntityCacheInterface::OPTION_REPOSITORY => $this,
-            EntityCacheInterface::OPTION_ENTITY_PROTOTYPE => $this->getEntityPrototype()
+            CacheInterface::OPTION_REPOSITORY => $this,
+            CacheInterface::OPTION_ENTITY_PROTOTYPE => $this->getEntityPrototype()
         ]));
     }
 
