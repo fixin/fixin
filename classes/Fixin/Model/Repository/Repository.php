@@ -169,7 +169,7 @@ class Repository extends RepositoryBase {
 
             if ($data !== false) {
                 $entity->exchangeArray($data);
-                $this->getEntityCache()->refreshed($entity);
+                $this->getEntityCache()->update($entity);
 
                 return $this;
             }
