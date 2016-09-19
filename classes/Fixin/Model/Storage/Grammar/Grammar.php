@@ -215,19 +215,16 @@ abstract class Grammar extends GrammarBase {
         ->appendWord(static::STATEMENT_INSERT)
         ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
 
-        // Columns
         $columnNames = [];
         foreach (array_keys(reset($rows)) as $identifier) {
             $columnNames[] = $this->identifierToString($identifier, $query);
         }
-        
+
         $query->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $columnNames)));
 
-        // Rows
         $source = [];
         foreach ($rows as $set) {
             $values = [];
-
             foreach ($set as $value) {
                 $values[] = $this->expressionToString($value, $query);
             }

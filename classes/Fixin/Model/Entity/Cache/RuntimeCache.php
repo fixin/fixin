@@ -66,15 +66,10 @@ class RuntimeCache extends Cache {
      * @see \Fixin\Model\Entity\Cache\CacheInterface::getByIds($ids)
      */
     public function getByIds(array $ids): array {
-        if (!$ids) {
-            return [];
-        }
-
         $ids = array_combine($ids, $ids);
         $cached = array_intersect_key($this->entities, $ids);
         $list = array_replace(array_fill_keys(array_keys($ids), null), $cached);
 
-        // Fetch required data
         if ($ids = array_diff_key($ids, $cached)) {
             $request = $this->repository->createRequest();
             $request->getWhere()->in($this->repository->getPrimaryKey(), $ids);
