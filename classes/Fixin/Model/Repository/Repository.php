@@ -187,16 +187,12 @@ class Repository extends RepositoryBase {
     public function save(EntityInterface $entity): EntityIdInterface {
         $set = $entity->collectSaveData();
 
-        // Update
         if ($oldId = $entity->getEntityId()) {
             $request = $this->createRequest();
             $request->getWhere()->id($oldId);
-
             $this->getStorage()->update($set, $request);
 
-            // New ID
             $id = array_replace($oldId->getArrayCopy(), Arrays::intersectByKeys($set, $this->primaryKey));
-
             if ($id === $oldId->getArrayCopy()) {
                 return $oldId;
             }
@@ -206,7 +202,6 @@ class Repository extends RepositoryBase {
             return $this->createIdWithArray($id);
         }
 
-        // Insert
         return $this->insert($set);
     }
 
