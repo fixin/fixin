@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Request\Where;
 
+use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Resource\PrototypeInterface;
 
@@ -51,6 +52,13 @@ interface WhereInterface extends PrototypeInterface {
      * @return array
      */
     public function getTags(): array;
+
+    /**
+     * Add: id
+     * @param EntityIdInterface $entityId
+     * @return self
+     */
+    public function id(EntityIdInterface $entityId): WhereInterface;
 
     /**
      * Add: and in
@@ -156,6 +164,13 @@ interface WhereInterface extends PrototypeInterface {
      * @return self
      */
     public function orExists(RequestInterface $request): WhereInterface;
+
+    /**
+     * Add: id
+     * @param EntityIdInterface $entityId
+     * @return self
+     */
+    public function orId(EntityIdInterface $entityId): WhereInterface;
 
     /**
      * Add: or in

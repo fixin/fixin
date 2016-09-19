@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Request\Where;
 
+use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\Where\Tag\BetweenTag;
 use Fixin\Model\Request\Where\Tag\ExistsTag;
@@ -51,6 +52,14 @@ class Where extends WhereBase {
      */
     public function getTags(): array {
         return $this->tags;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\Where\WhereInterface::id($entityId)
+     */
+    public function id(EntityIdInterface $entityId): WhereInterface {
+        return $this->items($entityId->getArrayCopy());
     }
 
     /**
@@ -149,6 +158,14 @@ class Where extends WhereBase {
      */
     public function orExists(RequestInterface $request): WhereInterface {
         return $this->addExists(ExistsTag::JOIN_OR, false, $request);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Request\Where\WhereInterface::orId($entityId)
+     */
+    public function orId(EntityIdInterface $entityId): WhereInterface {
+        return $this->orItems($entityId->getArrayCopy());
     }
 
     /**
