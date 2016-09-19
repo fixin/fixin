@@ -9,6 +9,7 @@ namespace Fixin\Model\Entity\Cache;
 
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\PrototypeInterface;
+use Fixin\Model\Entity\EntityInterface;
 
 interface CacheInterface extends PrototypeInterface {
 
@@ -27,9 +28,9 @@ interface CacheInterface extends PrototypeInterface {
      * Fetch result entity
      *
      * @param StorageResultInterface $storageResult
-     * @return CacheInterface
+     * @return EntityInterface
      */
-    public function fetchResultEntity(StorageResultInterface $storageResult): CacheInterface;
+    public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface;
 
     /**
      * Get entities by IDs
@@ -45,4 +46,20 @@ interface CacheInterface extends PrototypeInterface {
      * @return CacheInterface
      */
     public function invalidate(): CacheInterface;
+
+    /**
+     * Remove entity
+     *
+     * @param EntityInterface $entity
+     * @return CacheInterface
+     */
+    public function remove(EntityInterface $entity): CacheInterface;
+
+    /**
+     * Update entity
+     *
+     * @param EntityInterface $entity
+     * @return CacheInterface
+     */
+    public function update(EntityInterface $entity): CacheInterface;
 }
