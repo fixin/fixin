@@ -18,7 +18,7 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface {
     const
         EXCEPTION_INVALID_NAME = "Invalid name '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
-        PROTOTYPE_ENTITY_CACHE = 'Model\Entity\Cache\Cache', // TODO
+        PROTOTYPE_ENTITY_CACHE = 'Model\Entity\Cache\RuntimeCache', // TODO
         THIS_REQUIRES = [
             self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
             self::OPTION_NAME => self::TYPE_STRING,

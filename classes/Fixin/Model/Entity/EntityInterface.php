@@ -21,7 +21,7 @@ interface EntityInterface extends PrototypeInterface {
      *
      * @return array
      */
-    abstract public function collectSaveData(): array;
+    public function collectSaveData(): array;
 
     /**
      * Delete from the repository
