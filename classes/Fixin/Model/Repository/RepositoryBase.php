@@ -18,14 +18,15 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface {
     const
         EXCEPTION_INVALID_NAME = "Invalid name '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
-        PROTOTYPE_ENTITY_CACHE = 'Model\Entity\Cache\RuntimeCache', // TODO
         THIS_REQUIRES = [
+            self::OPTION_ENTITY_CACHE => self::TYPE_INSTANCE,
             self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
             self::OPTION_NAME => self::TYPE_STRING,
             self::OPTION_PRIMARY_KEY => self::TYPE_ARRAY,
             self::OPTION_STORAGE => self::TYPE_INSTANCE,
         ],
         THIS_SETS_LAZY = [
+            self::OPTION_ENTITY_CACHE => CacheInterface::class,
             self::OPTION_ENTITY_PROTOTYPE => EntityInterface::class,
             self::OPTION_STORAGE => StorageInterface::class
         ];
@@ -36,7 +37,7 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface {
     protected $autoIncrementColumn;
 
     /**
-     * @var CacheInterface|null
+     * @var CacheInterface|false|null
      */
     protected $entityCache;
 
@@ -74,12 +75,10 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface {
      * @return CacheInterface
      */
     protected function getEntityCache(): CacheInterface {
-        // TODO: default class, valahol le van tærolva hogy mi a default, de felulbiralhato (constructorban asszem)
-        // TODO: minden runtimeexception lecserelesre sajatra, ne az Exception\RuntimeException hasznalja kozvetlenul
-        return $this->entityCache ?? ($this->entityCache = $this->container->clonePrototype(static::PROTOTYPE_ENTITY_CACHE, [
+        return $this->entityCache ?: $this->loadLazyProperty(static::OPTION_ENTITY_CACHE, [
             CacheInterface::OPTION_REPOSITORY => $this,
             CacheInterface::OPTION_ENTITY_PROTOTYPE => $this->getEntityPrototype()
-        ]));
+        ]);
     }
 
     /**

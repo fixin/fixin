@@ -19,6 +19,7 @@ interface RepositoryInterface extends ResourceInterface {
 
     const
     OPTION_AUTO_INCREMENT_COLUMN = 'autoIncrementColumn',
+    OPTION_ENTITY_CACHE = 'entityCache',
     OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
     OPTION_NAME = 'name',
     OPTION_PRIMARY_KEY = 'primaryKey',

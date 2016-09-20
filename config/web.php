@@ -31,18 +31,12 @@ return [
 
             // Basics
             'defaultFileSystem' => 'Base\FileSystem\Local',
-            'fileStorage' => [
-                'class' => 'Model\Storage\Directory\DirectoryStorage',
-                'options' => [
-                    'fileSystem' => 'defaultFileSystem'
-                ]
-            ],
             'starterCargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
             'sessionRepository' => [
                 'class' => 'Model\Repository\Repository',
                 'options' => [
                     'name' => 'session',
-                    'storage' => 'fileStorage',
+                    'storage' => 'dbStorage',
                     'entityPrototype' => 'Model\Entity\Entity'
                 ]
             ],
