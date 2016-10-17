@@ -7,7 +7,6 @@
 
 namespace Fixin\Model\Entity\Cache;
 
-use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 
