@@ -23,6 +23,11 @@ return [
             'Delivery\Node\HttpRouterHub' => [
                 'class' => 'Delivery\Node\Factory\HttpRouterHubFactory'
             ],
+            'Model\Repository' => [
+                'options' => [
+                    'entityCache' => 'Model\Entity\Cache\Cache'
+                ]
+            ],
             'View\View' => [
                 'options' => [
                     'fileResolver' => 'viewFileResolver'
@@ -30,6 +35,9 @@ return [
             ],
 
             // Basics
+            'dbStorage' => [
+                'class' => 'Model\Storage\Pdo\PdoStorage',
+            ],
             'defaultFileSystem' => 'Base\FileSystem\Local',
             'starterCargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
             'sessionRepository' => [
@@ -37,7 +45,8 @@ return [
                 'options' => [
                     'name' => 'session',
                     'storage' => 'dbStorage',
-                    'entityPrototype' => 'Model\Entity\Entity'
+                    'entityPrototype' => 'Base\Session\SessionEntity',
+                    'entityCache' => 'Model\Entity\Cache\RuntimeCache',
                 ]
             ],
             'viewFileResolver' => [
