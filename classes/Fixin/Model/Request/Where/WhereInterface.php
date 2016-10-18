@@ -61,6 +61,13 @@ interface WhereInterface extends PrototypeInterface {
     public function id(EntityIdInterface $entityId): WhereInterface;
 
     /**
+     * Add: ids
+     * @param EntityIdInterface[] $entityIds
+     * @return WhereInterface
+     */
+    public function ids(array $entityIds): WhereInterface;
+
+    /**
      * Add: and in
      * @param string|array $identifier
      * @param array|RequestInterface $values
