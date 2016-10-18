@@ -23,14 +23,14 @@ abstract class Entity extends Prototype implements EntityInterface {
     ];
 
     /**
-     * @var array
-     */
-    protected $deletableRelatedEntities = array();
-
-    /**
      * @var EntityIdInterface
      */
     protected $entityId;
+
+    /**
+     * @var Entity[]
+     */
+    protected $outdatedSubEntities = array();
 
     /**
      * @var RepositoryInterface|false|null
@@ -95,20 +95,26 @@ abstract class Entity extends Prototype implements EntityInterface {
 
         return $this
         ->refresh()
-        ->saveRelated();
+        ->saveSubEntities();
     }
 
     /**
-     * Save related entities
+     * Save sub entities
      *
      * @return \Fixin\Model\Entity\Entity
      */
-    protected function saveRelated() {
-        foreach ($this->deletableRelatedEntities as $entity) {
-            $entity->delete();
+    protected function saveSubEntities() {
+        // Delete outdated entities
+        $repositories = new \SplObjectStorage();
+        foreach ($this->outdatedSubEntities as $entity) {
+            $repositories[$entity->getRepository()] = $entity->getEntityId();
         }
 
-        $this->deletableRelatedEntities = [];
+        foreach ($repositories as $repository) {
+            $repository->deleteByIds($repositories[$repository]);
+        }
+
+        $this->outdatedSubEntities = [];
 
         return $this;
     }
