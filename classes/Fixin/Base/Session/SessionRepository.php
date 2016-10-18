@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Session;
 
-class Repository extends \Fixin\Model\Repository\Repository {
+class SessionRepository extends \Fixin\Model\Repository\Repository {
 
     protected $primaryKey = ['sessionID'];
 

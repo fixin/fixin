@@ -9,7 +9,7 @@ namespace Fixin\Base\Session;
 
 use Fixin\Model\Entity\EntityInterface;
 
-class Entity extends \Fixin\Model\Entity\Entity {
+class SessionEntity extends \Fixin\Model\Entity\Entity {
 
     /**
      * @var array

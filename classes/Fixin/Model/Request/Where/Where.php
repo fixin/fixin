@@ -64,6 +64,19 @@ class Where extends WhereBase {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Model\Request\Where\WhereInterface::ids()
+     */
+    public function ids(array $entityIds): WhereInterface {
+        $list = [];
+        foreach ($entityIds as $entityId) {
+            $list[] = $entityId->getArrayCopy();
+        }
+
+        return $this->in(array_keys(reset($list)), $list);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Model\Request\Where\WhereInterface::in($identifier, $values)
      */
     public function in($identifier, $values): WhereInterface {

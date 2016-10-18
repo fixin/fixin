@@ -17,6 +17,9 @@ use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Support\Arrays;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class Repository extends RepositoryBase {
 
     const
@@ -109,6 +112,17 @@ class Repository extends RepositoryBase {
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::deleteByIds()
+     */
+    public function deleteByIds(array $ids): int {
+        $request = $this->createRequest();
+        $request->getWhere()->ids($ids);
+
+        return $this->delete($request);
     }
 
     /**
