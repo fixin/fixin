@@ -211,6 +211,32 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
     }
 
     /**
+     * Send headers
+     *
+     * @return self
+     */
+    protected function sendHeaders() {
+        foreach ($this->headers as $name => $values) {
+            foreach ($values as $value) {
+                header("$name: " . $value, false);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Send status code
+     *
+     * @return self
+     */
+    protected function sendStatus() {
+        http_response_code($this->statusCode);
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Delivery\Cargo\HttpCargoInterface::setContentType($contentType)
      */
@@ -342,7 +368,9 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
         // Cookie changes
         $this->cookies->sendChanges();
 
-        // @todo header
+        // Headers
+        $this->sendHeaders();
+        $this->sendStatus();
 
         // Content
         echo $this->content;
