@@ -9,7 +9,7 @@ namespace Fixin\Base\Session;
 
 use Fixin\Model\Entity\EntityInterface;
 
-class Entity extends \Fixin\Model\Entity\Entity {
+class SessionEntity extends \Fixin\Model\Entity\SessionEntity {
 
     /**
      * @var array
@@ -23,7 +23,7 @@ class Entity extends \Fixin\Model\Entity\Entity {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::collectSaveData()
+     * @see \Fixin\Model\SessionEntity\EntityInterface::collectSaveData()
      */
     public function collectSaveData(): array {
         return [
@@ -34,7 +34,7 @@ class Entity extends \Fixin\Model\Entity\Entity {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::exchangeArray()
+     * @see \Fixin\Model\SessionEntity\EntityInterface::exchangeArray()
      */
     public function exchangeArray(array $data): EntityInterface {
         $this->sessionId = $data['sessionId'] ?? null;
