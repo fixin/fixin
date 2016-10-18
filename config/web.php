@@ -12,7 +12,15 @@ return [
             // Classes
             'Base\Session\SessionManager' => [
                 'options' => [
-                    'repository' => 'sessionRepository'
+                    'repository' => 'Base\Session\SessionRepository'
+                ]
+            ],
+            'Base\Session\SessionRepository' => [
+                'class' => 'Model\Repository\Repository',
+                'options' => [
+                    'name' => 'system__sessions',
+                    'storage' => 'dbStorage',
+                    'entityPrototype' => 'Base\Session\SessionEntity',
                 ]
             ],
             'Delivery\Node\HttpErrorHub' => [
@@ -23,9 +31,9 @@ return [
             'Delivery\Node\HttpRouterHub' => [
                 'class' => 'Delivery\Node\Factory\HttpRouterHubFactory'
             ],
-            'Model\Repository' => [
+            'Model\Repository\Repository' => [
                 'options' => [
-                    'entityCache' => 'Model\Entity\Cache\Cache'
+                    'entityCache' => 'Model\Entity\Cache\RuntimeCache'
                 ]
             ],
             'View\View' => [
@@ -40,15 +48,6 @@ return [
             ],
             'defaultFileSystem' => 'Base\FileSystem\Local',
             'starterCargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
-            'sessionRepository' => [
-                'class' => 'Model\Repository\Repository',
-                'options' => [
-                    'name' => 'session',
-                    'storage' => 'dbStorage',
-                    'entityPrototype' => 'Base\Session\SessionEntity',
-                    'entityCache' => 'Model\Entity\Cache\RuntimeCache',
-                ]
-            ],
             'viewFileResolver' => [
                 'class' => 'Base\FileSystem\FileResolver',
                 'options' => [
