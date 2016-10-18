@@ -65,6 +65,14 @@ interface RepositoryInterface extends ResourceInterface {
     public function delete(RequestInterface $request): int;
 
     /**
+     * Delete entities by ids
+     *
+     * @param EntityIdInterface[] $ids
+     * @return int
+     */
+    public function deleteByIds(array $ids): int;
+
+    /**
      * Exists
      *
      * @param RequestInterface $request
