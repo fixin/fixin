@@ -11,6 +11,9 @@ use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class Request extends RequestBase {
 
     const
