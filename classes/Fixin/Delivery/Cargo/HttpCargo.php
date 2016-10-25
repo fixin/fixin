@@ -372,7 +372,12 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
         $this->sendHeaders();
         $this->sendStatus();
 
-        // Content
-        echo $this->content;
+        // Parent
+        parent::unpack();
+
+        // Session
+        if ($this->session) {
+            $this->session->save();
+        }
     }
 }
