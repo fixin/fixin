@@ -96,6 +96,8 @@ class Application implements ApplicationInterface {
     public function run(): ApplicationInterface {
         $container = $this->container;
 
+        // TODO lock
+
         try {
             $cargo = $container->clonePrototype($this->config[static::OPTION_CARGO]);
             $cargo = $container->get($this->config[static::OPTION_ROUTE])->handle($cargo);
