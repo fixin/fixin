@@ -307,4 +307,12 @@ class Repository extends RepositoryBase {
 
         throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_REQUEST, $this->getName(), $request->getRepository()->getName()));
     }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Repository\RepositoryInterface::valueToDateTime()
+     */
+    public function valueToDateTime($value) {
+        return $this->getStorage()->valueToDateTime($value);
+    }
 }

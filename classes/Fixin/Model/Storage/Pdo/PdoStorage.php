@@ -239,4 +239,12 @@ class PdoStorage extends Resource implements StorageInterface {
     public function update(array $set, RequestInterface $request): int {
         return $this->execute($this->getGrammar()->update($set, $request));
     }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\StorageInterface::valueToDateTime()
+     */
+    public function valueToDateTime($value) {
+        return $this->getGrammar()->valueToDateTime($value);
+    }
 }

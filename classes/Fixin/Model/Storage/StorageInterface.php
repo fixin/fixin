@@ -87,4 +87,12 @@ interface StorageInterface extends ResourceInterface {
      * @return int
      */
     public function update(array $set, RequestInterface $request): int;
+
+    /**
+     * Convert value to DateTime
+     *
+     * @param string|int $value
+     * @return DateTime|null
+     */
+    public function valueToDateTime($value);
 }

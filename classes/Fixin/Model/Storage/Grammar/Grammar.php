@@ -7,10 +7,12 @@
 
 namespace Fixin\Model\Storage\Grammar;
 
+use DateTime;
 use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\UnionInterface;
+use Fixin\Support\Numbers;
 
 abstract class Grammar extends GrammarBase {
 
@@ -298,5 +300,17 @@ abstract class Grammar extends GrammarBase {
         $this->clauseWhere($request, $query);
 
         return $query;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::valueToDateTime()
+     */
+    public function valueToDateTime($value) {
+        if (Numbers::isInt($value)) {
+            return new DateTime($value);
+        }
+
+        return DateTime::createFromFormat(static::DATETIME_FORMAT, $value);
     }
 }

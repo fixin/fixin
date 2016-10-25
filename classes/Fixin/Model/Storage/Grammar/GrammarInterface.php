@@ -77,4 +77,12 @@ interface GrammarInterface extends ResourceInterface {
      * @return QueryInterface
      */
     public function update(array $set, RequestInterface $request): QueryInterface;
+
+    /**
+     * Convert value to DateTime
+     *
+     * @param string|int $value
+     * @return DateTime|null
+     */
+    public function valueToDateTime($value);
 }
