@@ -16,11 +16,11 @@ return [
                 ]
             ],
             'Base\Session\SessionRepository' => [
-                'class' => 'Model\Repository\Repository',
                 'options' => [
                     'name' => 'system__sessions',
                     'storage' => 'dbStorage',
                     'entityPrototype' => 'Base\Session\SessionEntity',
+                    'entityCache' => 'Model\Entity\Cache\RuntimeCache'
                 ]
             ],
             'Delivery\Node\HttpErrorHub' => [
@@ -30,11 +30,6 @@ return [
             ],
             'Delivery\Node\HttpRouterHub' => [
                 'class' => 'Delivery\Node\Factory\HttpRouterHubFactory'
-            ],
-            'Model\Repository\Repository' => [
-                'options' => [
-                    'entityCache' => 'Model\Entity\Cache\RuntimeCache'
-                ]
             ],
             'View\View' => [
                 'options' => [

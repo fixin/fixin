@@ -7,9 +7,19 @@
 
 namespace Fixin\Base\Session;
 
+use DateTime;
 use Fixin\Model\Entity\EntityInterface;
 
 class SessionEntity extends \Fixin\Model\Entity\Entity {
+
+    const
+    COLUMN_ACCESS_TIME = 'accessTime',
+    COLUMN_SESSION_ID = 'sessionId';
+
+    /**
+     * @var DateTime
+     */
+    protected $accessTime;
 
     /**
      * @var array
@@ -28,7 +38,8 @@ class SessionEntity extends \Fixin\Model\Entity\Entity {
     public function collectSaveData(): array {
         return [
             'sessionId' => $this->sessionId,
-            'data' => serialize($this->data)
+            'data' => serialize($this->data),
+            'accessTime' => $this->accessTime
         ];
     }
 
@@ -38,9 +49,23 @@ class SessionEntity extends \Fixin\Model\Entity\Entity {
      */
     public function exchangeArray(array $data): EntityInterface {
         $this->sessionId = $data['sessionId'] ?? null;
-        $this->data = isset($data['data']) ? (is_string($data['data']) ? unserialize($data['data']) : $data['data']) : null;
+
+        $value = $data['data'] ?? null;
+        $this->data = is_string($value) ? unserialize($value) : $value;
+
+        $value = $data['accessTime'] ?? null;
+        $this->accessTime = $value instanceof DateTime || is_null($value) ? $value : $this->getRepository()->toDate($value);
 
         return $this;
+    }
+
+    /**
+     * Get access time
+     *
+     * @return DateTime
+     */
+    public function getAccessTime() {
+        return $this->accessTime;
     }
 
     /**
@@ -59,6 +84,18 @@ class SessionEntity extends \Fixin\Model\Entity\Entity {
      */
     public function getSessionId() {
         return $this->sessionId;
+    }
+
+    /**
+     * Set access time
+     *
+     * @param DateTime $accessTime
+     * @return self
+     */
+    public function setAccessTime(DateTime $accessTime): self {
+        $this->accessTime = $accessTime;
+
+        return $this;
     }
 
     /**
