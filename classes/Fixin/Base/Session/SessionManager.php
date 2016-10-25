@@ -198,8 +198,8 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         }
 
         /* @var $entity Entity */
-        if ($entity = $request->fetchFirst()) {
-            $this->areas = $entity->getData();
+        if ($this->entity = $request->fetchFirst()) {
+            $this->areas = $this->entity->getData();
             $this->sessionId = $sessionId;
 
             if ($this->lifetime) {
