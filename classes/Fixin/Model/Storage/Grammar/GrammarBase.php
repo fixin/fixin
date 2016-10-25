@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Storage\Grammar;
 
+use DateTime;
 use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Request\ExpressionInterface;
@@ -24,6 +25,7 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
 
     const
         EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@",
+        DATETIME_FORMAT = 'Y-m-d H:i:s',
         IDENTIFIER_QUOTE_CLOSE = "`",
         IDENTIFIER_QUOTE_OPEN = "`",
         LIST_SEPARATOR = ', ',
@@ -83,19 +85,24 @@ abstract class GrammarBase extends Resource implements GrammarInterface {
             return $this->quoteExpression($expression->getExpression());
         }
 
+        // DateTime
+        if ($expression instanceof DateTime) {
+            $expression = $expression->format(static::DATETIME_FORMAT);
+        }
+
         // Request
-        if ($expression instanceof RequestInterface) {
+        elseif ($expression instanceof RequestInterface) {
             return sprintf(static::MASK_NESTED, $this->requestToString($expression, $query));
         }
 
         // ID
-        if ($expression instanceof EntityIdInterface) {
+        elseif ($expression instanceof EntityIdInterface) {
             $expression = $expression->getArrayCopy();
             if (count($expression) > 1) {
                 return $this->expressionArrayToString($expression, $query);
             }
 
-            return $this->expressionToString(reset($expression), $query);
+            $expression = reset($expression);
         }
 
         $query->addParameter($expression);
