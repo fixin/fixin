@@ -216,10 +216,12 @@ class SessionManager extends Prototype implements SessionManagerInterface {
             $where->compare(SessionEntity::COLUMN_ACCESS_TIME, '>=', new DateTime('+' . $this->lifetime . ' MINUTES'));
         }
 
-        $this->entity = $request->fetchFirst();
+        /** @var SessionEntity $entity */
+        $entity = $request->fetchFirst();
 
-        if (isset($this->entity)) {
-            $this->areas = $this->entity->getData();
+        if ($entity) {
+            $this->entity = $entity;
+            $this->areas = $entity->getData();
             $this->sessionId = $sessionId;
 
             if ($this->lifetime) {
