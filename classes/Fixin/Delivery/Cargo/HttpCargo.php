@@ -369,8 +369,9 @@ class HttpCargo extends Cargo implements HttpCargoInterface {
         $this->cookies->sendChanges();
 
         // Headers
-        $this->sendHeaders();
-        $this->sendStatus();
+        $this
+        ->sendHeaders()
+        ->sendStatus();
 
         // Parent
         parent::unpack();
