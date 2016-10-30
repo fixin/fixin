@@ -7,6 +7,7 @@
 
 namespace Fixin\Delivery\Cargo\Factory;
 
+use Fixin\Base\Container\VariableContainer;
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
@@ -27,7 +28,7 @@ class HttpCargoFactory extends Factory {
     public function __invoke(array $options = NULL, string $name = NULL) {
         $container = $this->container;
 
-        $variables = $container->clonePrototype('Base\Container\VariableContainer');
+        $variables = new VariableContainer();
         $cookies = $container->clonePrototype('Base\Cookie\CookieManager', [
             CookieManagerInterface::OPTION_COOKIES => $_COOKIE
         ]);
