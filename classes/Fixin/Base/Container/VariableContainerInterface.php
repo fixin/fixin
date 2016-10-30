@@ -47,4 +47,12 @@ interface VariableContainerInterface extends ContainerInterface, \Serializable {
      * @return VariableContainerInterface
      */
     public function setModified(bool $modified): VariableContainerInterface;
+
+    /**
+     * Unset value for key
+     *
+     * @param string $name
+     * @return VariableContainerInterface
+     */
+    public function unset(string $name): VariableContainerInterface;
 }

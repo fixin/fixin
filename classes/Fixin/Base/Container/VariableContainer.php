@@ -99,4 +99,15 @@ class VariableContainer implements VariableContainerInterface {
     public function unserialize($serialized) {
         return $this->data = unserialize($serialized);
     }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Container\VariableContainerInterface::unset()
+     */
+    public function unset(string $name): VariableContainerInterface {
+        unset($this->data[$name]);
+        $this->modified = true;
+
+        return $this;
+    }
 }
