@@ -60,7 +60,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     /**
      * @var integer
      */
-    protected $regenerateForwardTime = 1;
+    protected $regenerationForwardTime = 1;
 
     /**
      * @var RepositoryInterface|false|null
@@ -135,6 +135,30 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      */
     protected function getCookieManager(): CookieManagerInterface {
         return $this->cookieManager ?: $this->loadLazyProperty(static::OPTION_COOKIE_MANAGER);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Session\SessionManagerInterface::getCookieName()
+     */
+    public function getCookieName(): string {
+        return $this->cookieName;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Session\SessionManagerInterface::getLifetime()
+     */
+    public function getLifetime(): int {
+        return $this->lifetime;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Session\SessionManagerInterface::getRegenerationForwardTime()
+     */
+    public function getRegenerationForwardTime(): int {
+        return $this->regenerationForwardTime;
     }
 
     /**
@@ -250,6 +274,15 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     }
 
     /**
+     * Set regeneration forward time
+     *
+     * @param int $regenerationForwardTime
+     */
+    protected function setRegenerationForwardTime(int $regenerationForwardTime) {
+        $this->regenerationForwardTime = $regenerationForwardTime;
+    }
+
+    /**
      * Setup cookie
      */
     protected function setupCookie() {
@@ -293,10 +326,12 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         }
 
         /** @var SessionEntity $entity */
-        if ($entity = $request->fetchFirst()) {
+        $entity = $request->fetchFirst();
+
+        if (isset($entity)) {
             $data = $entity->getData();
             if (isset($data[static::DATA_REGENERATED])) {
-                return $entity->getAccessTime() >= new DateTime('-' . $this->regenerateForwardTime . ' MINUTES') ? $this->startWith($data[static::DATA_REGENERATED]) : false;
+                return $entity->getAccessTime() >= new DateTime('-' . $this->regenerationForwardTime . ' MINUTES') ? $this->startWith($data[static::DATA_REGENERATED]) : false;
             }
 
             $this->loadEntity($entity);
