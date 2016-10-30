@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Storage\Grammar;
 
+use DateTime;
 use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;

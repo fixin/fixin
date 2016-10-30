@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Storage;
 
+use DateTime;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Resource\ResourceInterface;
