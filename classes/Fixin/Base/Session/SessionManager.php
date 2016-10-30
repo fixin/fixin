@@ -15,12 +15,14 @@ use Fixin\Support\Strings;
 
 class SessionManager extends Prototype implements SessionManagerInterface {
 
-    const THIS_REQUIRES = [
+    const
+    DATA_REGENERATED = 'regenerated',
+    THIS_REQUIRES = [
         self::OPTION_COOKIE_MANAGER => self::TYPE_INSTANCE,
         self::OPTION_COOKIE_NAME => self::TYPE_STRING,
         self::OPTION_REPOSITORY => self::TYPE_INSTANCE
-    ];
-    const THIS_SETS_LAZY = [
+    ],
+    THIS_SETS_LAZY = [
         self::OPTION_COOKIE_MANAGER => CookieManagerInterface::class,
         self::OPTION_REPOSITORY => RepositoryInterface::class
     ];
@@ -51,6 +53,16 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     protected $lifetime = 0;
 
     /**
+     * @var bool
+     */
+    protected $modified = false;
+
+    /**
+     * @var integer
+     */
+    protected $regenerateForwardTime = 1;
+
+    /**
      * @var RepositoryInterface|false|null
      */
     protected $repository;
@@ -66,6 +78,30 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     protected $started = false;
 
     /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Session\SessionManagerInterface::clear()
+     */
+    public function clear(): SessionManagerInterface {
+        $this->start();
+
+        $this->areas = [];
+        $this->modified = true;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Session\SessionManagerInterface::garbageCollection()
+     */
+    public function garbageCollection(int $lifetime): int {
+        $request = $this->getRepository()->createRequest();
+        $request->getWhere()->compare(SessionEntity::COLUMN_ACCESS_TIME, '<', new DateTime('+' . $lifetime . ' MINUTES'));
+
+        return $request->delete();
+    }
+
+    /**
      * Generate session id
      *
      * @return string
@@ -76,7 +112,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
 
     /**
      * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::getArea($name)
+     * @see \Fixin\Base\Session\SessionManagerInterface::getArea()
      */
     public function getArea(string $name): SessionAreaInterface {
         $this->start();
@@ -87,7 +123,9 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         }
 
         // New area
-        return $this->areas[$name] = (new \Fixin\Base\Session\SessionArea())->setModified(true);
+        $this->modified = true;
+
+        return $this->areas[$name] = (new \Fixin\Base\Session\SessionArea());
     }
 
     /**
@@ -113,6 +151,12 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @see \Fixin\Base\Session\SessionManagerInterface::isModified()
      */
     public function isModified(): bool {
+        $this->start();
+
+        if ($this->modified) {
+            return true;
+        }
+
         foreach ($this->areas as $area) {
             if ($area->isModified()) {
                 return true;
@@ -123,12 +167,42 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     }
 
     /**
+     * Load entity
+     *
+     * @param SessionEntity $entity
+     */
+    protected function loadEntity(SessionEntity $entity) {
+        $this->entity = $entity;
+        $this->areas = $entity->getData();
+        $this->sessionId = $entity->getSessionId();
+
+        if ($this->lifetime) {
+            $this->setupCookie();
+        }
+
+        $request = $this->getRepository()->createRequest();
+        $request->getWhere()->compare(SessionEntity::COLUMN_SESSION_ID, '=', $this->sessionId);
+        $request->update([SessionEntity::COLUMN_ACCESS_TIME => new DateTime()]);
+    }
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Base\Session\SessionManagerInterface::regenerateId()
      */
     public function regenerateId(): SessionManagerInterface {
+        $this->start();
+
         $this->sessionId = $this->generateId();
-        $this->entity->setSessionId($this->sessionId);
+        $this->modified = true;
+
+        if ($this->entity->isStored()) {
+            $this->entity
+            ->setData([static::DATA_REGENERATED => $this->sessionId])
+            ->setAccessTime(new DateTime())
+            ->save();
+
+            $this->entity = $this->getRepository()->create();
+        }
 
         $this->setupCookie();
 
@@ -142,9 +216,12 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     public function save(): SessionManagerInterface {
         if ($this->started && $this->isModified()) {
             $this->entity
+            ->setSessionId($this->sessionId)
             ->setData($this->areas)
             ->setAccessTime(new DateTime())
             ->save();
+
+            $this->modified = false;
 
             foreach ($this->areas as $area) {
                 $area->setModified(false);
@@ -208,8 +285,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @return bool
      */
     protected function startWith(string $sessionId): bool {
-        $repository = $this->getRepository();
-        $request = $repository->createRequest();
+        $request = $this->getRepository()->createRequest();
         $where = $request->getWhere()->compare(SessionEntity::COLUMN_SESSION_ID, '=', $sessionId);
 
         if ($this->lifetime) {
@@ -217,22 +293,13 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         }
 
         /** @var SessionEntity $entity */
-        $entity = $request->fetchFirst();
-
-        if ($entity) {
-            $this->entity = $entity;
-            $this->areas = $entity->getData();
-            $this->sessionId = $sessionId;
-
-            if ($this->lifetime) {
-                $this->setupCookie();
+        if ($entity = $request->fetchFirst()) {
+            $data = $entity->getData();
+            if (isset($data[static::DATA_REGENERATED])) {
+                return $entity->getAccessTime() >= new DateTime('-' . $this->regenerateForwardTime . ' MINUTES') ? $this->startWith($data[static::DATA_REGENERATED]) : false;
             }
 
-            $request = $repository->createRequest();
-            $request->getWhere()->compare(SessionEntity::COLUMN_SESSION_ID, '=', $sessionId);
-            $request->update([
-                SessionEntity::COLUMN_ACCESS_TIME => new DateTime()
-            ]);
+            $this->loadEntity($entity);
 
             return true;
         }

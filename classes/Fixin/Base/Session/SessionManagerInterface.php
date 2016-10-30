@@ -17,6 +17,21 @@ interface SessionManagerInterface extends PrototypeInterface {
     const OPTION_REPOSITORY = 'repository';
 
     /**
+     * Clear data
+     *
+     * @return SessionManagerInterface
+     */
+    public function clear(): SessionManagerInterface;
+
+    /**
+     * Garbage collection
+     *
+     * @param int $lifetime
+     * @return int
+     */
+    public function garbageCollection(int $lifetime): int;
+
+    /**
      * Get session area for name
      *
      * @param string $name
