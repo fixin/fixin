@@ -83,7 +83,7 @@ interface GrammarInterface extends ResourceInterface {
      * Convert value to DateTime
      *
      * @param string|int $value
-     * @return DateTime|false
+     * @return DateTime|null
      */
     public function valueToDateTime($value);
 }

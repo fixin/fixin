@@ -311,6 +311,6 @@ abstract class Grammar extends GrammarBase {
             return new DateTime($value);
         }
 
-        return DateTime::createFromFormat(static::DATETIME_FORMAT, $value);
+        return DateTime::createFromFormat(static::DATETIME_FORMAT, $value) ?: null;
     }
 }
