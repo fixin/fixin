@@ -17,6 +17,13 @@ interface VariableContainerInterface extends ContainerInterface {
     public function clear(): VariableContainerInterface;
 
     /**
+     * Determine if content modified
+     *
+     * @return bool
+     */
+    public function isModified(): bool;
+
+    /**
      * Set value for key
      *
      * @param string $name
@@ -32,4 +39,12 @@ interface VariableContainerInterface extends ContainerInterface {
      * @return VariableContainerInterface
      */
     public function setFromArray(array $values): VariableContainerInterface;
+
+    /**
+     * Set modified state
+     *
+     * @param bool $modified
+     * @return VariableContainerInterface
+     */
+    public function setModified(bool $modified): VariableContainerInterface;
 }

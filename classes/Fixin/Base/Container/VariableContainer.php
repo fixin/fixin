@@ -15,11 +15,17 @@ class VariableContainer implements VariableContainerInterface {
     protected $data = [];
 
     /**
+     * @var bool
+     */
+    protected $modified = false;
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Base\Container\VariableContainerInterface::clear()
      */
     public function clear(): VariableContainerInterface {
         $this->data = [];
+        $this->modified = true;
 
         return $this;
     }
@@ -41,10 +47,19 @@ class VariableContainer implements VariableContainerInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Base\Container\VariableContainerInterface::isModified()
+     */
+    public function isModified(): bool {
+        return $this->modified;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Base\Container\VariableContainerInterface::set($name, $value)
      */
     public function set(string $name, $value): VariableContainerInterface {
         $this->data[$name] = $value;
+        $this->modified = true;
 
         return $this;
     }
@@ -54,6 +69,17 @@ class VariableContainer implements VariableContainerInterface {
      */
     public function setFromArray(array $values): VariableContainerInterface {
         $this->data = $values + $this->data;
+        $this->modified = true;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Container\VariableContainerInterface::setModified()
+     */
+    public function setModified(bool $modified): VariableContainerInterface {
+        $this->modified = $modified;
 
         return $this;
     }
