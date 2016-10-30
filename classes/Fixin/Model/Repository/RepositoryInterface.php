@@ -203,7 +203,7 @@ interface RepositoryInterface extends ResourceInterface {
      * Convert value to DateTime
      *
      * @param string|int $value
-     * @return DateTime|null
+     * @return DateTime|false
      */
     public function valueToDateTime($value);
 }
