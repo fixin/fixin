@@ -28,7 +28,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     /**
      * @var SessionAreaInterface[]
      */
-    protected $areas = [];
+    protected $areas;
 
     /**
      * @var CookieManagerInterface|false|null
@@ -129,6 +129,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         if ($this->started) {
             // TODO: when changed
             $this->entity
+            ->setData($this->areas)
             ->setAccessTime(new DateTime())
             ->save();
         }
