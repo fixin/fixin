@@ -7,9 +7,7 @@
 
 namespace Fixin\Base\Container;
 
-use Fixin\Resource\PrototypeInterface;
-
-interface VariableContainerInterface extends ContainerInterface, PrototypeInterface {
+interface VariableContainerInterface extends ContainerInterface {
 
     /**
      * Clear all values

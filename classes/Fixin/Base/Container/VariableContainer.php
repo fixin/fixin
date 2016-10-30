@@ -7,9 +7,7 @@
 
 namespace Fixin\Base\Container;
 
-use Fixin\Resource\Prototype;
-
-class VariableContainer extends Prototype implements VariableContainerInterface {
+class VariableContainer implements VariableContainerInterface {
 
     /**
      * @var array
