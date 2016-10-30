@@ -7,7 +7,7 @@
 
 namespace Fixin\Base\Container;
 
-interface VariableContainerInterface extends ContainerInterface {
+interface VariableContainerInterface extends ContainerInterface, \Serializable {
 
     /**
      * Clear all values

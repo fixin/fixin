@@ -55,6 +55,14 @@ class VariableContainer implements VariableContainerInterface {
 
     /**
      * {@inheritDoc}
+     * @see Serializable::serialize()
+     */
+    public function serialize() {
+        return serialize($this->data);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Base\Container\VariableContainerInterface::set($name, $value)
      */
     public function set(string $name, $value): VariableContainerInterface {
@@ -82,5 +90,13 @@ class VariableContainer implements VariableContainerInterface {
         $this->modified = $modified;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Serializable::unserialize()
+     */
+    public function unserialize($serialized) {
+        return $this->data = unserialize($serialized);
     }
 }
