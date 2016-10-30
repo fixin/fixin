@@ -125,7 +125,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         // New area
         $this->modified = true;
 
-        return $this->areas[$name] = (new \Fixin\Base\Session\SessionArea());
+        return $this->areas[$name] = new \Fixin\Base\Session\SessionArea();
     }
 
     /**
@@ -328,7 +328,7 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         /** @var SessionEntity $entity */
         $entity = $request->fetchFirst();
 
-        if (isset($entity)) {
+        if ($entity) {
             $data = $entity->getData();
             if (isset($data[static::DATA_REGENERATED])) {
                 return ($entity->getAccessTime() >= new DateTime('-' . $this->regenerationForwardTime . ' MINUTES')) ? $this->startWith($data[static::DATA_REGENERATED]) : false;
