@@ -331,7 +331,11 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         if ($entity) {
             $data = $entity->getData();
             if (isset($data[static::DATA_REGENERATED])) {
-                return ($entity->getAccessTime() >= new DateTime('-' . $this->regenerationForwardTime . ' MINUTES')) ? $this->startWith($data[static::DATA_REGENERATED]) : false;
+                if ($entity->getAccessTime() >= new DateTime('-' . $this->regenerationForwardTime . ' MINUTES')) {
+                    return $this->startWith($data[static::DATA_REGENERATED]);
+                }
+
+                return false;
             }
 
             $this->loadEntity($entity);
