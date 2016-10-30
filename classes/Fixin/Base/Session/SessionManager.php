@@ -110,6 +110,20 @@ class SessionManager extends Prototype implements SessionManagerInterface {
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Base\Session\SessionManagerInterface::isModified()
+     */
+    public function isModified(): bool {
+        foreach ($this->areas as $area) {
+            if ($area->isModified()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Base\Session\SessionManagerInterface::regenerateId()
      */
     public function regenerateId(): SessionManagerInterface {
@@ -126,20 +140,14 @@ class SessionManager extends Prototype implements SessionManagerInterface {
      * @see \Fixin\Base\Session\SessionManagerInterface::save()
      */
     public function save(): SessionManagerInterface {
-        if ($this->started) {
+        if ($this->started && $this->isModified()) {
+            $this->entity
+            ->setData($this->areas)
+            ->setAccessTime(new DateTime())
+            ->save();
+
             foreach ($this->areas as $area) {
-                if ($area->isModified()) {
-                    $this->entity
-                    ->setData($this->areas)
-                    ->setAccessTime(new DateTime())
-                    ->save();
-
-                    foreach ($this->areas as $area) {
-                        $area->setModified(false);
-                    }
-
-                    break;
-                }
+                $area->setModified(false);
             }
         }
 
@@ -208,8 +216,9 @@ class SessionManager extends Prototype implements SessionManagerInterface {
             $where->compare(SessionEntity::COLUMN_ACCESS_TIME, '>=', new DateTime('+' . $this->lifetime . ' MINUTES'));
         }
 
-        /* @var $entity Entity */
-        if ($this->entity = $request->fetchFirst()) {
+        $this->entity = $request->fetchFirst();
+
+        if (isset($this->entity)) {
             $this->areas = $this->entity->getData();
             $this->sessionId = $sessionId;
 

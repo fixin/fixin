@@ -25,6 +25,13 @@ interface SessionManagerInterface extends PrototypeInterface {
     public function getArea(string $name): SessionAreaInterface;
 
     /**
+     * Determine if at least one area modified
+     *
+     * @return bool
+     */
+    public function isModified(): bool;
+
+    /**
      * Regenerate session ID
      *
      * @return self
