@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Repository;
 
+use DateTime;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
@@ -197,4 +198,12 @@ interface RepositoryInterface extends ResourceInterface {
      * @return int
      */
     public function update(array $set, RequestInterface $request): int;
+
+    /**
+     * Convert value to DateTime
+     *
+     * @param string|int $value
+     * @return DateTime|null
+     */
+    public function valueToDateTime($value);
 }

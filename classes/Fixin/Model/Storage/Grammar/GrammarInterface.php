@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Storage\Grammar;
 
+use DateTime;
 use Fixin\Base\Query\QueryInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
@@ -77,4 +78,12 @@ interface GrammarInterface extends ResourceInterface {
      * @return QueryInterface
      */
     public function update(array $set, RequestInterface $request): QueryInterface;
+
+    /**
+     * Convert value to DateTime
+     *
+     * @param string|int $value
+     * @return DateTime|null
+     */
+    public function valueToDateTime($value);
 }

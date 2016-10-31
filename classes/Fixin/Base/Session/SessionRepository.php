@@ -9,6 +9,6 @@ namespace Fixin\Base\Session;
 
 class SessionRepository extends \Fixin\Model\Repository\Repository {
 
-    protected $primaryKey = ['sessionID'];
+    protected $primaryKey = ['sessionId'];
 
 }

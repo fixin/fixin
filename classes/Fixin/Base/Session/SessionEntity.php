@@ -53,8 +53,7 @@ class SessionEntity extends \Fixin\Model\Entity\Entity {
         $value = $data['data'] ?? null;
         $this->data = is_string($value) ? unserialize($value) : $value;
 
-        $value = $data['accessTime'] ?? null;
-        $this->accessTime = $value instanceof DateTime || is_null($value) ? $value : $this->getRepository()->toDate($value);
+        $this->accessTime = $data['accessTime'] ?? null;
 
         return $this;
     }
@@ -65,6 +64,10 @@ class SessionEntity extends \Fixin\Model\Entity\Entity {
      * @return DateTime
      */
     public function getAccessTime() {
+        if (!$this->accessTime instanceof DateTime && isset($this->accessTime)) {
+            $this->accessTime = $this->getRepository()->valueToDateTime($this->accessTime);
+        }
+
         return $this->accessTime;
     }
 

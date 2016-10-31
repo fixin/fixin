@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Request\Where;
 
+use DateTime;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Resource\PrototypeInterface;
@@ -20,8 +21,8 @@ interface WhereInterface extends PrototypeInterface {
      * Add: and between
      *
      * @param string $identifier
-     * @param number|string $min
-     * @param number|string $max
+     * @param number|string|DateTime $min
+     * @param number|string|DateTime $max
      * @return self
      */
     public function between(string $identifier, $min, $max): WhereInterface;
@@ -31,7 +32,7 @@ interface WhereInterface extends PrototypeInterface {
      *
      * @param string|number|bool $left
      * @param string $operator
-     * @param string|number|bool|array $right
+     * @param string|number|bool|array|DateTime $right
      * @param string $leftType
      * @param string $rightType
      * @return self
@@ -95,8 +96,8 @@ interface WhereInterface extends PrototypeInterface {
      * Add: and not between
      *
      * @param string $identifier
-     * @param number|string $min
-     * @param number|string $max
+     * @param number|string|DateTime $min
+     * @param number|string|DateTime $max
      * @return self
      */
     public function notBetween(string $identifier, $min, $max): WhereInterface;
@@ -146,8 +147,8 @@ interface WhereInterface extends PrototypeInterface {
      * Add: or between
      *
      * @param string $identifier
-     * @param number|string $min
-     * @param number|string $max
+     * @param number|string|DateTime $min
+     * @param number|string|DateTime $max
      * @return self
      */
     public function orBetween(string $identifier, $min, $max): WhereInterface;
@@ -157,7 +158,7 @@ interface WhereInterface extends PrototypeInterface {
      *
      * @param string|number|bool $left
      * @param string $operator
-     * @param string|number|bool|array $right
+     * @param string|number|bool|array|DateTime $right
      * @param string $leftType
      * @param string $rightType
      * @return self
@@ -208,8 +209,8 @@ interface WhereInterface extends PrototypeInterface {
      * Add: or not between
      *
      * @param string $identifier
-     * @param number|string $min
-     * @param number|string $max
+     * @param number|string|DateTime $min
+     * @param number|string|DateTime $max
      * @return self
      */
     public function orNotBetween(string $identifier, $min, $max): WhereInterface;

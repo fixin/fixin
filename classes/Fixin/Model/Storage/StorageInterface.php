@@ -7,6 +7,7 @@
 
 namespace Fixin\Model\Storage;
 
+use DateTime;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Resource\ResourceInterface;
@@ -87,4 +88,12 @@ interface StorageInterface extends ResourceInterface {
      * @return int
      */
     public function update(array $set, RequestInterface $request): int;
+
+    /**
+     * Convert value to DateTime
+     *
+     * @param string|int $value
+     * @return DateTime|null
+     */
+    public function valueToDateTime($value);
 }

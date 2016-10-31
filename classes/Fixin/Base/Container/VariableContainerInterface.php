@@ -7,9 +7,7 @@
 
 namespace Fixin\Base\Container;
 
-use Fixin\Resource\PrototypeInterface;
-
-interface VariableContainerInterface extends ContainerInterface, PrototypeInterface {
+interface VariableContainerInterface extends ContainerInterface, \Serializable {
 
     /**
      * Clear all values
@@ -17,6 +15,13 @@ interface VariableContainerInterface extends ContainerInterface, PrototypeInterf
      * @return VariableContainerInterface
      */
     public function clear(): VariableContainerInterface;
+
+    /**
+     * Determine if content modified
+     *
+     * @return bool
+     */
+    public function isModified(): bool;
 
     /**
      * Set value for key
@@ -34,4 +39,20 @@ interface VariableContainerInterface extends ContainerInterface, PrototypeInterf
      * @return VariableContainerInterface
      */
     public function setFromArray(array $values): VariableContainerInterface;
+
+    /**
+     * Set modified state
+     *
+     * @param bool $modified
+     * @return VariableContainerInterface
+     */
+    public function setModified(bool $modified): VariableContainerInterface;
+
+    /**
+     * Unset value for key
+     *
+     * @param string $name
+     * @return VariableContainerInterface
+     */
+    public function unset(string $name): VariableContainerInterface;
 }

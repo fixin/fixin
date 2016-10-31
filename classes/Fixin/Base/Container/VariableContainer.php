@@ -7,9 +7,7 @@
 
 namespace Fixin\Base\Container;
 
-use Fixin\Resource\Prototype;
-
-class VariableContainer extends Prototype implements VariableContainerInterface {
+class VariableContainer implements VariableContainerInterface {
 
     /**
      * @var array
@@ -17,11 +15,17 @@ class VariableContainer extends Prototype implements VariableContainerInterface 
     protected $data = [];
 
     /**
+     * @var bool
+     */
+    protected $modified = false;
+
+    /**
      * {@inheritDoc}
      * @see \Fixin\Base\Container\VariableContainerInterface::clear()
      */
     public function clear(): VariableContainerInterface {
         $this->data = [];
+        $this->modified = true;
 
         return $this;
     }
@@ -43,10 +47,27 @@ class VariableContainer extends Prototype implements VariableContainerInterface 
 
     /**
      * {@inheritDoc}
+     * @see \Fixin\Base\Container\VariableContainerInterface::isModified()
+     */
+    public function isModified(): bool {
+        return $this->modified;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Serializable::serialize()
+     */
+    public function serialize() {
+        return serialize($this->data);
+    }
+
+    /**
+     * {@inheritDoc}
      * @see \Fixin\Base\Container\VariableContainerInterface::set($name, $value)
      */
     public function set(string $name, $value): VariableContainerInterface {
         $this->data[$name] = $value;
+        $this->modified = true;
 
         return $this;
     }
@@ -56,6 +77,36 @@ class VariableContainer extends Prototype implements VariableContainerInterface 
      */
     public function setFromArray(array $values): VariableContainerInterface {
         $this->data = $values + $this->data;
+        $this->modified = true;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Container\VariableContainerInterface::setModified()
+     */
+    public function setModified(bool $modified): VariableContainerInterface {
+        $this->modified = $modified;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Serializable::unserialize()
+     */
+    public function unserialize($serialized) {
+        return $this->data = unserialize($serialized);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fixin\Base\Container\VariableContainerInterface::unset()
+     */
+    public function unset(string $name): VariableContainerInterface {
+        unset($this->data[$name]);
+        $this->modified = true;
 
         return $this;
     }
