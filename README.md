@@ -12,7 +12,7 @@ Framework for PHP 7.
 
 ## Developer Preview
 
-This is a preview. Architectural changes are possible.
+This is a preview. Architecture changes are possible.
 
 ## Requirements
 
