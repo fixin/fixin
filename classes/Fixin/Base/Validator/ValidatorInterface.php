@@ -9,20 +9,20 @@ namespace Fixin\Base\Validator;
 
 use Fixin\Resource\ResourceInterface;
 
-interface ValidatorInterface extends ResourceInterface {
+interface ValidatorInterface extends ResourceInterface
+{
+    /**
+     * Invoke isValid()
+     */
+    public function __invoke($value): bool;
 
     /**
      * Get errors of last validation
-     *
-     * @return array
      */
     public function getErrors(): array;
 
     /**
      * Validate value
-     *
-     * @param mixed $value
-     * @return bool
      */
     public function isValid($value): bool;
 }

@@ -9,6 +9,6 @@ namespace Fixin\Base\Session;
 
 use Fixin\Base\Container\VariableContainer;
 
-class SessionArea extends VariableContainer implements SessionAreaInterface {
-
+class SessionArea extends VariableContainer implements SessionAreaInterface
+{
 }

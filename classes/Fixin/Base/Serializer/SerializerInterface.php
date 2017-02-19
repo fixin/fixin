@@ -7,22 +7,12 @@
 
 namespace Fixin\Base\Serializer;
 
-interface SerializerInterface {
-
-    /**
-     * Serialize value
-     *
-     * @param mixed $value
-     * @return string
-     */
+interface SerializerInterface
+{
     public function serialize($value): string;
 
     /**
      * Create value from a serialized string
-     *
-     * @param string $data
-     * @param array $allowedClasses
-     * @return mixed
      */
     public function unserialize(string $data, array $allowedClasses = null);
 }

@@ -9,13 +9,15 @@ namespace Fixin\Base\Filter;
 
 use Fixin\Resource\ResourceInterface;
 
-interface FilterInterface extends ResourceInterface {
+interface FilterInterface extends ResourceInterface
+{
+    /**
+     * Invoke filter()
+     */
+    public function __invoke($value);
 
     /**
      * Get filtered value
-     *
-     * @param mixed $value
-     * @return mixed
      */
     public function filter($value);
 }

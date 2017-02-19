@@ -56,7 +56,7 @@ class Application implements ApplicationInterface
         $this->container = new $containerClass($containerConfig);
     }
 
-    protected function errorRoute(CargoInterface $cargo): self
+    protected function errorRoute(CargoInterface $cargo): void
     {
         // HTTP cargo
         if ($cargo instanceof HttpCargoInterface) {
@@ -64,16 +64,16 @@ class Application implements ApplicationInterface
         }
 
         try {
-            $this->container->get($this->config[static::OPTION_ERROR_ROUTE])
-                ->handle($cargo)
-                ->unpack();
+            $cargo = $this->container->get($this->config[static::OPTION_ERROR_ROUTE])
+                ->handle($cargo);
+            $cargo->unpack();
         }
         catch (\Throwable $t) {
             // Double error
             $this->internalServerError($t->getMessage());
         }
 
-        return $this;
+        return $cargo;
     }
 
     protected function internalServerError(string $text): void

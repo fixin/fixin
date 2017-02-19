@@ -13,19 +13,19 @@ use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Strings;
 
-class SessionManager extends Prototype implements SessionManagerInterface {
-
-    const
-    DATA_REGENERATED = 'regenerated',
-    THIS_REQUIRES = [
-        self::OPTION_COOKIE_MANAGER => self::TYPE_INSTANCE,
-        self::OPTION_COOKIE_NAME => self::TYPE_STRING,
-        self::OPTION_REPOSITORY => self::TYPE_INSTANCE
-    ],
-    THIS_SETS_LAZY = [
-        self::OPTION_COOKIE_MANAGER => CookieManagerInterface::class,
-        self::OPTION_REPOSITORY => RepositoryInterface::class
-    ];
+class SessionManager extends Prototype implements SessionManagerInterface
+{
+    protected const
+        DATA_REGENERATED = 'regenerated',
+        THIS_REQUIRES = [
+            self::OPTION_COOKIE_MANAGER => self::TYPE_INSTANCE,
+            self::OPTION_COOKIE_NAME => self::TYPE_STRING,
+            self::OPTION_REPOSITORY => self::TYPE_INSTANCE
+        ],
+        THIS_SETS_LAZY = [
+            self::OPTION_COOKIE_MANAGER => CookieManagerInterface::class,
+            self::OPTION_REPOSITORY => RepositoryInterface::class
+        ];
 
     /**
      * @var SessionAreaInterface[]
@@ -78,10 +78,10 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     protected $started = false;
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::clear()
+     * @return static
      */
-    public function clear(): SessionManagerInterface {
+    public function clear(): SessionManagerInterface
+    {
         $this->start();
 
         $this->areas = [];
@@ -90,31 +90,21 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::garbageCollection()
-     */
-    public function garbageCollection(int $lifetime): int {
+    public function garbageCollection(int $lifetime): int
+    {
         $request = $this->getRepository()->createRequest();
         $request->getWhere()->compare(SessionEntity::COLUMN_ACCESS_TIME, '<', new DateTime('+' . $lifetime . ' MINUTES'));
 
         return $request->delete();
     }
 
-    /**
-     * Generate session id
-     *
-     * @return string
-     */
-    protected function generateId(): string {
+    protected function generateId(): string
+    {
         return sha1(Strings::generateRandom(24) . uniqid('', true) . microtime(true));
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::getArea()
-     */
-    public function getArea(string $name): SessionAreaInterface {
+    public function getArea(string $name): SessionAreaInterface
+    {
         $this->start();
 
         // Existing area
@@ -128,53 +118,33 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         return $this->areas[$name] = new \Fixin\Base\Session\SessionArea();
     }
 
-    /**
-     * Get cookie manager instance
-     *
-     * @return CookieManagerInterface
-     */
-    protected function getCookieManager(): CookieManagerInterface {
+    protected function getCookieManager(): CookieManagerInterface
+    {
         return $this->cookieManager ?: $this->loadLazyProperty(static::OPTION_COOKIE_MANAGER);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::getCookieName()
-     */
-    public function getCookieName(): string {
+    public function getCookieName(): string
+    {
         return $this->cookieName;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::getLifetime()
-     */
-    public function getLifetime(): int {
+    public function getLifetime(): int
+    {
         return $this->lifetime;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::getRegenerationForwardTime()
-     */
-    public function getRegenerationForwardTime(): int {
+    public function getRegenerationForwardTime(): int
+    {
         return $this->regenerationForwardTime;
     }
 
-    /**
-     * Get repository instance
-     *
-     * @return RepositoryInterface
-     */
-    protected function getRepository(): RepositoryInterface {
+    protected function getRepository(): RepositoryInterface
+    {
         return $this->repository ?: $this->loadLazyProperty(static::OPTION_REPOSITORY);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::isModified()
-     */
-    public function isModified(): bool {
+    public function isModified(): bool
+    {
         $this->start();
 
         if ($this->modified) {
@@ -191,11 +161,10 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     }
 
     /**
-     * Load entity
-     *
-     * @param SessionEntity $entity
+     * @return static
      */
-    protected function loadEntity(SessionEntity $entity) {
+    protected function loadEntity(SessionEntity $entity): self
+    {
         $this->entity = $entity;
         $this->areas = $entity->getData();
         $this->sessionId = $entity->getSessionId();
@@ -207,13 +176,15 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         $request = $this->getRepository()->createRequest();
         $request->getWhere()->compare(SessionEntity::COLUMN_SESSION_ID, '=', $this->sessionId);
         $request->update([SessionEntity::COLUMN_ACCESS_TIME => new DateTime()]);
+
+        return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::regenerateId()
+     * @return static
      */
-    public function regenerateId(): SessionManagerInterface {
+    public function regenerateId(): SessionManagerInterface
+    {
         $this->start();
 
         $this->sessionId = $this->generateId();
@@ -234,10 +205,10 @@ class SessionManager extends Prototype implements SessionManagerInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::save()
+     * @return static
      */
-    public function save(): SessionManagerInterface {
+    public function save(): SessionManagerInterface
+    {
         if ($this->started && $this->isModified()) {
             $this->entity
             ->setSessionId($this->sessionId)
@@ -255,45 +226,36 @@ class SessionManager extends Prototype implements SessionManagerInterface {
         return $this;
     }
 
-    /**
-     * Set cookie name
-     *
-     * @param string $cookieName
-     */
-    protected function setCookieName(string $cookieName) {
+    protected function setCookieName(string $cookieName): void
+    {
         $this->cookieName = $cookieName;
     }
 
-    /**
-     * Set lifetime
-     *
-     * @param int $lifetime
-     */
-    protected function setLifetime(int $lifetime) {
+    protected function setLifetime(int $lifetime): void
+    {
         $this->lifetime = $lifetime;
     }
 
-    /**
-     * Set regeneration forward time
-     *
-     * @param int $regenerationForwardTime
-     */
-    protected function setRegenerationForwardTime(int $regenerationForwardTime) {
+    protected function setRegenerationForwardTime(int $regenerationForwardTime): void
+    {
         $this->regenerationForwardTime = $regenerationForwardTime;
     }
 
     /**
-     * Setup cookie
+     * @return static
      */
-    protected function setupCookie() {
+    protected function setupCookie(): self
+    {
         $this->getCookieManager()->set($this->cookieName, $this->sessionId)->setExpire($this->lifetime)->setPath('/');
+
+        return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Session\SessionManagerInterface::start()
+     * @return static
      */
-    public function start(): SessionManagerInterface {
+    public function start(): SessionManagerInterface
+    {
         if (!$this->started) {
             $this->started = true;
 
@@ -313,11 +275,9 @@ class SessionManager extends Prototype implements SessionManagerInterface {
 
     /**
      * Start with stored session id
-     *
-     * @param string $sessionId
-     * @return bool
      */
-    protected function startWith(string $sessionId): bool {
+    protected function startWith(string $sessionId): bool
+    {
         $request = $this->getRepository()->createRequest();
         $where = $request->getWhere()->compare(SessionEntity::COLUMN_SESSION_ID, '=', $sessionId);
 

@@ -11,8 +11,8 @@ use Fixin\Resource\Prototype;
 use Fixin\Support\Ground;
 use Fixin\Support\VariableInspector;
 
-class Query extends Prototype implements QueryInterface {
-
+class Query extends Prototype implements QueryInterface
+{
     /**
      * @var array
      */
@@ -23,83 +23,78 @@ class Query extends Prototype implements QueryInterface {
      */
     protected $text = '';
 
-    public function __toString(): string {
+    public function __toString(): string
+    {
         return Ground::debugText($this->text) . Ground::debugText(VariableInspector::arrayInfo($this->parameters));
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Query\QueryInterface::addParameter($parameter)
+     * @return static
      */
-    public function addParameter($parameter): QueryInterface {
+    public function addParameter($parameter): QueryInterface
+    {
         $this->parameters[] = $parameter;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Query\QueryInterface::addParameters($parameters)
+     * @return static
      */
-    public function addParameters(array $parameters): QueryInterface {
+    public function addParameters(array $parameters): QueryInterface
+    {
         $this->parameters = array_merge($this->parameters, $parameters);
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Query\QueryInterface::appendClause($clause, $string)
+     * @return static
      */
-    public function appendClause(string $clause, string $string): QueryInterface {
+    public function appendClause(string $clause, string $string): QueryInterface
+    {
         $this->text .= $clause . ' ' . $string . PHP_EOL;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Query\QueryInterface::appendString($string)
+     * @return static
      */
-    public function appendString(string $string): QueryInterface {
+    public function appendString(string $string): QueryInterface
+    {
         $this->text .= $string;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Query\QueryInterface::appendWord($word)
+     * @return static
      */
-    public function appendWord(string $word): QueryInterface {
+    public function appendWord(string $word): QueryInterface
+    {
         $this->text .= $word . ' ';
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Query\QueryInterface::applyMask($mask)
+     * @return static
      */
-    public function applyMask(string $mask): QueryInterface {
+    public function applyMask(string $mask): QueryInterface
+    {
         $this->text = sprintf($mask, $this->text);
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Query\QueryInterface::getParameters()
-     */
-    public function getParameters(): array {
+    public function getParameters(): array
+    {
         return $this->parameters;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Query\QueryInterface::getText()
-     */
-    public function getText(): string {
+    public function getText(): string
+    {
         return $this->text;
     }
 }

@@ -9,112 +9,70 @@ namespace Fixin\Base\FileSystem;
 
 use Fixin\Resource\ResourceInterface;
 
-interface FileSystemInterface extends ResourceInterface {
-
+interface FileSystemInterface extends ResourceInterface
+{
     /**
      * Delete file
-     *
-     * @param string $filename
-     * @return bool
      */
     public function delete(string $filename): bool;
 
     /**
-     * Check file existence
-     *
-     * @param string $path
-     * @return bool
-     */
-    public function exists(string $path): bool;
-
-    /**
      * Get extension of a filename
-     *
-     * @param string $path
-     * @return string
      */
-    public function extension(string $path): string;
+    public function getExtension(string $path): ?string;
 
     /**
      * Get the contents of a file
-     *
-     * @param string $filename
-     * @return string
      */
-    public function get(string $filename): string;
+    public function getFileContents(string $filename): string;
 
     /**
      * Get the contents of a file with lock
-     *
-     * @param string $filename
-     * @return string
      */
-    public function getWithLock(string $filename): string;
+    public function getFileContentsWithLock(string $filename): string;
+
+    /**
+     * Get file size
+     */
+    public function getFileSize(string $filename): ?int;
+
+    /**
+     * Get real path
+     */
+    public function getRealPath(string $path): ?string;
 
     /**
      * Include files recursive
-     *
-     * @param string $path
-     * @param string $extension
-     * @return FileSystemInterface
      */
     public function includeFilesRecursive(string $path, string $extension): FileSystemInterface;
 
     /**
      * Determine if path is a file
-     *
-     * @param string $path
-     * @return bool
      */
     public function isDirectory(string $path): bool;
 
     /**
+     * Determine if existence
+     */
+    public function isExisting(string $path): bool;
+
+    /**
      * Determine if path is a file
-     *
-     * @param string $path
-     * @return bool
      */
     public function isFile(string $path): bool;
 
     /**
      * Determine if path is a file and is readable
-     *
-     * @param string $filename
-     * @return bool
      */
     public function isReadable(string $filename): bool;
 
     /**
      * Put the contents of a file
-     *
-     * @param string $filename
-     * @param string $contents
-     * @return self
      */
-    public function put(string $filename, string $contents): int;
+    public function putFileContents(string $filename, string $contents): ?int;
 
     /**
      * Put the contents of a file with lock
-     *
-     * @param string $filename
-     * @param string $contents
-     * @return self
      */
-    public function putWithLock(string $filename, string $contents): int;
-
-    /**
-     * Get real path
-     *
-     * @param string $path
-     * @return string
-     */
-    public function realpath(string $path): string;
-
-    /**
-     * Get file size
-     *
-     * @param string $filename
-     * @return int|false
-     */
-    public function size(string $filename);
+    public function putFileContentsWithLock(string $filename, string $contents): ?int;
 }

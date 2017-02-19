@@ -10,14 +10,15 @@ namespace Fixin\Base\FileSystem;
 use Fixin\Resource\Resource;
 use Fixin\Support\Strings;
 
-class FileResolver extends Resource implements FileResolverInterface {
-
-    const THIS_REQUIRES = [
-        self::OPTION_FILE_SYSTEM => self::TYPE_INSTANCE
-    ];
-    const THIS_SETS_LAZY = [
-        self::OPTION_FILE_SYSTEM => FileSystemInterface::class
-    ];
+class FileResolver extends Resource implements FileResolverInterface
+{
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_FILE_SYSTEM => self::TYPE_INSTANCE
+        ],
+        THIS_SETS_LAZY = [
+            self::OPTION_FILE_SYSTEM => FileSystemInterface::class
+        ];
 
     /**
      * @var string
@@ -34,20 +35,13 @@ class FileResolver extends Resource implements FileResolverInterface {
      */
     protected $paths = [];
 
-    /**
-     * Get FileSystem instance
-     *
-     * @return FileSystemInterface
-     */
-    protected function getFileSystem(): FileSystemInterface {
+    protected function getFileSystem(): FileSystemInterface
+    {
         return $this->fileSystem ?: $this->loadLazyProperty(static::OPTION_FILE_SYSTEM);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileResolverInterface::resolve($filename)
-     */
-    public function resolve(string $filename):string {
+    public function resolve(string $filename): ?string
+    {
         $fileSystem = $this->getFileSystem();
 
         // Default extension
@@ -64,24 +58,22 @@ class FileResolver extends Resource implements FileResolverInterface {
             }
         }
 
-        return '';
+        return null;
     }
 
     /**
      * Set default extension for filenames
-     *
-     * @param string $defaultExtension
      */
-    protected function setDefaultExtension(string $defaultExtension) {
+    protected function setDefaultExtension(string $defaultExtension): void
+    {
         $this->defaultExtension = $defaultExtension;
     }
 
     /**
      * Set paths in normalized form
-     *
-     * @param array $paths
      */
-    protected function setPaths(array $paths) {
+    protected function setPaths(array $paths): void
+    {
         $this->paths = [];
 
         foreach ($paths as $path) {

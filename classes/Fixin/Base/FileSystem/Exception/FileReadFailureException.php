@@ -7,6 +7,6 @@
 
 namespace Fixin\Base\FileSystem\Exception;
 
-class FileNotFoundException extends RuntimeException
+class FileReadFailureException extends RuntimeException
 {
 }

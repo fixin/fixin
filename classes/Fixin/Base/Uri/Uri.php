@@ -9,8 +9,8 @@ namespace Fixin\Base\Uri;
 
 use Fixin\Resource\Prototype;
 
-class Uri extends Prototype implements UriInterface {
-
+class Uri extends Prototype implements UriInterface
+{
     /**
      * @var array
      */
@@ -54,10 +54,8 @@ class Uri extends Prototype implements UriInterface {
      */
     protected $userInfo = '';
 
-    /**
-     * @return string
-     */
-    public function __toString(): string {
+    public function __toString(): string
+    {
         return ltrim($this->scheme . '://', ':/')
             . $this->getAuthority()
             . ($this->path !== '' ? '/' . ltrim($this->path, '/') : '')
@@ -65,11 +63,8 @@ class Uri extends Prototype implements UriInterface {
             . rtrim('#' . $this->fragment, '#');
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::getAuthority()
-     */
-    public function getAuthority(): string {
+    public function getAuthority(): string
+    {
         // Host
         $authority = $this->host;
 
@@ -90,138 +85,114 @@ class Uri extends Prototype implements UriInterface {
         return $authority;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::getFragment()
-     */
-    public function getFragment() {
+    public function getFragment(): ?string
+    {
         return $this->fragment;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::getHost()
-     */
-    public function getHost(): string {
+    public function getHost(): string
+    {
         return $this->host;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::getPath()
-     */
-    public function getPath(): string {
+    public function getPath(): string
+    {
         return $this->path;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::getPort()
-     */
-    public function getPort() {
+    public function getPort(): ?int
+    {
         return $this->port;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::getQuery()
-     */
-    public function getQuery(): string {
+    public function getQuery(): string
+    {
         return $this->query;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::getScheme()
-     */
-    public function getScheme(): string {
+    public function getScheme(): string
+    {
         return $this->scheme;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::getUserInfo()
-     */
-    public function getUserInfo(): string {
+    public function getUserInfo(): string
+    {
         return $this->userInfo;
     }
 
     /**
      * Determine port is default for scheme
-     *
-     * @param int $port
-     * @param string $scheme
-     * @return bool
      */
-    protected function isStandardPort(int $port, string $scheme): bool {
+    protected function isStandardPort(int $port, string $scheme): bool
+    {
         return $port === $this->defaultSchemePorts[$scheme] ?? null;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::setFragment($fragment)
+     * @return static
      */
-    public function setFragment($fragment) {
+    public function setFragment(?string $fragment): UriInterface
+    {
         $this->fragment = $fragment;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::setHost($host)
+     * @return static
      */
-    public function setHost(string $host) {
+    public function setHost(string $host): UriInterface
+    {
         $this->host = $host;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::setPath($path)
+     * @return static
      */
-    public function setPath(string $path) {
+    public function setPath(string $path): UriInterface
+    {
         $this->path = $path;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::setPort($port)
+     * @return static
      */
-    public function setPort($port) {
+    public function setPort(?int $port): UriInterface
+    {
         $this->port = $port;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::setQuery($query)
+     * @return static
      */
-    public function setQuery(string $query) {
+    public function setQuery(string $query): UriInterface
+    {
         $this->query = $query;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::setScheme($scheme)
+     * @return static
      */
-    public function setScheme(string $scheme) {
+    public function setScheme(string $scheme): UriInterface
+    {
         $this->scheme = $scheme;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Uri\UriInterface::setUserInfo($userInfo)
+     * @return static
      */
-    public function setUserInfo(string $userInfo) {
+    public function setUserInfo(string $userInfo): UriInterface
+    {
         $this->userInfo = $userInfo;
 
         return $this;

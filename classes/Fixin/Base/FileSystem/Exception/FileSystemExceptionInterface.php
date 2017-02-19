@@ -7,6 +7,8 @@
 
 namespace Fixin\Base\FileSystem\Exception;
 
-interface FileSystemException {
+use Fixin\Exception\FixinExceptionInterface;
 
+interface FileSystemExceptionInterface extends FixinExceptionInterface
+{
 }

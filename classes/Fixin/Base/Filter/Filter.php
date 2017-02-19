@@ -9,15 +9,10 @@ namespace Fixin\Base\Filter;
 
 use Fixin\Resource\Resource;
 
-abstract class Filter extends Resource implements FilterInterface {
-
-    /**
-     * Invoke filter()
-     *
-     * @param mixed $value
-     * @return mixed
-     */
-    public function __invoke($value) {
+abstract class Filter extends Resource implements FilterInterface
+{
+    public function __invoke($value)
+    {
         return $this->filter($value);
     }
 }

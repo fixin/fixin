@@ -7,11 +7,11 @@
 
 namespace Fixin\Base\Json;
 
-use Fixin\Exception\RuntimeException;
+use Fixin\Base\Json\Exception;
 use Fixin\Resource\Resource;
 
-class Json extends Resource implements JsonInterface {
-
+class Json extends Resource implements JsonInterface
+{
     /**
      * @var int
      */
@@ -32,61 +32,39 @@ class Json extends Resource implements JsonInterface {
      */
     protected $encodingMaxDepth = 512;
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Json\JsonInterface::decode($json)
-     */
-    public function decode(string $json) {
+    public function decode(string $json)
+    {
         $result = json_decode($json, true, $this->decodingMaxDepth, $this->decodingOptions);
 
         if (json_last_error() === JSON_ERROR_NONE) {
             return $result;
         }
 
-        throw new RuntimeException(json_last_error_msg());
+        throw new Exception\RuntimeException(json_last_error_msg());
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Json\JsonInterface::encode($value)
-     */
-    public function encode($value): string {
+    public function encode($value): string
+    {
         return json_encode($value, $this->encodingOptions, $this->encodingMaxDepth);
     }
 
-    /**
-     * Set decoding max depth
-     *
-     * @param int $decodingMaxDepth
-     */
-    protected function setDecodingMaxDepth(int $decodingMaxDepth) {
+    protected function setDecodingMaxDepth(int $decodingMaxDepth): void
+    {
         $this->decodingMaxDepth = $decodingMaxDepth;
     }
 
-    /**
-     * Set decoding options
-     *
-     * @param int $decodingOptions
-     */
-    protected function setDecodingOptions(int $decodingOptions) {
+    protected function setDecodingOptions(int $decodingOptions): void
+    {
         $this->decodingOptions = $decodingOptions;
     }
 
-    /**
-     * Set encoding max depth
-     *
-     * @param int $encodingMaxDepth
-     */
-    protected function setEncodingMaxDepth(int $encodingMaxDepth) {
+    protected function setEncodingMaxDepth(int $encodingMaxDepth): void
+    {
         $this->encodingMaxDepth = $encodingMaxDepth;
     }
 
-    /**
-     * Set encoding options
-     *
-     * @param int $encodingOptions
-     */
-    protected function setEncodingOptions(int $encodingOptions) {
+    protected function setEncodingOptions(int $encodingOptions): void
+    {
         $this->encodingOptions = $encodingOptions;
     }
 }

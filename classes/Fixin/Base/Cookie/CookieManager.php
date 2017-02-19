@@ -9,9 +9,10 @@ namespace Fixin\Base\Cookie;
 
 use Fixin\Resource\Prototype;
 
-class CookieManager extends Prototype implements CookieManagerInterface {
-
-    const EXPIRE_MINUTES = -24 * 60 * 7;
+class CookieManager extends Prototype implements CookieManagerInterface
+{
+    protected const
+        EXPIRE_MINUTES = -24 * 60 * 7;
 
     /**
      * @var array
@@ -19,36 +20,30 @@ class CookieManager extends Prototype implements CookieManagerInterface {
     protected $cookies = [];
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieManagerInterface::expire($name, $path, $domain)
+     * @return static
      */
-    public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface {
+    public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface
+    {
         $this->set($name, null)->setExpire(static::EXPIRE_MINUTES)->setPath($path)->setDomain($domain);
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieManagerInterface::get()
-     */
-    public function getValue(string $name, string $default = null) {
-        return isset($this->cookies[$name]) ? (($item = $this->cookies[$name])  instanceof CookieInterface ? $item->getValue() : $item) : $default;
+    public function getValue(string $name, string $default = null): ?string
+    {
+        return isset($this->cookies[$name]) ? (($item = $this->cookies[$name]) instanceof CookieInterface ? $item->getValue() : $item) : $default;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieManagerInterface::has($name)
-     */
-    public function has(string $name): bool {
+    public function has(string $name): bool
+    {
         return isset($this->cookies[$name]);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieManagerInterface::sendChanges()
+     * @return static
      */
-    public function sendChanges(): CookieManagerInterface {
+    public function sendChanges(): CookieManagerInterface
+    {
         foreach ($this->cookies as $name => $cookie) {
             if ($cookie instanceof CookieInterface) {
                 $cookie->sendAs($name);
@@ -59,10 +54,10 @@ class CookieManager extends Prototype implements CookieManagerInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieManagerInterface::set($name, $value)
+     * @return static
      */
-    public function set(string $name, string $value): CookieInterface {
+    public function set(string $name, string $value): CookieInterface
+    {
         if (!isset($this->cookies[$name]) || !($cookie = $this->cookies[$name]) instanceof CookieInterface) {
             $cookie =
             $this->cookies[$name] = $this->container->clonePrototype('Base\Cookie\Cookie');
@@ -71,12 +66,8 @@ class CookieManager extends Prototype implements CookieManagerInterface {
         return $cookie->setValue($value);
     }
 
-    /**
-     * Set cookies
-     *
-     * @param array $cookies
-     */
-    protected function setCookies(array $cookies) {
+    protected function setCookies(array $cookies): void
+    {
         $this->cookies = $cookies;
     }
 }

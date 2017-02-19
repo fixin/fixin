@@ -10,10 +10,11 @@ namespace Fixin\Base\Cookie;
 use Fixin\Resource\Prototype;
 use Fixin\Exception\RuntimeException;
 
-class Cookie extends Prototype implements CookieInterface {
-
-    const EXCEPTION_CAN_T_SET_COOKIE = "Can't set '%s' cookie";
-    const EXPIRE_TO_TIMESTAMP = 60;
+class Cookie extends Prototype implements CookieInterface
+{
+    protected const
+        EXCEPTION_CAN_T_SET_COOKIE = "Can't set '%s' cookie",
+        EXPIRE_TO_TIMESTAMP = 60;
 
     /**
      * @var string
@@ -45,59 +46,41 @@ class Cookie extends Prototype implements CookieInterface {
      */
     protected $value = '';
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::getDomain()
-     */
-    public function getDomain(): string {
+    public function getDomain(): string
+    {
         return $this->domain;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::getExpire()
-     */
-    public function getExpire(): int {
+    public function getExpire(): int
+    {
         return $this->expire;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::getPath()
-     */
-    public function getPath(): string {
+    public function getPath(): string
+    {
         return $this->path;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::getValue()
-     */
-    public function getValue(): string {
+    public function getValue(): string
+    {
         return $this->value;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::isHttpOnly()
-     */
-    public function isHttpOnly(): bool {
+    public function isHttpOnly(): bool
+    {
         return $this->httpOnly;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::isSecure()
-     */
-    public function isSecure(): bool {
+    public function isSecure(): bool
+    {
         return $this->secure;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::sendAs($name)
+     * @return static
      */
-    public function sendAs(string $name): CookieInterface {
+    public function sendAs(string $name): CookieInterface
+    {
         if (setcookie($name, $this->value, $this->expire ? time() + $this->expire * static::EXPIRE_TO_TIMESTAMP : 0, $this->path, $this->domain, $this->secure, $this->httpOnly)) {
             return $this;
         }
@@ -106,60 +89,60 @@ class Cookie extends Prototype implements CookieInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::setDomain($domain)
+     * @return static
      */
-    public function setDomain(string $domain): CookieInterface {
+    public function setDomain(string $domain): CookieInterface
+    {
         $this->domain = $domain;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::setExpire($expire)
+     * @return static
      */
-    public function setExpire(int $expire): CookieInterface {
+    public function setExpire(int $expire): CookieInterface
+    {
         $this->expire = $expire;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::setHttpOnly($httpOnly)
+     * @return static
      */
-    public function setHttpOnly(bool $httpOnly): CookieInterface {
+    public function setHttpOnly(bool $httpOnly): CookieInterface
+    {
         $this->httpOnly = $httpOnly;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::setPath($path)
+     * @return static
      */
-    public function setPath(string $path): CookieInterface {
+    public function setPath(string $path): CookieInterface
+    {
         $this->path = $path;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::setSecure($secure)
+     * @return static
      */
-    public function setSecure(bool $secure): CookieInterface {
+    public function setSecure(bool $secure): CookieInterface
+    {
         $this->secure = $secure;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Cookie\CookieInterface::setValue($value)
+     * @return static
      */
-    public function setValue(string $value): CookieInterface {
+    public function setValue(string $value): CookieInterface
+    {
         $this->value = $value;
 
         return $this;

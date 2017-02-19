@@ -7,91 +7,99 @@
 
 namespace Fixin\Base\FileSystem;
 
-use Fixin\Base\FileSystem\Exception\FileNotFoundException;
+use Fixin\Base\FileSystem\Exception;
 use Fixin\Resource\Resource;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class Local extends Resource implements FileSystemInterface {
+class Local extends Resource implements FileSystemInterface
+{
+    protected const
+        EXCEPTION_FILE_NOT_EXISTS = "File not exists at '%s'",
+        EXCEPTION_FILE_READ_FAILURE = "File read failure '%s'",
+        EXCEPTION_FILE_WRITE_FAILURE = "File read failure '%s'";
 
-    const EXCEPTION_FILE_NOT_EXISTS = "File not exists at '%s'";
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::delete($filename)
-     */
-    public function delete(string $filename): bool {
+    public function delete(string $filename): bool
+    {
         return unlink($filename);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::exists($path)
-     */
-    public function exists(string $path): bool {
-        return file_exists($path);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::extension($path)
-     */
-    public function extension(string $path): string {
+    public function getExtension(string $path): ?string
+    {
         return pathinfo($path, PATHINFO_EXTENSION);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::get($filename)
+     * @throws Exception\FileNotFoundException
+     * @throws Exception\FileReadFailureException
      */
-    public function get(string $filename): string {
+    public function getFileContents(string $filename): string
+    {
         if ($this->isFile($filename)) {
-            return file_get_contents($filename);
-        }
+            $content = file_get_contents($filename);
 
-        throw new FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::getWithLock($filename)
-     */
-    public function getWithLock(string $filename): string {
-        if ($this->isFile($filename)) {
-            return $this->getSharedContents($filename);
-        }
-
-        throw new FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
-    }
-
-    /**
-     * Get contents of shared file
-     *
-     * @param string $filename
-     * @return string
-     */
-    protected function getSharedContents(string $filename): string {
-        $contents = '';
-
-        if ($handle = fopen($filename, 'r')) {
-            if (flock($handle, LOCK_SH)) {
-                while (!feof($handle)) {
-                    $contents .= fread($handle, 1048576);
-                }
+            if ($content !== false) {
+                return $content;
             }
 
-            fclose($handle);
+            throw new Exception\FileReadFailureException(sprintf(static::EXCEPTION_FILE_READ_FAILURE, $filename));
         }
+
+        throw new Exception\FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
+    }
+
+    /**
+     * @throws Exception\FileNotFoundException
+     * @throws Exception\FileReadFailureException
+     */
+    public function getFileContentsWithLock(string $filename): string
+    {
+        if ($this->isFile($filename)) {
+            $content = $this->getSharedFileContents($filename);
+
+            if ($content !== null) {
+                return $content;
+            }
+
+            throw new Exception\FileReadFailureException(sprintf(static::EXCEPTION_FILE_READ_FAILURE, $filename));
+        }
+
+        throw new Exception\FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
+    }
+
+    public function getFileSize(string $filename): ?int
+    {
+        return ($size = filesize($filename)) !== false ? $size: null;
+    }
+
+    public function getRealPath(string $path): ?string
+    {
+        return ($resolved = realpath($path)) !== false ? $resolved : null;
+    }
+
+    protected function getSharedFileContents(string $filename): ?string
+    {
+        $contents = null;
+
+        if (($handle = fopen($filename, 'r')) && flock($handle, LOCK_SH)) {
+            $contents = '';
+
+            while (!feof($handle)) {
+                $contents .= fread($handle, 1048576);
+            }
+        }
+
+        fclose($handle);
 
         return $contents;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::includeFilesRecursive($path, $extension)
+     * @return static
      */
-    public function includeFilesRecursive(string $path, string $extension): FileSystemInterface {
+    public function includeFilesRecursive(string $path, string $extension): FileSystemInterface
+    {
         $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
         foreach ($iterator as $item) {
             if ($item->isFile() && strtolower($item->getExtension()) === $extension) {
@@ -102,59 +110,47 @@ class Local extends Resource implements FileSystemInterface {
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::isDirectory($path)
-     */
-    public function isDirectory(string $path): bool {
+    public function isDirectory(string $path): bool
+    {
         return is_dir($path);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::isFile($path)
-     */
-    public function isFile(string $path): bool {
+    public function isExisting(string $path): bool
+    {
+        return file_exists($path);
+    }
+
+    public function isFile(string $path): bool
+    {
         return is_file($path);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::isReadable($filename)
-     */
-    public function isReadable(string $filename): bool {
+    public function isReadable(string $filename): bool
+    {
         return is_readable($filename);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::put($filename, $contents)
-     */
-    public function put(string $filename, string $contents): int {
-        return file_put_contents($filename, $contents);
+    public function putFileContents(string $filename, string $contents): int
+    {
+        return $this->putFileContentsProcess($filename, $contents, 0);
+    }
+
+    public function putFileContentsWithLock(string $filename, string $contents): int
+    {
+        return $this->putFileContentsProcess($filename, $contents, LOCK_EX);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::putWithLock($filename, $contents)
+     * @throws Exception\FileWriteFailureException
      */
-    public function putWithLock(string $filename, string $contents): int {
-        return file_put_contents($filename, $contents, LOCK_EX);
-    }
+    protected function putFileContentsProcess(string $filename, string $contents, int $flags): int
+    {
+        $written = file_put_contents($filename, $contents, $flags);
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::realpath($path)
-     */
-    public function realpath(string $path): string {
-        return realpath($path);
-    }
+        if ($written !== false) {
+            return $written;
+        }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\FileSystem\FileSystemInterface::size($filename)
-     */
-    public function size(string $filename) {
-        return filesize($filename);
+        throw new Exception\FileWriteFailureException(sprintf(static::EXCEPTION_FILE_WRITE_FAILURE, $filename));
     }
 }

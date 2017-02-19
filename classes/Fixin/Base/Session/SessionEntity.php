@@ -10,11 +10,11 @@ namespace Fixin\Base\Session;
 use DateTime;
 use Fixin\Model\Entity\EntityInterface;
 
-class SessionEntity extends \Fixin\Model\Entity\Entity {
-
-    const
-    COLUMN_ACCESS_TIME = 'accessTime',
-    COLUMN_SESSION_ID = 'sessionId';
+class SessionEntity extends \Fixin\Model\Entity\Entity
+{
+    public const
+        COLUMN_ACCESS_TIME = 'accessTime',
+        COLUMN_SESSION_ID = 'sessionId';
 
     /**
      * @var DateTime
@@ -31,11 +31,8 @@ class SessionEntity extends \Fixin\Model\Entity\Entity {
      */
     protected $sessionId;
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::collectSaveData()
-     */
-    public function collectSaveData(): array {
+    public function collectSaveData(): array
+    {
         return [
             'sessionId' => $this->sessionId,
             'data' => serialize($this->data),
@@ -44,10 +41,10 @@ class SessionEntity extends \Fixin\Model\Entity\Entity {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::exchangeArray()
+     * @return static
      */
-    public function exchangeArray(array $data): EntityInterface {
+    public function exchangeArray(array $data): EntityInterface
+    {
         $this->sessionId = $data['sessionId'] ?? null;
 
         $value = $data['data'] ?? null;
@@ -58,12 +55,8 @@ class SessionEntity extends \Fixin\Model\Entity\Entity {
         return $this;
     }
 
-    /**
-     * Get access time
-     *
-     * @return DateTime
-     */
-    public function getAccessTime() {
+    public function getAccessTime(): ?DateTime
+    {
         if (!$this->accessTime instanceof DateTime && isset($this->accessTime)) {
             $this->accessTime = $this->getRepository()->valueToDateTime($this->accessTime);
         }
@@ -71,55 +64,41 @@ class SessionEntity extends \Fixin\Model\Entity\Entity {
         return $this->accessTime;
     }
 
-    /**
-     * Get data
-     *
-     * @return array
-     */
-    public function getData(): array {
+    public function getData(): array
+    {
         return $this->data;
     }
 
-    /**
-     * Get session id
-     *
-     * @return string
-     */
-    public function getSessionId() {
+    public function getSessionId(): ?string
+    {
         return $this->sessionId;
     }
 
     /**
-     * Set access time
-     *
-     * @param DateTime $accessTime
-     * @return self
+     * @return static
      */
-    public function setAccessTime(DateTime $accessTime): self {
+    public function setAccessTime(?DateTime $accessTime): self
+    {
         $this->accessTime = $accessTime;
 
         return $this;
     }
 
     /**
-     * Set data
-     *
-     * @param array $data
-     * @return self
+     * @return static
      */
-    public function setData(array $data): self {
+    public function setData(array $data): self
+    {
         $this->data = $data;
 
         return $this;
     }
 
     /**
-     * Set session id
-     *
-     * @param string $sessionId
-     * @return self
+     * @return static
      */
-    public function setSessionId(string $sessionId): self {
+    public function setSessionId(?string $sessionId): self
+    {
         $this->sessionId = $sessionId;
 
         return $this;
