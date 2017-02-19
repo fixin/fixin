@@ -7,12 +7,7 @@
 
 namespace Fixin\Application;
 
-interface ApplicationInterface {
-
-    /**
-     * Run the application
-     *
-     * @return self
-     */
+interface ApplicationInterface
+{
     public function run(): ApplicationInterface;
 }

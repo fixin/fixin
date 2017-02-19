@@ -12,20 +12,23 @@ use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Support\Http;
 
-class Application implements ApplicationInterface {
+class Application implements ApplicationInterface
+{
+    protected const
+        CONFIG_APPLICATION = 'application',
+        CONFIG_RESOURCE_MANAGER = 'resourceManager',
 
-    const CONFIG_APPLICATION = 'application';
-    const CONFIG_RESOURCE_MANAGER = 'resourceManager';
+        DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\Resource\ResourceManager',
 
-    const DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\Resource\ResourceManager';
+        INTERNAL_SERVER_ERROR_CODE = 500,
+        INTERNAL_SERVER_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error',
+        INTERNAL_SERVER_ERROR_HTML = '<h1>500 Internal server error</h1>';
 
-    const INTERNAL_SERVER_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error';
-    const INTERNAL_SERVER_ERROR_HTML = '<h1>500 Internal server error</h1>';
-
-    const OPTION_CARGO = 'cargo';
-    const OPTION_CLASS = 'class';
-    const OPTION_ERROR_ROUTE = 'errorRoute';
-    const OPTION_ROUTE = 'route';
+    public const
+        OPTION_CARGO = 'cargo',
+        OPTION_CLASS = 'class',
+        OPTION_ERROR_ROUTE = 'errorRoute',
+        OPTION_ROUTE = 'route';
 
     /**
      * @var array
@@ -37,10 +40,8 @@ class Application implements ApplicationInterface {
      */
     protected $container;
 
-    /**
-     * @param array $config
-     */
-    public function __construct(array $config) {
+    public function __construct(array $config)
+    {
         // Config
         $this->config = $config[static::CONFIG_APPLICATION] ?? [];
 
@@ -55,20 +56,17 @@ class Application implements ApplicationInterface {
         $this->container = new $containerClass($containerConfig);
     }
 
-    /**
-     * Error route
-     *
-     * @param CargoInterface $cargo
-     */
-    protected function errorRoute(CargoInterface $cargo) {
+    protected function errorRoute(CargoInterface $cargo): void
+    {
         // HTTP cargo
         if ($cargo instanceof HttpCargoInterface) {
             $cargo->setStatusCode(Http::STATUS_INTERNAL_SERVER_ERROR_500);
         }
 
         try {
-            $cargo = $this->container->get($this->config[static::OPTION_ERROR_ROUTE])->handle($cargo);
-            $cargo->unpack();
+            $this->container->get($this->config[static::OPTION_ERROR_ROUTE])
+                ->handle($cargo)
+                ->unpack();
         }
         catch (\Throwable $t) {
             // Double error
@@ -76,35 +74,29 @@ class Application implements ApplicationInterface {
         }
     }
 
-    /**
-     * Internal Server Error
-     *
-     * @param string $text
-     */
-    protected function internalServerError(string $text) {
-        header(static::INTERNAL_SERVER_ERROR_HEADER, true, 500);
+    protected function internalServerError(string $text): void
+    {
+        header(static::INTERNAL_SERVER_ERROR_HEADER, true, static::INTERNAL_SERVER_ERROR_CODE);
         echo static::INTERNAL_SERVER_ERROR_HTML;
 
         echo $text;
         exit;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Application\ApplicationInterface::run()
-     */
-    public function run(): ApplicationInterface {
+    public function run(): ApplicationInterface
+    {
         $container = $this->container;
 
         // TODO lock
 
         try {
             $cargo = $container->clonePrototype($this->config[static::OPTION_CARGO]);
-            $cargo = $container->get($this->config[static::OPTION_ROUTE])->handle($cargo);
-            $cargo->unpack();
+            $container->get($this->config[static::OPTION_ROUTE])
+                ->handle($cargo)
+                ->unpack();
         }
         catch (\Throwable $t) {
-            $this->errorRoute(($cargo ?? $container->clonePrototype('Delivery\Cargo\Cargo'))->setContent($t));
+            $this->errorRoute(($cargo ?? $container->clonePrototype('Delivery\Cargo\Cargo'))->setContent($t)); // TODO: const?
         }
 
         return $this;
