@@ -7,21 +7,17 @@
 
 namespace Fixin\Base\Autoloader;
 
-interface AutoloaderInterface {
-
+interface AutoloaderInterface
+{
     /**
      * Autoload callback
-     *
-     * @param string $class
      */
-    public function autoload(string $class);
+    public function autoload(string $class): void;
 }
 
 /**
  * Encapsulated include
- *
- * @param string $filename
  */
-function fixinBaseAutoloaderEncapsulatedInclude(string $filename) {
+function fixinBaseAutoloaderEncapsulatedInclude(string $filename): void {
     include $filename;
 }

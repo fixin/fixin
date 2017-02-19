@@ -19,7 +19,10 @@ class VariableContainer implements VariableContainerInterface
      */
     protected $modified = false;
 
-    public function clear()
+    /**
+     * @return static
+     */
+    public function clear(): VariableContainerInterface
     {
         $this->data = [];
         $this->modified = true;
@@ -48,7 +51,7 @@ class VariableContainer implements VariableContainerInterface
     }
 
     /**
-     * @return self
+     * @return static
      */
     public function set(string $name, $value): VariableContainerInterface
     {
@@ -59,7 +62,7 @@ class VariableContainer implements VariableContainerInterface
     }
 
     /**
-     * @return self
+     * @return static
      */
     public function setFromArray(array $values): VariableContainerInterface
     {
@@ -70,7 +73,7 @@ class VariableContainer implements VariableContainerInterface
     }
 
     /**
-     * @return self
+     * @return static
      */
     public function setModified(bool $modified): VariableContainerInterface
     {
@@ -85,7 +88,7 @@ class VariableContainer implements VariableContainerInterface
     }
 
     /**
-     * @return self
+     * @return static
      */
     public function unset(string $name): VariableContainerInterface
     {

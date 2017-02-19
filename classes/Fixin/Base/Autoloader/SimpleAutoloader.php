@@ -9,8 +9,8 @@ namespace Fixin\Base\Autoloader;
 
 require_once 'AutoloaderInterface.php';
 
-class SimpleAutoloader implements AutoloaderInterface {
-
+class SimpleAutoloader implements AutoloaderInterface
+{
     /**
      * Registered paths
      *
@@ -21,20 +21,18 @@ class SimpleAutoloader implements AutoloaderInterface {
     /**
      * @param array $prefixes
      */
-    public function __construct(array $prefixes = []) {
+    public function __construct(array $prefixes = [])
+    {
         $this
-        ->addPrefixes($prefixes)
-        ->register();
+            ->addPrefixes($prefixes)
+            ->register();
     }
 
     /**
      * Add base path(s) for a prefix
-     *
-     * @param string $prefix
-     * @param string|array $path
-     * @return self
      */
-    protected function addPrefixPath(string $prefix, $path) {
+    protected function addPrefixPath(string $prefix, $path): self
+    {
         // Prepare prefix
         $prefix = strtr(trim($prefix, '\\'), '\\', DIRECTORY_SEPARATOR);
 
@@ -48,11 +46,9 @@ class SimpleAutoloader implements AutoloaderInterface {
 
     /**
      * Add multiple prefixes
-     *
-     * @param array $prefixes
-     * @return self
      */
-    protected function addPrefixes(array $prefixes) {
+    protected function addPrefixes(array $prefixes): self
+    {
         foreach ($prefixes as $prefix => $path) {
             $this->addPrefixPath($prefix, $path);
         }
@@ -60,11 +56,8 @@ class SimpleAutoloader implements AutoloaderInterface {
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Base\Autoloader\AutoloaderInterface::autoload()
-     */
-    public function autoload(string $class) {
+    public function autoload(string $class): void
+    {
         // Swap '\'
         $class = strtr($class, '\\', DIRECTORY_SEPARATOR);
 
@@ -76,23 +69,16 @@ class SimpleAutoloader implements AutoloaderInterface {
 
             // Prefix found
             if (isset($this->paths[$prefix])) {
-                $this->autoloadPrefixSearch(substr($class, $length + 1) . '.php', $prefix);
+                $relativeName = substr($class, $length + 1) . '.php';
 
-                return;
-            }
-        }
-    }
+                // Search through the paths
+                foreach ($this->paths[$prefix] as $path) {
+                    if (file_exists($filename = $path . $relativeName)) {
+                        fixinBaseAutoloaderEncapsulatedInclude($filename);
 
-    /**
-     * Search through the paths
-     *
-     * @param string $relativeName
-     * @param string $prefix
-     */
-    protected function autoloadPrefixSearch(string $relativeName, string $prefix) {
-        foreach ($this->paths[$prefix] as $path) {
-            if (file_exists($filename = $path . $relativeName)) {
-                fixinBaseAutoloaderEncapsulatedInclude($filename);
+                        return;
+                    }
+                }
 
                 return;
             }
@@ -101,10 +87,9 @@ class SimpleAutoloader implements AutoloaderInterface {
 
     /**
      * Register autoload function
-     *
-     * @return self
      */
-    protected function register() {
+    protected function register(): self
+    {
         spl_autoload_register([$this, 'autoload']);
 
         return $this;

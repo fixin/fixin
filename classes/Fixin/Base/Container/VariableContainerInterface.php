@@ -16,23 +16,13 @@ interface VariableContainerInterface extends ContainerInterface, \Serializable
      */
     public function isModified(): bool;
 
-    /**
-     * Set value for key
-     */
-    public function set(string $name, $value): VariableContainerInterface;
+        public function set(string $name, $value): self;
 
     /**
      * Set values from array
      */
-    public function setFromArray(array $values): VariableContainerInterface;
+    public function setFromArray(array $values): self;
 
-    /**
-     * Set modified state
-     */
-    public function setModified(bool $modified): VariableContainerInterface;
-
-    /**
-     * Unset value for key
-     */
-    public function unset(string $name): VariableContainerInterface;
+    public function setModified(bool $modified): self;
+    public function unset(string $name): self;
 }
