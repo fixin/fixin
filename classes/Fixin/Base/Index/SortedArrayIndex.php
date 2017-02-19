@@ -169,7 +169,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
             throw new Exception\RuntimeException(static::EXCEPTION_FILENAME_NOT_SET);
         }
 
-        $data = unserialize($this->getFileSystem()->get($this->filename), ['allowed_classes' => false]);
+        $data = unserialize($this->getFileSystem()->getFileContents($this->filename), ['allowed_classes' => false]);
         if (!is_array($data) || !$this->loadArray($data)) {
             throw new Exception\RuntimeException(static::EXCEPTION_INVALID_DATA);
         }

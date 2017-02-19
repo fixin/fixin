@@ -70,7 +70,7 @@ class Local extends Resource implements FileSystemInterface
 
     public function getFileSize(string $filename): ?int
     {
-        return ($size = filesize($filename)) !== false ? $size: null;
+        return ($size = filesize($filename)) !== false ? $size : null;
     }
 
     public function getRealPath(string $path): ?string
