@@ -10,8 +10,8 @@ namespace Fixin\Model\Entity\Cache;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 
-class RuntimeCache extends Cache {
-
+class RuntimeCache extends Cache
+{
     /**
      * @var array
      */
@@ -23,21 +23,18 @@ class RuntimeCache extends Cache {
     protected $invalidEntities = [];
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\Cache\CacheInterface::clear()
+     * @return static
      */
-    public function clear(): CacheInterface {
+    public function clear(): CacheInterface
+    {
         $this->entities = [];
         $this->invalidEntities = [];
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\Cache\CacheInterface::fetchResultEntity($storageResult)
-     */
-    public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface {
+    public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface
+    {
         $data = $storageResult->current();
         $storageResult->next();
 
@@ -60,11 +57,8 @@ class RuntimeCache extends Cache {
         ])->exchangeArray($data);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\Cache\CacheInterface::getByIds($ids)
-     */
-    public function getByIds(array $ids): array {
+    public function getByIds(array $ids): array
+    {
         $ids = array_combine($ids, $ids);
         $cached = array_intersect_key($this->entities, $ids);
         $list = array_replace(array_fill_keys(array_keys($ids), null), $cached);
@@ -83,11 +77,8 @@ class RuntimeCache extends Cache {
         return array_filter($list);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\Cache\CacheInterface::invalidate()
-     */
-    public function invalidate(): CacheInterface {
+    public function invalidate(): self // TODO if this works remove all @return static and change return types directly
+    {
         $this->invalidEntities = $this->entities + $this->invalidEntities;
         $this->entities = [];
 
@@ -95,10 +86,10 @@ class RuntimeCache extends Cache {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\Cache\CacheInterface::remove($entity)
+     * @return static
      */
-    public function remove(EntityInterface $entity): CacheInterface {
+    public function remove(EntityInterface $entity): CacheInterface
+    {
         $key = (string) $entity->getEntityId();
 
         unset($this->entities[$key], $this->invalidEntities[$key]);
@@ -107,10 +98,10 @@ class RuntimeCache extends Cache {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\Cache\CacheInterface::update($entity)
+     * @return static
      */
-    public function update(EntityInterface $entity): CacheInterface {
+    public function update(EntityInterface $entity): CacheInterface
+    {
         $key = (string) $entity->getEntityId();
 
         unset($this->invalidEntities[$key]);

@@ -11,42 +11,20 @@ use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\PrototypeInterface;
 
-interface JoinInterface extends PrototypeInterface {
+interface JoinInterface extends PrototypeInterface
+{
+    public const
+        OPTION_ALIAS = 'alias',
+        OPTION_REPOSITORY = 'repository',
+        OPTION_TYPE = 'type',
+        OPTION_WHERE = 'where',
+        TYPE_CROSS = 'cross',
+        TYPE_INNER = 'inner',
+        TYPE_LEFT = 'left',
+        TYPE_RIGHT = 'right';
 
-    const OPTION_ALIAS = 'alias';
-    const OPTION_REPOSITORY = 'repository';
-    const OPTION_TYPE = 'type';
-    const OPTION_WHERE = 'where';
-    const TYPE_CROSS = 'cross';
-    const TYPE_INNER = 'inner';
-    const TYPE_LEFT = 'left';
-    const TYPE_RIGHT = 'right';
-
-    /**
-     * Get alias
-     *
-     * @return string
-     */
     public function getAlias(): string;
-
-    /**
-     * Get repository
-     *
-     * @return RepositoryInterface
-     */
     public function getRepository(): RepositoryInterface;
-
-    /**
-     * Get type
-     *
-     * @return string
-     */
     public function getType(): string;
-
-    /**
-     * Get where
-     *
-     * @return WhereInterface|null
-     */
-    public function getWhere();
+    public function getWhere(): ?WhereInterface;
 }

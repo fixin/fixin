@@ -16,194 +16,92 @@ use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\ResourceInterface;
 
-interface RepositoryInterface extends ResourceInterface {
-
-    const
-    OPTION_AUTO_INCREMENT_COLUMN = 'autoIncrementColumn',
-    OPTION_ENTITY_CACHE = 'entityCache',
-    OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
-    OPTION_NAME = 'name',
-    OPTION_PRIMARY_KEY = 'primaryKey',
-    OPTION_STORAGE = 'storage';
+interface RepositoryInterface extends ResourceInterface
+{
+    public const
+        OPTION_AUTO_INCREMENT_COLUMN = 'autoIncrementColumn',
+        OPTION_ENTITY_CACHE = 'entityCache',
+        OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
+        OPTION_NAME = 'name',
+        OPTION_PRIMARY_KEY = 'primaryKey',
+        OPTION_STORAGE = 'storage';
 
     /**
      * Create entity for the repository
-     *
-     * @return EntityInterface
      */
     public function create(): EntityInterface;
 
-    /**
-     * Create expression
-     *
-     * @param string $expression
-     * @param array $parameters
-     * @return ExpressionInterface
-     */
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface;
 
     /**
      * Create entity ID
      *
      * @param array|int|string ...$entityId
-     * @return EntityIdInterface
      */
     public function createId(...$entityId): EntityIdInterface;
 
-    /**
-     * Create request
-     *
-     * @return RequestInterface
-     */
     public function createRequest(): RequestInterface;
-
-    /**
-     * Delete
-     *
-     * @param RequestInterface $request
-     * @return int
-     */
     public function delete(RequestInterface $request): int;
 
     /**
      * Delete entities by ids
      *
      * @param EntityIdInterface[] $ids
-     * @return int
      */
     public function deleteByIds(array $ids): int;
 
-    /**
-     * Exists
-     *
-     * @param RequestInterface $request
-     * @return bool
-     */
-    public function exists(RequestInterface $request): bool;
+    public function getAutoIncrementColumn(): ?string;
 
     /**
-     * Get auto-increment column
-     *
-     * @return string|null
+     * Get entity by id
      */
-    public function getAutoIncrementColumn();
+    public function getById(EntityIdInterface $id): ?EntityInterface;
 
     /**
-     * Get name of the repository
-     *
-     * @return string
+     * Get entities by ids
      */
+    public function getByIds(array $ids): EntitySetInterface;
+
     public function getName(): string;
 
     /**
-     * Get primary key
-     *
      * @return string[]
      */
     public function getPrimaryKey(): array;
 
-    /**
-     * Insert
-     *
-     * @param array $set
-     * @return EntityIdInterface
-     */
     public function insert(array $set): EntityIdInterface;
-
-    /**
-     * Insert into
-     *
-     * @param RepositoryInterface $repository
-     * @param RequestInterface $request
-     * @return int
-     */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
-
-    /**
-     * Insert multiple
-     *
-     * @param array $rows
-     * @return int
-     */
     public function insertMultiple(array $rows): int;
 
     /**
      * Refresh entity from storage
-     *
-     * @param EntityInterface $entity
-     * @return RepositoryInterface
      */
     public function refresh(EntityInterface $entity): RepositoryInterface;
 
     /**
      * Save entity to storage
-     *
-     * @param EntityInterface $entity
-     * @return EntityIdInterface
      */
     public function save(EntityInterface $entity): EntityIdInterface;
 
     /**
      * Select entities
-     *
-     * @param RequestInterface $request
-     * @return EntitySetInterface
      */
     public function select(RequestInterface $request): EntitySetInterface;
 
     /**
      * Select all entities
-     *
-     * @return EntitySetInterface
      */
     public function selectAll(): EntitySetInterface;
 
-    /**
-     * Select entity by id
-     *
-     * @param EntityIdInterface $id
-     * @return EntityInterface|null
-     */
-    public function selectById(EntityIdInterface $id);
-
-    /**
-     * Select entities by ids
-     *
-     * @param array $ids
-     * @return EntitySetInterface
-     */
-    public function selectByIds(array $ids): EntitySetInterface;
-
-    /**
-     * Select column
-     *
-     * @param RequestInterface $request
-     * @return StorageResultInterface
-     */
     public function selectColumn(RequestInterface $request): StorageResultInterface;
-
-    /**
-     * Select raw data
-     *
-     * @param RequestInterface $request
-     * @return StorageResultInterface
-     */
+    public function selectExists(RequestInterface $request): bool;
     public function selectRawData(RequestInterface $request): StorageResultInterface;
-
-    /**
-     * Update
-     *
-     * @param array $set
-     * @param RequestInterface $request
-     * @return int
-     */
     public function update(array $set, RequestInterface $request): int;
 
     /**
      * Convert value to DateTime
      *
      * @param string|int $value
-     * @return DateTime|null
      */
-    public function valueToDateTime($value);
+//    public function convertValueToDateTime($value): ?DateTime; TODO
 }

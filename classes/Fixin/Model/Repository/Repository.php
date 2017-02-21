@@ -7,11 +7,10 @@
 
 namespace Fixin\Model\Repository;
 
-use Fixin\Exception\InvalidArgumentException;
+use DateTime;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
-use Fixin\Model\Repository\Exception\EntityRefreshFaultException;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Storage\StorageResultInterface;
@@ -20,42 +19,33 @@ use Fixin\Support\Arrays;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class Repository extends RepositoryBase {
+class Repository extends RepositoryBase
+{
+    protected const
+        EXCEPTION_ENTITY_REFRESH_ERROR = 'Entity refresh error',
+        EXCEPTION_INVALID_ID = "Invalid ID",
+        EXCEPTION_INVALID_REQUEST = "Invalid request, repository mismatch '%s' '%s'",
+        EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity',
+        PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
+        PROTOTYPE_ENTITY_SET = 'Model\Entity\EntitySet',
+        PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
+        PROTOTYPE_REQUEST = 'Model\Request\Request';
 
-    const
-    EXCEPTION_ENTITY_REFRESH_ERROR = 'Entity refresh error',
-    EXCEPTION_INVALID_ID = "Invalid ID",
-    EXCEPTION_INVALID_REQUEST = "Invalid request, repository mismatch '%s' '%s'",
-    EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity',
-    PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
-    PROTOTYPE_ENTITY_SET = 'Model\Entity\EntitySet',
-    PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
-    PROTOTYPE_REQUEST = 'Model\Request\Request';
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::create()
-     */
-    public function create(): EntityInterface {
+    public function create(): EntityInterface
+    {
         return clone $this->getEntityPrototype();
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::createExpression($expression, $parameters)
-     */
-    public function createExpression(string $expression, array $parameters = []): ExpressionInterface {
+    public function createExpression(string $expression, array $parameters = []): ExpressionInterface
+    {
         return $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
             ExpressionInterface::OPTION_EXPRESSION => $expression,
             ExpressionInterface::OPTION_PARAMETERS => $parameters
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::createId($entityId)
-     */
-    public function createId(...$entityId): EntityIdInterface {
+    public function createId(...$entityId): EntityIdInterface
+    {
         $columnCount = count($this->primaryKey);
 
         // Array
@@ -66,7 +56,7 @@ class Repository extends RepositoryBase {
                 return $this->createIdWithArray($entityId);
             }
 
-            throw new InvalidArgumentException(static::EXCEPTION_INVALID_ID);
+            throw new Exception\InvalidArgumentException(static::EXCEPTION_INVALID_ID);
         }
 
         // List
@@ -74,37 +64,26 @@ class Repository extends RepositoryBase {
             return $this->createIdWithArray(array_combine($this->primaryKey, $entityId));
         }
 
-        throw new InvalidArgumentException(static::EXCEPTION_INVALID_ID);
+        throw new Exception\InvalidArgumentException(static::EXCEPTION_INVALID_ID);
     }
 
-    /**
-     * Create ID with array
-     *
-     * @param array $entityId
-     * @return EntityIdInterface
-     */
-    private function createIdWithArray(array $entityId): EntityIdInterface {
+    private function createIdWithArray(array $entityId): EntityIdInterface
+    {
         return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_ID, [
             EntityIdInterface::OPTION_ENTITY_ID => $entityId,
             EntityIdInterface::OPTION_REPOSITORY => $this
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::createRequest()
-     */
-    public function createRequest(): RequestInterface {
+    public function createRequest(): RequestInterface
+    {
         return $this->container->clonePrototype(static::PROTOTYPE_REQUEST, [
             RequestInterface::OPTION_REPOSITORY => $this
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::delete($request)
-     */
-    public function delete(RequestInterface $request): int {
+    public function delete(RequestInterface $request): int
+    {
         $this->validateRequest($request);
 
         if ($result = $this->getStorage()->delete($request)) {
@@ -114,32 +93,39 @@ class Repository extends RepositoryBase {
         return $result;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::deleteByIds()
-     */
-    public function deleteByIds(array $ids): int {
+    public function deleteByIds(array $ids): int
+    {
         $request = $this->createRequest();
         $request->getWhere()->ids($ids);
 
         return $this->delete($request);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::exists($request)
-     */
-    public function exists(RequestInterface $request): bool {
+    public function isExisting(RequestInterface $request): bool
+    {
         $this->validateRequest($request);
 
         return $this->getStorage()->exists($request);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::insert($set)
-     */
-    public function insert(array $set): EntityIdInterface {
+    public function getById(EntityIdInterface $id): ?EntityInterface
+    {
+        $entities = $this->getEntityCache()->getByIds([$id]);
+
+        return reset($entities);
+    }
+
+    public function getByIds(array $ids): EntitySetInterface
+    {
+        return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_SET, [
+            EntitySetInterface::OPTION_REPOSITORY => $this,
+            EntitySetInterface::OPTION_ENTITY_CACHE => $this->getEntityCache(),
+            EntitySetInterface::OPTION_ITEMS => $this->getEntityCache()->getByIds($ids)
+        ]);
+    }
+
+    public function insert(array $set): EntityIdInterface
+    {
         if ($this->getStorage()->insert($this, $set)) {
             $rowId = Arrays::intersectByKeys($set, $this->primaryKey);
 
@@ -153,29 +139,23 @@ class Repository extends RepositoryBase {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::insertInto($repository, $request)
-     */
-    public function insertInto(RepositoryInterface $repository, RequestInterface $request): int {
+    public function insertInto(RepositoryInterface $repository, RequestInterface $request): int
+    {
         $this->validateRequest($request);
 
         return $this->getStorage()->insertInto($repository, $request);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::insertMultiple($rows)
-     */
-    public function insertMultiple(array $rows): int {
+    public function insertMultiple(array $rows): int
+    {
         return $this->getStorage()->insertMultiple($this, $rows);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::refresh($entity)
+     * @return static
      */
-    public function refresh(EntityInterface $entity): RepositoryInterface {
+    public function refresh(EntityInterface $entity): RepositoryInterface
+    {
         if ($entity->isStored()) {
             $request = $this->createRequest();
             $request->getWhere()->id($entity->getEntityId());
@@ -188,17 +168,14 @@ class Repository extends RepositoryBase {
                 return $this;
             }
 
-            throw new EntityRefreshFaultException(static::EXCEPTION_ENTITY_REFRESH_ERROR);
+            throw new Exception\EntityRefreshFaultException(static::EXCEPTION_ENTITY_REFRESH_ERROR);
         }
 
-        throw new EntityRefreshFaultException(static::EXCEPTION_NOT_STORED_ENTITY);
+        throw new Exception\EntityRefreshFaultException(static::EXCEPTION_NOT_STORED_ENTITY);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::save($entity)
-     */
-    public function save(EntityInterface $entity): EntityIdInterface {
+    public function save(EntityInterface $entity): EntityIdInterface
+    {
         $set = $entity->collectSaveData();
 
         if ($oldId = $entity->getEntityId()) {
@@ -219,11 +196,8 @@ class Repository extends RepositoryBase {
         return $this->insert($set);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::select($request)
-     */
-    public function select(RequestInterface $request): EntitySetInterface {
+    public function select(RequestInterface $request): EntitySetInterface
+    {
         $fetchRequest = clone $request;
         $fetchRequest->setColumns($fetchRequest->isIdFetchEnabled() ? $this->primaryKey : []);
 
@@ -235,57 +209,23 @@ class Repository extends RepositoryBase {
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::selectAll()
-     */
-    public function selectAll(): EntitySetInterface {
-        return $this->createRequest()->fetch();
+    public function selectAll(): EntitySetInterface
+    {
+        return $this->createRequest()->fetch(); // TODO fetch?
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::selectById($id)
-     */
-    public function selectById(EntityIdInterface $id) {
-        $entities = $this->getEntityCache()->getByIds([$id]);
-
-        return reset($entities);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::selectByIds($ids)
-     */
-    public function selectByIds(array $ids): EntitySetInterface {
-        return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_SET, [
-            EntitySetInterface::OPTION_REPOSITORY => $this,
-            EntitySetInterface::OPTION_ENTITY_CACHE => $this->getEntityCache(),
-            EntitySetInterface::OPTION_ITEMS => $this->getEntityCache()->getByIds($ids)
-        ]);
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::selectColumn($request)
-     */
-    public function selectColumn(RequestInterface $request): StorageResultInterface {
+    public function selectColumn(RequestInterface $request): StorageResultInterface
+    {
         return $this->getStorage()->selectColumn($request);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::selectRawData($request)
-     */
-    public function selectRawData(RequestInterface $request): StorageResultInterface {
+    public function selectRawData(RequestInterface $request): StorageResultInterface
+    {
         return $this->getStorage()->select($request);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::update($set, $request)
-     */
-    public function update(array $set, RequestInterface $request): int {
+    public function update(array $set, RequestInterface $request): int
+    {
         $this->validateRequest($request);
 
         if ($result = $this->getStorage()->update($set, $request)) {
@@ -296,23 +236,19 @@ class Repository extends RepositoryBase {
     }
 
     /**
-     * Validate request
-     *
-     * @param RequestInterface $request
+     * @throws Exception\InvalidArgumentException
      */
-    protected function validateRequest(RequestInterface $request) {
+    protected function validateRequest(RequestInterface $request): void
+    {
         if ($request->getRepository() === $this) {
             return;
         }
 
-        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_REQUEST, $this->getName(), $request->getRepository()->getName()));
+        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_REQUEST, $this->getName(), $request->getRepository()->getName()));
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::valueToDateTime()
-     */
-    public function valueToDateTime($value) {
+    public function valueToDateTime($value): ?DateTime
+    {
         return $this->getStorage()->valueToDateTime($value);
     }
 }

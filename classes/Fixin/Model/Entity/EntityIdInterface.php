@@ -10,36 +10,20 @@ namespace Fixin\Model\Entity;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\PrototypeInterface;
 
-interface EntityIdInterface extends PrototypeInterface {
+interface EntityIdInterface extends PrototypeInterface
+{
+    public const
+        OPTION_ENTITY_ID = 'entityId',
+        OPTION_REPOSITORY = 'repository';
 
-    const OPTION_ENTITY_ID = 'entityId';
-    const OPTION_REPOSITORY = 'repository';
-
-    /**
-     * Delete entity of ID
-     *
-     * @return bool
-     */
+    public function __toString(): string;
     public function deleteEntity(): bool;
-
-    /**
-     * Get array copy
-     *
-     * @return array
-     */
     public function getArrayCopy(): array;
 
     /**
-     * Get entity of ID
-     *
-     * @return EntityInterface|null
+     * Get the entity for the ID
      */
-    public function getEntity();
+    public function getEntity(): ?EntityInterface;
 
-    /**
-     * Get repository
-     *
-     * @return RepositoryInterface
-     */
     public function getRepository(): RepositoryInterface;
 }

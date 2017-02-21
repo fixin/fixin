@@ -7,6 +7,6 @@
 
 namespace Fixin\Model\Storage\Grammar;
 
-class MysqlGrammar extends Grammar {
-
+class MysqlGrammar extends SqlGrammar
+{
 }

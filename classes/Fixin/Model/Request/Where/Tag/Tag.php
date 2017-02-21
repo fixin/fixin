@@ -9,11 +9,12 @@ namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Resource\Prototype;
 
-abstract class Tag extends Prototype implements TagInterface {
-
-    const THIS_REQUIRES = [
-        self::OPTION_JOIN => self::TYPE_STRING
-    ];
+abstract class Tag extends Prototype implements TagInterface
+{
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_JOIN => self::TYPE_STRING
+        ];
 
     /**
      * @var string
@@ -25,37 +26,23 @@ abstract class Tag extends Prototype implements TagInterface {
      */
     protected $negated = false;
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\Tag\TagInterface::getJoin()
-     */
-    public function getJoin(): string {
+    public function getJoin(): string
+    {
         return $this->join;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\Tag\TagInterface::isNegated()
-     */
-    public function isNegated(): bool {
+    public function isNegated(): bool
+    {
         return $this->negated;
     }
 
-    /**
-     * Set join
-     *
-     * @param string $join
-     */
-    protected function setJoin(string $join) {
+    protected function setJoin(string $join)
+    {
         $this->join = $join;
     }
 
-    /**
-     * Set negated
-     *
-     * @param bool $negated
-     */
-    protected function setNegated(bool $negated) {
+    protected function setNegated(bool $negated)
+    {
         $this->negated = $negated;
     }
 }

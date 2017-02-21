@@ -14,9 +14,9 @@ use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\UnionInterface;
 use Fixin\Support\Numbers;
 
-abstract class Grammar extends GrammarBase {
-
-    const
+abstract class Grammar extends GrammarBase
+{
+    protected const
         ADD_COLUMNS = 'columns',
         ALL_COLUMNS = '*',
         ADD_FROM = 'from',
@@ -47,13 +47,8 @@ abstract class Grammar extends GrammarBase {
         STATEMENT_SELECT = [false => 'SELECT', true => 'SELECT DISTINCT'],
         STATEMENT_UPDATE = 'UPDATE';
 
-    /**
-     * COLUMNS clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     */
-    protected function clauseColumns(RequestInterface $request, QueryInterface $query) {
+    protected function clauseColumns(RequestInterface $request, QueryInterface $query): void
+    {
         // Selected columns
         if ($columns = $request->getColumns()) {
             $list = [];
@@ -71,35 +66,20 @@ abstract class Grammar extends GrammarBase {
         $query->appendWord(static::ALL_COLUMNS);
     }
 
-    /**
-     * FROM clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     */
-    protected function clauseFrom(RequestInterface $request, QueryInterface $query) {
+    protected function clauseFrom(RequestInterface $request, QueryInterface $query): void
+    {
         $query->appendClause(static::CLAUSE_FROM, $this->requestNameToString($request));
     }
 
-    /**
-     * HAVING clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     */
-    protected function clauseHaving(RequestInterface $request, QueryInterface $query) {
+    protected function clauseHaving(RequestInterface $request, QueryInterface $query): void
+    {
         if ($request->hasHaving()) {
             $query->appendString($this->whereToString(static::CLAUSE_HAVING, $request->getHaving(), $query));
         }
     }
 
-    /**
-     * GROUP BY clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     */
-    protected function clauseGroupBy(RequestInterface $request, QueryInterface $query) {
+    protected function clauseGroupBy(RequestInterface $request, QueryInterface $query): void
+    {
         $groupBy = [];
 
         foreach ($request->getGroupBy() as $value) {
@@ -111,13 +91,8 @@ abstract class Grammar extends GrammarBase {
         }
     }
 
-    /**
-     * JOIN clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     */
-    protected function clauseJoin(RequestInterface $request, QueryInterface $query) {
+    protected function clauseJoin(RequestInterface $request, QueryInterface $query): void
+    {
         foreach ($request->getJoins() as $join) {
             $query
             ->appendClause(static::CLAUSE_JOIN, $this->nameToString($join->getRepository()->getName(), $join->getAlias()))
@@ -125,69 +100,42 @@ abstract class Grammar extends GrammarBase {
         }
     }
 
-    /**
-     * LIMIT clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     */
-    protected function clauseLimit(RequestInterface $request, QueryInterface $query) {
+    protected function clauseLimit(RequestInterface $request, QueryInterface $query): void
+    {
         $query->appendString($this->limitsToString($request->getOffset(), $request->getLimit()));
     }
 
-    /**
-     * ORDER BY clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     */
-    protected function clauseOrderBy(RequestInterface $request, QueryInterface $query) {
+    protected function clauseOrderBy(RequestInterface $request, QueryInterface $query): void
+    {
         $query->appendString($this->orderByToString($request->getOrderBy(), $query));
     }
 
-    /**
-     * WHERE clause
-     *
-     * @param RequestInterface $request
-     * @param QueryInterface $query
-     */
-    protected function clauseWhere(RequestInterface $request, QueryInterface $query) {
+    protected function clauseWhere(RequestInterface $request, QueryInterface $query): void
+    {
         if ($request->hasWhere()) {
             $query->appendString($this->whereToString(static::CLAUSE_WHERE, $request->getWhere(), $query));
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::delete($request)
-     */
-    public function delete(RequestInterface $request): QueryInterface {
+    public function delete(RequestInterface $request): QueryInterface
+    {
         return $this->makeQuery(static::STATEMENT_DELETE, $request, [static::ADD_FROM, static::ADD_WHERE, static::ADD_ORDER_BY, static::ADD_LIMIT]);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::exists($request)
-     */
-    public function exists(RequestInterface $request): QueryInterface {
+    public function exists(RequestInterface $request): QueryInterface
+    {
         $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY);
 
         return $query->appendClause(static::STATEMENT_SELECT[false], sprintf(static::MASK_EXISTS, $this->requestToString($request, $query)));
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::insert($repository, $set)
-     */
-    public function insert(RepositoryInterface $repository, array $set): QueryInterface {
+    public function insert(RepositoryInterface $repository, array $set): QueryInterface
+    {
         return $this->insertMultiple($repository, [$set]);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::insertInto($repository, $request)
-     */
-    public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface {
+    public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface
+    {
         $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
         ->appendWord(static::STATEMENT_INSERT)
         ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
@@ -208,11 +156,8 @@ abstract class Grammar extends GrammarBase {
         return $query;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::insertMultiple($repository, $rows)
-     */
-    public function insertMultiple(RepositoryInterface $repository, array $rows): QueryInterface {
+    public function insertMultiple(RepositoryInterface $repository, array $rows): QueryInterface
+    {
         $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
         ->appendWord(static::STATEMENT_INSERT)
         ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
@@ -237,15 +182,8 @@ abstract class Grammar extends GrammarBase {
         return $query->appendClause(static::CLAUSE_VALUES, implode(static::LIST_SEPARATOR_MULTI_LINE, $source));
     }
 
-    /**
-     * Make query
-     *
-     * @param string $statement
-     * @param RequestInterface $request
-     * @param string[] $tags
-     * @return QueryInterface
-     */
-    protected function makeQuery(string $statement, RequestInterface $request, array $tags) {
+    protected function makeQuery(string $statement, RequestInterface $request, array $tags): QueryInterface
+    {
         $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)->appendWord($statement);
 
         foreach ($tags as $tag) {
@@ -255,11 +193,8 @@ abstract class Grammar extends GrammarBase {
         return $query;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::select($request)
-     */
-    public function select(RequestInterface $request): QueryInterface {
+    public function select(RequestInterface $request): QueryInterface
+    {
         $query = $this->makeQuery(static::STATEMENT_SELECT[$request->isDistinctResult()], $request, [static::ADD_COLUMNS, static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_GROUP_BY, static::ADD_HAVING, static::ADD_ORDER_BY, static::ADD_LIMIT]);
 
         // Unions
@@ -280,11 +215,8 @@ abstract class Grammar extends GrammarBase {
         return $query;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::update($set, $request)
-     */
-    public function update(array $set, RequestInterface $request): QueryInterface {
+    public function update(array $set, RequestInterface $request): QueryInterface
+    {
         $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
         ->appendClause(static::STATEMENT_UPDATE, $this->requestNameToString($request));
 
@@ -302,11 +234,8 @@ abstract class Grammar extends GrammarBase {
         return $query;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Storage\Grammar\GrammarInterface::valueToDateTime()
-     */
-    public function valueToDateTime($value) {
+    public function valueToDateTime($value): ?DateTime
+    {
         if (Numbers::isInt($value)) {
             return new DateTime($value);
         }

@@ -7,6 +7,8 @@
 
 namespace Fixin\Model\Entity\Exception;
 
-class NotStoredEntityException extends RuntimeException
+use Fixin\Exception\FixinExceptionInterface;
+
+interface EntityExceptionInterface extends FixinExceptionInterface
 {
 }

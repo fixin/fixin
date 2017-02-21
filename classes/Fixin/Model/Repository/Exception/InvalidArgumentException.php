@@ -7,6 +7,6 @@
 
 namespace Fixin\Model\Repository\Exception;
 
-class EntityRefreshFaultException extends RuntimeException
+class InvalidArgumentException extends \InvalidArgumentException implements RepositoryExceptionInterface
 {
 }

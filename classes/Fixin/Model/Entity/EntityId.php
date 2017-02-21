@@ -10,17 +10,16 @@ namespace Fixin\Model\Entity;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 
-class EntityId extends Prototype implements EntityIdInterface {
-
-    const
+class EntityId extends Prototype implements EntityIdInterface
+{
+    protected const
         SEPARATOR = ',',
         THIS_REQUIRES = [
             self::OPTION_REPOSITORY => self::TYPE_INSTANCE
         ],
         THIS_SETS_LAZY = [
             self::OPTION_REPOSITORY => RepositoryInterface::class
-        ]
-    ;
+        ];
 
     /**
      * @var array
@@ -35,53 +34,38 @@ class EntityId extends Prototype implements EntityIdInterface {
     /**
      * @var string
      */
-    protected $string;
+    protected $string = '';
 
-    public function __toString() {
+    public function __toString(): string
+    {
         return $this->string;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityIdInterface::deleteEntity()
-     */
-    public function deleteEntity(): bool {
+    public function deleteEntity(): bool
+    {
         $request = $this->getRepository()->createRequest();
         $request->getWhere()->items($this->entityId);
 
         return $request->delete() > 0;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityIdInterface::getArrayCopy()
-     */
-    public function getArrayCopy(): array {
+    public function getArrayCopy(): array
+    {
         return $this->entityId;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityIdInterface::getEntity()
-     */
-    public function getEntity() {
+    public function getEntity(): ?EntityInterface
+    {
         return $this->getRepository()->selectById($this);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityIdInterface::getRepository()
-     */
-    public function getRepository(): RepositoryInterface {
+    public function getRepository(): RepositoryInterface
+    {
         return $this->repository ?: $this->loadLazyProperty(static::OPTION_REPOSITORY);
     }
 
-    /**
-     * Set entity ID
-     *
-     * @param array $entityId
-     */
-    protected function setEntityId(array $entityId) {
+    protected function setEntityId(array $entityId): void
+    {
         $this->entityId = $entityId;
         $this->string = implode(static::SEPARATOR, $entityId);
     }

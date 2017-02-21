@@ -23,50 +23,47 @@ use Fixin\Model\Request\Where\Tag\WhereTag;
 class Where extends WhereBase {
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::between($identifier, $min, $max)
+     * @return static
      */
-    public function between(string $identifier, $min, $max): WhereInterface {
+    public function between(string $identifier, $min, $max): WhereInterface
+    {
         return $this->addBetween(BetweenTag::JOIN_AND, false, $identifier, $min, $max);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::compare($left, $operator, $right, $leftType, $rightType)
+     * @return static
      */
-    public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface {
+    public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface
+    {
         return $this->addCompare(TagInterface::JOIN_AND, false, $left, $operator, $right, $leftType, $rightType);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::exists($request)
+     * @return static
      */
-    public function exists(RequestInterface $request): WhereInterface {
+    public function exists(RequestInterface $request): WhereInterface
+    {
         return $this->addExists(ExistsTag::JOIN_AND, false, $request);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::getTags()
-     */
-    public function getTags(): array {
+    public function getTags(): array
+    {
         return $this->tags;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::id($entityId)
+     * @return static
      */
-    public function id(EntityIdInterface $entityId): WhereInterface {
+    public function id(EntityIdInterface $entityId): WhereInterface
+    {
         return $this->items($entityId->getArrayCopy());
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::ids()
+     * @return static
      */
-    public function ids(array $entityIds): WhereInterface {
+    public function ids(array $entityIds): WhereInterface
+    {
         $list = [];
         foreach ($entityIds as $entityId) {
             $list[] = $entityId->getArrayCopy();
@@ -76,198 +73,198 @@ class Where extends WhereBase {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::in($identifier, $values)
+     * @return static
      */
-    public function in($identifier, $values): WhereInterface {
+    public function in($identifier, $values): WhereInterface
+    {
         return $this->addIn(InTag::JOIN_AND, false, $identifier, $values);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::items($array)
+     * @return static
      */
-    public function items(array $array): WhereInterface {
+    public function items(array $array): WhereInterface
+    {
         return $this->nested(function(Where $where) use ($array) {
             $this->addItems($where, $array);
         });
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::nested($callback)
+     * @return static
      */
-    public function nested(callable $callback): WhereInterface {
+    public function nested(callable $callback): WhereInterface
+    {
         return $this->addNested(WhereTag::JOIN_AND, false, $callback);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::notBetween($identifier, $min, $max)
+     * @return static
      */
-    public function notBetween(string $identifier, $min, $max): WhereInterface {
+    public function notBetween(string $identifier, $min, $max): WhereInterface
+    {
         return $this->addBetween(BetweenTag::JOIN_AND, true, $identifier, $min, $max);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::notExists($request)
+     * @return static
      */
-    public function notExists(RequestInterface $request): WhereInterface {
+    public function notExists(RequestInterface $request): WhereInterface
+    {
         return $this->addExists(ExistsTag::JOIN_AND, true, $request);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::notIn($identifier, $values)
+     * @return static
      */
-    public function notIn($identifier, $values): WhereInterface {
+    public function notIn($identifier, $values): WhereInterface
+    {
         return $this->addIn(InTag::JOIN_AND, true, $identifier, $values);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::notNested($callback)
+     * @return static
      */
-    public function notNested(callable $callback): WhereInterface {
+    public function notNested(callable $callback): WhereInterface
+    {
         return $this->addNested(WhereTag::JOIN_AND, true, $callback);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::notNull($identifier)
+     * @return static
      */
-    public function notNull(string $identifier): WhereInterface {
+    public function notNull(string $identifier): WhereInterface
+    {
         return $this->addNull(NullTag::JOIN_AND, true, $identifier);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::null($identifier)
+     * @return static
      */
-    public function null(string $identifier): WhereInterface {
+    public function null(string $identifier): WhereInterface
+    {
         return $this->addNull(NullTag::JOIN_AND, false, $identifier);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orBetween($identifier, $min, $max)
+     * @return static
      */
-    public function orBetween(string $identifier, $min, $max): WhereInterface {
+    public function orBetween(string $identifier, $min, $max): WhereInterface
+    {
         return $this->addBetween(BetweenTag::JOIN_OR, false, $identifier, $min, $max);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orCompare($left, $operator, $right, $leftType, $rightType)
+     * @return static
      */
-    public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface {
+    public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface
+    {
         return $this->addCompare(TagInterface::JOIN_OR, false, $left, $operator, $right, $leftType, $rightType);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orExists($request)
+     * @return static
      */
-    public function orExists(RequestInterface $request): WhereInterface {
+    public function orExists(RequestInterface $request): WhereInterface
+    {
         return $this->addExists(ExistsTag::JOIN_OR, false, $request);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orId($entityId)
+     * @return static
      */
-    public function orId(EntityIdInterface $entityId): WhereInterface {
+    public function orId(EntityIdInterface $entityId): WhereInterface
+    {
         return $this->orItems($entityId->getArrayCopy());
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orIn($identifier, $values)
+     * @return static
      */
-    public function orIn($identifier, $values): WhereInterface {
+    public function orIn($identifier, $values): WhereInterface
+    {
         return $this->addIn(InTag::JOIN_OR, false, $identifier, $values);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orItems($array)
+     * @return static
      */
-    public function orItems(array $array): WhereInterface {
+    public function orItems(array $array): WhereInterface
+    {
         return $this->orNested(function(Where $where) use ($array) {
             $this->addItems($where, $array);
         });
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orNested($callback)
+     * @return static
      */
-    public function orNested(callable $callback): WhereInterface {
+    public function orNested(callable $callback): WhereInterface
+    {
         return $this->addNested(WhereTag::JOIN_OR, false, $callback);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orNotBetween($identifier, $min, $max)
+     * @return static
      */
-    public function orNotBetween(string $identifier, $min, $max): WhereInterface {
+    public function orNotBetween(string $identifier, $min, $max): WhereInterface
+    {
         return $this->addBetween(BetweenTag::JOIN_OR, true, $identifier, $min, $max);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orNotExists($request)
+     * @return static
      */
-    public function orNotExists(RequestInterface $request): WhereInterface {
+    public function orNotExists(RequestInterface $request): WhereInterface
+    {
         return $this->addExists(ExistsTag::JOIN_OR, true, $request);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orNotIn($identifier, $values)
+     * @return static
      */
-    public function orNotIn($identifier, $values): WhereInterface {
+    public function orNotIn($identifier, $values): WhereInterface
+    {
         return $this->addIn(InTag::JOIN_OR, true, $identifier, $values);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orNotNested($callback)
+     * @return static
      */
-    public function orNotNested(callable $callback): WhereInterface {
+    public function orNotNested(callable $callback): WhereInterface
+    {
         return $this->addNested(WhereTag::JOIN_OR, true, $callback);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orNotNull($identifier)
+     * @return static
      */
-    public function orNotNull(string $identifier): WhereInterface {
+    public function orNotNull(string $identifier): WhereInterface
+    {
         return $this->addNull(NullTag::JOIN_OR, true, $identifier);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orNull($identifier)
+     * @return static
      */
-    public function orNull(string $identifier): WhereInterface {
+    public function orNull(string $identifier): WhereInterface
+    {
         return $this->addNull(NullTag::JOIN_OR, false, $identifier);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::orSub($where)
+     * @return static
      */
-    public function orSub(WhereInterface $where): WhereInterface {
+    public function orSub(WhereInterface $where): WhereInterface
+    {
         return $this->addSub(WhereTag::JOIN_OR, false, $where);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\Where\WhereInterface::sub($where)
+     * @return static
      */
-    public function sub(WhereInterface $where): WhereInterface {
+    public function sub(WhereInterface $where): WhereInterface
+    {
         return $this->addSub(WhereTag::JOIN_AND, false, $where);
     }
 }

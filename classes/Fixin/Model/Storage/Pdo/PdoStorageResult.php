@@ -7,20 +7,23 @@
 
 namespace Fixin\Model\Storage\Pdo;
 
-use Fixin\Exception\RuntimeException;
+use Fixin\Model\Storage\Exception;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Ground;
+use PDOStatement;
 
-class PdoStorageResult extends Prototype implements StorageResultInterface {
-    const
+class PdoStorageResult extends Prototype implements StorageResultInterface
+{
+    protected const
         EXCEPTION_REWIND_IS_NOT_ALLOWED = 'Rewind is not allowed',
         MASK_TO_STRING = '%s {' . PHP_EOL . "    Position: %d" . PHP_EOL . "    Count: %d" . PHP_EOL . '}' . PHP_EOL,
-        OPTION_STATEMENT = 'statement',
         THIS_REQUIRES = [
             self::OPTION_STATEMENT => self::TYPE_INSTANCE
-        ]
-    ;
+        ];
+
+    public const
+        OPTION_STATEMENT = 'statement';
 
     /**
      * @var mixed
@@ -33,50 +36,39 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
     protected $currentFetched = false;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $position = 0;
 
     /**
-     * @var \PDOStatement
+     * @var PDOStatement
      */
     protected $statement;
 
-    public function __toString(): string {
+    public function __toString(): string
+    {
         return Ground::debugText(sprintf(static::MASK_TO_STRING, get_class($this), $this->position, $this->count()));
     }
 
-    /**
-     * {@inheritDoc}
-     * @see Countable::count()
-     */
-    public function count(): int {
+    public function count(): int
+    {
         return $this->statement->rowCount();
     }
 
-    /**
-     * {@inheritDoc}
-     * @see Iterator::current()
-     */
-    public function current() {
+    public function current()
+    {
         $this->prefetch();
 
         return $this->currentData;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see Iterator::key()
-     */
-    public function key() {
+    public function key(): int
+    {
         return $this->position;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see Iterator::next()
-     */
-    public function next() {
+    public function next(): void
+    {
         $this->position++;
         $this->currentFetched = false;
 
@@ -86,40 +78,31 @@ class PdoStorageResult extends Prototype implements StorageResultInterface {
     /**
      * Prefetch data
      */
-    protected function prefetch() {
+    protected function prefetch(): void
+    {
         if (!$this->currentFetched) {
             $this->currentData = $this->statement->fetch();
             $this->currentFetched = true;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * @see Iterator::rewind()
-     */
-    public function rewind() {
+    public function rewind(): void
+    {
         if ($this->position > 0) {
-            throw new RuntimeException(static::EXCEPTION_REWIND_IS_NOT_ALLOWED);
+            throw new Exception\RuntimeException(static::EXCEPTION_REWIND_IS_NOT_ALLOWED);
         }
 
         $this->prefetch();
     }
 
-    /**
-     * Set statement
-     *
-     * @param \PDOStatement $statement
-     */
-    protected function setStatement(\PDOStatement $statement) {
+    protected function setStatement(PDOStatement $statement): void
+    {
         $this->statement = $statement;
         $this->currentFetched = false;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see Iterator::valid()
-     */
-    public function valid(): bool {
+    public function valid(): bool
+    {
         $this->prefetch();
 
         return $this->currentData !== false;

@@ -7,23 +7,22 @@
 
 namespace Fixin\Model\Entity;
 
-use Fixin\Model\Entity\Exception\NotStoredEntityException;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 use Fixin\Support\ToStringTrait;
 
-abstract class Entity extends Prototype implements EntityInterface {
-
+abstract class Entity extends Prototype implements EntityInterface
+{
     use ToStringTrait;
 
-    const
-    EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity',
-    THIS_SETS_LAZY = [
-        self::OPTION_REPOSITORY => RepositoryInterface::class
-    ];
+    protected const
+        EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity',
+        THIS_SETS_LAZY = [
+            self::OPTION_REPOSITORY => RepositoryInterface::class
+        ];
 
     /**
-     * @var EntityIdInterface
+     * @var EntityIdInterface|null
      */
     protected $entityId;
 
@@ -38,10 +37,11 @@ abstract class Entity extends Prototype implements EntityInterface {
     protected $repository;
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::delete()
+     * @throws Exception\NotStoredEntityException
+     * @return static
      */
-    public function delete(): EntityInterface {
+    public function delete(): EntityInterface
+    {
         if ($this->isStored()) {
             $this->entityId->deleteEntity();
             $this->entityId = null;
@@ -49,61 +49,51 @@ abstract class Entity extends Prototype implements EntityInterface {
             return $this;
         }
 
-        throw new NotStoredEntityException(static::EXCEPTION_NOT_STORED_ENTITY);
+        throw new Exception\NotStoredEntityException(static::EXCEPTION_NOT_STORED_ENTITY);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::getEntityId()
-     */
-    public function getEntityId() {
+    public function getEntityId(): ?EntityIdInterface
+    {
         return $this->entityId;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::getRepository()
-     */
-    public function getRepository(): RepositoryInterface {
+    public function getRepository(): RepositoryInterface
+    {
         return $this->repository ?: $this->loadLazyProperty(static::OPTION_REPOSITORY);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::isStored()
-     */
-    public function isStored(): bool {
+    public function isStored(): bool
+    {
         return isset($this->entityId);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::refresh()
+     * @return static
      */
-    public function refresh(): EntityInterface {
+    public function refresh(): EntityInterface
+    {
         $this->getRepository()->refresh($this);
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Entity\EntityInterface::save()
+     * @return static
      */
-    public function save(): EntityInterface {
+    public function save(): EntityInterface
+    {
         $this->entityId = $this->getRepository()->save($this);
 
         return $this
-        ->refresh()
-        ->saveSubEntities();
+            ->refresh()
+            ->saveSubEntities();
     }
 
     /**
-     * Save sub entities
-     *
-     * @return \Fixin\Model\Entity\Entity
+     * @return static
      */
-    protected function saveSubEntities() {
+    protected function saveSubEntities(): self
+    {
         // Delete outdated entities
         $repositories = new \SplObjectStorage();
         foreach ($this->outdatedSubEntities as $entity) {
@@ -119,12 +109,8 @@ abstract class Entity extends Prototype implements EntityInterface {
         return $this;
     }
 
-    /**
-     * Set entity id
-     *
-     * @param EntityIdInterface $entityId
-     */
-    protected function setEntityId(EntityIdInterface $entityId) {
+    protected function setEntityId(EntityIdInterface $entityId): void
+    {
         $this->entityId = $entityId;
     }
 }

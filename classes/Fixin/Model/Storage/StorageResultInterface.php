@@ -11,5 +11,6 @@ use Countable;
 use Fixin\Resource\PrototypeInterface;
 use Iterator;
 
-interface StorageResultInterface extends PrototypeInterface, Iterator, Countable {
+interface StorageResultInterface extends PrototypeInterface, Iterator, Countable
+{
 }

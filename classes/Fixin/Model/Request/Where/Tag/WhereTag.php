@@ -9,33 +9,28 @@ namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Model\Request\Where\WhereInterface;
 
-class WhereTag extends Tag {
+class WhereTag extends Tag
+{
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_WHERE => self::TYPE_INSTANCE,
+        ];
 
-    const OPTION_WHERE = 'where';
-    const THIS_REQUIRES = [
-        self::OPTION_WHERE => self::TYPE_INSTANCE,
-    ];
+    public const
+        OPTION_WHERE = 'where';
 
     /**
      * @var WhereInterface
      */
     protected $where;
 
-    /**
-     * Get where
-     *
-     * @return WhereInterface
-     */
-    public function getWhere(): WhereInterface {
+    public function getWhere(): WhereInterface
+    {
         return $this->where;
     }
 
-    /**
-     * Set where
-     *
-     * @param WhereInterface $where
-     */
-    protected function setWhere(WhereInterface $where) {
+    protected function setWhere(WhereInterface $where)
+    {
         $this->where = $where;
     }
 }

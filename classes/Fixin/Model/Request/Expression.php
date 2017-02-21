@@ -9,11 +9,12 @@ namespace Fixin\Model\Request;
 
 use Fixin\Resource\Prototype;
 
-class Expression extends Prototype implements ExpressionInterface {
-
-    const THIS_REQUIRES = [
-        self::OPTION_EXPRESSION => self::TYPE_STRING,
-    ];
+class Expression extends Prototype implements ExpressionInterface
+{
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_EXPRESSION => self::TYPE_STRING,
+        ];
 
     /**
      * @var string
@@ -25,37 +26,23 @@ class Expression extends Prototype implements ExpressionInterface {
      */
     protected $parameters = [];
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\ExpressionInterface::getExpression()
-     */
-    public function getExpression(): string {
+    public function getExpression(): string
+    {
         return $this->expression;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\ExpressionInterface::getParameters()
-     */
-    public function getParameters(): array {
+    public function getParameters(): array
+    {
         return $this->parameters;
     }
 
-    /**
-     * Set expression
-     *
-     * @param string $expression
-     */
-    protected function setExpression(string $expression) {
+    protected function setExpression(string $expression)
+    {
         $this->expression = $expression;
     }
 
-    /**
-     * Set parameters
-     *
-     * @param array $parameters
-     */
-    protected function setParameters(array $parameters) {
+    protected function setParameters(array $parameters)
+    {
         $this->parameters = $parameters;
     }
 }

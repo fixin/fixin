@@ -7,6 +7,8 @@
 
 namespace Fixin\Model\Repository\Exception;
 
-class EntityRefreshFaultException extends RuntimeException
+use Fixin\Exception\FixinExceptionInterface;
+
+interface RepositoryExceptionInterface extends FixinExceptionInterface
 {
 }

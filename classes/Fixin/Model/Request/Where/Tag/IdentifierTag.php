@@ -7,12 +7,15 @@
 
 namespace Fixin\Model\Request\Where\Tag;
 
-abstract class IdentifierTag extends Tag {
+abstract class IdentifierTag extends Tag
+{
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_IDENTIFIER => self::TYPE_ANY,
+        ];
 
-    const OPTION_IDENTIFIER = 'identifier';
-    const THIS_REQUIRES = [
-        self::OPTION_IDENTIFIER => self::TYPE_ANY,
-    ];
+    public const
+        OPTION_IDENTIFIER = 'identifier';
 
     /**
      * @var string|array
@@ -20,20 +23,18 @@ abstract class IdentifierTag extends Tag {
     protected $identifier;
 
     /**
-     * Get identifier
-     *
      * @return string|array
      */
-    public function getIdentifier() {
+    public function getIdentifier()
+    {
         return $this->identifier;
     }
 
     /**
-     * Set identifier
-     *
      * @param string|array $identifier
      */
-    protected function setIdentifier($identifier) {
+    protected function setIdentifier($identifier)
+    {
         $this->identifier = $identifier;
     }
 }

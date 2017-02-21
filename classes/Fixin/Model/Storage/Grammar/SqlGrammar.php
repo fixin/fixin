@@ -5,7 +5,8 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Model\Repository\Exception;
+namespace Fixin\Model\Storage\Grammar;
 
-interface RepositoryException {
+abstract class SqlGrammar extends Grammar
+{
 }

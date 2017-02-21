@@ -9,13 +9,16 @@ namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Model\Request\RequestInterface;
 
-class InTag extends IdentifierTag {
+class InTag extends IdentifierTag
+{
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_IDENTIFIER => self::TYPE_ANY,
+            self::OPTION_VALUES => self::TYPE_ANY,
+        ];
 
-    const OPTION_VALUES = 'values';
-    const THIS_REQUIRES = [
-        self::OPTION_IDENTIFIER => self::TYPE_ANY,
-        self::OPTION_VALUES => self::TYPE_ANY,
-    ];
+    public const
+        OPTION_VALUES = 'values';
 
     /**
      * @var array|RequestInterface
@@ -23,20 +26,18 @@ class InTag extends IdentifierTag {
     protected $values;
 
     /**
-     * Get values
-     *
      * @return array|RequestInterface
      */
-    public function getValues() {
+    public function getValues()
+    {
         return $this->values;
     }
 
     /**
-     * Set values
-     *
      * @param array|RequestInterface $values
      */
-    protected function setValues($values) {
+    protected function setValues($values)
+    {
         $this->values = $values;
     }
 }

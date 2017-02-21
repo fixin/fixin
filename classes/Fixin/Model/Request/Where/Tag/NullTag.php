@@ -7,5 +7,6 @@
 
 namespace Fixin\Model\Request\Where\Tag;
 
-class NullTag extends IdentifierTag {
+class NullTag extends IdentifierTag
+{
 }

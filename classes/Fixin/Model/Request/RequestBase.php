@@ -46,7 +46,7 @@ abstract class RequestBase extends Prototype implements RequestInterface {
     protected $having;
 
     /**
-     * @var array
+     * @var Join[]
      */
     protected $joins = [];
 
@@ -84,7 +84,7 @@ abstract class RequestBase extends Prototype implements RequestInterface {
      * @param string $operator
      * @param string $right
      * @param string $alias
-     * @return self
+     * @return static
      */
     protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null) {
         return $this->addJoinItem($type, $repository, $this->container->clonePrototype(static::PROTOTYPE_WHERE)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
@@ -97,7 +97,7 @@ abstract class RequestBase extends Prototype implements RequestInterface {
      * @param RepositoryInterface $repository
      * @param WhereInterface $where
      * @param string $alias
-     * @return self
+     * @return static
      */
     protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null) {
         $this->joins[] = $this->container->clonePrototype(static::PROTOTYPE_JOIN, [
@@ -117,7 +117,7 @@ abstract class RequestBase extends Prototype implements RequestInterface {
      * @param RepositoryInterface $repository
      * @param callable $callback
      * @param string $alias
-     * @return self
+     * @return static
      */
     protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null) {
         $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);

@@ -7,15 +7,14 @@
 
 namespace Fixin\Model\Repository;
 
-use Fixin\Exception\InvalidArgumentException;
 use Fixin\Model\Entity\Cache\CacheInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Resource\Resource;
 
-abstract class RepositoryBase extends Resource implements RepositoryInterface {
-
-    const
+abstract class RepositoryBase extends Resource implements RepositoryInterface
+{
+    protected const
         EXCEPTION_INVALID_NAME = "Invalid name '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
         THIS_REQUIRES = [
@@ -61,93 +60,65 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface {
      */
     protected $storage;
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::getAutoIncrementColumn()
-     */
-    public function getAutoIncrementColumn() {
+    public function getAutoIncrementColumn(): ?string
+    {
         return $this->autoIncrementColumn;
     }
 
-    /**
-     * Get entity cache
-     *
-     * @return CacheInterface
-     */
-    protected function getEntityCache(): CacheInterface {
+    protected function getEntityCache(): CacheInterface
+    {
         return $this->entityCache ?: $this->loadLazyProperty(static::OPTION_ENTITY_CACHE, [
             CacheInterface::OPTION_REPOSITORY => $this,
             CacheInterface::OPTION_ENTITY_PROTOTYPE => $this->getEntityPrototype()
         ]);
     }
 
-    /**
-     * Get entity prototype
-     *
-     * @return EntityInterface
-     */
-    protected function getEntityPrototype(): EntityInterface {
+    protected function getEntityPrototype(): EntityInterface
+    {
         return $this->entityPrototype ?: $this->loadLazyProperty(static::OPTION_ENTITY_PROTOTYPE, [
             EntityInterface::OPTION_REPOSITORY => $this
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::getName()
-     */
-    public function getName(): string {
+    public function getName(): string
+    {
         return $this->name;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Repository\RepositoryInterface::getPrimaryKey()
-     */
-    public function getPrimaryKey(): array {
+    public function getPrimaryKey(): array
+    {
         return $this->primaryKey;
     }
 
-    /**
-     * Get storage instance
-     *
-     * @return StorageInterface
-     */
-    protected function getStorage(): StorageInterface {
+    protected function getStorage(): StorageInterface
+    {
         return $this->storage ?: $this->loadLazyProperty(static::OPTION_STORAGE);
     }
 
-    /**
-     * Set auto-increment column
-     *
-     * @param string $autoIncrementColumn
-     */
-    protected function setAutoIncrementColumn(string $autoIncrementColumn) {
+    protected function setAutoIncrementColumn(string $autoIncrementColumn): void
+    {
         $this->autoIncrementColumn = $autoIncrementColumn;
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      */
-    protected function setName(string $name) {
+    protected function setName(string $name): void
+    {
         if (preg_match(static::NAME_PATTERN, $name)) {
             $this->name = $name;
 
             return;
         }
 
-        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NAME, $name));
+        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NAME, $name));
     }
 
     /**
-     * Set primary key
-     *
      * @param string[] $primaryKey
      */
-    protected function setPrimaryKey(array $primaryKey) {
+    protected function setPrimaryKey(array $primaryKey): void
+    {
         $this->primaryKey = $primaryKey;
     }
 }

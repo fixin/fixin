@@ -9,22 +9,12 @@ namespace Fixin\Model\Request;
 
 use Fixin\Resource\PrototypeInterface;
 
-interface ExpressionInterface extends PrototypeInterface {
+interface ExpressionInterface extends PrototypeInterface
+{
+    public const
+        OPTION_EXPRESSION = 'expression',
+        OPTION_PARAMETERS = 'parameters';
 
-    const OPTION_EXPRESSION = 'expression';
-    const OPTION_PARAMETERS = 'parameters';
-
-    /**
-     * Get expression
-     *
-     * @return string
-     */
     public function getExpression(): string;
-
-    /**
-     * Get parameters
-     *
-     * @return array
-     */
     public function getParameters(): array;
 }

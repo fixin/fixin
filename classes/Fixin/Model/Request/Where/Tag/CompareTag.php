@@ -11,20 +11,21 @@ use Fixin\Model\Request\RequestInterface;
 
 class CompareTag extends Tag {
 
-    const OPERATOR_EQUAL = '=';
-    const OPERATOR_GREATER_THAN = '>';
-    const OPERATOR_GREATER_THAN_OR_EQUAL = '>=';
-    const OPERATOR_LOWER_THAN = '<';
-    const OPERATOR_LOWER_THAN_OR_EQUAL = '<=';
-    const OPERATOR_NOT_EQUAL = '!=';
-    const OPTION_LEFT = 'left';
-    const OPTION_OPERATOR = 'operator';
-    const OPTION_RIGHT = 'right';
-    const THIS_REQUIRES = [
-        self::OPTION_LEFT => self::TYPE_ANY,
-        self::OPTION_OPERATOR => self::TYPE_STRING,
-        self::OPTION_RIGHT => self::TYPE_ANY,
-    ];
+    public const
+        OPERATOR_EQUAL = '=',
+        OPERATOR_GREATER_THAN = '>',
+        OPERATOR_GREATER_THAN_OR_EQUAL = '>=',
+        OPERATOR_LOWER_THAN = '<',
+        OPERATOR_LOWER_THAN_OR_EQUAL = '<=',
+        OPERATOR_NOT_EQUAL = '!=',
+        OPTION_LEFT = 'left',
+        OPTION_OPERATOR = 'operator',
+        OPTION_RIGHT = 'right',
+        THIS_REQUIRES = [
+            self::OPTION_LEFT => self::TYPE_ANY,
+            self::OPTION_OPERATOR => self::TYPE_STRING,
+            self::OPTION_RIGHT => self::TYPE_ANY,
+        ];
 
     /**
      * @var number|string|RequestInterface
@@ -46,16 +47,13 @@ class CompareTag extends Tag {
      *
      * @return number|string
      */
-    public function getLeft() {
+    public function getLeft()
+    {
         return $this->left;
     }
 
-    /**
-     * Get operator
-     *
-     * @return string
-     */
-    public function getOperator(): string {
+    public function getOperator(): string
+    {
         return $this->operator;
     }
 
@@ -64,7 +62,8 @@ class CompareTag extends Tag {
      *
      * @return number|string|array
      */
-    public function getRight() {
+    public function getRight()
+    {
         return $this->right;
     }
 
@@ -73,16 +72,13 @@ class CompareTag extends Tag {
      *
      * @param number|string $left
      */
-    protected function setLeft($left) {
+    protected function setLeft($left)
+    {
         $this->left = $left;
     }
 
-    /**
-     * Set operator
-     *
-     * @param string $operator
-     */
-    protected function setOperator(string $operator) {
+    protected function setOperator(string $operator)
+    {
         $this->operator = $operator;
     }
 
@@ -91,7 +87,8 @@ class CompareTag extends Tag {
      *
      * @param number|string|array $right
      */
-    protected function setRight($right) {
+    protected function setRight($right)
+    {
         $this->right = $right;
     }
 }

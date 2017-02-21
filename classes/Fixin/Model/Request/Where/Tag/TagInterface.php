@@ -9,24 +9,14 @@ namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Resource\PrototypeInterface;
 
-interface TagInterface extends PrototypeInterface {
+interface TagInterface extends PrototypeInterface
+{
+    public const
+        JOIN_AND = 'and',
+        JOIN_OR = 'or',
+        OPTION_JOIN = 'join',
+        OPTION_NEGATED = 'negated';
 
-    const JOIN_AND = 'and';
-    const JOIN_OR = 'or';
-    const OPTION_JOIN = 'join';
-    const OPTION_NEGATED = 'negated';
-
-    /**
-     * Get join
-     *
-     * @return string
-     */
     public function getJoin(): string;
-
-    /**
-     * Is negated
-     *
-     * @return bool
-     */
     public function isNegated(): bool;
 }

@@ -7,5 +7,6 @@
 
 namespace Fixin\Model\Entity\Exception;
 
-interface EntityException {
+class RuntimeException extends \RuntimeException implements EntityExceptionInterface
+{
 }

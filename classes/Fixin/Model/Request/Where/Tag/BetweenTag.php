@@ -7,15 +7,16 @@
 
 namespace Fixin\Model\Request\Where\Tag;
 
-class BetweenTag extends IdentifierTag {
-
-    const OPTION_MAX = 'max';
-    const OPTION_MIN = 'min';
-    const THIS_REQUIRES = [
-        self::OPTION_IDENTIFIER => self::TYPE_ANY,
-        self::OPTION_MAX => self::TYPE_ANY,
-        self::OPTION_MIN => self::TYPE_ANY,
-    ];
+class BetweenTag extends IdentifierTag
+{
+    public const
+        OPTION_MAX = 'max',
+        OPTION_MIN = 'min',
+        THIS_REQUIRES = [
+            self::OPTION_IDENTIFIER => self::TYPE_ANY,
+            self::OPTION_MAX => self::TYPE_ANY,
+            self::OPTION_MIN => self::TYPE_ANY,
+        ];
 
     /**
      * @var number|string
@@ -32,7 +33,8 @@ class BetweenTag extends IdentifierTag {
      *
      * @return number|string
      */
-    public function getMax() {
+    public function getMax()
+    {
         return $this->max;
     }
 
@@ -41,7 +43,8 @@ class BetweenTag extends IdentifierTag {
      *
      * @return number|string
      */
-    public function getMin() {
+    public function getMin()
+    {
         return $this->min;
     }
 
@@ -50,7 +53,8 @@ class BetweenTag extends IdentifierTag {
      *
      * @param number|string $max
      */
-    protected function setMax($max) {
+    protected function setMax($max)
+    {
         $this->max = $max;
     }
 
@@ -59,7 +63,8 @@ class BetweenTag extends IdentifierTag {
      *
      * @param number|string $min
      */
-    protected function setMin($min) {
+    protected function setMin($min)
+    {
         $this->min = $min;
     }
 }
