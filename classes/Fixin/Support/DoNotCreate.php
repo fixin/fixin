@@ -7,18 +7,18 @@
 
 namespace Fixin\Support;
 
-use Fixin\Support\Exception\DoNotCreateException;
-
-abstract class DoNotCreate {
-
-    const EXCEPTION_DO_NOT_CREATE = "Do not create instance of %s";
+abstract class DoNotCreate
+{
+    protected const
+        EXCEPTION_DO_NOT_CREATE = "Do not create instance of %s";
 
     /**
      * Block creation
      *
-     * @throws DoNotCreateException
+     * @throws Exception\DoNotCreateException
      */
-    final public function __construct() {
-        throw new DoNotCreateException(sprintf(static::EXCEPTION_DO_NOT_CREATE, __CLASS__));
+    final public function __construct()
+    {
+        throw new Exception\DoNotCreateException(sprintf(static::EXCEPTION_DO_NOT_CREATE, __CLASS__));
     }
 }

@@ -8,19 +8,19 @@
 namespace Fixin\View;
 
 use Fixin\Base\FileSystem\FileResolverInterface;
-use Fixin\Exception\RuntimeException;
 use Fixin\Resource\Prototype;
 use Fixin\View\Engine\EngineInterface;
 
-class View extends Prototype implements ViewInterface {
-
-    const DEFAULT_ENGINE = 'View\Engine\JsonEngine';
-    const EXCEPTION_FILE_RESOLVER_NOT_SET = 'File resolver not set';
-    const EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE = "Unable to resolve template '%s'";
-    const THIS_SETS_LAZY = [
-        self::OPTION_ENGINE => EngineInterface::class,
-        self::OPTION_FILE_RESOLVER => FileResolverInterface::class
-    ];
+class View extends Prototype implements ViewInterface
+{
+    protected const
+        DEFAULT_ENGINE = 'View\Engine\JsonEngine',
+        EXCEPTION_FILE_RESOLVER_NOT_SET = 'File resolver not set',
+        EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE = "Unable to resolve template '%s'",
+        THIS_SETS_LAZY = [
+            self::OPTION_ENGINE => EngineInterface::class,
+            self::OPTION_FILE_RESOLVER => FileResolverInterface::class
+        ];
 
     /**
      * @var ViewInterface[]
@@ -56,56 +56,45 @@ class View extends Prototype implements ViewInterface {
     protected $variables = [];
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::clearChildren()
+     * @return static
      */
-    public function clearChildren(): ViewInterface {
+    public function clearChildren(): ViewInterface
+    {
         $this->children = [];
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::clearVariables()
+     * @return static
      */
-    public function clearVariables(): ViewInterface {
+    public function clearVariables(): ViewInterface
+    {
         $this->variables = [];
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getChild($name)
-     */
-    public function getChild(string $name) {
+    public function getChild(string $name): ?ViewInterface
+    {
         return $this->children[$name] ?? null;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getChildren()
-     */
-    public function getChildren(): array {
+    public function getChildren(): array
+    {
         return $this->children;
     }
 
     /**
-     * Get type of rendered content
-     *
-     * @return string
+     * Get type of the rendered content
      */
-    public function getContentType(): string {
+    public function getContentType(): string
+    {
         return $this->getEngine()->getContentType();
     }
 
-    /**
-     * Get Engine instance
-     *
-     * @return EngineInterface
-     */
-    protected function getEngine(): EngineInterface {
+    protected function getEngine(): EngineInterface
+    {
         if ($this->engine) {
             return $this->engine;
         }
@@ -119,10 +108,9 @@ class View extends Prototype implements ViewInterface {
 
     /**
      * Get engine name for the template
-     *
-     * @return string
      */
-    protected function getEngineNameForTemplate(): string {
+    protected function getEngineNameForTemplate(): string
+    {
         $template = $this->getResolvedTemplate();
 
         $start =
@@ -140,20 +128,16 @@ class View extends Prototype implements ViewInterface {
         return static::DEFAULT_ENGINE;
     }
 
-    /**
-     * Get FileResolver instance
-     *
-     * @return FileResolverInterface
-     */
-    protected function getFileResolver(): FileResolverInterface {
+    protected function getFileResolver(): FileResolverInterface
+    {
         return $this->fileResolver ?: $this->loadLazyProperty(static::OPTION_FILE_RESOLVER);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getResolvedTemplate()
+     * @throws Exception\RuntimeException
      */
-    public function getResolvedTemplate(): string {
+    public function getResolvedTemplate(): string
+    {
         $template = $this->template;
 
         // No template or accessible file
@@ -171,85 +155,69 @@ class View extends Prototype implements ViewInterface {
             return $resolved;
         }
 
-        throw new RuntimeException(sprintf(static::EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE, $template));
+        throw new Exception\RuntimeException(sprintf(static::EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE, $template));
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getTemplate()
-     */
-    public function getTemplate(): String {
+    public function getTemplate(): String
+    {
         return $this->template;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getVariable($name)
-     */
-    public function getVariable(string $name) {
+    public function getVariable(string $name)
+    {
         return $this->variables[$name] ?? null;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::getVariables()
-     */
-    public function getVariables(): array {
+    public function getVariables(): array
+    {
         return $this->variables;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::render()
-     */
-    public function render() {
+    public function render()
+    {
         return $this->getEngine()->render($this);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::setChild($name, $child)
+     * @return static
      */
-    public function setChild(string $name, ViewInterface $child): ViewInterface {
+    public function setChild(string $name, ViewInterface $child): ViewInterface
+    {
         $this->children[$name] = $child;
 
         return $this;
     }
 
-    /**
-     * Set postfix to engine mapping
-     *
-     * @param array $postfixToEngineMap
-     */
-    protected function setPostfixToEngineMap(array $postfixToEngineMap) {
+    protected function setPostfixToEngineMap(array $postfixToEngineMap): void
+    {
         $this->postfixToEngineMap = $postfixToEngineMap;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::setTemplate($template)
+     * @return static
      */
-    public function setTemplate(string $template): ViewInterface {
+    public function setTemplate(string $template): ViewInterface
+    {
         $this->template = $template;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::setVariable($name, $value)
+     * @return static
      */
-    public function setVariable(string $name, $value): ViewInterface {
+    public function setVariable(string $name, $value): ViewInterface
+    {
         $this->variables[$name] = $value;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\ViewInterface::setVariables($variables)
+     * @return static
      */
-    public function setVariables(array $variables): ViewInterface {
+    public function setVariables(array $variables): ViewInterface
+    {
         $this->variables = $variables + $this->variables;
 
         return $this;

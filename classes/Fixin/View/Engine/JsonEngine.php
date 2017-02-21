@@ -10,20 +10,18 @@ namespace Fixin\View\Engine;
 use Fixin\Base\Json\Json;
 use Fixin\View\ViewInterface;
 
-class JsonEngine extends Engine {
-
-    const CONTENT_TYPE = 'application/json';
+class JsonEngine extends Engine
+{
+    protected const
+        CONTENT_TYPE = 'application/json';
 
     /**
      * @var Json
      */
     protected $json;
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Engine\EngineInterface::render($view)
-     */
-    public function render(ViewInterface $view) {
+    public function render(ViewInterface $view): string
+    {
         $json = $this->json ?? ($this->json = $this->container->get('Base\Json\Json'));
         $result = [];
 

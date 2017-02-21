@@ -7,6 +7,8 @@
 
 namespace Fixin\Support\Exception;
 
-class DoNotCreateException extends LogicException
+use Fixin\Exception\FixinExceptionInterface;
+
+interface SupportExceptionInterface extends FixinExceptionInterface
 {
 }

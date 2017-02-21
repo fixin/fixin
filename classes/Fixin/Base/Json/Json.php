@@ -7,7 +7,6 @@
 
 namespace Fixin\Base\Json;
 
-use Fixin\Base\Json\Exception;
 use Fixin\Resource\Resource;
 
 class Json extends Resource implements JsonInterface

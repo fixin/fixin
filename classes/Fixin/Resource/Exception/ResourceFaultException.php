@@ -7,7 +7,6 @@
 
 namespace Fixin\Resource\Exception;
 
-use Fixin\Exception\RuntimeException;
-
-class ResourceFaultException extends RuntimeException implements ResourceException {
+class ResourceFaultException extends RuntimeException
+{
 }

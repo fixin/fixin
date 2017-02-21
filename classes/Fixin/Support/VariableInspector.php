@@ -9,45 +9,37 @@ namespace Fixin\Support;
 
 use Fixin\Resource\ResourceManagerInterface;
 
-class VariableInspector extends DoNotCreate {
-
-    const SCALAR_VALUE_COLORS = [
-        'integer' => '#080',
-        'double' => '#c60',
-        'boolean' => '#0ac'
-    ];
-
-    const VALUE_TEMPLATE = '<span style="color: %s">%s</span>';
+class VariableInspector extends DoNotCreate
+{
+    protected const
+        SCALAR_VALUE_COLORS = [
+            'integer' => '#080',
+            'double' => '#c60',
+            'boolean' => '#0ac'
+        ],
+        VALUE_TEMPLATE = '<span style="color: %s">%s</span>';
 
     /**
      * Return array info
-     *
-     * @param array $var
-     * @return string
      */
-    public static function arrayInfo(array $var): string {
+    public static function arrayInfo(array $var): string
+    {
         return '[' . ($var ? "\n" . static::itemsInfo($var, '#754') : '') . ']';
     }
 
     /**
      * Is hidden data
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return bool
      */
-    protected static function isHidden(string $key, $value): bool {
+    protected static function isHidden(string $key, $value): bool
+    {
         return is_scalar($value) && stripos($key, 'password') !== false;
     }
 
     /**
      * Return list info
-     *
-     * @param array $var
-     * @param string $color
-     * @return string
      */
-    public static function itemsInfo(array $var, string $color): string {
+    public static function itemsInfo(array $var, string $color): string
+    {
         $result = PHP_EOL;
 
         foreach ($var as $key => $value) {
@@ -69,11 +61,9 @@ class VariableInspector extends DoNotCreate {
 
     /**
      * Return object info
-     *
-     * @param object $var
-     * @return string
      */
-    public static function objectInfo($var): string {
+    public static function objectInfo($var): string
+    {
         $opening = get_class($var) . ' {';
 
         if (method_exists($var, '__debugInfo')) {
@@ -91,9 +81,9 @@ class VariableInspector extends DoNotCreate {
      * Return scalar info
      *
      * @param int|float|string|bool $var
-     * @return string
      */
-    public static function scalarInfo($var): string {
+    public static function scalarInfo($var): string
+    {
         $type = gettype($var);
 
         if (isset(static::SCALAR_VALUE_COLORS[$type])) {
@@ -111,11 +101,9 @@ class VariableInspector extends DoNotCreate {
 
     /**
      * Return expression info
-     *
-     * @param mixed $expression
-     * @return string
      */
-    public static function valueInfo($expression): string {
+    public static function valueInfo($expression): string
+    {
         // Object
         if (is_object($expression)) {
             return static::objectInfo($expression);

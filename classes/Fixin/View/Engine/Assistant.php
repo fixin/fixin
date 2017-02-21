@@ -10,12 +10,10 @@ namespace Fixin\View\Engine;
 use Fixin\View\Helper\HelperInterface;
 
 /**
- * @author attilajenei
- *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  */
-class Assistant implements AssistantInterface {
-
+class Assistant implements AssistantInterface
+{
     /**
      * @var EngineInterface
      */
@@ -26,29 +24,24 @@ class Assistant implements AssistantInterface {
      */
     protected $__prototype;
 
-    /**
-     * @param string $name
-     * @return HelperInterface
-     */
-    public function __get(string $name): HelperInterface {
+    public function __get(string $name): HelperInterface
+    {
         return $this->$name = $this->__prototype->getHelper($name);
     }
 
     /**
      * Resolving helper
-     *
-     * @param string $name
-     * @return HelperInterface
      */
-    protected function getHelper(string $name): HelperInterface {
+    protected function getHelper(string $name): HelperInterface
+    {
         return $this->$name = $this->__engine->getHelper($name);
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Engine\AssistantInterface::withEngine($engine)
+     * @return static
      */
-    public function withEngine(EngineInterface $engine): AssistantInterface {
+    public function withEngine(EngineInterface $engine): AssistantInterface
+    {
         $clone = clone $this;
         $clone->__engine = $engine;
         $clone->__prototype = $clone;

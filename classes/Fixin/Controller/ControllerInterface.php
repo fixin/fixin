@@ -9,6 +9,6 @@ namespace Fixin\Controller;
 
 use Fixin\Delivery\Cargo\CargoHandlerInterface;
 
-interface ControllerInterface extends CargoHandlerInterface {
-
+interface ControllerInterface extends CargoHandlerInterface
+{
 }

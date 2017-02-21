@@ -7,13 +7,10 @@
 
 namespace Fixin\View\Helper;
 
-class EscapeHtml extends EscapeHelper {
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Helper\EscapeHelper::escape($value)
-     */
-    public function escape($value): string {
+class EscapeHtml extends EscapeHelper
+{
+    public function escape($value): string
+    {
         return $this->escaper->escapeHtml((string) $value);
     }
 }

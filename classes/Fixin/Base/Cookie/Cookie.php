@@ -8,7 +8,6 @@
 namespace Fixin\Base\Cookie;
 
 use Fixin\Resource\Prototype;
-use Fixin\Exception\RuntimeException;
 
 class Cookie extends Prototype implements CookieInterface
 {

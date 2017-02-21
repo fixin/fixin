@@ -8,7 +8,6 @@
 namespace Fixin\Base\Index;
 
 use Fixin\Base\FileSystem\FileSystemInterface;
-use Fixin\Base\Index\Exception;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Arrays;
 

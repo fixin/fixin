@@ -7,8 +7,6 @@
 
 namespace Fixin\Base\Serializer;
 
-use Fixin\Base\Serializer\Exception;
-
 class PhpSerializer implements SerializerInterface
 {
     protected const

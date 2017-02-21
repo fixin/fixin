@@ -9,12 +9,15 @@ namespace Fixin\Resource\AbstractFactory;
 
 use Fixin\Resource\Resource;
 
-class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface {
+class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
+{
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_SEARCH_ORDER => self::TYPE_ARRAY
+        ];
 
-    const OPTION_SEARCH_ORDER = 'searchOrder';
-    const THIS_REQUIRES = [
-        self::OPTION_SEARCH_ORDER => self::TYPE_ARRAY
-    ];
+    public const
+        OPTION_SEARCH_ORDER = 'searchOrder';
 
     /**
      * @var array
@@ -26,21 +29,15 @@ class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
      */
     protected $searchOrder = [];
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\AbstractFactory\AbstractFactoryInterface::__invoke($options, $name)
-     */
-    public function __invoke(array $options = null, string $name = null) {
+    public function __invoke(array $options = null, string $name = null)
+    {
         $mapped = $this->map[$name];
 
         return $mapped ? new $mapped($this->container, $options, $name) : null;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\AbstractFactory\AbstractFactoryInterface::canProduce($name)
-     */
-    public function canProduce(string $name): bool {
+    public function canProduce(string $name): bool
+    {
         // Already resolved
         if (isset($this->map[$name])) {
             return (bool) $this->map[$name];
@@ -61,12 +58,8 @@ class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
         return $this->map[$name] = false;
     }
 
-    /**
-     * Set search order
-     *
-     * @param array $searchOrder
-     */
-    protected function setSearchOrder(array $searchOrder) {
+    protected function setSearchOrder(array $searchOrder): void
+    {
         $this->searchOrder = $searchOrder;
     }
 }

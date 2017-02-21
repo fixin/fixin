@@ -7,8 +7,6 @@
 
 namespace Fixin\Base\Stream;
 
-use Fixin\Base\Stream\Exception;
-
 class Stream implements StreamInterface
 {
     protected const

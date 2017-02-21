@@ -7,6 +7,6 @@
 
 namespace Fixin\Support;
 
-interface SystemSelfTestInterface {
-
+interface SystemSelfTestInterface
+{
 }

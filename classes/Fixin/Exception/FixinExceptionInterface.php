@@ -7,5 +7,6 @@
 
 namespace Fixin\Exception;
 
-class LogicException extends \LogicException implements FixinException {
+interface FixinExceptionInterface
+{
 }

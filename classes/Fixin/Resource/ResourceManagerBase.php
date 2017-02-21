@@ -7,61 +7,53 @@
 
 namespace Fixin\Resource;
 
-use Fixin\Exception\InvalidArgumentException;
 use Fixin\Resource\AbstractFactory\AbstractFactoryInterface;
 use Fixin\Resource\Factory\FactoryInterface;
 
-abstract class ResourceManagerBase implements ResourceManagerInterface {
+abstract class ResourceManagerBase implements ResourceManagerInterface
+{
+    protected const
+        EXCEPTION_ALREADY_DEFINED = "%s already defined for '%'",
+        EXCEPTION_CLASS_NOT_FOUND_FOR = "Class not found for '%s'",
+        EXCEPTION_GET_ERRORS = [
+            "Resource not accessible by name '%s'",
+            "Prototype not accessible by name '%s'",
+            "Can't access prototype as normal resource '%s'",
+            "Can't access normal resource as prototype '%s'",
+        ],
+        EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION = "Invalid abstract factory definition '%s'",
+        EXCEPTION_INVALID_DEFINITION = "Invalid definition registered for name '%s'",
+        KEY_CLASS = 'class',
+        KEY_OPTIONS = 'options',
+        KEY_RESOLVED = 'resolved';
 
-    const EXCEPTION_ALREADY_DEFINED = "%s already defined for '%'";
-    const EXCEPTION_CLASS_NOT_FOUND_FOR = "Class not found for '%s'";
-    const EXCEPTION_GET_ERRORS = [
-        "Resource not accessible by name '%s'",
-        "Prototype not accessible by name '%s'",
-        "Can't access prototype as normal resource '%s'",
-        "Can't access normal resource as prototype '%s'",
-    ];
-    const EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION = "Invalid abstract factory definition '%s'";
-    const EXCEPTION_INVALID_DEFINITION = "Invalid definition registered for name '%s'";
+    public const
+        OPTION_ABSTRACT_FACTORIES = 'abstractFactories',
+        OPTION_DEFINITIONS = 'definitions',
+        OPTION_RESOURCES = 'resources',
 
-    const KEY_CLASS = 'class';
-    const KEY_OPTIONS = 'options';
-    const KEY_RESOLVED = 'resolved';
-
-    const OPTION_ABSTRACT_FACTORIES = 'abstractFactories';
-    const OPTION_DEFINITIONS = 'definitions';
-    const OPTION_RESOURCES = 'resources';
-
-    const OPTIONS_INJECT_KEYS = [
-        self::OPTION_DEFINITIONS => 'Definition',
-        self::OPTION_RESOURCES => 'Resource'
-    ];
+        OPTIONS_INJECT_KEYS = [
+            self::OPTION_DEFINITIONS => 'Definition',
+            self::OPTION_RESOURCES => 'Resource'
+        ];
 
     /**
-     * Abstract factories
-     *
      * @var array
      */
     protected $abstractFactories = [];
 
     /**
-     * Definitions
-     *
      * @var array
      */
     protected $definitions = [];
 
     /**
-     * Allocated resources
-     *
      * @var array
      */
     protected $resources = [];
 
-    /**
-     * @param array $options
-     */
-    public function __construct(array $options) {
+    public function __construct(array $options)
+    {
         // Abstract factories
         if (isset($options[static::OPTION_ABSTRACT_FACTORIES])) {
             $this->setupAbstractFactories($options[static::OPTION_ABSTRACT_FACTORIES]);
@@ -75,10 +67,8 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
         }
     }
 
-    /**
-     * @return string
-     */
-    public function __toString(): string {
+    public function __toString(): string
+    {
         $resources = [];
 
         foreach ($this->definitions as $key => $definition) {
@@ -97,11 +87,10 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     /**
      * Create object from definition
      *
-     * @param string $name
-     * @param array $definition
      * @return object|null
      */
-    protected function createFromDefinition(string $name, array $definition) {
+    protected function createFromDefinition(string $name, array $definition)
+    {
         if (class_exists($class = $definition[static::KEY_CLASS])) {
             return new $class($this, $definition[static::KEY_OPTIONS], $name);
         }
@@ -110,14 +99,11 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     }
 
     /**
-     * Get resource or prototype
-     *
-     * @param string $name
-     * @param bool $prototype
      * @throws Exception\ResourceNotFoundException
      * @return object
      */
-    protected function getResource(string $name, bool $prototype) {
+    protected function getResource(string $name, bool $prototype)
+    {
         $resource = $this->resources[$name] ?? $this->produceResource($name);
 
         // Found
@@ -129,13 +115,12 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     }
 
     /**
-     * Produce resource
-     *
-     * @param string $name
-     * @throws Exception\ResourceFaultException
      * @return object
+     * @throws Exception\ClassNotFoundException
+     * @throws Exception\ResourceFaultException
      */
-    protected function produceResource(string $name) {
+    protected function produceResource(string $name)
+    {
         $resource = $this->produceResourceFromDefinition($name, $this->resolveDefinitionFromName($name));
 
         // Object
@@ -154,13 +139,10 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     }
 
     /**
-     * Produce resource from abstract factories
-     *
-     * @param string $name
-     * @param array $options
      * @return mixed|NULL
      */
-    protected function produceResourceFromAbstractFactories(string $name, array $options = null) {
+    protected function produceResourceFromAbstractFactories(string $name, array $options = null)
+    {
         foreach ($this->abstractFactories as $abstractFactory) {
             if ($abstractFactory->canProduce($name)) {
                 return $abstractFactory($options, $name);
@@ -171,13 +153,10 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     }
 
     /**
-     * Produce resource from definition
-     *
-     * @param string $name
-     * @param array $definition
      * @return mixed
      */
-    protected function produceResourceFromDefinition(string $name, array $definition) {
+    protected function produceResourceFromDefinition(string $name, array $definition)
+    {
         $class = $definition[static::KEY_CLASS];
 
         if (is_string($class)) {
@@ -199,12 +178,9 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
 
     /**
      * Resolve definition (various data)
-     *
-     * @param mixed $definition
-     * @param string $name
-     * @return array
      */
-    protected function resolveDefinition($definition, string $name): array {
+    protected function resolveDefinition($definition, string $name): array
+    {
         // String
         if (is_string($definition)) {
             return $this->resolveDefinitionFromName($definition);
@@ -223,12 +199,9 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
 
     /**
      * Resolve definition (array)
-     *
-     * @param array $definition
-     * @param string $name
-     * @return array
      */
-    protected function resolveDefinitionArray(array $definition, string $name): array {
+    protected function resolveDefinitionArray(array $definition, string $name): array
+    {
         $class = $definition[static::KEY_CLASS] ?? $name;
 
         if ($class !== $name) {
@@ -245,13 +218,8 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
         ];
     }
 
-    /**
-     * Resolve definition from name
-     *
-     * @param string $name
-     * @return array
-     */
-    protected function resolveDefinitionFromName(string $name): array {
+    protected function resolveDefinitionFromName(string $name): array
+    {
         if (isset($this->definitions[$name])) {
             $definition = $this->definitions[$name];
 
@@ -274,17 +242,15 @@ abstract class ResourceManagerBase implements ResourceManagerInterface {
     }
 
     /**
-     * Set abstract factories
-     *
-     * @param array $abstractFactories
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      */
-    protected function setupAbstractFactories(array $abstractFactories) {
+    protected function setupAbstractFactories(array $abstractFactories): void
+    {
         foreach ($abstractFactories as $key => $abstractFactory) {
             $abstractFactory = $this->createFromDefinition($key, $this->resolveDefinition($abstractFactory, ''));
 
             if (!$abstractFactory instanceof AbstractFactoryInterface) {
-                throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION, $key));
+                throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION, $key));
             }
 
             $this->abstractFactories[] = $abstractFactory;

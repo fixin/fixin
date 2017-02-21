@@ -7,12 +7,7 @@
 
 namespace Fixin\Resource;
 
-interface ResourceInterface {
-
-    /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     * @param string $name
-     */
+interface ResourceInterface
+{
     public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null);
 }

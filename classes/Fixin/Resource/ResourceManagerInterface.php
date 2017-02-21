@@ -6,30 +6,22 @@
  */
 namespace Fixin\Resource;
 
-interface ResourceManagerInterface {
-
+interface ResourceManagerInterface
+{
     /**
-     * Clone the registered prototype
-     *
-     * @param string $name
-     * @param array $options
-     * @return object
+     * Clone prototype
      */
-    public function clonePrototype(string $name, array $options = []);
+    public function clonePrototype(string $name, array $options = []): PrototypeInterface;
 
     /**
-     * Get the registered instance
+     * Get instance
      *
-     * @param string $name
-     * @return mixed
+     * @return object|null
      */
     public function get(string $name);
 
     /**
-     * Check if the name has been registered
-     *
-     * @param string $name
-     * @return bool
+     * Check if the name has been accessible
      */
     public function has(string $name): bool;
 }

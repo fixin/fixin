@@ -7,15 +7,15 @@
 
 namespace Fixin\Support;
 
-class CodeInspector extends DoNotCreate {
-
+class CodeInspector extends DoNotCreate
+{
     /**
      * Get source code of function
      *
      * @param string|\Closure $function
-     * @return string
      */
-    public static function functionSource($function): string {
+    public static function functionSource($function): string
+    {
         // File content
         $reflection = new \ReflectionFunction($function);
         $file = file($reflection->getFileName());
@@ -28,13 +28,8 @@ class CodeInspector extends DoNotCreate {
         return static::removeIndent($lines);
     }
 
-    /**
-     * Remove indent from lines
-     *
-     * @param array $lines
-     * @return string
-     */
-    protected static function removeIndent(array $lines): string {
+    protected static function removeIndent(array $lines): string
+    {
         // Indents
         $left = PHP_INT_MAX;
 

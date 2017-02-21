@@ -10,31 +10,25 @@ namespace Fixin\View\Engine;
 use Fixin\Resource\ResourceManagerInterface;
 use Fixin\View\ViewInterface;
 
-class PhpEngine extends Engine {
-
-    const NO_TEMPLATE = 'No template';
+class PhpEngine extends Engine
+{
+    protected const
+        NO_TEMPLATE = 'No template';
 
     /**
      * @var AssistantInterface
      */
     protected $assistant;
 
-    /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     * @param string $name
-     */
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
+    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
+    {
         parent::__construct($container, $options, $name);
 
         $this->assistant = $this->container->get('View\Engine\Assistant')->withEngine($this);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Engine\EngineInterface::render($view)
-     */
-    public function render(ViewInterface $view) {
+    public function render(ViewInterface $view): string
+    {
         // Template
         $filename = $view->getResolvedTemplate();
         if (is_null($filename)) {

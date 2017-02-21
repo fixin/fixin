@@ -7,5 +7,6 @@
 
 namespace Fixin\Support\Exception;
 
-interface SupportException {
+class LogicException extends \LogicException implements SupportExceptionInterface
+{
 }

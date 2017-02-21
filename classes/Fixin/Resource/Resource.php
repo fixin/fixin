@@ -7,20 +7,20 @@
 
 namespace Fixin\Resource;
 
-use Fixin\Exception\InvalidArgumentException;
-use Fixin\Exception\RuntimeException;
-
-abstract class Resource implements ResourceInterface {
-
-    const EXCEPTION_INVALID_OPTION = "Invalid option name '%s'";
-    const EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s for %s";
-    const THIS_REQUIRES = [];
-    const THIS_SETS_LAZY = [];
-    const TYPE_ANY = 'any';
-    const TYPE_ARRAY = 'array';
-    const TYPE_BOOL = 'bool';
-    const TYPE_INSTANCE = 'instance';
-    const TYPE_STRING = 'string';
+abstract class Resource implements ResourceInterface
+{
+    protected const
+        EXCEPTION_INVALID_ARGUMENT = "Invalid '%s' argument: %s allowed",
+        EXCEPTION_INVALID_OPTION = "Invalid option name '%s'",
+        EXCEPTION_INVALID_RESOURCE = "Invalid '%s' resource: %s allowed",
+        EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s for %s",
+        THIS_REQUIRES = [],
+        THIS_SETS_LAZY = [],
+        TYPE_ANY = 'any',
+        TYPE_ARRAY = 'array',
+        TYPE_BOOL = 'bool',
+        TYPE_INSTANCE = 'instance',
+        TYPE_STRING = 'string';
 
     /**
      * @var ResourceManagerInterface
@@ -33,13 +33,10 @@ abstract class Resource implements ResourceInterface {
     private $lazyLoadingProperties = [];
 
     /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     * @param string $name
-     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
+    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
+    {
         $this->container = $container;
 
         // Options
@@ -52,84 +49,68 @@ abstract class Resource implements ResourceInterface {
     }
 
     /**
-     * Any test
-     *
-     * @param mixed $value
-     * @return bool
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
-    private function configurationAnyTest($value): bool {
+    private function configurationAnyTest($value): bool
+    {
         return isset($value);
     }
 
     /**
-     * Array test
-     *
-     * @param mixed $value
-     * @return bool
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
-    private function configurationArrayTest($value): bool {
+    private function configurationArrayTest($value): bool
+    {
         return is_array($value) && count($value);
     }
 
     /**
-     * Bool test
-     *
-     * @param mixed $value
-     * @return bool
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
-    private function configurationBoolTest($value): bool {
+    private function configurationBoolTest($value): bool
+    {
         return is_bool($value);
     }
 
     /**
-     * Instance test
-     *
-     * @param mixed $value
-     * @return bool
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
-    private function configurationInstanceTest($value): bool {
+    private function configurationInstanceTest($value): bool
+    {
         return $value === false || is_object($value);
     }
 
     /**
-     * String test
-     *
-     * @param mixed $value
-     * @return bool
      * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      */
-    private function configurationStringTest($value): bool {
+    private function configurationStringTest($value): bool
+    {
         return is_string($value) && $value !== '';
     }
 
     /**
-     * Configuration tests
-     *
-     * @return self
+     * @throws Exception\RuntimeException
+     * @return static
      */
-    protected function configurationTests(): Resource {
+    protected function configurationTests(): Resource
+    {
         foreach (static::THIS_REQUIRES as $key => $type) {
             if ($this->{"configuration{$type}Test"}($this->$key)) {
                 continue;
             }
 
-            throw new RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, $type, get_class($this)));
+            throw new Exception\RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, $type, get_class($this)));
         }
 
         return $this;
     }
 
     /**
-     * Configure
-     *
-     * @param array $options
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
+     * @return static
      */
-    protected function configureWithOptions(array $options): Resource {
+    protected function configureWithOptions(array $options): Resource
+    {
         foreach ($options as $key => $value) {
             // Setter for property
             if (method_exists($this, $method = 'set' . $key)) {
@@ -145,21 +126,17 @@ abstract class Resource implements ResourceInterface {
                 continue;
             }
 
-            throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_OPTION, $key));
+            throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_OPTION, $key));
         }
 
         return $this;
     }
 
     /**
-     * Load lazy property
-     *
-     * @param string $propertyName
-     * @param array $prototypeOptions
-     * @throws InvalidArgumentException
-     * @return mixed
+     * @throws Exception\InvalidArgumentException
      */
-    protected function loadLazyProperty(string $propertyName, array $prototypeOptions = []) {
+    protected function loadLazyProperty(string $propertyName, array $prototypeOptions = [])
+    {
         if (isset($this->lazyLoadingProperties[$propertyName])) {
             $set = $this->lazyLoadingProperties[$propertyName];
             $interface = $set[1];
@@ -169,27 +146,24 @@ abstract class Resource implements ResourceInterface {
                 return $this->$propertyName = $value;
             }
 
-            throw new InvalidArgumentException(sprintf(InvalidArgumentException::INVALID_RESOURCE, $propertyName, $interface));
+            throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_RESOURCE, $propertyName, $interface));
         }
 
         return $this->$propertyName = null;
     }
 
     /**
-     * Set lazy-loading property
-     *
-     * @param string $propertyName
-     * @param string $interface
-     * @param string|object $value
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
+     * @return static
      */
-    protected function setLazyLoadingProperty(string $propertyName, string $interface, $value) {
+    protected function setLazyLoadingProperty(string $propertyName, string $interface, $value): Resource
+    {
         // Key
         if (is_string($value)) {
             $this->{$propertyName} = false;
             $this->lazyLoadingProperties[$propertyName] = [$value, $interface];
 
-            return;
+            return $this;
         }
 
         // Instance
@@ -197,9 +171,9 @@ abstract class Resource implements ResourceInterface {
             $this->{$propertyName} = $value;
             unset($this->lazyLoadingProperties[$propertyName]);
 
-            return;
+            return $this;
         }
 
-        throw new InvalidArgumentException(sprintf(InvalidArgumentException::INVALID_ARGUMENT, $propertyName, 'string or ' . $interface));
+        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ARGUMENT, $propertyName, 'string or ' . $interface));
     }
 }

@@ -15,16 +15,14 @@ use Fixin\Support\Http;
 class Application implements ApplicationInterface
 {
     protected const
-        CONFIG_APPLICATION = 'application',
-        CONFIG_RESOURCE_MANAGER = 'resourceManager',
-
         DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\Resource\ResourceManager',
-
         INTERNAL_SERVER_ERROR_CODE = 500,
         INTERNAL_SERVER_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error',
         INTERNAL_SERVER_ERROR_HTML = '<h1>500 Internal server error</h1>';
 
     public const
+        CONFIG_APPLICATION = 'application',
+        CONFIG_RESOURCE_MANAGER = 'resourceManager',
         OPTION_CARGO = 'cargo',
         OPTION_CLASS = 'class',
         OPTION_ERROR_ROUTE = 'errorRoute',

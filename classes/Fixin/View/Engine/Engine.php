@@ -7,63 +7,54 @@
 
 namespace Fixin\View\Engine;
 
-use Fixin\Exception\InvalidArgumentException;
-use Fixin\Exception\KeyCollisionException;
 use Fixin\Resource\Resource;
 use Fixin\View\Helper\HelperInterface;
 use Fixin\View\ViewInterface;
 
-abstract class Engine extends Resource implements EngineInterface {
-
-    const CONTENT_TYPE = 'text/html';
-    const EXCEPTION_INVALID_HELPER_NAME = "Invalid helper name: '%s'";
-    const EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'";
-    const HELPER_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
+abstract class Engine extends Resource implements EngineInterface
+{
+    protected const
+        CONTENT_TYPE = 'text/html',
+        EXCEPTION_INVALID_HELPER_NAME = "Invalid helper name: '%s'",
+        EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'",
+        HELPER_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
 
     /**
      * @var HelperInterface[]
      */
     protected $helpers = [];
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Engine\EngineInterface::getContentType()
-     */
-    public function getContentType(): string {
+    public function getContentType(): string
+    {
         return static::CONTENT_TYPE;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\View\Engine\EngineInterface::getHelper($name)
-     */
-    public function getHelper(string $name): HelperInterface {
+    public function getHelper(string $name): HelperInterface
+    {
         return $this->helpers[$name] ?? ($this->helpers[$name] = $this->produceHelper($name));
     }
 
     /**
-     * Make helper instance
+     * Produce helper instance
      *
-     * @param string $name
-     * @throws InvalidArgumentException
-     * @return HelperInterface
+     * @throws Exception\InvalidArgumentException
      */
-    protected function produceHelper(string $name): HelperInterface {
+    protected function produceHelper(string $name): HelperInterface
+    {
         if (preg_match(static::HELPER_NAME_PATTERN, $name)) {
             return $this->container->clonePrototype('View\Helper\\' . ucfirst($name), [
                 HelperInterface::OPTION_ENGINE => $this
             ]);
         }
 
-        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_HELPER_NAME, $name));
+        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_HELPER_NAME, $name));
     }
 
     /**
-     * Render children
-     *
-     * @return array
+     * @throws Exception\KeyCollisionException
      */
-    protected function renderChildren(ViewInterface $view): array {
+    protected function renderChildren(ViewInterface $view): array
+    {
         $data = [];
         $dataByObject = new \SplObjectStorage();
 
@@ -75,7 +66,7 @@ abstract class Engine extends Resource implements EngineInterface {
         $variables = $view->getVariables();
 
         if ($names = array_intersect_key($data, $variables)) {
-            throw new KeyCollisionException(sprintf(static::EXCEPTION_NAME_COLLISION, implode("', '", array_keys($names))));
+            throw new Exception\KeyCollisionException(sprintf(static::EXCEPTION_NAME_COLLISION, implode("', '", array_keys($names))));
         }
 
         return $data;

@@ -7,13 +7,10 @@
 
 namespace Fixin\Resource;
 
-interface PrototypeInterface extends ResourceInterface {
-
+interface PrototypeInterface extends ResourceInterface
+{
     /**
-     * New instance with changed options
-     *
-     * @param array $options
-     * @return self
+     * Clone instance and change options
      */
     public function withOptions(array $options): PrototypeInterface;
 }

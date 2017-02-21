@@ -7,15 +7,13 @@
 
 namespace Fixin\Resource;
 
-abstract class Prototype extends Resource implements PrototypeInterface {
-
+abstract class Prototype extends Resource implements PrototypeInterface
+{
     /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     * @param string $name
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
+    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
+    {
         $this->container = $container;
 
         // Options
@@ -25,12 +23,12 @@ abstract class Prototype extends Resource implements PrototypeInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\PrototypeInterface::withOptions($options)
+     * @return static
      */
-    public function withOptions(array $options): PrototypeInterface {
+    public function withOptions(array $options): PrototypeInterface
+    {
         return (clone $this)
-        ->configureWithOptions($options)
-        ->configurationTests();
+            ->configureWithOptions($options)
+            ->configurationTests();
     }
 }

@@ -7,17 +7,13 @@
 
 namespace Fixin\View\Engine;
 
-final class EncapsulatedInclude {
-
+final class EncapsulatedInclude
+{
     /**
      * Include file with own scope
-     *
-     * @param AssistantInterface $_
-     * @param string $__filename
-     * @param array $__data
-     * @return mixed
      */
-    public static function include(AssistantInterface $_, string $__filename, array $__data) {
+    public static function include(AssistantInterface $_, string $__filename, array $__data): void
+    {
         // Extract data
         unset($__data['_'], $__data['__filename']);
 

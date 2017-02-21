@@ -7,13 +7,10 @@
 
 namespace Fixin\View\Engine;
 
-interface AssistantInterface {
-
+interface AssistantInterface
+{
     /**
      * New instance for engine
-     *
-     * @param EngineInterface $engine
-     * @return self
      */
     public function withEngine(EngineInterface $engine): AssistantInterface;
 }

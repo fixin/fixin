@@ -7,5 +7,8 @@
 
 namespace Fixin\Resource\Exception;
 
-interface ResourceException {
+use Fixin\Exception\FixinExceptionInterface;
+
+interface ResourceExceptionInterface extends FixinExceptionInterface
+{
 }

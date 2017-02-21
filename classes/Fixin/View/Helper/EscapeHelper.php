@@ -10,19 +10,15 @@ namespace Fixin\View\Helper;
 use Fixin\Base\Escaper\EscaperInterface;
 use Fixin\Resource\ResourceManagerInterface;
 
-abstract class EscapeHelper extends Helper {
-
+abstract class EscapeHelper extends Helper
+{
     /**
      * @var EscaperInterface
      */
     protected $escaper;
 
-    /**
-     * @param ResourceManagerInterface $container
-     * @param array $options
-     * @param string $name
-     */
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null) {
+    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
+    {
         parent::__construct($container, $options, $name);
 
         $this->escaper = $container->get('Base\Escaper\Escaper');
@@ -30,11 +26,9 @@ abstract class EscapeHelper extends Helper {
 
     /**
      * Normal escape or iterated for arrays
-     *
-     * @param mixed $value
-     * @return string
      */
-    public function __invoke($value) {
+    public function __invoke($value): string
+    {
         if (is_array($value)) {
             return array_map([$this, 'escape'], $value);
         }
@@ -42,11 +36,5 @@ abstract class EscapeHelper extends Helper {
         return $this->escape($value);
     }
 
-    /**
-     * Escape value
-     *
-     * @param string $value
-     * @return string
-     */
     abstract public function escape($value): string;
 }

@@ -100,7 +100,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
 
     protected function generateId(): string
     {
-        return sha1(Strings::generateRandom(24) . uniqid('', true) . microtime(true));
+        return sha1(Strings::generateRandomAlnum(24) . uniqid('', true) . microtime(true));
     }
 
     public function getArea(string $name): SessionAreaInterface

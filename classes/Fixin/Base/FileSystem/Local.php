@@ -7,7 +7,6 @@
 
 namespace Fixin\Base\FileSystem;
 
-use Fixin\Base\FileSystem\Exception;
 use Fixin\Resource\Resource;
 
 /**

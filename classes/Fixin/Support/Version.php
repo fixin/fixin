@@ -7,12 +7,12 @@
 
 namespace Fixin\Support;
 
-final class Version extends DoNotCreate {
-
+final class Version extends DoNotCreate
+{
     /**
      * @var string
      */
-    const MINIMUM_PHP_VERSION = '7.0';
+    const MINIMUM_PHP_VERSION = '7.1';
 
     /**
      * Installed version
