@@ -14,18 +14,19 @@ use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Resource\Factory\Factory;
 use Fixin\Support\Http;
 
-class HttpCargoFactory extends Factory {
+/**
+ * @SuppressWarnings(PHPMD.Superglobals)
+ */
+class HttpCargoFactory extends Factory
+{
+    protected const
+        DEFAULT_SESSION_COOKIE = 'session';
 
-    const DEFAULT_SESSION_COOKIE = 'session';
-    const OPTION_SESSION_COOKIE = 'sessionCookie';
+    public const
+        OPTION_SESSION_COOKIE = 'sessionCookie';
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Factory\FactoryInterface::__invoke()
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    public function __invoke(array $options = NULL, string $name = NULL) {
+    public function __invoke(array $options = NULL, string $name = NULL): HttpCargoInterface
+    {
         $container = $this->container;
 
         $variables = new VariableContainer();
@@ -49,12 +50,9 @@ class HttpCargoFactory extends Factory {
 
     /**
      * Get header values
-     *
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getHeaders(): array {
+    protected function getHeaders(): array
+    {
         if (function_exists('getallheaders')) {
             return getallheaders();
         }
@@ -69,25 +67,13 @@ class HttpCargoFactory extends Factory {
         return $headers;
     }
 
-    /**
-     * Get method
-     *
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    protected function getMethod(): string {
+    protected function getMethod(): string
+    {
         return $_SERVER['REQUEST_METHOD'];
     }
 
-    /**
-     * Get POST parameters
-     *
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    protected function getPostParameters(): array {
+    protected function getPostParameters(): array
+    {
         $post = $_POST;
 
         // Files
@@ -100,24 +86,14 @@ class HttpCargoFactory extends Factory {
         return $post;
     }
 
-    /**
-     * Get protocol version
-     *
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    protected function getProtocolVersion(): string {
+    protected function getProtocolVersion(): string
+    {
         return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::PROTOCOL_VERSION_1_0)
             ? Http::PROTOCOL_VERSION_1_0 : Http::PROTOCOL_VERSION_1_1;
     }
 
-    /**
-     * Setup cargo
-     *
-     * @param HttpCargoInterface $cargo
-     */
-    protected function setup(HttpCargoInterface $cargo) {
+    protected function setup(HttpCargoInterface $cargo)
+    {
         // Setup data
         $this->setupRequest($cargo);
         $this->setupParameters($cargo);
@@ -130,11 +106,9 @@ class HttpCargoFactory extends Factory {
 
     /**
      * Setup parameter containers
-     *
-     * @param HttpCargoInterface $cargo
-     * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function setupParameters(HttpCargoInterface $cargo) {
+    protected function setupParameters(HttpCargoInterface $cargo)
+    {
         $cargo->getRequestParameters()->setFromArray($_GET);
         $cargo->getEnvironmentParameters()->setFromArray($_ENV);
         $cargo->getServerParameters()->setFromArray($_SERVER);
@@ -142,10 +116,9 @@ class HttpCargoFactory extends Factory {
 
     /**
      * Setup POST data
-     *
-     * @param HttpCargoInterface $cargo
      */
-    protected function setupPost(HttpCargoInterface $cargo) {
+    protected function setupPost(HttpCargoInterface $cargo)
+    {
         $cargo->setContent($this->getPostParameters());
 
         // Content type
@@ -156,24 +129,18 @@ class HttpCargoFactory extends Factory {
 
     /**
      * Setup request data
-     *
-     * @param HttpCargoInterface $cargo
      */
-    protected function setupRequest(HttpCargoInterface $cargo) {
+    protected function setupRequest(HttpCargoInterface $cargo)
+    {
         $cargo
-        ->setRequestProtocolVersion($this->getProtocolVersion())
-        ->setRequestMethod($this->getMethod())
-        ->setRequestUri($this->container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
-        ->setRequestHeaders($this->getHeaders());
+            ->setRequestProtocolVersion($this->getProtocolVersion())
+            ->setRequestMethod($this->getMethod())
+            ->setRequestUri($this->container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
+            ->setRequestHeaders($this->getHeaders());
     }
 
-    /**
-     * Setup session
-     *
-     * @param CookieManagerInterface $cookies
-     * @return SessionManagerInterface
-     */
-    protected function setupSession(CookieManagerInterface $cookies): SessionManagerInterface {
+    protected function setupSession(CookieManagerInterface $cookies): SessionManagerInterface
+    {
         return $this->container->clonePrototype('Base\Session\SessionManager', [
             SessionManagerInterface::OPTION_COOKIE_MANAGER => $cookies
         ]);

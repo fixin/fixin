@@ -9,8 +9,8 @@ namespace Fixin\Delivery\Cargo;
 
 use Fixin\Resource\Prototype;
 
-class Cargo extends Prototype implements CargoInterface {
-
+class Cargo extends Prototype implements CargoInterface
+{
     /**
      * @var mixed
      */
@@ -26,65 +26,58 @@ class Cargo extends Prototype implements CargoInterface {
      */
     protected $delivered = false;
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoInterface::getContent()
-     */
-    public function getContent() {
+    public function getContent()
+    {
         return $this->content;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoInterface::getContentType()
-     */
-    public function getContentType(): string {
+    public function getContentType(): string
+    {
         return $this->contentType;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoInterface::isDelivered()
-     */
-    public function isDelivered(): bool {
+    public function isDelivered(): bool
+    {
         return $this->delivered;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoInterface::setContent($content)
+     * @return static
      */
-    public function setContent($content): CargoInterface {
+    public function setContent($content): CargoInterface
+    {
         $this->content = $content;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoInterface::setContentType($contentType)
+     * @return static
      */
-    public function setContentType(string $contentType): CargoInterface {
+    public function setContentType(string $contentType): CargoInterface
+    {
         $this->contentType = $contentType;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoInterface::setDelivered($delivered)
+     * @return static
      */
-    public function setDelivered(bool $delivered): CargoInterface {
+    public function setDelivered(bool $delivered): CargoInterface
+    {
         $this->delivered = $delivered;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoInterface::unpack()
+     * @return static
      */
-    public function unpack() {
+    public function unpack(): CargoInterface
+    {
         echo $this->content;
+
+        return $this;
     }
 }

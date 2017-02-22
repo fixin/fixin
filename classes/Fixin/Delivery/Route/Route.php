@@ -11,9 +11,10 @@ use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Node\NodeInterface;
 use Fixin\Resource\Resource;
 
-class Route extends Resource implements RouteInterface {
-
-    const EXCEPTION_INVALID_NODE = "Invalid node '%s'";
+class Route extends Resource implements RouteInterface
+{
+    protected const
+        EXCEPTION_INVALID_NODE = "Invalid node '%s'";
 
     /**
      * @var NodeInterface[]
@@ -28,11 +29,10 @@ class Route extends Resource implements RouteInterface {
     /**
      * Get node instance for index
      *
-     * @param int $index
-     * @throws InvalidArgumentException
-     * @return NodeInterface
+     * @throws Exception\InvalidArgumentException
      */
-    protected function getNode(int $index): NodeInterface {
+    protected function getNode(int $index): NodeInterface
+    {
         if (isset($this->loadedNodes[$index])) {
             return $this->loadedNodes[$index];
         }
@@ -49,14 +49,11 @@ class Route extends Resource implements RouteInterface {
             return $node;
         }
 
-        throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NODE, $index));
+        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NODE, $index));
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
-     */
-    public function handle(CargoInterface $cargo): CargoInterface {
+    public function handle(CargoInterface $cargo): CargoInterface
+    {
         $cargo->setDelivered(false);
 
         $index = 0;
@@ -75,12 +72,8 @@ class Route extends Resource implements RouteInterface {
         return $cargo;
     }
 
-    /**
-     * Set nodes
-     *
-     * @param array $nodes
-     */
-    protected function setNodes(array $nodes) {
+    protected function setNodes(array $nodes)
+    {
         $this->nodes = array_values($nodes);
     }
 }

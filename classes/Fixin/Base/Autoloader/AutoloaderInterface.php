@@ -18,6 +18,7 @@ interface AutoloaderInterface
 /**
  * Encapsulated include
  */
-function fixinBaseAutoloaderEncapsulatedInclude(string $filename): void {
+function fixinBaseAutoloaderEncapsulatedInclude(string $filename): void
+{
     include $filename;
 }

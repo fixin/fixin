@@ -12,15 +12,18 @@ use Fixin\Delivery\Node\NodeInterface;
 use Fixin\Resource\Resource;
 use Fixin\View\ViewInterface;
 
-class WrapInView extends Resource implements NodeInterface {
+class WrapInView extends Resource implements NodeInterface
+{
+    protected const
+        ALLOWED_TYPES = ['text/html'],
+        THIS_REQUIRES = [
+            self::OPTION_CONTENT_NAME => self::TYPE_STRING,
+            self::OPTION_TEMPLATE => self::TYPE_STRING
+        ];
 
-    const ALLOWED_TYPES = ['text/html'];
-    const OPTION_CONTENT_NAME = 'contentName';
-    const OPTION_TEMPLATE = 'template';
-    const THIS_REQUIRES = [
-        self::OPTION_CONTENT_NAME => self::TYPE_STRING,
-        self::OPTION_TEMPLATE => self::TYPE_STRING
-    ];
+    public const
+        OPTION_CONTENT_NAME = 'contentName',
+        OPTION_TEMPLATE = 'template';
 
     /**
      * @var string
@@ -32,11 +35,8 @@ class WrapInView extends Resource implements NodeInterface {
      */
     protected $template = '';
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
-     */
-    public function handle(CargoInterface $cargo): CargoInterface {
+    public function handle(CargoInterface $cargo): CargoInterface
+    {
         if (in_array($cargo->getContentType(), static::ALLOWED_TYPES)) {
             $content = $cargo->getContent();
 
@@ -56,21 +56,13 @@ class WrapInView extends Resource implements NodeInterface {
         return $cargo;
     }
 
-    /**
-     * Set content name
-     *
-     * @param string $contentName
-     */
-    protected function setContentName(string $contentName) {
+    protected function setContentName(string $contentName)
+    {
         $this->contentName = $contentName;
     }
 
-    /**
-     * Set template
-     *
-     * @param string $template
-     */
-    protected function setTemplate(string $template) {
+    protected function setTemplate(string $template)
+    {
         $this->template = $template;
     }
 }

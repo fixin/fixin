@@ -12,15 +12,17 @@ use Fixin\Resource\Factory\Factory;
 use Fixin\Support\Arrays;
 use Fixin\Support\Strings;
 
-class HttpRouterHubFactory extends Factory {
+class HttpRouterHubFactory extends Factory
+{
+    protected const
+        EXCEPTION_INVALID_ROUTE_ARGUMENT = "Invalid route argument for '%s'",
+        EXCEPTION_NO_ROUTES = "No routes";
 
-    const EXCEPTION_INVALID_ROUTE_ARGUMENT = "Invalid route argument for '%s'";
-    const EXCEPTION_NO_ROUTES = "No routes";
-
-    const OPTION_HANDLER = 'handler';
-    const OPTION_PATTERNS = 'patterns';
-    const OPTION_ROUTES = 'routes';
-    const OPTION_URI = 'uri';
+    public const
+        OPTION_HANDLER = 'handler',
+        OPTION_PATTERNS = 'patterns',
+        OPTION_ROUTES = 'routes',
+        OPTION_URI = 'uri';
 
     /**
      * @var array
@@ -53,10 +55,10 @@ class HttpRouterHubFactory extends Factory {
     protected $scopePatterns;
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Resource\Factory\FactoryInterface::__invoke()
+     * @throws Exception\RuntimeException
      */
-    public function __invoke(array $options = NULL, string $name = NULL) {
+    public function __invoke(array $options = NULL, string $name = NULL): HttpRouterHub
+    {
         // Routes
         if (isset($options[static::OPTION_ROUTES])) {
             // Reset
@@ -76,23 +78,20 @@ class HttpRouterHubFactory extends Factory {
             }
         }
 
-        throw new RuntimeException(static::EXCEPTION_NO_ROUTES);
+        throw new Exception\RuntimeException(static::EXCEPTION_NO_ROUTES);
     }
 
     /**
-     * Add route
-     *
-     * @param array $definition
-     * @param string $uri
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      */
-    protected function addRouteFromDefinition(array $definition, string $uri) {
+    protected function addRouteFromDefinition(array $definition, string $uri): void
+    {
         $this->scopePatterns = $this->patterns;
 
         if (isset($definition[static::OPTION_PATTERNS])) {
             $routePatterns = $definition[static::OPTION_PATTERNS];
             if (!is_array($routePatterns)) {
-                throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ROUTE_ARGUMENT, $uri));
+                throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ROUTE_ARGUMENT, $uri));
             }
 
             $this->scopePatterns = array_replace($this->scopePatterns, $routePatterns);
@@ -102,32 +101,22 @@ class HttpRouterHubFactory extends Factory {
     }
 
     /**
-     * Add route group
-     *
-     * @param array $definition
-     * @param string $uri
-     * @param string $namespace
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      */
-    protected function addRouteGroupFromDefinition(array $definition, string $uri, string $namespace) {
+    protected function addRouteGroupFromDefinition(array $definition, string $uri, string $namespace): void
+    {
         foreach ($definition as $key => $route) {
             if (is_array($route)) {
                 $this->addRoutesFromDefinition($route, $uri, $namespace . $key . '::');
                 continue;
             }
 
-            throw new InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ROUTE_ARGUMENT, $key));
+            throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ROUTE_ARGUMENT, $key));
         }
     }
 
-    /**
-     * Add route item to the results
-     *
-     * @param array $path
-     * @param string $uri
-     * @param array $parameters
-     */
-    protected function addRouteItem(array $path, string $uri, array $parameters) {
+    protected function addRouteItem(array $path, string $uri, array $parameters): void
+    {
         Arrays::set($this->routeTree, $path, [
             HttpRouterHub::KEY_HANDLER => $this->scopeName,
             HttpRouterHub::KEY_PARAMETERS => array_keys($parameters)
@@ -139,17 +128,8 @@ class HttpRouterHubFactory extends Factory {
         ];
     }
 
-    /**
-     * Add route parameter segment
-     *
-     * @param string $name
-     * @param array $segments
-     * @param array $path
-     * @param string $uri
-     * @param array $parameters
-     * @param int $level
-     */
-    protected function addRouteParameterSegment(string $name, array $segments, array $path, string $uri, array $parameters, int $level) {
+    protected function addRouteParameterSegment(string $name, array $segments, array $path, string $uri, array $parameters, int $level): void
+    {
         // Optional
         $isOptional = $name[strlen($name) - 1] === '?';
         if ($isOptional) {
@@ -170,28 +150,23 @@ class HttpRouterHubFactory extends Factory {
         $this->addRouteSegments($segments, $path, $uri . '%s', $parameters, $level + 1);
     }
 
-    /**
-     * Add route segments
-     *
-     * @param array $segments
-     * @param array $path
-     * @param string $uri
-     * @param array $parameters
-     * @param int $level
-     */
-    protected function addRouteSegments(array $segments, array $path, string $uri, array $parameters, int $level) {
+    protected function addRouteSegments(array $segments, array $path, string $uri, array $parameters, int $level): void
+    {
         // End
         if (empty($segments)) {
             array_unshift($path, $level);
+            $this->addRouteItem($path, $uri, $parameters);
 
-            return $this->addRouteItem($path, $uri, $parameters);
+            return;
         }
 
         $segment = array_shift($segments);
 
         // Parameter
         if (Strings::surroundedBy($segment, '{', '}')) {
-            return $this->addRouteParameterSegment(substr($segment, 1, -1), $segments, $path, $uri, $parameters, $level);
+            $this->addRouteParameterSegment(substr($segment, 1, -1), $segments, $path, $uri, $parameters, $level);
+
+            return;
         }
 
         // Normal segment
@@ -200,14 +175,10 @@ class HttpRouterHubFactory extends Factory {
     }
 
     /**
-     * Add routes
-     *
-     * @param array $definition
-     * @param string $uri
-     * @param string $namespace
-     * @throws InvalidArgumentException
+     * @throws Exception\InvalidArgumentException
      */
-    protected function addRoutesFromDefinition(array $definition, string $uri, string $namespace) {
+    protected function addRoutesFromDefinition(array $definition, string $uri, string $namespace): void
+    {
         // Uri
         if (isset($definition[static::OPTION_URI])) {
             $uri = $this->uri($definition[static::OPTION_URI], $uri);
@@ -233,7 +204,8 @@ class HttpRouterHubFactory extends Factory {
     /**
      * Reset data
      */
-    protected function reset() {
+    protected function reset(): void
+    {
         $this->routeTree = [];
         $this->routeUris = [];
         $this->handlers = [];
@@ -241,12 +213,9 @@ class HttpRouterHubFactory extends Factory {
 
     /**
      * URI overriding (absolute, relative)
-     *
-     * @param string $uri
-     * @param string $inherited
-     * @return string
      */
-    protected function uri(string $uri, string $inherited): string {
+    protected function uri(string $uri, string $inherited): string
+    {
         if ($uri !== '') {
             if ($uri[0] === '/') {
                 $inherited = '';

@@ -9,13 +9,7 @@ namespace Fixin\Delivery\Cargo;
 
 use Fixin\Resource\ResourceInterface;
 
-interface CargoHandlerInterface extends ResourceInterface {
-
-    /**
-     * Handle cargo
-     *
-     * @param CargoInterface $cargo
-     * @return CargoInterface
-     */
+interface CargoHandlerInterface extends ResourceInterface
+{
     public function handle(CargoInterface $cargo): CargoInterface;
 }

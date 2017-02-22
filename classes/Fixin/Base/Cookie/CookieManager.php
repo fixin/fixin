@@ -53,9 +53,6 @@ class CookieManager extends Prototype implements CookieManagerInterface
         return $this;
     }
 
-    /**
-     * @return static
-     */
     public function set(string $name, string $value): CookieInterface
     {
         if (!isset($this->cookies[$name]) || !($cookie = $this->cookies[$name]) instanceof CookieInterface) {

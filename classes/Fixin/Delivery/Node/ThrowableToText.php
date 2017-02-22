@@ -11,15 +11,13 @@ use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Resource\Resource;
 use Fixin\Support\Ground;
 
-class ThrowableToText extends Resource implements NodeInterface {
+class ThrowableToText extends Resource implements NodeInterface
+{
+    protected const
+        CONTENT_TYPE = 'text/html';
 
-    const CONTENT_TYPE = 'text/html';
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
-     */
-    public function handle(CargoInterface $cargo): CargoInterface {
+    public function handle(CargoInterface $cargo): CargoInterface
+    {
         if ($cargo->getContent() instanceof \Throwable) {
             $cargo
             ->setContent(Ground::debugText(htmlspecialchars($cargo->getContent())))

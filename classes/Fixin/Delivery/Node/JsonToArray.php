@@ -10,15 +10,13 @@ namespace Fixin\Delivery\Node;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Resource\Resource;
 
-class JsonToArray extends Resource implements NodeInterface {
+class JsonToArray extends Resource implements NodeInterface
+{
+    protected const
+        ALLOWED_TYPES = ['application/json', 'application/jsonml+json'];
 
-    const ALLOWED_TYPES = ['application/json', 'application/jsonml+json'];
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
-     */
-    public function handle(CargoInterface $cargo): CargoInterface {
+    public function handle(CargoInterface $cargo): CargoInterface
+    {
         if (in_array($cargo->getContentType(), static::ALLOWED_TYPES)) {
             $cargo->setContent($this->container->get('Base\Json\Json')->decode($cargo->getContent()));
         }

@@ -13,35 +13,30 @@ use Fixin\Delivery\Route\RouteInterface;
 use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
-class HttpErrorHub extends Resource implements NodeInterface {
+class HttpErrorHub extends Resource implements NodeInterface
+{
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_ROUTE => self::TYPE_INSTANCE
+        ],
+        THIS_SETS_LAZY = [
+            self::OPTION_ROUTE => RouteInterface::class
+        ];
 
-    const OPTION_ROUTE = 'route';
-    const THIS_REQUIRES = [
-        self::OPTION_ROUTE => self::TYPE_INSTANCE
-    ];
-    const THIS_SETS_LAZY = [
-        self::OPTION_ROUTE => RouteInterface::class
-    ];
+    public const OPTION_ROUTE = 'route';
 
     /**
      * @var RouteInterface|false|null
      */
     protected $route;
 
-    /**
-     * Get route instance
-     *
-     * @return RouteInterface
-     */
-    protected function getRoute(): RouteInterface {
+    protected function getRoute(): RouteInterface
+    {
         return $this->route ?: $this->loadLazyProperty(static::OPTION_ROUTE);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
-     */
-    public function handle(CargoInterface $cargo): CargoInterface {
+    public function handle(CargoInterface $cargo): CargoInterface
+    {
         if ($cargo instanceof HttpCargoInterface) {
             $statusCode = $cargo->getStatusCode();
 

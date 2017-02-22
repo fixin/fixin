@@ -12,13 +12,10 @@ use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
-abstract class HttpHub extends Resource implements NodeInterface {
-
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Cargo\CargoHandlerInterface::handle($cargo)
-     */
-    public function handle(CargoInterface $cargo): CargoInterface {
+abstract class HttpHub extends Resource implements NodeInterface
+{
+    public function handle(CargoInterface $cargo): CargoInterface
+    {
         if ($cargo instanceof HttpCargoInterface && $cargo->getStatusCode() === Http::STATUS_CONTINUE_100) {
             return $this->handleHttpCargo($cargo);
         }
@@ -26,11 +23,5 @@ abstract class HttpHub extends Resource implements NodeInterface {
         return $cargo;
     }
 
-    /**
-     * Handle HttpCargoInterface instance
-     *
-     * @param HttpCargoInterface $cargo
-     * @return CargoInterface
-     */
     abstract protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface;
 }

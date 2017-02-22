@@ -9,7 +9,8 @@ namespace Fixin\Delivery\Route;
 
 use Fixin\Delivery\Cargo\CargoHandlerInterface;
 
-interface RouteInterface extends CargoHandlerInterface {
-
-    const OPTION_NODES = 'nodes';
+interface RouteInterface extends CargoHandlerInterface
+{
+    public const
+        OPTION_NODES = 'nodes';
 }

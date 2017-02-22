@@ -14,13 +14,16 @@ use Fixin\Exception\RuntimeException;
 use Fixin\Support\Http;
 use Fixin\Support\Strings;
 
-class HttpClassHub extends HttpHub {
+class HttpClassHub extends HttpHub
+{
+    protected const
+        CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/',
+        EXCEPTION_INVALID_CLASS = "Class '%s' is invalid, CargoHandlerInterface required";
 
-    const CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/';
-    const EXCEPTION_INVALID_CLASS = "Class '%s' is invalid, CargoHandlerInterface required";
-    const OPTION_BASE_PATH = 'basePath';
-    const OPTION_CLASS_PREFIX = 'classPrefix';
-    const OPTION_DEPTH = 'depth';
+    public const
+        OPTION_BASE_PATH = 'basePath',
+        OPTION_CLASS_PREFIX = 'classPrefix',
+        OPTION_DEPTH = 'depth';
 
     /**
      * @var string
@@ -33,15 +36,12 @@ class HttpClassHub extends HttpHub {
     protected $classPrefix = '';
 
     /**
-     * @var integer
+     * @var int
      */
     protected $depth = 2;
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Delivery\Node\HttpHub::handleHttpCargo($cargo)
-     */
-    protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface {
+    protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface
+    {
         $path = $cargo->getRequestUri()->getPath();
         $length = strlen($this->basePath);
 
@@ -59,13 +59,9 @@ class HttpClassHub extends HttpHub {
 
     /**
      * Handle observed path
-     *
-     * @param HttpCargoInterface $cargo
-     * @param string $path
-     * @throws RuntimeException
-     * @return HttpCargoInterface
      */
-    protected function handlePath(HttpCargoInterface $cargo, string $path): HttpCargoInterface {
+    protected function handlePath(HttpCargoInterface $cargo, string $path): HttpCargoInterface
+    {
         $depth = $this->depth;
         $tags = explode('/', rtrim($path, '/'), $depth + 2);
 
@@ -87,11 +83,10 @@ class HttpClassHub extends HttpHub {
     /**
      * Get controller instance for path
      *
-     * @param string $name
-     * @throws RuntimeException
-     * @return CargoHandlerInterface|NULL
+     * @throws Exception\RuntimeException
      */
-    protected function pathToController(string $name) {
+    protected function pathToController(string $name): ?CargoHandlerInterface
+    {
         if (preg_match(static::CLASS_NAME_PATTERN, $name)) {
             $fullName = $this->classPrefix . Strings::className($name);
 
@@ -103,37 +98,25 @@ class HttpClassHub extends HttpHub {
                     return $instance;
                 }
 
-                throw new RuntimeException(sprintf(static::EXCEPTION_INVALID_CLASS, get_class($instance)));
+                throw new Exception\RuntimeException(sprintf(static::EXCEPTION_INVALID_CLASS, get_class($instance)));
             }
         }
 
         return null;
     }
 
-    /**
-     * Set base path
-     *
-     * @param string $basePath
-     */
-    protected function setBasePath(string $basePath) {
+    protected function setBasePath(string $basePath)
+    {
         $this->basePath = rtrim($basePath, '/') . '/';
     }
 
-    /**
-     * Set class prefix
-     *
-     * @param string $classPrefix
-     */
-    protected function setClassPrefix(string $classPrefix) {
+    protected function setClassPrefix(string $classPrefix)
+    {
         $this->classPrefix = trim($classPrefix, '\\') . '\\';
     }
 
-    /**
-     * Set depth
-     *
-     * @param int $depth
-     */
-    protected function setDepth(int $depth) {
+    protected function setDepth(int $depth)
+    {
         $this->depth = $depth;
     }
 }
