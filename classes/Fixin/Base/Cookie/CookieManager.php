@@ -56,6 +56,7 @@ class CookieManager extends Prototype implements CookieManagerInterface
     public function set(string $name, string $value): CookieInterface
     {
         if (!isset($this->cookies[$name]) || !($cookie = $this->cookies[$name]) instanceof CookieInterface) {
+            /** @var CookieInterface $cookie */
             $cookie =
             $this->cookies[$name] = $this->container->clonePrototype('Base\Cookie\Cookie');
         }

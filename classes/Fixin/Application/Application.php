@@ -93,6 +93,7 @@ class Application implements ApplicationInterface
         // TODO lock
 
         try {
+            /** @var CargoInterface $cargo */
             $cargo = $container->clonePrototype($this->config[static::OPTION_CARGO]);
             $container->get($this->config[static::OPTION_ROUTE])
                 ->handle($cargo)

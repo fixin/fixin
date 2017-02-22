@@ -16,6 +16,7 @@ interface StorageInterface extends ResourceInterface
 {
     public function delete(RequestInterface $request): int;
     public function getLastInsertValue(): int;
+    public function getValueAsDateTime($value): ?DateTime;
     public function insert(RepositoryInterface $repository, array $set): int;
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
     public function insertMultiple(RepositoryInterface $repository, array $rows): int;
@@ -23,11 +24,4 @@ interface StorageInterface extends ResourceInterface
     public function selectColumn(RequestInterface $request): StorageResultInterface;
     public function selectExists(RequestInterface $request): bool;
     public function update(array $set, RequestInterface $request): int;
-
-    /**
-     * Convert value to DateTime
-     *
-     * @param string|int $value
-     */
-//    public function valueToDateTime($value): ?\DateTime;
 }

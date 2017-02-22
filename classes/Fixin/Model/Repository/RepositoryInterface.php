@@ -69,6 +69,7 @@ interface RepositoryInterface extends ResourceInterface
      */
     public function getPrimaryKey(): array;
 
+    public function getValueAsDateTime($value): ?DateTime;
     public function insert(array $set): EntityIdInterface;
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
     public function insertMultiple(array $rows): int;
@@ -97,11 +98,4 @@ interface RepositoryInterface extends ResourceInterface
     public function selectExists(RequestInterface $request): bool;
     public function selectRawData(RequestInterface $request): StorageResultInterface;
     public function update(array $set, RequestInterface $request): int;
-
-    /**
-     * Convert value to DateTime
-     *
-     * @param string|int $value
-     */
-//    public function convertValueToDateTime($value): ?DateTime; TODO
 }

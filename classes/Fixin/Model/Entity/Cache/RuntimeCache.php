@@ -13,12 +13,12 @@ use Fixin\Model\Storage\StorageResultInterface;
 class RuntimeCache extends Cache
 {
     /**
-     * @var array
+     * @var EntityInterface[]
      */
     protected $entities = [];
 
     /**
-     * @var array
+     * @var EntityInterface[]
      */
     protected $invalidEntities = [];
 

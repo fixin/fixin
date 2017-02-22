@@ -105,6 +105,11 @@ class PdoStorage extends Resource implements StorageInterface
         return $this->resource->lastInsertId();
     }
 
+    public function getValueAsDateTime($value): ?DateTime
+    {
+        return $this->getGrammar()->valueToDateTime($value);
+    }
+
     public function insert(RepositoryInterface $repository, array $set): int
     {
         return $this->execute($this->getGrammar()->insert($repository, $set));
@@ -178,9 +183,4 @@ class PdoStorage extends Resource implements StorageInterface
     {
         return $this->execute($this->getGrammar()->update($set, $request));
     }
-
-//    public function valueToDateTime($value): ?DateTime
-//    {
-//        return $this->getGrammar()->valueToDateTime($value);
-//    }
 }

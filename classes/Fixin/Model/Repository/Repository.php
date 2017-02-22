@@ -101,13 +101,6 @@ class Repository extends RepositoryBase
         return $this->delete($request);
     }
 
-    public function isExisting(RequestInterface $request): bool
-    {
-        $this->validateRequest($request);
-
-        return $this->getStorage()->exists($request);
-    }
-
     public function getById(EntityIdInterface $id): ?EntityInterface
     {
         $entities = $this->getEntityCache()->getByIds([$id]);
@@ -122,6 +115,11 @@ class Repository extends RepositoryBase
             EntitySetInterface::OPTION_ENTITY_CACHE => $this->getEntityCache(),
             EntitySetInterface::OPTION_ITEMS => $this->getEntityCache()->getByIds($ids)
         ]);
+    }
+
+    public function getValueAsDateTime($value): ?DateTime
+    {
+        return $this->getStorage()->getValueAsDateTime($value);
     }
 
     public function insert(array $set): EntityIdInterface
@@ -219,6 +217,13 @@ class Repository extends RepositoryBase
         return $this->getStorage()->selectColumn($request);
     }
 
+    public function selectExists(RequestInterface $request): bool
+    {
+        $this->validateRequest($request);
+
+        return $this->getStorage()->selectExists($request);
+    }
+
     public function selectRawData(RequestInterface $request): StorageResultInterface
     {
         return $this->getStorage()->select($request);
@@ -245,10 +250,5 @@ class Repository extends RepositoryBase
         }
 
         throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_REQUEST, $this->getName(), $request->getRepository()->getName()));
-    }
-
-    public function valueToDateTime($value): ?DateTime
-    {
-        return $this->getStorage()->valueToDateTime($value);
     }
 }

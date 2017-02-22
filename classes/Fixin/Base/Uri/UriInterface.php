@@ -11,7 +11,14 @@ use Fixin\Resource\PrototypeInterface;
 
 interface UriInterface extends PrototypeInterface
 {
-    // TODO OPTION_* ?
+    public const
+        OPTION_FRAGMENT = 'fragment',
+        OPTION_HOST = 'host',
+        OPTION_PATH = 'path',
+        OPTION_PORT = 'port',
+        OPTION_QUERY = 'query',
+        OPTION_SCHEME = 'scheme',
+        OPTION_USER_INFO = 'userInfo';
 
     public function getAuthority(): string;
     public function getFragment(): ?string;
@@ -21,11 +28,4 @@ interface UriInterface extends PrototypeInterface
     public function getQuery(): string;
     public function getScheme(): string;
     public function getUserInfo(): string;
-    public function setFragment(?string $fragment): UriInterface;
-    public function setHost(string $host): UriInterface;
-    public function setPath(string $path): UriInterface;
-    public function setPort(?int $port): UriInterface;
-    public function setQuery(string $query): UriInterface;
-    public function setScheme(string $scheme): UriInterface;
-    public function setUserInfo(string $userInfo): UriInterface;
 }

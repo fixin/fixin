@@ -7,6 +7,7 @@
 
 namespace Fixin\Base\Uri\Factory;
 
+use Fixin\Base\Uri\UriInterface;
 use Fixin\Resource\Factory\Factory;
 
 class EnvironmentUriFactory extends Factory
@@ -16,12 +17,13 @@ class EnvironmentUriFactory extends Factory
 
     public function __invoke(array $options = NULL, string $name = null)
     {
-        return $this->container->clonePrototype('Base\Uri\Uri')
-            ->setScheme(($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http')
-            ->setHost($_SERVER['HTTP_HOST'])
-            ->setPort($_SERVER['SERVER_PORT'])
-            ->setPath($this->getPath())
-            ->setQuery($_SERVER['QUERY_STRING']);
+        return $this->container->clonePrototype('Base\Uri\Uri', [
+            UriInterface::OPTION_SCHEME => ($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http',
+            UriInterface::OPTION_HOST => $_SERVER['HTTP_HOST'],
+            UriInterface::OPTION_PORT => $_SERVER['SERVER_PORT'],
+            UriInterface::OPTION_PATH => $this->getPath(),
+            UriInterface::OPTION_QUERY => $_SERVER['QUERY_STRING']
+        ]);
     }
 
     protected function getPath(): string

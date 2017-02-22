@@ -75,15 +75,15 @@ abstract class RequestBase extends Prototype implements RequestInterface {
      */
     protected $where;
 
+    public function __clone() {
+        $this->having = clone $this->having;
+        $this->joins = clone $this->joins;
+        $this->where = clone $this->where;
+    }
+
     /**
      * Add join
      *
-     * @param string $type
-     * @param RepositoryInterface $repository
-     * @param string $left
-     * @param string $operator
-     * @param string $right
-     * @param string $alias
      * @return static
      */
     protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null) {
@@ -91,15 +91,12 @@ abstract class RequestBase extends Prototype implements RequestInterface {
     }
 
     /**
-     * Add join intem
+     * Add join item
      *
-     * @param string $type
-     * @param RepositoryInterface $repository
-     * @param WhereInterface $where
-     * @param string $alias
      * @return static
      */
-    protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null) {
+    protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null): self
+    {
         $this->joins[] = $this->container->clonePrototype(static::PROTOTYPE_JOIN, [
             JoinInterface::OPTION_TYPE => $type,
             JoinInterface::OPTION_REPOSITORY => $repository,
@@ -113,13 +110,11 @@ abstract class RequestBase extends Prototype implements RequestInterface {
     /**
      * Add join by where callback
      *
-     * @param string $type
-     * @param RepositoryInterface $repository
-     * @param callable $callback
-     * @param string $alias
      * @return static
      */
-    protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null) {
+    protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null): self
+    {
+        /** @var  $where */
         $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
@@ -127,42 +122,30 @@ abstract class RequestBase extends Prototype implements RequestInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::crossJoin($repository, $alias)
+     * @return static
      */
-    public function crossJoin(RepositoryInterface $repository, string $alias = null): RequestInterface {
+    public function crossJoin(RepositoryInterface $repository, string $alias = null): RequestInterface
+    {
         return $this->addJoinItem(JoinInterface::TYPE_CROSS, $repository, null, $alias);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getAlias()
-     */
-    public function getAlias(): string {
+    public function getAlias(): string
+    {
         return $this->alias ?? ($this->alias = $this->repository->getName());
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getColumns()
-     */
-    public function getColumns(): array {
+    public function getColumns(): array
+    {
         return $this->columns;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getGroupBy()
-     */
-    public function getGroupBy(): array {
+    public function getGroupBy(): array
+    {
         return $this->groupBy;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getHaving()
-     */
-    public function getHaving(): WhereInterface {
+    public function getHaving(): WhereInterface
+    {
         return $this->having ?? ($this->having = $this->container->clonePrototype(static::PROTOTYPE_WHERE));
     }
 

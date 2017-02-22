@@ -22,14 +22,10 @@ interface GrammarInterface extends ResourceInterface
 
     public function delete(RequestInterface $request): QueryInterface;
     public function exists(RequestInterface $request): QueryInterface;
+    public function getValueAsDateTime($value): ?DateTime;
     public function insert(RepositoryInterface $repository, array $set): QueryInterface;
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface;
     public function insertMultiple(RepositoryInterface $repository, array $rows): QueryInterface;
     public function select(RequestInterface $request): QueryInterface;
     public function update(array $set, RequestInterface $request): QueryInterface;
-
-    /**
-     * Convert value to DateTime
-     */
-    public function valueToDateTime($value): ?DateTime;
 }

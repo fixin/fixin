@@ -131,7 +131,7 @@ class Uri extends Prototype implements UriInterface
     /**
      * @return static
      */
-    public function setFragment(?string $fragment): UriInterface
+    protected function setFragment(?string $fragment): UriInterface
     {
         $this->fragment = $fragment;
 
@@ -141,7 +141,7 @@ class Uri extends Prototype implements UriInterface
     /**
      * @return static
      */
-    public function setHost(string $host): UriInterface
+    protected function setHost(string $host): UriInterface
     {
         $this->host = $host;
 
@@ -151,7 +151,7 @@ class Uri extends Prototype implements UriInterface
     /**
      * @return static
      */
-    public function setPath(string $path): UriInterface
+    protected function setPath(string $path): UriInterface
     {
         $this->path = $path;
 
@@ -161,7 +161,7 @@ class Uri extends Prototype implements UriInterface
     /**
      * @return static
      */
-    public function setPort(?int $port): UriInterface
+    protected function setPort(?int $port): UriInterface
     {
         $this->port = $port;
 
@@ -171,7 +171,7 @@ class Uri extends Prototype implements UriInterface
     /**
      * @return static
      */
-    public function setQuery(string $query): UriInterface
+    protected function setQuery(string $query): UriInterface
     {
         $this->query = $query;
 
@@ -181,7 +181,7 @@ class Uri extends Prototype implements UriInterface
     /**
      * @return static
      */
-    public function setScheme(string $scheme): UriInterface
+    protected function setScheme(string $scheme): UriInterface
     {
         $this->scheme = $scheme;
 
@@ -191,7 +191,7 @@ class Uri extends Prototype implements UriInterface
     /**
      * @return static
      */
-    public function setUserInfo(string $userInfo): UriInterface
+    protected function setUserInfo(string $userInfo): UriInterface
     {
         $this->userInfo = $userInfo;
 

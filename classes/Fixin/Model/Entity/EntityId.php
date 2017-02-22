@@ -56,7 +56,7 @@ class EntityId extends Prototype implements EntityIdInterface
 
     public function getEntity(): ?EntityInterface
     {
-        return $this->getRepository()->selectById($this);
+        return $this->getRepository()->getById($this);
     }
 
     public function getRepository(): RepositoryInterface

@@ -129,6 +129,15 @@ abstract class Grammar extends GrammarBase
         return $query->appendClause(static::STATEMENT_SELECT[false], sprintf(static::MASK_EXISTS, $this->requestToString($request, $query)));
     }
 
+    public function getValueAsDateTime($value): ?DateTime
+    {
+        if (Numbers::isInt($value)) {
+            return new DateTime($value);
+        }
+
+        return DateTime::createFromFormat(static::DATETIME_FORMAT, $value) ?: null;
+    }
+
     public function insert(RepositoryInterface $repository, array $set): QueryInterface
     {
         return $this->insertMultiple($repository, [$set]);
@@ -234,12 +243,4 @@ abstract class Grammar extends GrammarBase
         return $query;
     }
 
-    public function valueToDateTime($value): ?DateTime
-    {
-        if (Numbers::isInt($value)) {
-            return new DateTime($value);
-        }
-
-        return DateTime::createFromFormat(static::DATETIME_FORMAT, $value) ?: null;
-    }
 }
