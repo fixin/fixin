@@ -10,6 +10,7 @@ namespace Fixin\Model\Request\Where;
 use DateTime;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Model\Request\Where\Tag\TagInterface;
 use Fixin\Resource\PrototypeInterface;
 
 interface WhereInterface extends PrototypeInterface

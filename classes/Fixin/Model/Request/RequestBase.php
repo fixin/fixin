@@ -114,7 +114,7 @@ abstract class RequestBase extends Prototype implements RequestInterface {
      */
     protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null): self
     {
-        /** @var  $where */
+        /** @var WhereInterface $where */
         $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 

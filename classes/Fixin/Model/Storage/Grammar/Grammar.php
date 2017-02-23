@@ -94,9 +94,10 @@ abstract class Grammar extends GrammarBase
     protected function clauseJoin(RequestInterface $request, QueryInterface $query): void
     {
         foreach ($request->getJoins() as $join) {
-            $query
-            ->appendClause(static::CLAUSE_JOIN, $this->nameToString($join->getRepository()->getName(), $join->getAlias()))
-            ->appendString($this->whereToString(static::CLAUSE_JOIN_ON, $join->getWhere(), $query));
+            $query->appendClause(static::CLAUSE_JOIN, $this->nameToString($join->getRepository()->getName(), $join->getAlias()));
+            if ($where = $join->getWhere()) {
+                $query->appendString($this->whereToString(static::CLAUSE_JOIN_ON, $where, $query));
+            }
         }
     }
 
@@ -124,6 +125,7 @@ abstract class Grammar extends GrammarBase
 
     public function exists(RequestInterface $request): QueryInterface
     {
+        /** @var QueryInterface $query */
         $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY);
 
         return $query->appendClause(static::STATEMENT_SELECT[false], sprintf(static::MASK_EXISTS, $this->requestToString($request, $query)));
@@ -145,9 +147,11 @@ abstract class Grammar extends GrammarBase
 
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): QueryInterface
     {
-        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
-        ->appendWord(static::STATEMENT_INSERT)
-        ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
+        /** @var QueryInterface $query */
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY);
+        $query
+            ->appendWord(static::STATEMENT_INSERT)
+            ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
 
         // Columns
         if ($columns = $request->getColumns()) {
@@ -167,9 +171,11 @@ abstract class Grammar extends GrammarBase
 
     public function insertMultiple(RepositoryInterface $repository, array $rows): QueryInterface
     {
-        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
-        ->appendWord(static::STATEMENT_INSERT)
-        ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
+        /** @var QueryInterface $query */
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY);
+        $query
+            ->appendWord(static::STATEMENT_INSERT)
+            ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
 
         $columnNames = [];
         foreach (array_keys(reset($rows)) as $identifier) {
@@ -193,7 +199,9 @@ abstract class Grammar extends GrammarBase
 
     protected function makeQuery(string $statement, RequestInterface $request, array $tags): QueryInterface
     {
-        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)->appendWord($statement);
+        /** @var QueryInterface $query */
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY);
+        $query->appendWord($statement);
 
         foreach ($tags as $tag) {
             $this->{static::METHOD_CLAUSE . $tag}($request, $query);
@@ -226,8 +234,9 @@ abstract class Grammar extends GrammarBase
 
     public function update(array $set, RequestInterface $request): QueryInterface
     {
-        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY)
-        ->appendClause(static::STATEMENT_UPDATE, $this->requestNameToString($request));
+        /** @var QueryInterface $query */
+        $query = $this->container->clonePrototype(static::PROTOTYPE_QUERY);
+        $query->appendClause(static::STATEMENT_UPDATE, $this->requestNameToString($request));
 
         // Set
         $list = [];
