@@ -23,7 +23,7 @@ class ResourceManager extends ResourceManagerBase
         return false;
     }
 
-    public function clonePrototype(string $name, array $options = []): PrototypeInterface
+    public function clonePrototype(string $name, array $options = [])
     {
         return $this->getResource($name, true)->withOptions($options);
     }

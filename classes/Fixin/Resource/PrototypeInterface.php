@@ -12,5 +12,5 @@ interface PrototypeInterface extends ResourceInterface
     /**
      * Clone instance and change options
      */
-    public function withOptions(array $options): PrototypeInterface;
+    public function withOptions(array $options);
 }

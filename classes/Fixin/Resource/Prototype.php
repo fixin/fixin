@@ -25,7 +25,7 @@ abstract class Prototype extends Resource implements PrototypeInterface
     /**
      * @return static
      */
-    public function withOptions(array $options): PrototypeInterface
+    public function withOptions(array $options)
     {
         return (clone $this)
             ->configureWithOptions($options)

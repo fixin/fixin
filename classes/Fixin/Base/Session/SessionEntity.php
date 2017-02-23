@@ -58,7 +58,7 @@ class SessionEntity extends \Fixin\Model\Entity\Entity
     public function getAccessTime(): ?DateTime
     {
         if (!$this->accessTime instanceof DateTime && isset($this->accessTime)) {
-            $this->accessTime = $this->getRepository()->valueToDateTime($this->accessTime);
+            $this->accessTime = $this->getRepository()->getValueAsDateTime($this->accessTime);
         }
 
         return $this->accessTime;
