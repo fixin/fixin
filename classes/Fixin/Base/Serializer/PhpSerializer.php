@@ -7,6 +7,8 @@
 
 namespace Fixin\Base\Serializer;
 
+use Throwable;
+
 class PhpSerializer implements SerializerInterface
 {
     protected const
@@ -18,7 +20,7 @@ class PhpSerializer implements SerializerInterface
         try {
             return serialize($value);
         }
-        catch (\Throwable $t) {
+        catch (Throwable $t) {
             throw new Exception\RuntimeException(static::EXCEPTION_SERIALIZATION_FAILED, 0, $t);
         }
     }
@@ -28,7 +30,7 @@ class PhpSerializer implements SerializerInterface
         try {
             return unserialize($data, isset($allowedClasses) ? ['allowed_classes' => $allowedClasses] : null);
         }
-        catch (\Throwable $t) {
+        catch (Throwable $t) {
             throw new Exception\RuntimeException(static::EXCEPTION_UNSERIALIZATION_FAILED, 0, $t);
         }
     }

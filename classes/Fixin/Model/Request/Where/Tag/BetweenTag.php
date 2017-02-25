@@ -9,14 +9,16 @@ namespace Fixin\Model\Request\Where\Tag;
 
 class BetweenTag extends IdentifierTag
 {
+    protected const
+        THIS_REQUIRES = [
+        self::OPTION_IDENTIFIER => self::TYPE_ANY,
+        self::OPTION_MAX => self::TYPE_ANY,
+        self::OPTION_MIN => self::TYPE_ANY,
+    ];
+
     public const
         OPTION_MAX = 'max',
-        OPTION_MIN = 'min',
-        THIS_REQUIRES = [
-            self::OPTION_IDENTIFIER => self::TYPE_ANY,
-            self::OPTION_MAX => self::TYPE_ANY,
-            self::OPTION_MIN => self::TYPE_ANY,
-        ];
+        OPTION_MIN = 'min';
 
     /**
      * @var number|string

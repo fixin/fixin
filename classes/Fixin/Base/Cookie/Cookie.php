@@ -84,7 +84,7 @@ class Cookie extends Prototype implements CookieInterface
             return $this;
         }
 
-        throw new RuntimeException(sprintf(static::EXCEPTION_CAN_T_SET_COOKIE, $name));
+        throw new Exception\RuntimeException(sprintf(static::EXCEPTION_CAN_T_SET_COOKIE, $name));
     }
 
     /**

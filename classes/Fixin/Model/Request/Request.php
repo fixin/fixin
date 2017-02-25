@@ -47,14 +47,12 @@ class Request extends RequestBase {
      */
     protected $unions = [];
 
-    protected function addUnion(string $type, RequestInterface $request): RequestInterface
+    protected function addUnion(string $type, RequestInterface $request): void
     {
         $this->unions[] = $this->container->clonePrototype(static::PROTOTYPE_UNION, [
             UnionInterface::OPTION_TYPE => $type,
             UnionInterface::OPTION_REQUEST => $request
         ]);
-
-        return $this;
     }
 
     public function count(): int
@@ -92,7 +90,10 @@ class Request extends RequestBase {
 
     public function fetchFirst(): ?EntityInterface
     {
-        return (clone $this)->setLimit(1)->fetch()->current();
+        return (clone $this)
+            ->setLimit(1)
+            ->fetch()
+            ->current();
     }
 
     public function fetchRawData(): StorageResultInterface
@@ -191,7 +192,9 @@ class Request extends RequestBase {
      */
     public function union(RequestInterface $request): RequestInterface
     {
-        return $this->addUnion(UnionInterface::TYPE_NORMAL, $request);
+        $this->addUnion(UnionInterface::TYPE_NORMAL, $request);
+
+        return $this;
     }
 
     /**
@@ -199,7 +202,9 @@ class Request extends RequestBase {
      */
     public function unionAll(RequestInterface $request): RequestInterface
     {
-        return $this->addUnion(UnionInterface::TYPE_ALL, $request);
+        $this->addUnion(UnionInterface::TYPE_ALL, $request);
+
+        return $this;
     }
 
     public function update(array $set): int

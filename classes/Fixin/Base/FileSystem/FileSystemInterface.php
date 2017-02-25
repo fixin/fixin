@@ -52,7 +52,7 @@ interface FileSystemInterface extends ResourceInterface
     public function isDirectory(string $path): bool;
 
     /**
-     * Determine if existence
+     * Determine if existing
      */
     public function isExisting(string $path): bool;
 

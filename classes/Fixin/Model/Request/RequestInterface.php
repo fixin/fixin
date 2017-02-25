@@ -19,11 +19,7 @@ interface RequestInterface extends PrototypeInterface
     public const
         OPTION_REPOSITORY = 'repository';
 
-    /**
-     * Count items
-     */
     public function count(): int;
-
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface;
 
     /**
@@ -32,15 +28,9 @@ interface RequestInterface extends PrototypeInterface
     public function crossJoin(RepositoryInterface $repository, string $alias = null): RequestInterface;
 
     public function delete(): int;
-
-    /**
-     * Fetch entities
-     */
     public function fetch(): EntitySetInterface;
 
     /**
-     * Fetch column values
-     *
      * @param string|ExpressionInterface|RequestInterface $column
      */
     public function fetchColumn($column): StorageResultInterface;
@@ -50,8 +40,6 @@ interface RequestInterface extends PrototypeInterface
     public function fetchRawData(): StorageResultInterface;
 
     /**
-     * Fetch value
-     *
      * @param string|ExpressionInterface|RequestInterface $column
      */
     public function fetchValue($column);
@@ -62,7 +50,7 @@ interface RequestInterface extends PrototypeInterface
     public function getHaving(): WhereInterface;
 
     /**
-     * @return Join[]
+     * @return JoinInterface[]
      */
     public function getJoins(): array;
 
@@ -75,7 +63,7 @@ interface RequestInterface extends PrototypeInterface
     public function getUnionOrderBy(): array;
 
     /**
-     * @return Union[]
+     * @return UnionInterface[]
      */
     public function getUnions(): array;
 
@@ -137,12 +125,12 @@ interface RequestInterface extends PrototypeInterface
     public function setUnionOrderBy(array $unionOrderBy): RequestInterface;
 
     /**
-     * Add a union
+     * Add union
      */
     public function union(RequestInterface $request): RequestInterface;
 
     /**
-     * Add a union all
+     * Add union all
      */
     public function unionAll(RequestInterface $request): RequestInterface;
     public function update(array $set): int;

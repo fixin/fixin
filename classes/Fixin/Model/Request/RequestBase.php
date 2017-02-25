@@ -11,9 +11,9 @@ use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\Prototype;
 
-abstract class RequestBase extends Prototype implements RequestInterface {
-
-    const
+abstract class RequestBase extends Prototype implements RequestInterface
+{
+    protected const
         PROTOTYPE_JOIN = 'Model\Request\Join',
         PROTOTYPE_WHERE = 'Model\Request\Where\Where',
         THIS_REQUIRES = [
@@ -41,12 +41,12 @@ abstract class RequestBase extends Prototype implements RequestInterface {
     protected $groupBy = [];
 
     /**
-     * @var WhereInterface
+     * @var WhereInterface|null
      */
     protected $having;
 
     /**
-     * @var Join[]
+     * @var JoinInterface[]
      */
     protected $joins = [];
 
@@ -71,7 +71,7 @@ abstract class RequestBase extends Prototype implements RequestInterface {
     protected $repository;
 
     /**
-     * @var WhereInterface
+     * @var WhereInterface|null
      */
     protected $where;
 
@@ -81,21 +81,12 @@ abstract class RequestBase extends Prototype implements RequestInterface {
         $this->where = clone $this->where;
     }
 
-    /**
-     * Add join
-     *
-     * @return static
-     */
-    protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null) {
-        return $this->addJoinItem($type, $repository, $this->container->clonePrototype(static::PROTOTYPE_WHERE)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
+    protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): void
+    {
+        $this->addJoinItem($type, $repository, $this->container->clonePrototype(static::PROTOTYPE_WHERE)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
     }
 
-    /**
-     * Add join item
-     *
-     * @return static
-     */
-    protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null): self
+    protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null): void
     {
         $this->joins[] = $this->container->clonePrototype(static::PROTOTYPE_JOIN, [
             JoinInterface::OPTION_TYPE => $type,
@@ -103,22 +94,15 @@ abstract class RequestBase extends Prototype implements RequestInterface {
             JoinInterface::OPTION_ALIAS => $alias ?? $repository->getName(),
             JoinInterface::OPTION_WHERE => $where
         ]);
-
-        return $this;
     }
 
-    /**
-     * Add join by where callback
-     *
-     * @return static
-     */
-    protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null): self
+    protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null): void
     {
         /** @var WhereInterface $where */
         $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
         $callback($where);
 
-        return $this->addJoinItem($type, $repository, $where, $alias);
+        $this->addJoinItem($type, $repository, $where, $alias);
     }
 
     /**
@@ -126,7 +110,9 @@ abstract class RequestBase extends Prototype implements RequestInterface {
      */
     public function crossJoin(RepositoryInterface $repository, string $alias = null): RequestInterface
     {
-        return $this->addJoinItem(JoinInterface::TYPE_CROSS, $repository, null, $alias);
+        $this->addJoinItem(JoinInterface::TYPE_CROSS, $repository, null, $alias);
+
+        return $this;
     }
 
     public function getAlias(): string
@@ -149,181 +135,169 @@ abstract class RequestBase extends Prototype implements RequestInterface {
         return $this->having ?? ($this->having = $this->container->clonePrototype(static::PROTOTYPE_WHERE));
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getJoins()
-     */
-    public function getJoins(): array {
+    public function getJoins(): array
+    {
         return $this->joins;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getLimit()
-     */
-    public function getLimit() {
+    public function getLimit(): ?int
+    {
         return $this->limit;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getOffset()
-     */
-    public function getOffset(): int {
+    public function getOffset(): int
+    {
         return $this->offset;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getOrderBy()
-     */
-    public function getOrderBy(): array {
+    public function getOrderBy(): array
+    {
         return $this->orderBy;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getRepository()
-     */
-    public function getRepository(): RepositoryInterface {
+    public function getRepository(): RepositoryInterface
+    {
         return $this->repository;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::getWhere()
-     */
-    public function getWhere(): WhereInterface {
+    public function getWhere(): WhereInterface
+    {
         return $this->where ?? ($this->where = $this->container->clonePrototype(static::PROTOTYPE_WHERE));
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::hasHaving()
-     */
-    public function hasHaving(): bool {
+    public function hasHaving(): bool
+    {
         return isset($this->having);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::hasWhere()
-     */
-    public function hasWhere(): bool {
+    public function hasWhere(): bool
+    {
         return isset($this->where);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::isDistinctResult()
-     */
-    public function isDistinctResult(): bool {
+    public function isDistinctResult(): bool
+    {
         return $this->disctinctResult;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::join($repository, $left, $operator, $right, $alias)
+     * @param array|number|string $right
+     * @return static
      */
-    public function join(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface {
-        return $this->addJoin(JoinInterface::TYPE_INNER, $repository, $left, $operator, $right, $alias);
+    public function join(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface
+    {
+        $this->addJoin(JoinInterface::TYPE_INNER, $repository, $left, $operator, $right, $alias);
+
+        return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::joinWhere($repository, $callback, $alias)
+     * @return static
      */
-    public function joinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface {
-        return $this->addJoinWhere(JoinInterface::TYPE_INNER, $repository, $callback, $alias);
+    public function joinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface
+    {
+        $this->addJoinWhere(JoinInterface::TYPE_INNER, $repository, $callback, $alias);
+
+        return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::leftJoin($repository, $left, $operator, $right, $alias)
+     * @param array|number|string $right
+     * @return static
      */
-    public function leftJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface {
-        return $this->addJoin(JoinInterface::TYPE_LEFT, $repository, $left, $operator, $right, $alias);
+    public function leftJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface
+    {
+        $this->addJoin(JoinInterface::TYPE_LEFT, $repository, $left, $operator, $right, $alias);
+
+        return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::leftJoinWhere($repository, $callback, $alias)
+     * @return static
      */
-    public function leftJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface {
-        return $this->addJoinWhere(JoinInterface::TYPE_LEFT, $repository, $callback, $alias);
+    public function leftJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface
+    {
+        $this->addJoinWhere(JoinInterface::TYPE_LEFT, $repository, $callback, $alias);
+
+        return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::rightJoin($repository, $left, $operator, $right, $alias)
+     * @param array|number|string $right
+     * @return static
      */
-    public function rightJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface {
-        return $this->addJoin(JoinInterface::TYPE_RIGHT, $repository, $left, $operator, $right, $alias);
+    public function rightJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface
+    {
+        $this->addJoin(JoinInterface::TYPE_RIGHT, $repository, $left, $operator, $right, $alias);
+
+        return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::rightJoinWhere($repository, $callback, $alias)
+     * @return static
      */
-    public function rightJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface {
-        return $this->addJoinWhere(JoinInterface::TYPE_RIGHT, $repository, $callback, $alias);
+    public function rightJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface
+    {
+        $this->addJoinWhere(JoinInterface::TYPE_RIGHT, $repository, $callback, $alias);
+
+        return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::setAlias($alias)
+     * @return static
      */
-    public function setAlias(string $alias): RequestInterface {
+    public function setAlias(string $alias): RequestInterface
+    {
         $this->alias = $alias;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::setColumns($columns)
+     * @return static
      */
-    public function setColumns(array $columns): RequestInterface {
+    public function setColumns(array $columns): RequestInterface
+    {
         $this->columns = $columns;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::setDistinctResult($disctinctResult)
+     * @return static
      */
-    public function setDistinctResult(bool $disctinctResult): RequestInterface {
+    public function setDistinctResult(bool $disctinctResult): RequestInterface
+    {
         $this->disctinctResult = $disctinctResult;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::setGroupBy($groupBy)
+     * @return static
      */
-    public function setGroupBy(array $groupBy): RequestInterface {
+    public function setGroupBy(array $groupBy): RequestInterface
+    {
         $this->groupBy = $groupBy;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::setLimit($limit)
+     * @return static
      */
-    public function setLimit($limit): RequestInterface {
+    public function setLimit(?int $limit): RequestInterface
+    {
         $this->limit = $limit;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::setLimitForPage($page, $itemsPerPage)
+     * @return static
      */
-    public function setLimitForPage(int $page, int $itemsPerPage): RequestInterface {
+    public function setLimitForPage(int $page, int $itemsPerPage): RequestInterface
+    {
         $this->offset = $page * $itemsPerPage;
         $this->limit = $itemsPerPage;
 
@@ -331,31 +305,27 @@ abstract class RequestBase extends Prototype implements RequestInterface {
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::setOffset($offset)
+     * @return static
      */
-    public function setOffset(int $offset): RequestInterface {
+    public function setOffset(int $offset): RequestInterface
+    {
         $this->offset = $offset;
 
         return $this;
     }
 
     /**
-     * {@inheritDoc}
-     * @see \Fixin\Model\Request\RequestInterface::setOrderBy($orderBy)
+     * @return static
      */
-    public function setOrderBy(array $orderBy): RequestInterface {
+    public function setOrderBy(array $orderBy): RequestInterface
+    {
         $this->orderBy = $orderBy;
 
         return $this;
     }
 
-    /**
-     * Set repository
-     *
-     * @param RepositoryInterface $repository
-     */
-    protected function setRepository(RepositoryInterface $repository) {
+    protected function setRepository(RepositoryInterface $repository)
+    {
         $this->repository = $repository;
     }
 }

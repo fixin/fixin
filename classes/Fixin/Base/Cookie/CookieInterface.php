@@ -11,7 +11,14 @@ use Fixin\Resource\PrototypeInterface;
 
 interface CookieInterface extends PrototypeInterface
 {
-    // TODO OPTION_* ?
+    public const
+        OPTION_DOMAIN = 'domain',
+        OPTION_EXPIRE = 'expire',
+        OPTION_HTTP_ONLY = 'httpOnly',
+        OPTION_PATH = 'path',
+        OPTION_SECURE = 'secure',
+        OPTION_VALUE = 'value';
+
     public function getDomain(): string;
 
     /**

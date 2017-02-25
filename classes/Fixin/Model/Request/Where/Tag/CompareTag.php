@@ -11,6 +11,13 @@ use Fixin\Model\Request\RequestInterface;
 
 class CompareTag extends Tag {
 
+    protected const
+        THIS_REQUIRES = [
+        self::OPTION_LEFT => self::TYPE_ANY,
+        self::OPTION_OPERATOR => self::TYPE_STRING,
+        self::OPTION_RIGHT => self::TYPE_ANY,
+    ];
+
     public const
         OPERATOR_EQUAL = '=',
         OPERATOR_GREATER_THAN = '>',
@@ -20,12 +27,7 @@ class CompareTag extends Tag {
         OPERATOR_NOT_EQUAL = '!=',
         OPTION_LEFT = 'left',
         OPTION_OPERATOR = 'operator',
-        OPTION_RIGHT = 'right',
-        THIS_REQUIRES = [
-            self::OPTION_LEFT => self::TYPE_ANY,
-            self::OPTION_OPERATOR => self::TYPE_STRING,
-            self::OPTION_RIGHT => self::TYPE_ANY,
-        ];
+        OPTION_RIGHT = 'right';
 
     /**
      * @var number|string|RequestInterface

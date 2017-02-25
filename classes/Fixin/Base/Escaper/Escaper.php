@@ -21,7 +21,7 @@ class Escaper implements EscaperInterface
 
     public function escapeJs(string $string): string
     {
-        return mb_substr($this->encodeJsVariable($string), 1, -1);
+        return mb_substr($this->escapeJsVariable($string), 1, -1);
     }
 
     public function escapeJsVariable($var): string

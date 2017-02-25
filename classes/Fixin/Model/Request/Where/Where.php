@@ -20,8 +20,8 @@ use Fixin\Model\Request\Where\Tag\WhereTag;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class Where extends WhereBase {
-
+class Where extends WhereBase
+{
     /**
      * @return static
      */

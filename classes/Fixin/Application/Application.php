@@ -11,6 +11,7 @@ use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Support\Http;
+use Throwable;
 
 class Application implements ApplicationInterface
 {
@@ -62,16 +63,14 @@ class Application implements ApplicationInterface
         }
 
         try {
-            $cargo = $this->container->get($this->config[static::OPTION_ERROR_ROUTE])
-                ->handle($cargo);
-            $cargo->unpack();
+            $this->container->get($this->config[static::OPTION_ERROR_ROUTE])
+                ->handle($cargo)
+                ->unpack();
         }
-        catch (\Throwable $t) {
+        catch (Throwable $t) {
             // Double error
             $this->internalServerError($t->getMessage());
         }
-
-        return $cargo;
     }
 
     protected function internalServerError(string $text): void
@@ -99,7 +98,7 @@ class Application implements ApplicationInterface
                 ->handle($cargo)
                 ->unpack();
         }
-        catch (\Throwable $t) {
+        catch (Throwable $t) {
             $this->errorRoute(($cargo ?? $container->clonePrototype('Delivery\Cargo\Cargo'))->setContent($t));
         }
 

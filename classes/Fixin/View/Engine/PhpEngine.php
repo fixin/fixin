@@ -9,6 +9,7 @@ namespace Fixin\View\Engine;
 
 use Fixin\Resource\ResourceManagerInterface;
 use Fixin\View\ViewInterface;
+use Throwable;
 
 class PhpEngine extends Engine
 {
@@ -43,7 +44,7 @@ class PhpEngine extends Engine
             ob_start();
             EncapsulatedInclude::include(clone $this->assistant, $filename, $data);
         }
-        catch (\Throwable $t) {
+        catch (Throwable $t) {
             ob_end_clean();
 
             throw $t;
