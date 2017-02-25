@@ -10,30 +10,10 @@ namespace Fixin\View\Helper;
 use Fixin\Base\Escaper\EscaperInterface;
 use Fixin\Resource\ResourceManagerInterface;
 
-class JsVariable extends Helper
+class JsVariable extends EscapeHelper
 {
-    /**
-     * @var EscaperInterface
-     */
-    protected $escaper;
-
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
+    public function escape($value): string
     {
-        parent::__construct($container, $options, $name);
-
-        $this->escaper = $container->get('Base\Escaper\Escaper');
-    }
-
-    /**
-     * Invoke encode()
-     */
-    public function __invoke($value): string
-    {
-        return $this->encode($value);
-    }
-
-    public function encode($value): string
-    {
-        return $this->escaper->encodeJsVariable($value);
+        return $this->escaper->escapeJsVariable($value);
     }
 }

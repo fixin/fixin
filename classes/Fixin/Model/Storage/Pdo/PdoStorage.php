@@ -8,7 +8,7 @@
 namespace Fixin\Model\Storage\Pdo;
 
 use DateTime;
-use Fixin\Base\Query\QueryInterface;
+use Fixin\Base\Sentence\SentenceInterface;
 use Fixin\Model\Storage\Exception;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
@@ -88,9 +88,9 @@ class PdoStorage extends Resource implements StorageInterface
         return $this->execute($this->getGrammar()->delete($request));
     }
 
-    protected function execute(QueryInterface $query): int
+    protected function execute(SentenceInterface $sentence): int
     {
-        return $this->prepareStatement($query)->rowCount();
+        return $this->prepareStatement($sentence)->rowCount();
     }
 
     protected function getGrammar(): GrammarInterface
@@ -125,19 +125,19 @@ class PdoStorage extends Resource implements StorageInterface
         return $this->execute($this->getGrammar()->insertMultiple($repository, $rows));
     }
 
-    protected function prepareStatement(QueryInterface $query): PDOStatement
+    protected function prepareStatement(SentenceInterface $sentence): PDOStatement
     {
-        $statement = $this->resource->prepare($query->getText());
-        $statement->execute($query->getParameters());
+        $statement = $this->resource->prepare($sentence->getText());
+        $statement->execute($sentence->getParameters());
 
         return $statement;
     }
 
-    protected function query(QueryInterface $query, array $mode): StorageResultInterface
+    protected function query(SentenceInterface $sentence, array $mode): StorageResultInterface
     {
-        $statement = $this->resource->prepare($query->getText());
+        $statement = $this->resource->prepare($sentence->getText());
         call_user_func_array([$statement, 'setFetchMode'], $mode);
-        $statement->execute($query->getParameters());
+        $statement->execute($sentence->getParameters());
 
         return $this->container->clonePrototype(static::PROTOTYPE_STORAGE_RESULT, [
             PdoStorageResult::OPTION_STATEMENT => $statement

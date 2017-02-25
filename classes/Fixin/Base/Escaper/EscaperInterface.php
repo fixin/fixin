@@ -10,11 +10,6 @@ namespace Fixin\Base\Escaper;
 interface EscaperInterface
 {
     /**
-     * Encode variable for JavaScript
-     */
-    public function encodeJsVariable($var): string;
-
-    /**
      * Escape string for HTML
      */
     public function escapeHtml(string $string): string;
@@ -23,6 +18,11 @@ interface EscaperInterface
      * Escape string for JavaScript
      */
     public function escapeJs(string $string): string;
+
+    /**
+     * Escape variable for JavaScript
+     */
+    public function escapeJsVariable($var): string;
 
     /**
      * Escape string for URI

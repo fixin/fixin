@@ -5,13 +5,13 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\Query;
+namespace Fixin\Base\Sentence;
 
 use Fixin\Resource\Prototype;
 use Fixin\Support\Ground;
 use Fixin\Support\VariableInspector;
 
-class Query extends Prototype implements QueryInterface
+class Sentence extends Prototype implements SentenceInterface
 {
     /**
      * @var array
@@ -31,7 +31,7 @@ class Query extends Prototype implements QueryInterface
     /**
      * @return static
      */
-    public function addParameter($parameter): QueryInterface
+    public function addParameter($parameter): SentenceInterface
     {
         $this->parameters[] = $parameter;
 
@@ -41,7 +41,7 @@ class Query extends Prototype implements QueryInterface
     /**
      * @return static
      */
-    public function addParameters(array $parameters): QueryInterface
+    public function addParameters(array $parameters): SentenceInterface
     {
         $this->parameters = array_merge($this->parameters, $parameters);
 
@@ -51,7 +51,7 @@ class Query extends Prototype implements QueryInterface
     /**
      * @return static
      */
-    public function appendClause(string $clause, string $string): QueryInterface
+    public function appendClause(string $clause, string $string): SentenceInterface
     {
         $this->text .= $clause . ' ' . $string . PHP_EOL;
 
@@ -61,7 +61,7 @@ class Query extends Prototype implements QueryInterface
     /**
      * @return static
      */
-    public function appendString(string $string): QueryInterface
+    public function appendString(string $string): SentenceInterface
     {
         $this->text .= $string;
 
@@ -71,7 +71,7 @@ class Query extends Prototype implements QueryInterface
     /**
      * @return static
      */
-    public function appendWord(string $word): QueryInterface
+    public function appendWord(string $word): SentenceInterface
     {
         $this->text .= $word . ' ';
 
@@ -81,7 +81,7 @@ class Query extends Prototype implements QueryInterface
     /**
      * @return static
      */
-    public function applyMask(string $mask): QueryInterface
+    public function applyMask(string $mask): SentenceInterface
     {
         $this->text = sprintf($mask, $this->text);
 

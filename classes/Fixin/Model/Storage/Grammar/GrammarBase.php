@@ -8,7 +8,7 @@
 namespace Fixin\Model\Storage\Grammar;
 
 use DateTime;
-use Fixin\Base\Query\QueryInterface;
+use Fixin\Base\Sentence\SentenceInterface;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
@@ -49,26 +49,26 @@ abstract class GrammarBase extends Resource implements GrammarInterface
         WHERE_TAG_NEGATE = [false => '', true => 'NOT '],
         WHERE_TAG_SEPARATOR = PHP_EOL . "\t %s ";
 
-    protected function expressionArrayToString(array $expression, QueryInterface $query): string
+    protected function expressionArrayToString(array $expression, SentenceInterface $sentence): string
     {
         $result = [];
         foreach ($expression as $item) {
-            $result[] = $this->expressionToString($item, $query);
+            $result[] = $this->expressionToString($item, $sentence);
         }
 
         return sprintf(static::MASK_ARRAY, implode(static::LIST_SEPARATOR, $result));
     }
 
-    protected function expressionToString($expression, QueryInterface $query): string
+    protected function expressionToString($expression, SentenceInterface $sentence): string
     {
         // Array
         if (is_array($expression)) {
-            return $this->expressionArrayToString($expression, $query);
+            return $this->expressionArrayToString($expression, $sentence);
         }
 
         // Expression
         if ($expression instanceof ExpressionInterface) {
-            $query->addParameters($expression->getParameters());
+            $sentence->addParameters($expression->getParameters());
 
             return $this->quoteExpression($expression->getExpression());
         }
@@ -80,20 +80,20 @@ abstract class GrammarBase extends Resource implements GrammarInterface
 
         // Request
         elseif ($expression instanceof RequestInterface) {
-            return sprintf(static::MASK_NESTED, $this->requestToString($expression, $query));
+            return sprintf(static::MASK_NESTED, $this->requestToString($expression, $sentence));
         }
 
         // ID
         elseif ($expression instanceof EntityIdInterface) {
             $expression = $expression->getArrayCopy();
             if (count($expression) > 1) {
-                return $this->expressionArrayToString($expression, $query);
+                return $this->expressionArrayToString($expression, $sentence);
             }
 
             $expression = reset($expression);
         }
 
-        $query->addParameter($expression);
+        $sentence->addParameter($expression);
 
         return static::PLACEHOLDER;
     }
@@ -101,17 +101,17 @@ abstract class GrammarBase extends Resource implements GrammarInterface
     /**
      * @param number|string|array|ExpressionInterface|RequestInterface $identifier
      */
-    protected function identifierToString($identifier, QueryInterface $query): string
+    protected function identifierToString($identifier, SentenceInterface $sentence): string
     {
         // Expression
         if ($identifier instanceof ExpressionInterface) {
-            $query->addParameters($identifier->getParameters());
+            $sentence->addParameters($identifier->getParameters());
 
             $identifier = $identifier->getExpression();
         }
         // Request
         elseif ($identifier instanceof RequestInterface) {
-            return sprintf(static::MASK_NESTED, $this->requestToString($identifier, $query));
+            return sprintf(static::MASK_NESTED, $this->requestToString($identifier, $sentence));
         }
         elseif (is_array($identifier)) {
             return $this->quoteArrayIdentifier($identifier);
@@ -150,14 +150,14 @@ abstract class GrammarBase extends Resource implements GrammarInterface
         return $this->quoteIdentifier($name);
     }
 
-    protected function orderByToString(array $orderBy, QueryInterface $query): string
+    protected function orderByToString(array $orderBy, SentenceInterface $sentence): string
     {
         if ($orderBy) {
             $list = [];
 
             foreach ($orderBy as $key => $value) {
                 if (is_numeric($key)) {
-                    $list[] = $this->identifierToString($value, $query);
+                    $list[] = $this->identifierToString($value, $sentence);
 
                     continue;
                 }
@@ -224,52 +224,52 @@ abstract class GrammarBase extends Resource implements GrammarInterface
         return $this->nameToString($request->getRepository()->getName(), $request->getAlias());
     }
 
-    protected function requestToString(RequestInterface $request, QueryInterface $query): string
+    protected function requestToString(RequestInterface $request, SentenceInterface $sentence): string
     {
-        $selectQuery = $this->select($request);
+        $select = $this->select($request);
 
-        $query->addParameters($selectQuery->getParameters());
+        $sentence->addParameters($select->getParameters());
 
-        return $selectQuery->getText();
+        return $select->getText();
     }
 
-    protected function whereTagBetween(BetweenTag $tag, QueryInterface $query): string
+    protected function whereTagBetween(BetweenTag $tag, SentenceInterface $sentence): string
     {
-        return $this->identifierToString($tag->getIdentifier(), $query) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_BETWEEN, $this->expressionToString($tag->getMin(), $query)
-            , $this->expressionToString($tag->getMax(), $query));
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_BETWEEN, $this->expressionToString($tag->getMin(), $sentence)
+            , $this->expressionToString($tag->getMax(), $sentence));
     }
 
-    protected function whereTagCompare(CompareTag $tag, QueryInterface $query): string
+    protected function whereTagCompare(CompareTag $tag, SentenceInterface $sentence): string
     {
-        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . $this->expressionToString($tag->getLeft(), $query) . ' ' . $tag->getOperator() . ' ' . $this->expressionToString($tag->getRight(), $query);
+        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . $this->expressionToString($tag->getLeft(), $sentence) . ' ' . $tag->getOperator() . ' ' . $this->expressionToString($tag->getRight(), $sentence);
     }
 
-    protected function whereTagExists(ExistsTag $tag, QueryInterface $query): string
+    protected function whereTagExists(ExistsTag $tag, SentenceInterface $sentence): string
     {
-        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_EXISTS, $this->requestToString($tag->getRequest(), $query));
+        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_EXISTS, $this->requestToString($tag->getRequest(), $sentence));
     }
 
-    protected function whereTagIn(InTag $tag, QueryInterface $query): string
+    protected function whereTagIn(InTag $tag, SentenceInterface $sentence): string
     {
         $values = $tag->getValues();
 
-        return $this->identifierToString($tag->getIdentifier(), $query) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_IN, $this->expressionToString($values, $query));
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_IN, $this->expressionToString($values, $sentence));
     }
 
-    protected function whereTagNull(NullTag $tag, QueryInterface $query): string
+    protected function whereTagNull(NullTag $tag, SentenceInterface $sentence): string
     {
-        return $this->identifierToString($tag->getIdentifier(), $query) . ' ' . static::WHERE_TAG_IS_NULL[!$tag->isNegated()];
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::WHERE_TAG_IS_NULL[!$tag->isNegated()];
     }
 
     /**
      * Where nested tag
      */
-    protected function whereTagWhere(WhereTag $tag, QueryInterface $query): string
+    protected function whereTagWhere(WhereTag $tag, SentenceInterface $sentence): string
     {
-        return sprintf(static::MASK_NESTED_MULTI_LINE, $this->whereToString('', $tag->getWhere(), $query));
+        return sprintf(static::MASK_NESTED_MULTI_LINE, $this->whereToString('', $tag->getWhere(), $sentence));
     }
 
-    protected function whereToString(string $clause, WhereInterface $where, QueryInterface $query): string
+    protected function whereToString(string $clause, WhereInterface $where, SentenceInterface $sentence): string
     {
         if ($tags = $where->getTags()) {
             $result = rtrim($clause . ' ');
@@ -282,7 +282,7 @@ abstract class GrammarBase extends Resource implements GrammarInterface
                 $class = get_class($tag);
                 $shortName = substr($class, strrpos($class, '\\') + 1, -3);
 
-                $result .= $this->{static::METHOD_WHERE_TAG . $shortName}($tag, $query);
+                $result .= $this->{static::METHOD_WHERE_TAG . $shortName}($tag, $sentence);
             }
 
             return $result . PHP_EOL;
