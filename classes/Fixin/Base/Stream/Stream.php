@@ -14,9 +14,11 @@ class Stream implements StreamInterface
         EXCEPTION_INVALID_STREAM_REFERENCE = 'Invalid stream reference',
         EXCEPTION_NOT_READABLE = 'Stream is not readable',
         EXCEPTION_NOT_SEEKABLE = 'Stream is not seekable',
-        EXCEPTION_READ_ERROR = 'Read error for stream',
-        EXCEPTION_SEEK_ERROR = 'Seek error for stream',
-        EXCEPTION_UNABLE_TO_DETERMINE_POSITION = 'Unable to determine position';
+        EXCEPTION_NOT_WRITABLE = 'Stream is not writable',
+        EXCEPTION_READ_ERROR = 'Stream read error',
+        EXCEPTION_SEEK_ERROR = 'Stream seek error',
+        EXCEPTION_UNABLE_TO_DETERMINE_POSITION = 'Unable to determine position',
+        EXCEPTION_WRITE_ERROR = 'Stream write error';
 
     /**
      * @var resource

@@ -22,6 +22,10 @@ class SortedArrayIndex extends Prototype implements IndexInterface
             self::OPTION_FILE_SYSTEM => FileSystemInterface::class
         ];
 
+    public const
+        OPTION_FILE_SYSTEM = 'fileSystem',
+        OPTION_FILENAME = 'filename';
+
     /**
      * @var bool
      */

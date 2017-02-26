@@ -11,10 +11,6 @@ use Fixin\Resource\PrototypeInterface;
 
 interface IndexInterface extends PrototypeInterface
 {
-    public const
-        OPTION_FILE_SYSTEM = 'fileSystem',
-        OPTION_FILENAME = 'filename';
-
     public function clear(): IndexInterface;
 
     /**
