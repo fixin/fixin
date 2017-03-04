@@ -40,6 +40,29 @@ class HttpClassHub extends HttpHub
      */
     protected $depth = 2;
 
+    /**
+     * @throws Exception\RuntimeException
+     */
+    protected function getHandlerForPath(string $name): ?CargoHandlerInterface
+    {
+        if (preg_match(static::CLASS_NAME_PATTERN, $name)) {
+            $fullName = $this->classPrefix . Strings::className($name);
+
+            // Test class
+            if ($this->container->has($fullName)) {
+                $instance = $this->container->get($fullName);
+
+                if ($instance instanceof CargoHandlerInterface) {
+                    return $instance;
+                }
+
+                throw new Exception\RuntimeException(sprintf(static::EXCEPTION_INVALID_CLASS, get_class($instance)));
+            }
+        }
+
+        return null;
+    }
+
     protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface
     {
         $path = $cargo->getRequestUri()->getPath();
@@ -72,7 +95,7 @@ class HttpClassHub extends HttpHub
             }
 
             // Controller
-            if ($controller = $this->pathToController(implode('\\', array_slice($tags, 0, $depth)))) {
+            if ($controller = $this->getHandlerForPath(implode('\\', array_slice($tags, 0, $depth)))) {
                 return $controller->handle($cargo);
             }
         }
@@ -80,42 +103,17 @@ class HttpClassHub extends HttpHub
         return $cargo->setStatusCode(Http::STATUS_NOT_FOUND_404);
     }
 
-    /**
-     * Get controller instance for path
-     *
-     * @throws Exception\RuntimeException
-     */
-    protected function pathToController(string $name): ?CargoHandlerInterface
-    {
-        if (preg_match(static::CLASS_NAME_PATTERN, $name)) {
-            $fullName = $this->classPrefix . Strings::className($name);
-
-            // Test class
-            if ($this->container->has($fullName)) {
-                $instance = $this->container->get($fullName);
-
-                if ($instance instanceof CargoHandlerInterface) {
-                    return $instance;
-                }
-
-                throw new Exception\RuntimeException(sprintf(static::EXCEPTION_INVALID_CLASS, get_class($instance)));
-            }
-        }
-
-        return null;
-    }
-
-    protected function setBasePath(string $basePath)
+    protected function setBasePath(string $basePath): void
     {
         $this->basePath = rtrim($basePath, '/') . '/';
     }
 
-    protected function setClassPrefix(string $classPrefix)
+    protected function setClassPrefix(string $classPrefix): void
     {
         $this->classPrefix = trim($classPrefix, '\\') . '\\';
     }
 
-    protected function setDepth(int $depth)
+    protected function setDepth(int $depth): void
     {
         $this->depth = $depth;
     }

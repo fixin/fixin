@@ -56,12 +56,12 @@ class WrapInView extends Resource implements NodeInterface
         return $cargo;
     }
 
-    protected function setContentName(string $contentName)
+    protected function setContentName(string $contentName): void
     {
         $this->contentName = $contentName;
     }
 
-    protected function setTemplate(string $template)
+    protected function setTemplate(string $template): void
     {
         $this->template = $template;
     }

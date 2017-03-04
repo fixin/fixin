@@ -36,12 +36,12 @@ abstract class Tag extends Prototype implements TagInterface
         return $this->negated;
     }
 
-    protected function setJoin(string $join)
+    protected function setJoin(string $join): void
     {
         $this->join = $join;
     }
 
-    protected function setNegated(bool $negated)
+    protected function setNegated(bool $negated): void
     {
         $this->negated = $negated;
     }

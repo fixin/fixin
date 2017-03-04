@@ -19,5 +19,5 @@ final class Version extends DoNotCreate
      *
      * @var string
      */
-    const VERSION = '0.1';
+    const VERSION = '0.9';
 }

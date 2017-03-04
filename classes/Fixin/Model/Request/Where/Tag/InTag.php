@@ -36,7 +36,7 @@ class InTag extends IdentifierTag
     /**
      * @param array|RequestInterface $values
      */
-    protected function setValues($values)
+    protected function setValues($values): void
     {
         $this->values = $values;
     }

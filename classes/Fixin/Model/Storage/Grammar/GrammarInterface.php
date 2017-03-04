@@ -15,7 +15,7 @@ use Fixin\Resource\ResourceInterface;
 
 interface GrammarInterface extends ResourceInterface
 {
-    protected const
+    public const
         IDENTIFIER_QUOTE = '`',
         IDENTIFIER_SEPARATOR = '.',
         STRING_QUOTE = "'";

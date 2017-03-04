@@ -60,22 +60,22 @@ class Join extends Prototype implements JoinInterface
         return $this->where;
     }
 
-    protected function setAlias(string $alias)
+    protected function setAlias(string $alias): void
     {
         $this->alias = $alias;
     }
 
-    protected function setRepository(RepositoryInterface $repository)
+    protected function setRepository(RepositoryInterface $repository): void
     {
         $this->repository = $repository;
     }
 
-    protected function setType(string $type)
+    protected function setType(string $type): void
     {
         $this->type = $type;
     }
 
-    protected function setWhere(?WhereInterface $where)
+    protected function setWhere(?WhereInterface $where): void
     {
         $this->where = $where;
     }

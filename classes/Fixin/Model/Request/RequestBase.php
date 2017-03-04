@@ -324,7 +324,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
         return $this;
     }
 
-    protected function setRepository(RepositoryInterface $repository)
+    protected function setRepository(RepositoryInterface $repository): void
     {
         $this->repository = $repository;
     }

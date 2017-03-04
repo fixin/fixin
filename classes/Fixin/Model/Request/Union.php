@@ -37,12 +37,12 @@ class Union extends Prototype implements UnionInterface
         return $this->type;
     }
 
-    protected function setRequest(RequestInterface $request)
+    protected function setRequest(RequestInterface $request): void
     {
         $this->request = $request;
     }
 
-    protected function setType(string $type)
+    protected function setType(string $type): void
     {
         $this->type = $type;
     }

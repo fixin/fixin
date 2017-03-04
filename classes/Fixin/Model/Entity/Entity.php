@@ -84,15 +84,14 @@ abstract class Entity extends Prototype implements EntityInterface
     {
         $this->entityId = $this->getRepository()->save($this);
 
-        return $this
+        $this
             ->refresh()
             ->saveSubEntities();
+
+        return $this;
     }
 
-    /**
-     * @return static
-     */
-    protected function saveSubEntities(): self
+    protected function saveSubEntities(): void
     {
         // Delete outdated entities
         $repositories = new \SplObjectStorage();
@@ -105,8 +104,6 @@ abstract class Entity extends Prototype implements EntityInterface
         }
 
         $this->outdatedSubEntities = [];
-
-        return $this;
     }
 
     protected function setEntityId(EntityIdInterface $entityId): void

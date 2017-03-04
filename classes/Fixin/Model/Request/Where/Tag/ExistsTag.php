@@ -29,7 +29,7 @@ class ExistsTag extends Tag
         return $this->request;
     }
 
-    protected function setRequest(RequestInterface $request)
+    protected function setRequest(RequestInterface $request): void
     {
         $this->request = $request;
     }

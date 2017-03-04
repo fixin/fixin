@@ -209,7 +209,7 @@ class Repository extends RepositoryBase
 
     public function selectAll(): EntitySetInterface
     {
-        return $this->createRequest()->fetch(); // TODO fetch?
+        return $this->createRequest()->fetch();
     }
 
     public function selectColumn(RequestInterface $request): StorageResultInterface

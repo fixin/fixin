@@ -36,12 +36,12 @@ class Expression extends Prototype implements ExpressionInterface
         return $this->parameters;
     }
 
-    protected function setExpression(string $expression)
+    protected function setExpression(string $expression): void
     {
         $this->expression = $expression;
     }
 
-    protected function setParameters(array $parameters)
+    protected function setParameters(array $parameters): void
     {
         $this->parameters = $parameters;
     }

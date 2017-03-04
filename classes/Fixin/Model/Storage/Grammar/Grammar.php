@@ -9,126 +9,95 @@ namespace Fixin\Model\Storage\Grammar;
 
 use DateTime;
 use Fixin\Base\Sentence\SentenceInterface;
+use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Repository\RepositoryInterface;
+use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
-use Fixin\Model\Request\UnionInterface;
+use Fixin\Model\Request\Where\Tag\BetweenTag;
+use Fixin\Model\Request\Where\Tag\CompareTag;
+use Fixin\Model\Request\Where\Tag\ExistsTag;
+use Fixin\Model\Request\Where\Tag\InTag;
+use Fixin\Model\Request\Where\Tag\NullTag;
+use Fixin\Model\Request\Where\Tag\WhereTag;
+use Fixin\Model\Request\Where\WhereInterface;
+use Fixin\Resource\Resource;
 use Fixin\Support\Numbers;
 
-abstract class Grammar extends GrammarBase
+abstract class Grammar extends Resource implements GrammarInterface
 {
     protected const
-        ADD_COLUMNS = 'columns',
-        ALL_COLUMNS = '*',
-        ADD_FROM = 'from',
-        ADD_GROUP_BY = 'groupBy',
-        ADD_HAVING = 'having',
-        ADD_JOIN = 'join',
-        ADD_LIMIT = 'limit',
-        ADD_ORDER_BY = 'orderBy',
-        ADD_WHERE = 'where',
-        CLAUSE_FROM = 'FROM',
-        CLAUSE_GROUP_BY = 'GROUP BY',
-        CLAUSE_HAVING = 'HAVING',
-        CLAUSE_INTO = 'INTO',
-        CLAUSE_JOIN = 'JOIN',
-        CLAUSE_JOIN_ON = "\tON",
-        CLAUSE_SET = 'SET',
-        CLAUSE_UNION = [UnionInterface::TYPE_NORMAL => 'UNION', UnionInterface::TYPE_ALL => 'UNION ALL'],
-        CLAUSE_VALUES = 'VALUES',
-        CLAUSE_WHERE = 'WHERE',
-        MASK_COLUMN_NAMES = "\t(%s)" . PHP_EOL,
-        MASK_UNION = '%s' . PHP_EOL . '(%s)' . PHP_EOL,
-        MASK_UNION_FIRST = '(%s)' . PHP_EOL,
-        MASK_VALUES = '(%s)',
-        METHOD_CLAUSE = 'clause',
-        PROTOTYPE_SENTENCE = 'Base\Sentence\Sentence',
-        STATEMENT_DELETE = 'DELETE',
-        STATEMENT_INSERT = 'INSERT',
-        STATEMENT_SELECT = [false => 'SELECT', true => 'SELECT DISTINCT'],
-        STATEMENT_UPDATE = 'UPDATE';
+        EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@",
+        DATETIME_FORMAT = 'Y-m-d H:i:s',
+        IDENTIFIER_QUOTE_CLOSE = "`",
+        IDENTIFIER_QUOTE_OPEN = "`",
+        LIST_SEPARATOR = ', ',
+        LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t",
+        MASK_ALIAS = '%s AS %s',
+        MASK_ARRAY = '(%s)',
+        MASK_BETWEEN = 'BETWEEN %s AND %s',
+        MASK_EXISTS = 'EXISTS(%s)',
+        MASK_IN = 'IN %s',
+        MASK_LIMIT = 'LIMIT %s' . PHP_EOL,
+        MASK_NESTED = "(%s)",
+        MASK_NESTED_MULTI_LINE = '(' . PHP_EOL . "\t%s)" . PHP_EOL,
+        MASK_OFFSET = 'OFFSET %s' . PHP_EOL,
+        MASK_ORDER_BY = 'ORDER BY %s' . PHP_EOL,
+        MASK_ORDER_BY_ITEM = '%s %s',
+        METHOD_WHERE_TAG = 'whereTag',
+        ORDER_ASCENDING = 'ASC',
+        ORDER_DESCENDING = 'DESC',
+        PLACEHOLDER = '?',
+        WHERE_TAG_IS_NULL = [false => 'IS NOT NULL', true => 'IS NULL'],
+        WHERE_TAG_NEGATE = [false => '', true => 'NOT '],
+        WHERE_TAG_SEPARATOR = PHP_EOL . "\t %s ";
 
-    protected function clauseColumns(RequestInterface $request, SentenceInterface $sentence): void
+    protected function expressionArrayToString(array $expression, SentenceInterface $sentence): string
     {
-        // Selected columns
-        if ($columns = $request->getColumns()) {
-            $list = [];
+        $result = [];
+        foreach ($expression as $item) {
+            $result[] = $this->expressionToString($item, $sentence);
+        }
 
-            foreach ($columns as $alias => $identifier) {
-                $list[] = $this->nameToString($this->identifierToString($identifier, $sentence), is_numeric($alias) ? null : $alias);
+        return sprintf(static::MASK_ARRAY, implode(static::LIST_SEPARATOR, $result));
+    }
+
+    protected function expressionToString($expression, SentenceInterface $sentence): string
+    {
+        // Array
+        if (is_array($expression)) {
+            return $this->expressionArrayToString($expression, $sentence);
+        }
+
+        // Expression
+        if ($expression instanceof ExpressionInterface) {
+            $sentence->addParameters($expression->getParameters());
+
+            return $this->quoteExpression($expression->getExpression());
+        }
+
+        // DateTime
+        if ($expression instanceof DateTime) {
+            $expression = $expression->format(static::DATETIME_FORMAT);
+        }
+
+        // Request
+        elseif ($expression instanceof RequestInterface) {
+            return sprintf(static::MASK_NESTED, $this->requestToString($expression, $sentence));
+        }
+
+        // ID
+        elseif ($expression instanceof EntityIdInterface) {
+            $expression = $expression->getArrayCopy();
+            if (count($expression) > 1) {
+                return $this->expressionArrayToString($expression, $sentence);
             }
 
-            $sentence->appendString(implode(static::LIST_SEPARATOR_MULTI_LINE, $list) . PHP_EOL);
-
-            return;
+            $expression = reset($expression);
         }
 
-        // All
-        $sentence->appendWord(static::ALL_COLUMNS);
-    }
+        $sentence->addParameter($expression);
 
-    protected function clauseFrom(RequestInterface $request, SentenceInterface $sentence): void
-    {
-        $sentence->appendClause(static::CLAUSE_FROM, $this->requestNameToString($request));
-    }
-
-    protected function clauseHaving(RequestInterface $request, SentenceInterface $sentence): void
-    {
-        if ($request->hasHaving()) {
-            $sentence->appendString($this->whereToString(static::CLAUSE_HAVING, $request->getHaving(), $sentence));
-        }
-    }
-
-    protected function clauseGroupBy(RequestInterface $request, SentenceInterface $sentence): void
-    {
-        $groupBy = [];
-
-        foreach ($request->getGroupBy() as $value) {
-            $groupBy[] = $this->identifierToString($value, $sentence);
-        }
-
-        if ($groupBy) {
-            $sentence->appendClause(static::CLAUSE_GROUP_BY, implode(static::LIST_SEPARATOR, $groupBy));
-        }
-    }
-
-    protected function clauseJoin(RequestInterface $request, SentenceInterface $sentence): void
-    {
-        foreach ($request->getJoins() as $join) {
-            $sentence->appendClause(static::CLAUSE_JOIN, $this->nameToString($join->getRepository()->getName(), $join->getAlias()));
-            if ($where = $join->getWhere()) {
-                $sentence->appendString($this->whereToString(static::CLAUSE_JOIN_ON, $where, $sentence));
-            }
-        }
-    }
-
-    protected function clauseLimit(RequestInterface $request, SentenceInterface $sentence): void
-    {
-        $sentence->appendString($this->limitsToString($request->getOffset(), $request->getLimit()));
-    }
-
-    protected function clauseOrderBy(RequestInterface $request, SentenceInterface $sentence): void
-    {
-        $sentence->appendString($this->orderByToString($request->getOrderBy(), $sentence));
-    }
-
-    protected function clauseWhere(RequestInterface $request, SentenceInterface $sentence): void
-    {
-        if ($request->hasWhere()) {
-            $sentence->appendString($this->whereToString(static::CLAUSE_WHERE, $request->getWhere(), $sentence));
-        }
-    }
-
-    public function delete(RequestInterface $request): SentenceInterface
-    {
-        return $this->makeSentence(static::STATEMENT_DELETE, $request, [static::ADD_FROM, static::ADD_WHERE, static::ADD_ORDER_BY, static::ADD_LIMIT]);
-    }
-
-    public function exists(RequestInterface $request): SentenceInterface
-    {
-        /** @var SentenceInterface $sentence */
-        $sentence = $this->container->clonePrototype(static::PROTOTYPE_SENTENCE);
-
-        return $sentence->appendClause(static::STATEMENT_SELECT[false], sprintf(static::MASK_EXISTS, $this->requestToString($request, $sentence)));
+        return static::PLACEHOLDER;
     }
 
     public function getValueAsDateTime($value): ?DateTime
@@ -145,110 +114,196 @@ abstract class Grammar extends GrammarBase
         return $this->insertMultiple($repository, [$set]);
     }
 
-    public function insertInto(RepositoryInterface $repository, RequestInterface $request): SentenceInterface
+    /**
+     * @param number|string|array|ExpressionInterface|RequestInterface $identifier
+     */
+    protected function identifierToString($identifier, SentenceInterface $sentence): string
     {
-        /** @var SentenceInterface $sentence */
-        $sentence = $this->container->clonePrototype(static::PROTOTYPE_SENTENCE);
-        $sentence
-            ->appendWord(static::STATEMENT_INSERT)
-            ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
+        // Expression
+        if ($identifier instanceof ExpressionInterface) {
+            $sentence->addParameters($identifier->getParameters());
 
-        // Columns
-        if ($columns = $request->getColumns()) {
+            $identifier = $identifier->getExpression();
+        }
+        // Request
+        elseif ($identifier instanceof RequestInterface) {
+            return sprintf(static::MASK_NESTED, $this->requestToString($identifier, $sentence));
+        }
+        elseif (is_array($identifier)) {
+            return $this->quoteArrayIdentifier($identifier);
+        }
+
+        return $this->quoteIdentifier($identifier);
+    }
+
+    /**
+     * Limit and offset string
+     */
+    protected function limitsToString(int $offset, ?int $limit): string
+    {
+        $result = '';
+
+        if ($offset) {
+            $result .= sprintf(static::MASK_OFFSET, $offset);
+        }
+
+        if ($limit) {
+            $result .= sprintf(static::MASK_LIMIT, $limit);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Name (with alias)
+     */
+    protected function nameToString(string $name, string $alias = null): string
+    {
+        if ($name !== $alias && !is_null($alias)) {
+            return sprintf(static::MASK_ALIAS, $this->quoteIdentifier($name), $this->quoteIdentifier($alias));
+        }
+
+        return $this->quoteIdentifier($name);
+    }
+
+    protected function orderByToString(array $orderBy, SentenceInterface $sentence): string
+    {
+        if ($orderBy) {
             $list = [];
-            foreach ($columns as $alias => $identifier) {
-                $list[] = $this->identifierToString(is_numeric($alias) ? $identifier : $alias, $sentence);
+
+            foreach ($orderBy as $key => $value) {
+                if (is_numeric($key)) {
+                    $list[] = $this->identifierToString($value, $sentence);
+
+                    continue;
+                }
+
+                $list[] = sprintf(static::MASK_ORDER_BY_ITEM, $this->quoteIdentifier($key), strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
             }
 
-            $sentence->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $list)));
+            return sprintf(static::MASK_ORDER_BY, implode(static::LIST_SEPARATOR, $list));
         }
 
-        // Select
-        $sentence->appendString($this->requestToString($request, $sentence));
-
-        return $sentence;
+        return '';
     }
 
-    public function insertMultiple(RepositoryInterface $repository, array $rows): SentenceInterface
+    protected function quoteArrayIdentifier(array $identifier): string
     {
-        /** @var SentenceInterface $sentence */
-        $sentence = $this->container->clonePrototype(static::PROTOTYPE_SENTENCE);
-        $sentence
-            ->appendWord(static::STATEMENT_INSERT)
-            ->appendClause(static::CLAUSE_INTO, $this->quoteIdentifier($repository->getName()));
-
-        $columnNames = [];
-        foreach (array_keys(reset($rows)) as $identifier) {
-            $columnNames[] = $this->identifierToString($identifier, $sentence);
+        if (count($identifier) > 1) {
+            return sprintf(static::MASK_ARRAY, implode(static::LIST_SEPARATOR, array_map([$this, 'quoteIdentifier'], $identifier)));
         }
 
-        $sentence->appendString(sprintf(static::MASK_COLUMN_NAMES, implode(static::LIST_SEPARATOR, $columnNames)));
+        return $this->quoteIdentifier(reset($identifier));
+    }
 
-        $source = [];
-        foreach ($rows as $set) {
-            $values = [];
-            foreach ($set as $value) {
-                $values[] = $this->expressionToString($value, $sentence);
+    /**
+     * Quote expression (detects identifier-only expressions)
+     */
+    protected function quoteExpression(string $expression): string
+    {
+        $trimmed = trim($expression);
+
+        // There is no terminal characters in the trimmed
+        if (strcspn($trimmed, static::EXPRESSION_TERMINALS) === strlen($trimmed)) {
+            return $this->quoteIdentifier($trimmed);
+        }
+
+        // Complex expression
+        return $expression;
+    }
+
+    protected function quoteIdentifier(string $identifier): string
+    {
+        $trimmed = trim($identifier);
+
+        // There is no terminal characters in the trimmed
+        if (strcspn($trimmed, static::EXPRESSION_TERMINALS) === strlen($trimmed)) {
+            $tags = explode(static::IDENTIFIER_SEPARATOR, $trimmed);
+
+            foreach ($tags as &$tag) {
+                if ($tag[0] !== static::IDENTIFIER_QUOTE_OPEN) {
+                    $tag = static::IDENTIFIER_QUOTE_OPEN . $tag . static::IDENTIFIER_QUOTE_CLOSE;
+                }
             }
 
-            $source[] = sprintf(static::MASK_VALUES, implode(static::LIST_SEPARATOR, $values));
+            return implode(static::IDENTIFIER_SEPARATOR, $tags);
         }
 
-        return $sentence->appendClause(static::CLAUSE_VALUES, implode(static::LIST_SEPARATOR_MULTI_LINE, $source));
+        return $identifier;
     }
 
-    protected function makeSentence(string $statement, RequestInterface $request, array $tags): SentenceInterface
+    /**
+     * Request name string (with alias)
+     */
+    protected function requestNameToString(RequestInterface $request): string
     {
-        /** @var SentenceInterface $sentence */
-        $sentence = $this->container->clonePrototype(static::PROTOTYPE_SENTENCE);
-        $sentence->appendWord($statement);
-
-        foreach ($tags as $tag) {
-            $this->{static::METHOD_CLAUSE . $tag}($request, $sentence);
-        }
-
-        return $sentence;
+        return $this->nameToString($request->getRepository()->getName(), $request->getAlias());
     }
 
-    public function select(RequestInterface $request): SentenceInterface
+    protected function requestToString(RequestInterface $request, SentenceInterface $sentence): string
     {
-        $sentence = $this->makeSentence(static::STATEMENT_SELECT[$request->isDistinctResult()], $request, [static::ADD_COLUMNS, static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_GROUP_BY, static::ADD_HAVING, static::ADD_ORDER_BY, static::ADD_LIMIT]);
+        $select = $this->select($request);
 
-        // Unions
-        if ($unions = $request->getUnions()) {
-            $sentence->applyMask(static::MASK_UNION_FIRST);
+        $sentence->addParameters($select->getParameters());
 
-            foreach ($unions as $union) {
-                $sentence->appendString(sprintf(static::MASK_UNION, static::CLAUSE_UNION[$union->getType()], $this->requestToString($union->getRequest(), $sentence)));
+        return $select->getText();
+    }
+
+    protected function whereTagBetween(BetweenTag $tag, SentenceInterface $sentence): string
+    {
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_BETWEEN, $this->expressionToString($tag->getMin(), $sentence)
+            , $this->expressionToString($tag->getMax(), $sentence));
+    }
+
+    protected function whereTagCompare(CompareTag $tag, SentenceInterface $sentence): string
+    {
+        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . $this->expressionToString($tag->getLeft(), $sentence) . ' ' . $tag->getOperator() . ' ' . $this->expressionToString($tag->getRight(), $sentence);
+    }
+
+    protected function whereTagExists(ExistsTag $tag, SentenceInterface $sentence): string
+    {
+        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_EXISTS, $this->requestToString($tag->getRequest(), $sentence));
+    }
+
+    protected function whereTagIn(InTag $tag, SentenceInterface $sentence): string
+    {
+        $values = $tag->getValues();
+
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_IN, $this->expressionToString($values, $sentence));
+    }
+
+    protected function whereTagNull(NullTag $tag, SentenceInterface $sentence): string
+    {
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::WHERE_TAG_IS_NULL[!$tag->isNegated()];
+    }
+
+    /**
+     * Where nested tag
+     */
+    protected function whereTagWhere(WhereTag $tag, SentenceInterface $sentence): string
+    {
+        return sprintf(static::MASK_NESTED_MULTI_LINE, $this->whereToString('', $tag->getWhere(), $sentence));
+    }
+
+    protected function whereToString(string $clause, WhereInterface $where, SentenceInterface $sentence): string
+    {
+        if ($tags = $where->getTags()) {
+            $result = rtrim($clause . ' ');
+
+            foreach ($tags as $index => $tag) {
+                if ($index) {
+                    $result .= sprintf(static::WHERE_TAG_SEPARATOR, strtoupper($tag->getJoin()));
+                }
+
+                $class = get_class($tag);
+                $shortName = substr($class, strrpos($class, '\\') + 1, -3);
+
+                $result .= $this->{static::METHOD_WHERE_TAG . $shortName}($tag, $sentence);
             }
 
-            // Union order by
-            $sentence->appendString($this->orderByToString($request->getUnionOrderBy(), $sentence));
-
-            // Union offset and limit
-            $sentence->appendString($this->limitsToString($request->getUnionOffset(), $request->getUnionLimit()));
+            return $result . PHP_EOL;
         }
 
-        return $sentence;
-    }
-
-    public function update(array $set, RequestInterface $request): SentenceInterface
-    {
-        /** @var SentenceInterface $sentence */
-        $sentence = $this->container->clonePrototype(static::PROTOTYPE_SENTENCE);
-        $sentence->appendClause(static::STATEMENT_UPDATE, $this->requestNameToString($request));
-
-        // Set
-        $list = [];
-        foreach ($set as $key => $value) {
-            $list[] = $this->identifierToString($key, $sentence) . ' = ' . $this->expressionToString($value, $sentence);
-        }
-
-        $sentence->appendClause(static::CLAUSE_SET, implode(static::LIST_SEPARATOR_MULTI_LINE, $list));
-
-        // Where
-        $this->clauseWhere($request, $sentence);
-
-        return $sentence;
+        return '';
     }
 }

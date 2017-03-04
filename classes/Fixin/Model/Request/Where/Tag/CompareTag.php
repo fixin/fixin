@@ -74,12 +74,12 @@ class CompareTag extends Tag {
      *
      * @param number|string $left
      */
-    protected function setLeft($left)
+    protected function setLeft($left): void
     {
         $this->left = $left;
     }
 
-    protected function setOperator(string $operator)
+    protected function setOperator(string $operator): void
     {
         $this->operator = $operator;
     }
@@ -89,7 +89,7 @@ class CompareTag extends Tag {
      *
      * @param number|string|array $right
      */
-    protected function setRight($right)
+    protected function setRight($right): void
     {
         $this->right = $right;
     }

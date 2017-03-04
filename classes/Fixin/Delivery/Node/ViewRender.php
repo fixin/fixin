@@ -19,8 +19,8 @@ class ViewRender extends Resource implements NodeInterface
 
         if ($content instanceof ViewInterface) {
             $cargo
-            ->setContent($content->render())
-            ->setContentType($content->getContentType());
+                ->setContent($content->render())
+                ->setContentType($content->getContentType());
         }
 
         return $cargo;

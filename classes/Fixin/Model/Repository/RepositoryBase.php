@@ -31,7 +31,7 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface
         ];
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $autoIncrementColumn;
 
@@ -48,7 +48,7 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface
     /**
      * @var string
      */
-    protected $name = '';
+    protected $name;
 
     /**
      * @var string[]

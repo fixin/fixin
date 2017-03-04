@@ -192,17 +192,17 @@ class HttpRouterHub extends HttpHub
         return $replaces;
     }
 
-    protected function setHandlers(array $handlers)
+    protected function setHandlers(array $handlers): void
     {
         $this->handlers = $handlers;
     }
 
-    protected function setRouteTree(array $routeTree)
+    protected function setRouteTree(array $routeTree): void
     {
         $this->routeTree = $routeTree;
     }
 
-    protected function setRouteUris(array $routeUris)
+    protected function setRouteUris(array $routeUris): void
     {
         $this->routeUris = $routeUris;
     }

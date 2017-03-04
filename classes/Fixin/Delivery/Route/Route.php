@@ -72,7 +72,7 @@ class Route extends Resource implements RouteInterface
         return $cargo;
     }
 
-    protected function setNodes(array $nodes)
+    protected function setNodes(array $nodes): void
     {
         $this->nodes = array_values($nodes);
     }

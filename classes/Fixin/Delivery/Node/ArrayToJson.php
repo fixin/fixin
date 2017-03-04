@@ -19,8 +19,8 @@ class ArrayToJson extends Resource implements NodeInterface
     {
         if (is_array($cargo->getContent())) {
             $cargo
-            ->setContent($this->container->get('Base\Json\Json')->encode($cargo->getContent()))
-            ->setContentType(static::CONTENT_TYPE);
+                ->setContent($this->container->get('Base\Json\Json')->encode($cargo->getContent()))
+                ->setContentType(static::CONTENT_TYPE);
         }
 
         return $cargo;

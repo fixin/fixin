@@ -128,73 +128,38 @@ class Uri extends Prototype implements UriInterface
         return $port === $this->defaultSchemePorts[$scheme] ?? null;
     }
 
-    /**
-     * @return static
-     */
-    protected function setFragment(?string $fragment): UriInterface
+    protected function setFragment(?string $fragment): void
     {
         $this->fragment = $fragment;
-
-        return $this;
     }
 
-    /**
-     * @return static
-     */
-    protected function setHost(string $host): UriInterface
+    protected function setHost(string $host): void
     {
         $this->host = $host;
-
-        return $this;
     }
 
-    /**
-     * @return static
-     */
-    protected function setPath(string $path): UriInterface
+    protected function setPath(string $path): void
     {
         $this->path = $path;
-
-        return $this;
     }
 
-    /**
-     * @return static
-     */
-    protected function setPort(?int $port): UriInterface
+    protected function setPort(?int $port): void
     {
         $this->port = $port;
-
-        return $this;
     }
 
-    /**
-     * @return static
-     */
-    protected function setQuery(string $query): UriInterface
+    protected function setQuery(string $query): void
     {
         $this->query = $query;
-
-        return $this;
     }
 
-    /**
-     * @return static
-     */
-    protected function setScheme(string $scheme): UriInterface
+    protected function setScheme(string $scheme): void
     {
         $this->scheme = $scheme;
-
-        return $this;
     }
 
-    /**
-     * @return static
-     */
-    protected function setUserInfo(string $userInfo): UriInterface
+    protected function setUserInfo(string $userInfo): void
     {
         $this->userInfo = $userInfo;
-
-        return $this;
     }
 }

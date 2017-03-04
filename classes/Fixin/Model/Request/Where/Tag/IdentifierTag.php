@@ -33,7 +33,7 @@ abstract class IdentifierTag extends Tag
     /**
      * @param string|array $identifier
      */
-    protected function setIdentifier($identifier)
+    protected function setIdentifier($identifier): void
     {
         $this->identifier = $identifier;
     }

@@ -154,16 +154,15 @@ abstract class Resource implements ResourceInterface
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @return static
      */
-    protected function setLazyLoadingProperty(string $propertyName, string $interface, $value): Resource
+    protected function setLazyLoadingProperty(string $propertyName, string $interface, $value): void
     {
         // Key
         if (is_string($value)) {
             $this->{$propertyName} = false;
             $this->lazyLoadingProperties[$propertyName] = [$value, $interface];
 
-            return $this;
+            return;
         }
 
         // Instance
@@ -171,7 +170,7 @@ abstract class Resource implements ResourceInterface
             $this->{$propertyName} = $value;
             unset($this->lazyLoadingProperties[$propertyName]);
 
-            return $this;
+            return;
         }
 
         throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ARGUMENT, $propertyName, 'string or ' . $interface));

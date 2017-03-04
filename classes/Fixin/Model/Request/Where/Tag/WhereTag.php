@@ -29,7 +29,7 @@ class WhereTag extends Tag
         return $this->where;
     }
 
-    protected function setWhere(WhereInterface $where)
+    protected function setWhere(WhereInterface $where): void
     {
         $this->where = $where;
     }

@@ -77,7 +77,10 @@ class RuntimeCache extends Cache
         return array_filter($list);
     }
 
-    public function invalidate(): self // TODO if this works remove all @return static and change return types directly
+    /**
+     * @return static
+     */
+    public function invalidate(): CacheInterface
     {
         $this->invalidEntities = $this->entities + $this->invalidEntities;
         $this->entities = [];

@@ -55,7 +55,7 @@ class BetweenTag extends IdentifierTag
      *
      * @param number|string $max
      */
-    protected function setMax($max)
+    protected function setMax($max): void
     {
         $this->max = $max;
     }
@@ -65,7 +65,7 @@ class BetweenTag extends IdentifierTag
      *
      * @param number|string $min
      */
-    protected function setMin($min)
+    protected function setMin($min): void
     {
         $this->min = $min;
     }
