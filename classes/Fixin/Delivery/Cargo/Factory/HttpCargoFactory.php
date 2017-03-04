@@ -92,7 +92,7 @@ class HttpCargoFactory extends Factory
             ? Http::PROTOCOL_VERSION_1_0 : Http::PROTOCOL_VERSION_1_1;
     }
 
-    protected function setup(HttpCargoInterface $cargo)
+    protected function setup(HttpCargoInterface $cargo): void
     {
         // Setup data
         $this->setupRequest($cargo);
@@ -107,7 +107,7 @@ class HttpCargoFactory extends Factory
     /**
      * Setup parameter containers
      */
-    protected function setupParameters(HttpCargoInterface $cargo)
+    protected function setupParameters(HttpCargoInterface $cargo): void
     {
         $cargo->getRequestParameters()->setFromArray($_GET);
         $cargo->getEnvironmentParameters()->setFromArray($_ENV);
@@ -117,7 +117,7 @@ class HttpCargoFactory extends Factory
     /**
      * Setup POST data
      */
-    protected function setupPost(HttpCargoInterface $cargo)
+    protected function setupPost(HttpCargoInterface $cargo): void
     {
         $cargo->setContent($this->getPostParameters());
 
@@ -130,7 +130,7 @@ class HttpCargoFactory extends Factory
     /**
      * Setup request data
      */
-    protected function setupRequest(HttpCargoInterface $cargo)
+    protected function setupRequest(HttpCargoInterface $cargo): void
     {
         $cargo
             ->setRequestProtocolVersion($this->getProtocolVersion())

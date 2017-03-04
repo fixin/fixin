@@ -206,12 +206,12 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this;
     }
 
-    protected function setCookies(CookieManagerInterface $cookies)
+    protected function setCookies(CookieManagerInterface $cookies): void
     {
         $this->cookies = $cookies;
     }
 
-    protected function setEnvironmentParameters(VariableContainerInterface $parameters)
+    protected function setEnvironmentParameters(VariableContainerInterface $parameters): void
     {
         $this->environmentParameters = $parameters;
     }
@@ -236,7 +236,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this;
     }
 
-    protected function setRequestParameters(VariableContainerInterface $parameters)
+    protected function setRequestParameters(VariableContainerInterface $parameters): void
     {
         $this->requestParameters = $parameters;
     }
@@ -280,12 +280,12 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this;
     }
 
-    protected function setServerParameters(VariableContainerInterface $parameters)
+    protected function setServerParameters(VariableContainerInterface $parameters): void
     {
         $this->serverParameters = $parameters;
     }
 
-    protected function setSession(SessionManagerInterface $session)
+    protected function setSession(SessionManagerInterface $session): void
     {
         $this->session = $session;
     }
