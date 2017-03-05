@@ -28,17 +28,8 @@ interface CookieInterface extends PrototypeInterface
 
     public function getPath(): string;
     public function getValue(): string;
-
-    /**
-     * Determine if HTTP-only
-     */
     public function isHttpOnly(): bool;
-
-    /**
-     * Determine if secure
-     */
     public function isSecure(): bool;
-
     public function sendAs(string $name): CookieInterface;
     public function setDomain(string $domain): CookieInterface;
 

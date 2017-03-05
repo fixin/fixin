@@ -7,22 +7,12 @@
 
 namespace Fixin\Base\Container;
 
-interface VariableContainerInterface extends ContainerInterface, \Serializable
+interface VariableContainerInterface extends ContainerInterface
 {
     public function clear(): VariableContainerInterface;
-
-    /**
-     * Determine if content modified
-     */
+    public function clearModified(): VariableContainerInterface;
     public function isModified(): bool;
-
     public function set(string $name, $value): VariableContainerInterface;
-
-    /**
-     * Set values from array
-     */
-    public function setFromArray(array $values): VariableContainerInterface;
-
-    public function setModified(bool $modified): VariableContainerInterface;
+    public function setValues(array $values): VariableContainerInterface;
     public function unset(string $name): VariableContainerInterface;
 }

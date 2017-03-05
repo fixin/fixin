@@ -77,7 +77,6 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     public function __clone() {
         $this->having = clone $this->having;
-        $this->joins = clone $this->joins;
         $this->where = clone $this->where;
     }
 

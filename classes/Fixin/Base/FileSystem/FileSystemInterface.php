@@ -31,34 +31,11 @@ interface FileSystemInterface extends ResourceInterface
      */
     public function getFileContentsWithLock(string $filename): string;
 
-    /**
-     * Get file size
-     */
     public function getFileSize(string $filename): ?int;
-
-    /**
-     * Get real path
-     */
     public function getRealPath(string $path): ?string;
-
-    /**
-     * Include files recursive
-     */
     public function includeFilesRecursive(string $path, string $extension): FileSystemInterface;
-
-    /**
-     * Determine if path is a file
-     */
     public function isDirectory(string $path): bool;
-
-    /**
-     * Determine if existing
-     */
     public function isExisting(string $path): bool;
-
-    /**
-     * Determine if path is a file
-     */
     public function isFile(string $path): bool;
 
     /**

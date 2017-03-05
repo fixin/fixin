@@ -7,13 +7,8 @@
 
 namespace Fixin\Base\Container;
 
-class VariableContainer implements VariableContainerInterface
+class VariableContainer extends Container implements VariableContainerInterface
 {
-    /**
-     * @var array
-     */
-    protected $data = [];
-
     /**
      * @var bool
      */
@@ -24,20 +19,20 @@ class VariableContainer implements VariableContainerInterface
      */
     public function clear(): VariableContainerInterface
     {
-        $this->data = [];
+        $this->values = [];
         $this->modified = true;
 
         return $this;
     }
 
-    public function get(string $name, $default = null)
+    /**
+     * @return static
+     */
+    public function clearModified(): VariableContainerInterface
     {
-        return $this->data[$name] ?? $default;
-    }
+        $this->modified = false;
 
-    public function has(string $name): bool
-    {
-        return isset($this->data[$name]);
+        return $this;
     }
 
     public function isModified(): bool
@@ -45,46 +40,15 @@ class VariableContainer implements VariableContainerInterface
         return $this->modified;
     }
 
-    public function serialize(): string
-    {
-        return serialize($this->data);
-    }
-
     /**
      * @return static
      */
     public function set(string $name, $value): VariableContainerInterface
     {
-        $this->data[$name] = $value;
+        $this->values[$name] = $value;
         $this->modified = true;
 
         return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function setFromArray(array $values): VariableContainerInterface
-    {
-        $this->data = $values + $this->data;
-        $this->modified = true;
-
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function setModified(bool $modified): VariableContainerInterface
-    {
-        $this->modified = $modified;
-
-        return $this;
-    }
-
-    public function unserialize($serialized): void
-    {
-        $this->data = unserialize($serialized);
     }
 
     /**
@@ -92,7 +56,7 @@ class VariableContainer implements VariableContainerInterface
      */
     public function unset(string $name): VariableContainerInterface
     {
-        unset($this->data[$name]);
+        unset($this->values[$name]);
         $this->modified = true;
 
         return $this;

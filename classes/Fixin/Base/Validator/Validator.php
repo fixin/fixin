@@ -26,14 +26,9 @@ abstract class Validator extends Resource implements ValidatorInterface
         return $this->isValid($value);
     }
 
-    /**
-     * @return static
-     */
-    protected function addError(string $error): Validator
+    protected function addError(string $error): void
     {
         $this->errors[$error] = $this->errorTemplates[$error] ?? $error;
-
-        return $this;
     }
 
     public function getErrors(): array

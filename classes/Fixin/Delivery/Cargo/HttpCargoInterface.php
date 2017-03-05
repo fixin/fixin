@@ -21,7 +21,6 @@ interface HttpCargoInterface extends CargoInterface
         OPTION_SERVER_PARAMETERS = 'serverParameters',
         OPTION_SESSION = 'session';
 
-
     /**
      * Add header value
      */

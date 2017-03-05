@@ -15,7 +15,7 @@ class CookieManager extends Prototype implements CookieManagerInterface
         EXPIRE_MINUTES = -24 * 60 * 7;
 
     /**
-     * @var array
+     * @var string[]|CookieInterface[]
      */
     protected $cookies = [];
 
@@ -24,7 +24,9 @@ class CookieManager extends Prototype implements CookieManagerInterface
      */
     public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface
     {
-        $this->set($name, null)->setExpire(static::EXPIRE_MINUTES)->setPath($path)->setDomain($domain);
+        $this->set($name, null)
+            ->setExpire(static::EXPIRE_MINUTES)
+            ->setPath($path)->setDomain($domain);
 
         return $this;
     }
@@ -56,7 +58,6 @@ class CookieManager extends Prototype implements CookieManagerInterface
     public function set(string $name, string $value): CookieInterface
     {
         if (!isset($this->cookies[$name]) || !($cookie = $this->cookies[$name]) instanceof CookieInterface) {
-            /** @var CookieInterface $cookie */
             $cookie =
             $this->cookies[$name] = $this->container->clonePrototype('Base\Cookie\Cookie');
         }

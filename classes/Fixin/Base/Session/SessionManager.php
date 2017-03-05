@@ -160,10 +160,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
         return false;
     }
 
-    /**
-     * @return static
-     */
-    protected function loadEntity(SessionEntity $entity): self
+    protected function loadEntity(SessionEntity $entity): void
     {
         $this->entity = $entity;
         $this->areas = $entity->getData();
@@ -176,8 +173,6 @@ class SessionManager extends Prototype implements SessionManagerInterface
         $request = $this->getRepository()->createRequest();
         $request->getWhere()->compare(SessionEntity::COLUMN_SESSION_ID, '=', $this->sessionId);
         $request->update([SessionEntity::COLUMN_ACCESS_TIME => new DateTime()]);
-
-        return $this;
     }
 
     /**
@@ -211,15 +206,15 @@ class SessionManager extends Prototype implements SessionManagerInterface
     {
         if ($this->started && $this->isModified()) {
             $this->entity
-            ->setSessionId($this->sessionId)
-            ->setData($this->areas)
-            ->setAccessTime(new DateTime())
-            ->save();
+                ->setSessionId($this->sessionId)
+                ->setData($this->areas)
+                ->setAccessTime(new DateTime())
+                ->save();
 
             $this->modified = false;
 
             foreach ($this->areas as $area) {
-                $area->setModified(false);
+                $area->clearModified();
             }
         }
 
@@ -241,14 +236,9 @@ class SessionManager extends Prototype implements SessionManagerInterface
         $this->regenerationForwardTime = $regenerationForwardTime;
     }
 
-    /**
-     * @return static
-     */
-    protected function setupCookie(): self
+    protected function setupCookie(): void
     {
         $this->getCookieManager()->set($this->cookieName, $this->sessionId)->setExpire($this->lifetime)->setPath('/');
-
-        return $this;
     }
 
     /**

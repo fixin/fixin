@@ -7,8 +7,12 @@
 
 namespace Fixin\Base\Container;
 
-interface ContainerInterface
+use Fixin\Resource\PrototypeInterface;
+
+interface ContainerInterface extends PrototypeInterface, \Serializable
 {
+    const OPTION_VALUES = 'values';
+
     /**
      * Get value for key or return default value for not-set key
      */

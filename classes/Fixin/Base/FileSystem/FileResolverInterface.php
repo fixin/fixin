@@ -16,7 +16,5 @@ interface FileResolverInterface extends ResourceInterface
         OPTION_FILE_SYSTEM = 'fileSystem',
         OPTION_PATHS = 'paths';
 
-    /**
-     */
     public function resolve(string $filename): ?string;
 }
