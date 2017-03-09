@@ -12,7 +12,7 @@ interface VariableContainerInterface extends ContainerInterface
     public function clear(): VariableContainerInterface;
     public function clearModified(): VariableContainerInterface;
     public function isModified(): bool;
+    public function replace(array $values): VariableContainerInterface;
     public function set(string $name, $value): VariableContainerInterface;
-    public function setValues(array $values): VariableContainerInterface;
     public function unset(string $name): VariableContainerInterface;
 }

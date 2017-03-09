@@ -7,9 +7,10 @@
 
 namespace Fixin\Delivery\Cargo\Factory;
 
-use Fixin\Base\Container\VariableContainer;
+use Fixin\Base\Container\ContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Session\SessionManagerInterface;
+use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Resource\Factory\Factory;
 use Fixin\Support\Http;
@@ -19,39 +20,62 @@ use Fixin\Support\Http;
  */
 class HttpCargoFactory extends Factory
 {
-    protected const
-        DEFAULT_SESSION_COOKIE = 'session';
-
-    public const
-        OPTION_SESSION_COOKIE = 'sessionCookie';
-
-    public function __invoke(array $options = NULL, string $name = NULL): HttpCargoInterface
+    public function __invoke(array $options = null, string $name = null): HttpCargoInterface
     {
         $container = $this->container;
-
-        $variables = new VariableContainer();
         $cookies = $container->clonePrototype('Base\Cookie\CookieManager', [
             CookieManagerInterface::OPTION_COOKIES => $_COOKIE
         ]);
+        $parameters = $container->clonePrototype('Base\Container\Container');
+        $requestHeaders = $this->getRequestHeaders();
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-        /** @var HttpCargoInterface $cargo */
-        $cargo = $container->clonePrototype('Delivery\Cargo\HttpCargo', [
-            'environmentParameters' => $variables,
-            'requestParameters' => clone $variables,
-            'serverParameters' => clone $variables,
-            'session' => $this->setupSession($cookies),
-            'cookies' => $cookies
-        ]);
+        $options = [
+            HttpCargoInterface::OPTION_COOKIES => $cookies,
+            HttpCargoInterface::OPTION_ENVIRONMENT_PARAMETERS => $parameters->withOptions([
+                ContainerInterface::OPTION_VALUES => $_ENV
+            ]),
+            HttpCargoInterface::OPTION_REQUEST_HEADERS => $requestHeaders,
+            HttpCargoInterface::OPTION_REQUEST_METHOD => $requestMethod,
+            HttpCargoInterface::OPTION_REQUEST_PARAMETERS => $parameters->withOptions([
+                ContainerInterface::OPTION_VALUES => $_GET
+            ]),
+            HttpCargoInterface::OPTION_REQUEST_PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
+            HttpCargoInterface::OPTION_REQUEST_URI => $container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'),
+            HttpCargoInterface::OPTION_SERVER_PARAMETERS => $parameters->withOptions([
+                ContainerInterface::OPTION_VALUES => $_SERVER
+            ]),
+            HttpCargoInterface::OPTION_SESSION => $container->clonePrototype('Base\Session\SessionManager', [
+                SessionManagerInterface::OPTION_COOKIE_MANAGER => $cookies
+            ])
+        ];
 
-        $this->setup($cargo);
+        if (in_array($requestMethod, [Http::METHOD_POST, Http::METHOD_PUT])) {
+            $options[CargoInterface::OPTION_CONTENT] = $this->getPostParameters();
 
-        return $cargo;
+            if (isset($requestHeaders[Http::HEADER_CONTENT_TYPE])) {
+                $options[CargoInterface::OPTION_CONTENT_TYPE] = $requestHeaders[Http::HEADER_CONTENT_TYPE];
+            }
+        }
+
+        return $container->clonePrototype('Delivery\Cargo\HttpCargo', $options);
     }
 
-    /**
-     * Get header values
-     */
-    protected function getHeaders(): array
+    protected function getPostParameters(): array
+    {
+        $post = $_POST;
+
+        // Files
+        if ($_FILES) {
+            foreach ($_FILES as $key => $file) {
+                $post[$key] = $file; // TODO pre-process
+            }
+        }
+
+        return $post;
+    }
+
+    protected function getRequestHeaders(): array
     {
         if (function_exists('getallheaders')) {
             return getallheaders();
@@ -67,82 +91,9 @@ class HttpCargoFactory extends Factory
         return $headers;
     }
 
-    protected function getMethod(): string
-    {
-        return $_SERVER['REQUEST_METHOD'];
-    }
-
-    protected function getPostParameters(): array
-    {
-        $post = $_POST;
-
-        // Files
-        if ($_FILES) {
-            foreach ($_FILES as $key => $file) {
-                $post[$key] = $file;
-            }
-        }
-
-        return $post;
-    }
-
-    protected function getProtocolVersion(): string
+    protected function getRequestProtocolVersion(): string
     {
         return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::PROTOCOL_VERSION_1_0)
             ? Http::PROTOCOL_VERSION_1_0 : Http::PROTOCOL_VERSION_1_1;
-    }
-
-    protected function setup(HttpCargoInterface $cargo): void
-    {
-        // Setup data
-        $this->setupRequest($cargo);
-        $this->setupParameters($cargo);
-
-        // POST
-        if ($cargo->getRequestMethod() === Http::METHOD_POST) {
-            $this->setupPost($cargo);
-        }
-    }
-
-    /**
-     * Setup parameter containers
-     */
-    protected function setupParameters(HttpCargoInterface $cargo): void
-    {
-        $cargo->getRequestParameters()->setFromArray($_GET);
-        $cargo->getEnvironmentParameters()->setFromArray($_ENV);
-        $cargo->getServerParameters()->setFromArray($_SERVER);
-    }
-
-    /**
-     * Setup POST data
-     */
-    protected function setupPost(HttpCargoInterface $cargo): void
-    {
-        $cargo->setContent($this->getPostParameters());
-
-        // Content type
-        if ($contentType = $cargo->getRequestHeader(Http::HEADER_CONTENT_TYPE)) {
-            $cargo->setContentType($contentType);
-        }
-    }
-
-    /**
-     * Setup request data
-     */
-    protected function setupRequest(HttpCargoInterface $cargo): void
-    {
-        $cargo
-            ->setRequestProtocolVersion($this->getProtocolVersion())
-            ->setRequestMethod($this->getMethod())
-            ->setRequestUri($this->container->clonePrototype('Base\Uri\Factory\EnvironmentUriFactory'))
-            ->setRequestHeaders($this->getHeaders());
-    }
-
-    protected function setupSession(CookieManagerInterface $cookies): SessionManagerInterface
-    {
-        return $this->container->clonePrototype('Base\Session\SessionManager', [
-            SessionManagerInterface::OPTION_COOKIE_MANAGER => $cookies
-        ]);
     }
 }

@@ -43,6 +43,16 @@ class VariableContainer extends Container implements VariableContainerInterface
     /**
      * @return static
      */
+    public function replace(array $values): VariableContainerInterface
+    {
+        $this->values = $values + $this->values;
+
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
     public function set(string $name, $value): VariableContainerInterface
     {
         $this->values[$name] = $value;

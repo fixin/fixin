@@ -34,8 +34,8 @@ interface ViewInterface extends PrototypeInterface
     public function getVariable(string $name);
     public function getVariables(): array;
     public function render();
+    public function replaceVariables(array $variables): ViewInterface;
     public function setChild(string $name, ViewInterface $child): ViewInterface;
     public function setTemplate(string $template): ViewInterface;
     public function setVariable(string $name, $value): ViewInterface;
-    public function setVariables(array $variables): ViewInterface;
 }

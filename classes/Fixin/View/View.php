@@ -181,6 +181,16 @@ class View extends Prototype implements ViewInterface
     /**
      * @return static
      */
+    public function replaceVariables(array $variables): ViewInterface
+    {
+        $this->variables = $variables + $this->variables;
+
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
     public function setChild(string $name, ViewInterface $child): ViewInterface
     {
         $this->children[$name] = $child;
@@ -209,16 +219,6 @@ class View extends Prototype implements ViewInterface
     public function setVariable(string $name, $value): ViewInterface
     {
         $this->variables[$name] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function setVariables(array $variables): ViewInterface
-    {
-        $this->variables = $variables + $this->variables;
 
         return $this;
     }

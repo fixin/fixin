@@ -11,6 +11,11 @@ use Fixin\Resource\PrototypeInterface;
 
 interface CargoInterface extends PrototypeInterface
 {
+    public const
+        OPTION_CONTENT = 'content',
+        OPTION_CONTENT_TYPE = 'contentType',
+        OPTION_DELIVERED = 'delivered';
+
     public function getContent();
     public function getContentType(): string;
     public function isDelivered(): bool;
