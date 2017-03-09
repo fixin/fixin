@@ -46,6 +46,7 @@ class VariableContainer extends Container implements VariableContainerInterface
     public function replace(array $values): VariableContainerInterface
     {
         $this->values = $values + $this->values;
+        $this->modified = true;
 
         return $this;
     }

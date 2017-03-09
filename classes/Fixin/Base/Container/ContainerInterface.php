@@ -9,7 +9,7 @@ namespace Fixin\Base\Container;
 
 use Fixin\Resource\PrototypeInterface;
 
-interface ContainerInterface extends PrototypeInterface, \Serializable
+interface ContainerInterface extends \Serializable
 {
     const OPTION_VALUES = 'values';
 
