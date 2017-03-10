@@ -139,7 +139,7 @@ class PdoStorage extends Resource implements StorageInterface
         call_user_func_array([$statement, 'setFetchMode'], $mode);
         $statement->execute($sentence->getParameters());
 
-        return $this->container->clonePrototype(static::PROTOTYPE_STORAGE_RESULT, [
+        return $this->container->clone(static::PROTOTYPE_STORAGE_RESULT, [
             PdoStorageResult::OPTION_STATEMENT => $statement
         ]);
     }

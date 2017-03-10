@@ -9,6 +9,12 @@ namespace Fixin\Resource;
 
 class ResourceManager extends ResourceManagerBase
 {
+    protected const
+        EXCEPTION_RESOURCE_NOT_FOUND = "Resource not found by name '%s'",
+        EXCEPTION_PROTOTYPE_NOT_FOUND = "Prototype not found by name '%s'",
+        EXCEPTION_PROTOTYPE_AS_RESOURCE = "Can't use prototype as resource '%s'",
+        EXCEPTION_RESOURCE_AS_PROTOTYPE = "Can't use resource as prototype '%s'";
+
     /**
      * Determine resource creation via an abstract factory is possible
      */
@@ -23,14 +29,38 @@ class ResourceManager extends ResourceManagerBase
         return false;
     }
 
-    public function clonePrototype(string $name, array $options = [])
+    public function clone(string $name, array $options = [])
     {
-        return $this->getResource($name, true)->withOptions($options);
+        $resource = $this->resources[$name] ?? $this->produceResource($name);
+
+        if ($resource instanceof PrototypeInterface) {
+            return $resource->withOptions($options);
+        }
+
+        if (!$resource instanceof ResourceInterface) {
+            return clone $resource;
+        }
+
+        if (!$resource) {
+            throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_RESOURCE_AS_PROTOTYPE, $name));
+        }
+
+        throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_PROTOTYPE_NOT_FOUND, $name));
     }
 
     public function get(string $name)
     {
-        return $this->getResource($name, false);
+        $resource = $this->resources[$name] ?? $this->produceResource($name);
+
+        if ($resource instanceof ResourceInterface && !$resource instanceof PrototypeInterface) {
+            return $resource;
+        }
+
+        if (!$resource) {
+            throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_PROTOTYPE_AS_RESOURCE, $name));
+        }
+
+        throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_RESOURCE_NOT_FOUND, $name));
     }
 
     public function has(string $name): bool

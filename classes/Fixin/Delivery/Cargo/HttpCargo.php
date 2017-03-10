@@ -8,6 +8,7 @@
 namespace Fixin\Delivery\Cargo;
 
 use Fixin\Base\Container\ContainerInterface;
+use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
@@ -16,7 +17,6 @@ use Fixin\Support\ToStringTrait;
 
 class HttpCargo extends Cargo implements HttpCargoInterface
 {
-
     use ToStringTrait;
 
     protected const THIS_REQUIRES = [
@@ -58,7 +58,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
     protected $requestMethod = Http::METHOD_GET;
 
     /**
-     * @var ContainerInterface
+     * @var VariableContainerInterface
      */
     protected $requestParameters;
 
@@ -142,7 +142,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this->requestMethod;
     }
 
-    public function getRequestParameters(): ContainerInterface
+    public function getRequestParameters(): VariableContainerInterface
     {
         return $this->requestParameters;
     }
@@ -236,14 +236,24 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this;
     }
 
-    protected function setRequestHeaders(array $headers): void
+    /**
+     * @return static
+     */
+    public function setRequestHeaders(array $headers): HttpCargoInterface
     {
         $this->requestHeaders = $headers;
+
+        return $this;
     }
 
-    protected function setRequestMethod(string $method): void
+    /**
+     * @return static
+     */
+    public function setRequestMethod(string $method): HttpCargoInterface
     {
         $this->requestMethod = $method;
+
+        return $this;
     }
 
     protected function setRequestParameters(ContainerInterface $parameters): void
@@ -251,14 +261,24 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         $this->requestParameters = $parameters;
     }
 
-    protected function setRequestProtocolVersion(string $protocolVersion): void
+    /**
+     * @return static
+     */
+    public function setRequestProtocolVersion(string $protocolVersion): HttpCargoInterface
     {
         $this->requestProtocolVersion = $protocolVersion;
+
+        return $this;
     }
 
-    protected function setRequestUri(UriInterface $requestUri): void
+    /**
+     * @return static
+     */
+    public function setRequestUri(UriInterface $requestUri): HttpCargoInterface
     {
         $this->requestUri = $requestUri;
+
+        return $this;
     }
 
     protected function setServerParameters(ContainerInterface $parameters): void

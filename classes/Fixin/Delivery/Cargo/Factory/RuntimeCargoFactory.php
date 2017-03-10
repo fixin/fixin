@@ -17,6 +17,6 @@ class RuntimeCargoFactory extends Factory
     {
         $factory = 'Delivery\Cargo\Factory\\' . (Ground::isConsole() ? 'ConsoleCargoFactory' : 'HttpCargoFactory');
 
-        return $this->container->clonePrototype($factory);
+        return $this->container->clone($factory);
     }
 }

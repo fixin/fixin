@@ -109,7 +109,7 @@ abstract class WhereBase extends Prototype implements WhereInterface
      */
     protected function addNested(string $join, bool $negated, callable $callback): WhereInterface
     {
-        $where = $this->container->clonePrototype(static::PROTOTYPE_WHERE);
+        $where = $this->container->clone(static::PROTOTYPE_WHERE);
         $callback($where);
 
         return $this->addTag(static::PROTOTYPE_WHERE_TAG, $join, $negated, [
@@ -142,7 +142,7 @@ abstract class WhereBase extends Prototype implements WhereInterface
      */
     protected function addTag(string $prototype, string $join, bool $negated, array $options): WhereInterface
     {
-        $this->tags[] = $this->container->clonePrototype($prototype, [
+        $this->tags[] = $this->container->clone($prototype, [
             TagInterface::OPTION_JOIN => $join,
             TagInterface::OPTION_NEGATED => $negated
         ] + $options);
@@ -153,7 +153,7 @@ abstract class WhereBase extends Prototype implements WhereInterface
     protected function compareSidePrepare($value, string $type)
     {
         if (!$value instanceof ExpressionInterface && !$value instanceof RequestInterface && $type === static::TYPE_IDENTIFIER) {
-            return $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
+            return $this->container->clone(static::PROTOTYPE_EXPRESSION, [
                 ExpressionInterface::OPTION_EXPRESSION => $value
             ]);
         }

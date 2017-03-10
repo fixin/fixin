@@ -11,7 +11,7 @@ interface ResourceManagerInterface
     /**
      * Clone prototype
      */
-    public function clonePrototype(string $name, array $options = []);
+    public function clone(string $name, array $options = []);
 
     /**
      * Get instance

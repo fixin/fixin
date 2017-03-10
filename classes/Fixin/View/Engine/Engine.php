@@ -42,7 +42,7 @@ abstract class Engine extends Resource implements EngineInterface
     protected function produceHelper(string $name): HelperInterface
     {
         if (preg_match(static::HELPER_NAME_PATTERN, $name)) {
-            return $this->container->clonePrototype('View\Helper\\' . ucfirst($name), [
+            return $this->container->clone('View\Helper\\' . ucfirst($name), [
                 HelperInterface::OPTION_ENGINE => $this
             ]);
         }

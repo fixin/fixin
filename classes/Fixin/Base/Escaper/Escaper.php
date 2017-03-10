@@ -7,7 +7,9 @@
 
 namespace Fixin\Base\Escaper;
 
-class Escaper implements EscaperInterface
+use Fixin\Resource\Resource;
+
+class Escaper extends Resource implements EscaperInterface
 {
     protected const
         HTML_ENCODING_OPTIONS = ENT_COMPAT | ENT_HTML5 | ENT_SUBSTITUTE,

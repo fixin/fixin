@@ -38,7 +38,7 @@ class Repository extends RepositoryBase
 
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface
     {
-        return $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
+        return $this->container->clone(static::PROTOTYPE_EXPRESSION, [
             ExpressionInterface::OPTION_EXPRESSION => $expression,
             ExpressionInterface::OPTION_PARAMETERS => $parameters
         ]);
@@ -69,7 +69,7 @@ class Repository extends RepositoryBase
 
     private function createIdWithArray(array $entityId): EntityIdInterface
     {
-        return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_ID, [
+        return $this->container->clone(static::PROTOTYPE_ENTITY_ID, [
             EntityIdInterface::OPTION_ENTITY_ID => $entityId,
             EntityIdInterface::OPTION_REPOSITORY => $this
         ]);
@@ -77,7 +77,7 @@ class Repository extends RepositoryBase
 
     public function createRequest(): RequestInterface
     {
-        return $this->container->clonePrototype(static::PROTOTYPE_REQUEST, [
+        return $this->container->clone(static::PROTOTYPE_REQUEST, [
             RequestInterface::OPTION_REPOSITORY => $this
         ]);
     }
@@ -110,7 +110,7 @@ class Repository extends RepositoryBase
 
     public function getByIds(array $ids): EntitySetInterface
     {
-        return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_SET, [
+        return $this->container->clone(static::PROTOTYPE_ENTITY_SET, [
             EntitySetInterface::OPTION_REPOSITORY => $this,
             EntitySetInterface::OPTION_ENTITY_CACHE => $this->getEntityCache(),
             EntitySetInterface::OPTION_ITEMS => $this->getEntityCache()->getByIds($ids)
@@ -199,7 +199,7 @@ class Repository extends RepositoryBase
         $fetchRequest = clone $request;
         $fetchRequest->setColumns($fetchRequest->isIdFetchEnabled() ? $this->primaryKey : []);
 
-        return $this->container->clonePrototype(static::PROTOTYPE_ENTITY_SET, [
+        return $this->container->clone(static::PROTOTYPE_ENTITY_SET, [
             EntitySetInterface::OPTION_REPOSITORY => $this,
             EntitySetInterface::OPTION_ENTITY_CACHE => $this->getEntityCache(),
             EntitySetInterface::OPTION_STORAGE_RESULT => $this->selectRawData($fetchRequest),

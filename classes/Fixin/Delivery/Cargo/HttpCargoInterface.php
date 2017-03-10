@@ -8,6 +8,7 @@
 namespace Fixin\Delivery\Cargo;
 
 use Fixin\Base\Container\ContainerInterface;
+use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
@@ -53,7 +54,7 @@ interface HttpCargoInterface extends CargoInterface
     public function getRequestHeader(string $name): ?string;
 
     public function getRequestMethod(): string;
-    public function getRequestParameters(): ContainerInterface;
+    public function getRequestParameters(): VariableContainerInterface;
     public function getRequestProtocolVersion(): string;
     public function getRequestUri(): UriInterface;
     public function getServerParameters(): ContainerInterface;
@@ -66,6 +67,11 @@ interface HttpCargoInterface extends CargoInterface
      * @param string|array $value
      */
     public function setHeader(string $name, $value): HttpCargoInterface;
+
     public function setProtocolVersion(string $protocolVersion): HttpCargoInterface;
+    public function setRequestHeaders(array $headers): HttpCargoInterface;
+    public function setRequestMethod(string $method): HttpCargoInterface;
+    public function setRequestProtocolVersion(string $protocolVersion): HttpCargoInterface;
+    public function setRequestUri(UriInterface $requestUri): HttpCargoInterface;
     public function setStatusCode(int $statusCode): HttpCargoInterface;
 }

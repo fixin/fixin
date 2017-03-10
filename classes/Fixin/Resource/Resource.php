@@ -140,7 +140,7 @@ abstract class Resource implements ResourceInterface
         if (isset($this->lazyLoadingProperties[$propertyName])) {
             $set = $this->lazyLoadingProperties[$propertyName];
             $interface = $set[1];
-            $value = is_subclass_of($interface, PrototypeInterface::class) ? $this->container->clonePrototype($set[0], $prototypeOptions) : $this->container->get($set[0]);
+            $value = is_subclass_of($interface, PrototypeInterface::class) ? $this->container->clone($set[0], $prototypeOptions) : $this->container->get($set[0]);
 
             if ($value instanceof $interface) {
                 return $this->$propertyName = $value;

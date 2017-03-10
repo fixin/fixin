@@ -7,7 +7,9 @@
 
 namespace Fixin\Base\Serializer;
 
-interface SerializerInterface
+use Fixin\Resource\ResourceInterface;
+
+interface SerializerInterface extends ResourceInterface
 {
     public function serialize($value): string;
 

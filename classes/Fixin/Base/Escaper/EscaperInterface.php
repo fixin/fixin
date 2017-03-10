@@ -7,7 +7,9 @@
 
 namespace Fixin\Base\Escaper;
 
-interface EscaperInterface
+use Fixin\Resource\ResourceInterface;
+
+interface EscaperInterface extends ResourceInterface
 {
     /**
      * Escape string for HTML

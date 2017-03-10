@@ -7,9 +7,10 @@
 
 namespace Fixin\Base\Serializer;
 
+use Fixin\Resource\Resource;
 use Throwable;
 
-class PhpSerializer implements SerializerInterface
+class PhpSerializer extends Resource implements SerializerInterface
 {
     protected const
         EXCEPTION_SERIALIZATION_FAILED = 'Serialization failed',

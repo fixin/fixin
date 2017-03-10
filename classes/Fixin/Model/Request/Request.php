@@ -49,7 +49,7 @@ class Request extends RequestBase {
 
     protected function addUnion(string $type, RequestInterface $request): void
     {
-        $this->unions[] = $this->container->clonePrototype(static::PROTOTYPE_UNION, [
+        $this->unions[] = $this->container->clone(static::PROTOTYPE_UNION, [
             UnionInterface::OPTION_TYPE => $type,
             UnionInterface::OPTION_REQUEST => $request
         ]);
@@ -62,7 +62,7 @@ class Request extends RequestBase {
 
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface
     {
-        return $this->container->clonePrototype(static::PROTOTYPE_EXPRESSION, [
+        return $this->container->clone(static::PROTOTYPE_EXPRESSION, [
             ExpressionInterface::OPTION_EXPRESSION => $expression,
             ExpressionInterface::OPTION_PARAMETERS => $parameters
         ]);

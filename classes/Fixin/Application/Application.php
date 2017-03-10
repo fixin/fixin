@@ -93,13 +93,13 @@ class Application implements ApplicationInterface
 
         try {
             /** @var CargoInterface $cargo */
-            $cargo = $container->clonePrototype($this->config[static::OPTION_CARGO]);
+            $cargo = $container->clone($this->config[static::OPTION_CARGO]);
             $container->get($this->config[static::OPTION_ROUTE])
                 ->handle($cargo)
                 ->unpack();
         }
         catch (Throwable $t) {
-            $this->errorRoute(($cargo ?? $container->clonePrototype('Delivery\Cargo\Cargo'))->setContent($t));
+            $this->errorRoute(($cargo ?? $container->clone('Delivery\Cargo\Cargo'))->setContent($t));
         }
 
         return $this;

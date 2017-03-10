@@ -15,12 +15,6 @@ abstract class ResourceManagerBase implements ResourceManagerInterface
     protected const
         EXCEPTION_ALREADY_DEFINED = "%s already defined for '%'",
         EXCEPTION_CLASS_NOT_FOUND_FOR = "Class not found for '%s'",
-        EXCEPTION_GET_ERRORS = [
-            "Resource not accessible by name '%s'",
-            "Prototype not accessible by name '%s'",
-            "Can't access prototype as normal resource '%s'",
-            "Can't access normal resource as prototype '%s'",
-        ],
         EXCEPTION_INVALID_ABSTRACT_FACTORY_DEFINITION = "Invalid abstract factory definition '%s'",
         EXCEPTION_INVALID_DEFINITION = "Invalid definition registered for name '%s'",
         KEY_CLASS = 'class',
@@ -96,22 +90,6 @@ abstract class ResourceManagerBase implements ResourceManagerInterface
         }
 
         return null;
-    }
-
-    /**
-     * @throws Exception\ResourceNotFoundException
-     * @return object
-     */
-    protected function getResource(string $name, bool $prototype)
-    {
-        $resource = $this->resources[$name] ?? $this->produceResource($name);
-
-        // Found
-        if ($resource && $resource instanceof PrototypeInterface === $prototype) {
-            return $resource;
-        }
-
-        throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_GET_ERRORS[isset($resource) * 2 + $prototype], $name));
     }
 
     /**
