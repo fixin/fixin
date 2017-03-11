@@ -256,7 +256,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this;
     }
 
-    protected function setRequestParameters(ContainerInterface $parameters): void
+    protected function setRequestParameters(VariableContainerInterface $parameters): void
     {
         $this->requestParameters = $parameters;
     }
