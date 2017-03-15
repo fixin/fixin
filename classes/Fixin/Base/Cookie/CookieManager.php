@@ -32,7 +32,7 @@ class CookieManager extends Prototype implements CookieManagerInterface
         return $this;
     }
 
-    public function getValue(string $name, string $default = null): ?string
+    public function get(string $name, string $default = null): ?string
     {
         return isset($this->cookies[$name]) ? (($item = $this->cookies[$name]) instanceof CookieInterface ? $item->getValue() : $item) : $default;
     }
@@ -50,6 +50,8 @@ class CookieManager extends Prototype implements CookieManagerInterface
         foreach ($this->cookies as $name => $cookie) {
             if ($cookie instanceof CookieInterface) {
                 $cookie->sendAs($name);
+
+                $this->cookies[$name] = $cookie->getValue();
             }
         }
 

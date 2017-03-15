@@ -8,8 +8,8 @@
 namespace Fixin\Application;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Support\Http;
 use Throwable;
 

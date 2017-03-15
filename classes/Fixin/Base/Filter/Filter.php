@@ -7,9 +7,9 @@
 
 namespace Fixin\Base\Filter;
 
-use Fixin\Resource\Resource;
+use Fixin\Resource\Prototype;
 
-abstract class Filter extends Resource implements FilterInterface
+abstract class Filter extends Prototype implements FilterInterface
 {
     public function __invoke($value)
     {

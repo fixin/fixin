@@ -10,6 +10,7 @@ namespace Fixin\Delivery\Cargo\Factory;
 use Fixin\Base\Container\ContainerInterface;
 use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
+use Fixin\Base\Http\HttpHeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
@@ -27,30 +28,33 @@ class HttpCargoFactory extends Factory
         $cookies = $container->clone('Base\Cookie\CookieManager', [
             CookieManagerInterface::OPTION_COOKIES => $_COOKIE
         ]);
+        $method = $_SERVER['REQUEST_METHOD'];
         $requestHeaders = $this->getRequestHeaders();
-        $requestMethod = $_SERVER['REQUEST_METHOD'];
 
         $options = [
             HttpCargoInterface::OPTION_COOKIES => $cookies,
-            HttpCargoInterface::OPTION_ENVIRONMENT_PARAMETERS => $container->clone('Base\Container\Container', [
+            HttpCargoInterface::OPTION_ENVIRONMENT => $container->clone('Base\Container\Container', [
                 ContainerInterface::OPTION_VALUES => $_ENV
             ]),
-            HttpCargoInterface::OPTION_REQUEST_HEADERS => $requestHeaders,
-            HttpCargoInterface::OPTION_REQUEST_METHOD => $requestMethod,
-            HttpCargoInterface::OPTION_REQUEST_PARAMETERS =>  $container->clone('Base\Container\VariableContainer', [
+            HttpCargoInterface::OPTION_METHOD => $method,
+            HttpCargoInterface::OPTION_PARAMETERS => $container->clone('Base\Container\VariableContainer', [
                 VariableContainerInterface::OPTION_VALUES => $_GET
             ]),
-            HttpCargoInterface::OPTION_REQUEST_PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
-            HttpCargoInterface::OPTION_REQUEST_URI => $container->clone('Base\Uri\Factory\EnvironmentUriFactory'),
-            HttpCargoInterface::OPTION_SERVER_PARAMETERS =>  $container->clone('Base\Container\Container', [
+            HttpCargoInterface::OPTION_PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
+            HttpCargoInterface::OPTION_REQUEST_HEADERS => $container->clone('Base\Http\HttpHeaders', [
+                HttpHeadersInterface::OPTION_VALUES => $requestHeaders
+            ]),
+            HttpCargoInterface::OPTION_RESPONSE_HEADERS => $container->clone('Base\Http\HttpHeaders'),
+            HttpCargoInterface::OPTION_SERVER => $container->clone('Base\Container\Container', [
                 ContainerInterface::OPTION_VALUES => $_SERVER
             ]),
             HttpCargoInterface::OPTION_SESSION => $container->clone('Base\Session\SessionManager', [
                 SessionManagerInterface::OPTION_COOKIE_MANAGER => $cookies
-            ])
+            ]),
+            HttpCargoInterface::OPTION_CONTENT_TYPE => 'text/html',
         ];
 
-        if (in_array($requestMethod, [Http::METHOD_POST, Http::METHOD_PUT])) {
+        if (in_array($method, [Http::METHOD_POST, Http::METHOD_PUT])) {
             $options[CargoInterface::OPTION_CONTENT] = $this->getPostParameters();
 
             if (isset($requestHeaders[Http::HEADER_CONTENT_TYPE])) {

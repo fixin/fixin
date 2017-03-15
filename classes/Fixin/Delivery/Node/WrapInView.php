@@ -8,7 +8,6 @@
 namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\Delivery\Node\NodeInterface;
 use Fixin\Resource\Resource;
 use Fixin\View\ViewInterface;
 

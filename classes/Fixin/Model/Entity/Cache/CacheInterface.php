@@ -7,9 +7,9 @@
 
 namespace Fixin\Model\Entity\Cache;
 
+use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\PrototypeInterface;
-use Fixin\Model\Entity\EntityInterface;
 
 interface CacheInterface extends PrototypeInterface
 {

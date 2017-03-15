@@ -7,9 +7,9 @@
 
 namespace Fixin\Base\Filter;
 
-use Fixin\Resource\ResourceInterface;
+use Fixin\Resource\PrototypeInterface;
 
-interface FilterInterface extends ResourceInterface
+interface FilterInterface extends PrototypeInterface
 {
     /**
      * Invoke filter()

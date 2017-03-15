@@ -205,7 +205,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     /**
      * @return static
      */
-    public function rollback(): IndexInterface
+    public function revert(): IndexInterface
     {
         $this->load();
 

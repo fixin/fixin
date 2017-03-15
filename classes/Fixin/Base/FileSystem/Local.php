@@ -24,11 +24,6 @@ class Local extends Resource implements FileSystemInterface
         return unlink($filename);
     }
 
-    public function getExtension(string $path): ?string
-    {
-        return pathinfo($path, PATHINFO_EXTENSION);
-    }
-
     /**
      * @throws Exception\FileNotFoundException
      * @throws Exception\FileReadFailureException

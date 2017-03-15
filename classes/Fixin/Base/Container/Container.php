@@ -9,7 +9,7 @@ namespace Fixin\Base\Container;
 
 use Fixin\Resource\Prototype;
 
-class Container implements ContainerInterface
+class Container extends Prototype implements ContainerInterface
 {
     /**
      * @var array

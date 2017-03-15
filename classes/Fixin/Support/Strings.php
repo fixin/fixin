@@ -42,6 +42,14 @@ class Strings extends DoNotCreate
     }
 
     /**
+     * Get extension of a filename
+     */
+    public static function extractExtension(string $path): ?string
+    {
+        return pathinfo($path, PATHINFO_EXTENSION);
+    }
+
+    /**
      * Generate random alpha-numeric string
      */
     public static function generateRandomAlnum(int $length): string

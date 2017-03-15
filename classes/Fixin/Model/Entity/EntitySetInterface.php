@@ -7,8 +7,8 @@
 
 namespace Fixin\Model\Entity;
 
-use Fixin\Resource\PrototypeInterface;
 use Fixin\Model\Repository\RepositoryInterface;
+use Fixin\Resource\PrototypeInterface;
 
 interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable
 {

@@ -7,9 +7,9 @@
 
 namespace Fixin\Base\Validator;
 
-use Fixin\Resource\ResourceInterface;
+use Fixin\Resource\PrototypeInterface;
 
-interface ValidatorInterface extends ResourceInterface
+interface ValidatorInterface extends PrototypeInterface
 {
     /**
      * Invoke isValid()

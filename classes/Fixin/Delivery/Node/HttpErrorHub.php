@@ -41,7 +41,9 @@ class HttpErrorHub extends Resource implements NodeInterface
             $statusCode = $cargo->getStatusCode();
 
             if ($statusCode >= Http::STATUS_BAD_REQUEST_400 && $statusCode <= Http::STATUS_LAST_POSSIBLE_ERROR) {
-                return $this->getRoute()->handle($cargo)->setDelivered(true);
+                return $this->getRoute()
+                    ->handle($cargo)
+                    ->setDelivered(true);
             }
         }
 

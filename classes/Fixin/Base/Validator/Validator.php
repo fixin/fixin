@@ -7,9 +7,9 @@
 
 namespace Fixin\Base\Validator;
 
-use Fixin\Resource\Resource;
+use Fixin\Resource\Prototype;
 
-abstract class Validator extends Resource implements ValidatorInterface
+abstract class Validator extends Prototype implements ValidatorInterface
 {
     /**
      * @var string[]

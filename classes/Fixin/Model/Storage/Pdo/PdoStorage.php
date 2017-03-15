@@ -9,9 +9,9 @@ namespace Fixin\Model\Storage\Pdo;
 
 use DateTime;
 use Fixin\Base\Sentence\SentenceInterface;
-use Fixin\Model\Storage\Exception;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Model\Storage\Exception;
 use Fixin\Model\Storage\Grammar\GrammarInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;

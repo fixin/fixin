@@ -45,7 +45,7 @@ class FileResolver extends Resource implements FileResolverInterface
         $fileSystem = $this->getFileSystem();
 
         // Default extension
-        if ($fileSystem->getExtension($filename) === '') {
+        if (Strings::extractExtension($filename) === '') {
             $filename .= $this->defaultExtension;
         }
 

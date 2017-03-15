@@ -31,7 +31,7 @@ interface IndexInterface extends PrototypeInterface
     /**
      * Rollback modifications to the last saved state
      */
-    public function rollback(): IndexInterface;
+    public function revert(): IndexInterface;
 
     public function set($key, $value): IndexInterface;
     public function unset($key): IndexInterface;

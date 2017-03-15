@@ -7,9 +7,6 @@
 
 namespace Fixin\View\Helper;
 
-use Fixin\Base\Escaper\EscaperInterface;
-use Fixin\Resource\ResourceManagerInterface;
-
 class JsVariable extends EscapeHelper
 {
     public function escape($value): string

@@ -17,11 +17,6 @@ interface FileSystemInterface extends ResourceInterface
     public function delete(string $filename): bool;
 
     /**
-     * Get extension of a filename
-     */
-    public function getExtension(string $path): ?string;
-
-    /**
      * Get the contents of a file
      */
     public function getFileContents(string $filename): string;
