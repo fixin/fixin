@@ -12,7 +12,7 @@ use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
-abstract class RestfulController extends Resource implements ControllerInterface
+abstract class HttpRestfulController extends Resource implements ControllerInterface
 {
     protected const
         CONTENT_METHOD_NOT_ALLOWED = [
@@ -42,13 +42,14 @@ abstract class RestfulController extends Resource implements ControllerInterface
      */
     public function get(HttpCargoInterface $cargo): HttpCargoInterface
     {
+        // TODO rethink method names: get() -> getMethod()?
         return $this->replyMethodNotAllowed($cargo);
     }
 
     public function handle(CargoInterface $cargo): CargoInterface
     {
         if ($cargo instanceof HttpCargoInterface) {
-            $method = $cargo->getRequestMethod();
+            $method = $cargo->getMethod();
 
             if (isset(static::METHOD_MAP[$method])) {
                 return $this->{static::METHOD_MAP[$method]}($cargo->setStatusCode(Http::STATUS_OK_200));

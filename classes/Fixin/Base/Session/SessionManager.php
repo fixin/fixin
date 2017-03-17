@@ -90,10 +90,10 @@ class SessionManager extends Prototype implements SessionManagerInterface
         return $this;
     }
 
-    public function garbageCollection(int $lifetime): int
+    public function deleteGarbageSessions(int $lifetime): int
     {
         $request = $this->getRepository()->createRequest();
-        $request->getWhere()->compare(SessionEntity::COLUMN_ACCESS_TIME, '<', new DateTime('+' . $lifetime . ' MINUTES'));
+        $request->getWhere()->compare(SessionEntity::ACCESS_TIME, '<', new DateTime('+' . $lifetime . ' MINUTES'));
 
         return $request->delete();
     }
@@ -115,7 +115,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
         // New area
         $this->modified = true;
 
-        return $this->areas[$name] = new \Fixin\Base\Session\SessionArea();
+        return $this->areas[$name] = $this->container->clone('Base\Session\SessionArea');
     }
 
     protected function getCookieManager(): CookieManagerInterface
@@ -171,8 +171,8 @@ class SessionManager extends Prototype implements SessionManagerInterface
         }
 
         $request = $this->getRepository()->createRequest();
-        $request->getWhere()->compare(SessionEntity::COLUMN_SESSION_ID, '=', $this->sessionId);
-        $request->update([SessionEntity::COLUMN_ACCESS_TIME => new DateTime()]);
+        $request->getWhere()->compare(SessionEntity::SESSION_ID, '=', $this->sessionId);
+        $request->update([SessionEntity::ACCESS_TIME => new DateTime()]);
     }
 
     /**
@@ -249,7 +249,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
         if (!$this->started) {
             $this->started = true;
 
-            $sessionId = $this->getCookieManager()->getValue($this->cookieName);
+            $sessionId = $this->getCookieManager()->get($this->cookieName);
             if ($sessionId && $this->startWith($sessionId)) {
                 return $this;
             }
@@ -269,10 +269,10 @@ class SessionManager extends Prototype implements SessionManagerInterface
     protected function startWith(string $sessionId): bool
     {
         $request = $this->getRepository()->createRequest();
-        $where = $request->getWhere()->compare(SessionEntity::COLUMN_SESSION_ID, '=', $sessionId);
+        $where = $request->getWhere()->compare(SessionEntity::SESSION_ID, '=', $sessionId);
 
         if ($this->lifetime) {
-            $where->compare(SessionEntity::COLUMN_ACCESS_TIME, '>=', new DateTime('+' . $this->lifetime . ' MINUTES'));
+            $where->compare(SessionEntity::ACCESS_TIME, '>=', new DateTime('+' . $this->lifetime . ' MINUTES'));
         }
 
         /** @var SessionEntity $entity */

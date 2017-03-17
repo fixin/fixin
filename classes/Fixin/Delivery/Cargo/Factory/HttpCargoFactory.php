@@ -10,7 +10,7 @@ namespace Fixin\Delivery\Cargo\Factory;
 use Fixin\Base\Container\ContainerInterface;
 use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
-use Fixin\Base\Http\HttpHeadersInterface;
+use Fixin\Base\Headers\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
@@ -31,6 +31,10 @@ class HttpCargoFactory extends Factory
         $method = $_SERVER['REQUEST_METHOD'];
         $requestHeaders = $this->getRequestHeaders();
 
+        // TODO
+        var_dump($requestHeaders);
+        die;
+
         $options = [
             HttpCargoInterface::OPTION_COOKIES => $cookies,
             HttpCargoInterface::OPTION_ENVIRONMENT => $container->clone('Base\Container\Container', [
@@ -41,10 +45,10 @@ class HttpCargoFactory extends Factory
                 VariableContainerInterface::OPTION_VALUES => $_GET
             ]),
             HttpCargoInterface::OPTION_PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
-            HttpCargoInterface::OPTION_REQUEST_HEADERS => $container->clone('Base\Http\HttpHeaders', [
-                HttpHeadersInterface::OPTION_VALUES => $requestHeaders
+            HttpCargoInterface::OPTION_REQUEST_HEADERS => $container->clone('Base\Headers\Headers', [
+                HeadersInterface::OPTION_VALUES => $requestHeaders
             ]),
-            HttpCargoInterface::OPTION_RESPONSE_HEADERS => $container->clone('Base\Http\HttpHeaders'),
+            HttpCargoInterface::OPTION_RESPONSE_HEADERS => $container->clone('Base\Headers\Headers'),
             HttpCargoInterface::OPTION_SERVER => $container->clone('Base\Container\Container', [
                 ContainerInterface::OPTION_VALUES => $_SERVER
             ]),

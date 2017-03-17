@@ -5,11 +5,11 @@
  * @copyright  Copyright (c) 2016 Attila Jenei
  */
 
-namespace Fixin\Base\Http;
+namespace Fixin\Base\Headers;
 
 use Fixin\Resource\Prototype;
 
-class HttpHeaders extends Prototype implements HttpHeadersInterface
+class Headers extends Prototype implements HeadersInterface
 {
     /**
      * @var array
@@ -19,7 +19,7 @@ class HttpHeaders extends Prototype implements HttpHeadersInterface
     /**
      * @return static
      */
-    public function add(string $name, string $value): HttpHeadersInterface
+    public function add(string $name, string $value): HeadersInterface
     {
         $list = (array) ($this->values[$name] ?? []);
         $list[] = $value;
@@ -32,7 +32,7 @@ class HttpHeaders extends Prototype implements HttpHeadersInterface
     /**
      * @return static
      */
-    public function clear(): HttpHeadersInterface
+    public function clear(): HeadersInterface
     {
         $this->values = [];
 
@@ -58,7 +58,7 @@ class HttpHeaders extends Prototype implements HttpHeadersInterface
     /**
      * @return static
      */
-    public function send(): HttpHeadersInterface
+    public function send(): HeadersInterface
     {
         foreach ($this->values as $name => $values) {
             foreach ((array) $values as $value) {
@@ -72,7 +72,7 @@ class HttpHeaders extends Prototype implements HttpHeadersInterface
     /**
      * @return static
      */
-    public function set(string $name, array $values): HttpHeadersInterface
+    public function set(string $name, array $values): HeadersInterface
     {
         $this->values[$name] = $values;
 

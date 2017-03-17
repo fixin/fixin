@@ -10,7 +10,7 @@ namespace Fixin\Delivery\Cargo;
 use Fixin\Base\Container\ContainerInterface;
 use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
-use Fixin\Base\Http\HttpHeadersInterface;
+use Fixin\Base\Headers\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
 use Fixin\Support\Http;
@@ -57,12 +57,12 @@ class HttpCargo extends Cargo implements HttpCargoInterface
     protected $protocolVersion = Http::PROTOCOL_VERSION_1_1;
 
     /**
-     * @var HttpHeadersInterface
+     * @var HeadersInterface
      */
     protected $requestHeaders;
 
     /**
-     * @var HttpHeadersInterface
+     * @var HeadersInterface
      */
     protected $responseHeaders;
 
@@ -116,12 +116,12 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this->protocolVersion;
     }
 
-    public function getRequestHeaders(): HttpHeadersInterface
+    public function getRequestHeaders(): HeadersInterface
     {
         return $this->requestHeaders;
     }
 
-    public function getResponseHeaders(): HttpHeadersInterface
+    public function getResponseHeaders(): HeadersInterface
     {
         return $this->responseHeaders;
     }
@@ -196,12 +196,12 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this;
     }
 
-    protected function setRequestHeaders(HttpHeadersInterface $requestHeaders): void
+    protected function setRequestHeaders(HeadersInterface $requestHeaders): void
     {
         $this->requestHeaders = $requestHeaders;
     }
 
-    protected function setResponseHeaders(HttpHeadersInterface $responseHeaders): void
+    protected function setResponseHeaders(HeadersInterface $responseHeaders): void
     {
         $this->responseHeaders = $responseHeaders;
     }
@@ -255,5 +255,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         if ($this->session) {
             $this->session->save();
         }
+
+        return $this;
     }
 }

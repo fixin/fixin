@@ -22,9 +22,5 @@ interface CargoInterface extends PrototypeInterface
     public function setContent($content): CargoInterface;
     public function setContentType(string $contentType): CargoInterface;
     public function setDelivered(bool $delivered): CargoInterface;
-
-    /**
-     * Unpack cargo
-     */
     public function unpack(): CargoInterface;
 }

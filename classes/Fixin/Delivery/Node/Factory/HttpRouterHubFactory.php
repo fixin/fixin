@@ -118,13 +118,13 @@ class HttpRouterHubFactory extends Factory
     protected function addRouteItem(array $path, string $uri, array $parameters): void
     {
         Arrays::set($this->routeTree, $path, [
-            HttpRouterHub::KEY_HANDLER => $this->scopeName,
-            HttpRouterHub::KEY_PARAMETERS => array_keys($parameters)
+            HttpRouterHub::ROUTE_URI_HANDLER => $this->scopeName,
+            HttpRouterHub::ROUTE_URI_PARAMETERS => array_keys($parameters)
         ]);
 
         $this->routeUris[$this->scopeName] = [
-            HttpRouterHub::KEY_URI => $uri,
-            HttpRouterHub::KEY_PARAMETERS => $parameters
+            HttpRouterHub::ROUTE_URI_URI => $uri,
+            HttpRouterHub::ROUTE_URI_PARAMETERS => $parameters
         ];
     }
 
@@ -138,12 +138,12 @@ class HttpRouterHubFactory extends Factory
             $name = substr($name, 0, -1);
         }
 
-        $pattern = HttpRouterHub::KEY_ANY_PARAMETER;
+        $pattern = HttpRouterHub::ROUTE_URI_ANY_PARAMETER;
         $parameters[$name] = !$isOptional;
 
         if (isset($this->scopePatterns[$name])) {
             $pattern = $this->scopePatterns[$name];
-            $path[] = HttpRouterHub::KEY_PATTERN_PARAMETER;
+            $path[] = HttpRouterHub::ROUTE_URI_PATTERN_PARAMETER;
         }
 
         $path[] = $pattern;

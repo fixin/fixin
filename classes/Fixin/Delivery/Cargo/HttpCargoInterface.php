@@ -10,7 +10,7 @@ namespace Fixin\Delivery\Cargo;
 use Fixin\Base\Container\ContainerInterface;
 use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
-use Fixin\Base\Http\HttpHeadersInterface;
+use Fixin\Base\Headers\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
 
@@ -34,8 +34,8 @@ interface HttpCargoInterface extends CargoInterface
     public function getMethod(): string;
     public function getParameters(): VariableContainerInterface;
     public function getProtocolVersion(): string;
-    public function getRequestHeaders(): HttpHeadersInterface;
-    public function getResponseHeaders(): HttpHeadersInterface;
+    public function getRequestHeaders(): HeadersInterface;
+    public function getResponseHeaders(): HeadersInterface;
     public function getServer(): ContainerInterface;
     public function getSession(): SessionManagerInterface;
     public function getStatusCode(): int;

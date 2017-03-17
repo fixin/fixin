@@ -8,13 +8,14 @@
 namespace Fixin\Base\Session;
 
 use DateTime;
+use Fixin\Model\Entity\Entity;
 use Fixin\Model\Entity\EntityInterface;
 
-class SessionEntity extends \Fixin\Model\Entity\Entity
+class SessionEntity extends Entity
 {
     public const
-        COLUMN_ACCESS_TIME = 'accessTime',
-        COLUMN_SESSION_ID = 'sessionId';
+        ACCESS_TIME = 'accessTime',
+        SESSION_ID = 'sessionId';
 
     /**
      * @var DateTime

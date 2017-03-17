@@ -13,7 +13,7 @@ use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 use Fixin\Support\Strings;
 
-abstract class ActionController extends Resource implements ControllerInterface
+abstract class HttpActionController extends Resource implements ControllerInterface
 {
     protected const
         ACTION_PARAMETER = 'action',
@@ -43,7 +43,7 @@ abstract class ActionController extends Resource implements ControllerInterface
     public function handle(CargoInterface $cargo): CargoInterface
     {
         if ($cargo instanceof HttpCargoInterface) {
-            if ($method = $this->getActionMethodName($cargo->getRequestParameters()->get(static::ACTION_PARAMETER, static::DEFAULT_ACTION))) {
+            if ($method = $this->getActionMethodName($cargo->getParameters()->get(static::ACTION_PARAMETER, static::DEFAULT_ACTION))) {
                 return $this->handleMethod($cargo, $method);
             }
 

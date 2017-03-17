@@ -54,7 +54,7 @@ class Stream implements StreamInterface
     public function __toString(): string
     {
         $this->rewind();
-        return $this->getContents();
+        return $this->getRemainingContents();
     }
 
     /**
@@ -74,7 +74,7 @@ class Stream implements StreamInterface
     /**
      * @throws Exception\RuntimeException
      */
-    public function getContents(): string
+    public function getRemainingContents(): string
     {
         if (!$this->isReadable()) {
             throw new Exception\RuntimeException(static::EXCEPTION_NOT_READABLE);

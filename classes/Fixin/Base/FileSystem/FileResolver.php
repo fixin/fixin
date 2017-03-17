@@ -51,10 +51,10 @@ class FileResolver extends Resource implements FileResolverInterface
 
         // Search
         foreach ($this->paths as $path) {
-            $fullname = $path . $filename;
+            $fullName = $path . $filename;
 
-            if ($fileSystem->isReadable($fullname)) {
-                return $fileSystem->getRealPath($fullname);
+            if ($fileSystem->isReadable($fullName)) {
+                return $fileSystem->getRealPath($fullName);
             }
         }
 

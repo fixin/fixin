@@ -25,7 +25,7 @@ class Application implements ApplicationInterface
         CONFIG_APPLICATION = 'application',
         CONFIG_RESOURCE_MANAGER = 'resourceManager',
         OPTION_CARGO = 'cargo',
-        OPTION_CLASS = 'class',
+        OPTION_RESOURCE_MANAGER_CLASS = 'resourceManagerClass',
         OPTION_ERROR_ROUTE = 'errorRoute',
         OPTION_ROUTE = 'route';
 
@@ -37,7 +37,7 @@ class Application implements ApplicationInterface
     /**
      * @var ResourceManagerInterface
      */
-    protected $container;
+    protected $resourceManager;
 
     public function __construct(array $config)
     {
@@ -45,14 +45,14 @@ class Application implements ApplicationInterface
         $this->config = $config[static::CONFIG_APPLICATION] ?? [];
 
         // Resource Manager config
-        $containerConfig = $config[static::CONFIG_RESOURCE_MANAGER];
+        $resourceManagerConfig = $config[static::CONFIG_RESOURCE_MANAGER];
 
         // Class
-        $containerClass = $containerConfig[static::OPTION_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
-        unset($containerConfig[static::OPTION_CLASS]);
+        $containerClass = $resourceManagerConfig[static::OPTION_RESOURCE_MANAGER_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
+        unset($resourceManagerConfig[static::OPTION_RESOURCE_MANAGER_CLASS]);
 
         // Resoure Manager init
-        $this->container = new $containerClass($containerConfig);
+        $this->resourceManager = new $containerClass($resourceManagerConfig);
     }
 
     protected function errorRoute(CargoInterface $cargo): void
@@ -63,7 +63,7 @@ class Application implements ApplicationInterface
         }
 
         try {
-            $this->container->get($this->config[static::OPTION_ERROR_ROUTE])
+            $this->resourceManager->get($this->config[static::OPTION_ERROR_ROUTE])
                 ->handle($cargo)
                 ->unpack();
         }
@@ -87,7 +87,7 @@ class Application implements ApplicationInterface
      */
     public function run(): ApplicationInterface
     {
-        $container = $this->container;
+        $container = $this->resourceManager;
 
         // TODO lock
 

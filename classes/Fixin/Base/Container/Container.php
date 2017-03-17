@@ -9,7 +9,7 @@ namespace Fixin\Base\Container;
 
 use Fixin\Resource\Prototype;
 
-class Container extends Prototype implements ContainerInterface
+class Container implements ContainerInterface
 {
     /**
      * @var array
@@ -39,5 +39,16 @@ class Container extends Prototype implements ContainerInterface
     public function unserialize($serialized): void
     {
         $this->values = unserialize($serialized);
+    }
+
+    /**
+     * @return static
+     */
+    public function withValues(array $values): ContainerInterface
+    {
+        $clone = clone $this;
+        $clone->values = $values;
+
+        return $clone;
     }
 }

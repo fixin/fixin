@@ -23,7 +23,7 @@ interface SessionManagerInterface extends PrototypeInterface
      */
     public function clear(): SessionManagerInterface;
 
-    public function garbageCollection(int $lifetime): int;
+    public function deleteGarbageSessions(int $lifetime): int;
     public function getArea(string $name): SessionAreaInterface;
     public function getCookieName(): string;
     public function getLifetime(): int;

@@ -17,8 +17,16 @@ class JsonToArray extends Resource implements NodeInterface
 
     public function handle(CargoInterface $cargo): CargoInterface
     {
-        if (in_array($cargo->getContentType(), static::ALLOWED_TYPES)) {
-            $cargo->setContent($this->container->get('Base\Json\Json')->decode($cargo->getContent()));
+        $content = $cargo->getContent();
+
+        if (!is_array($content) && in_array($cargo->getContentType(), static::ALLOWED_TYPES)) {
+            try {
+                $content = $this->container->get('Base\Json\Json')->decode($content);
+                $cargo->setContent(is_array($content) ? $content : null);
+            }
+            catch (\Fixin\Base\Json\Exception\RuntimeException $e) {
+                $cargo->setContent(null);
+            }
         }
 
         return $cargo;

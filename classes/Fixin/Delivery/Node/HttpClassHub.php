@@ -10,7 +10,7 @@ namespace Fixin\Delivery\Node;
 use Fixin\Delivery\Cargo\CargoHandlerInterface;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
-use Fixin\Exception\RuntimeException;
+use Fixin\Delivery\Node\Exception;
 use Fixin\Support\Http;
 use Fixin\Support\Strings;
 
@@ -65,7 +65,7 @@ class HttpClassHub extends HttpHub
 
     protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface
     {
-        $path = $cargo->getRequestUri()->getPath();
+        $path = $cargo->getUri()->getPath();
         $length = strlen($this->basePath);
 
         if (strncmp($path, $this->basePath, $length) === 0) {
