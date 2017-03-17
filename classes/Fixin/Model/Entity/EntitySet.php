@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Entity;
@@ -14,7 +16,11 @@ use Fixin\Resource\Prototype;
 
 class EntitySet extends Prototype implements EntitySetInterface
 {
-    protected const THIS_SETS_LAZY = [
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_STORAGE_RESULT => self::TYPE_INSTANCE
+        ],
+        THIS_SETS_LAZY = [
             self::OPTION_ENTITY_CACHE => CacheInterface::class,
             self::OPTION_REPOSITORY => RepositoryInterface::class
         ];

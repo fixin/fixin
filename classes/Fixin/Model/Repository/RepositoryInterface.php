@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Repository;
@@ -95,7 +97,7 @@ interface RepositoryInterface extends ResourceInterface
     public function selectAll(): EntitySetInterface;
 
     public function selectColumn(RequestInterface $request): StorageResultInterface;
-    public function selectExists(RequestInterface $request): bool;
+    public function selectExistsValue(RequestInterface $request): bool;
     public function selectRawData(RequestInterface $request): StorageResultInterface;
     public function update(array $set, RequestInterface $request): int;
 }

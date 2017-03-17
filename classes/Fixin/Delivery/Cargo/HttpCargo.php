@@ -20,16 +20,17 @@ class HttpCargo extends Cargo implements HttpCargoInterface
 {
     use ToStringTrait;
 
-    protected const THIS_REQUIRES = [
-        self::OPTION_COOKIES => self::TYPE_INSTANCE,
-        self::OPTION_ENVIRONMENT => self::TYPE_INSTANCE,
-        self::OPTION_PARAMETERS => self::TYPE_INSTANCE,
-        self::OPTION_REQUEST_HEADERS => self::TYPE_INSTANCE,
-        self::OPTION_RESPONSE_HEADERS => self::TYPE_INSTANCE,
-        self::OPTION_SERVER => self::TYPE_INSTANCE,
-        self::OPTION_SESSION => self::TYPE_INSTANCE,
-        self::OPTION_URI => self::TYPE_INSTANCE
-    ];
+    protected const
+        THIS_REQUIRES = [
+            self::OPTION_COOKIES => self::TYPE_INSTANCE,
+            self::OPTION_ENVIRONMENT => self::TYPE_INSTANCE,
+            self::OPTION_PARAMETERS => self::TYPE_INSTANCE,
+            self::OPTION_REQUEST_HEADERS => self::TYPE_INSTANCE,
+            self::OPTION_RESPONSE_HEADERS => self::TYPE_INSTANCE,
+            self::OPTION_SERVER => self::TYPE_INSTANCE,
+            self::OPTION_SESSION => self::TYPE_INSTANCE,
+            self::OPTION_URI => self::TYPE_INSTANCE
+        ];
 
     /**
      * @var CookieManagerInterface

@@ -2,7 +2,8 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Entity;
@@ -26,9 +27,5 @@ interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable
     public function getEntityIds(): array;
 
     public function getRepository(): RepositoryInterface;
-
-    /**
-     * Shuffle entities
-     */
     public function shuffle(): EntitySetInterface;
 }

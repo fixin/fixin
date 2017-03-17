@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Repository;
@@ -217,11 +219,11 @@ class Repository extends RepositoryBase
         return $this->getStorage()->selectColumn($request);
     }
 
-    public function selectExists(RequestInterface $request): bool
+    public function selectExistsValue(RequestInterface $request): bool
     {
         $this->validateRequest($request);
 
-        return $this->getStorage()->selectExists($request);
+        return $this->getStorage()->selectExistsValue($request);
     }
 
     public function selectRawData(RequestInterface $request): StorageResultInterface

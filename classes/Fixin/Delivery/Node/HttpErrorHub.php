@@ -23,7 +23,8 @@ class HttpErrorHub extends Resource implements NodeInterface
             self::OPTION_ROUTE => RouteInterface::class
         ];
 
-    public const OPTION_ROUTE = 'route';
+    public const
+        OPTION_ROUTE = 'route';
 
     /**
      * @var RouteInterface|false|null
