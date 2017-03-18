@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request\Where;
@@ -176,6 +178,19 @@ class Where extends WhereBase
     public function orId(EntityIdInterface $entityId): WhereInterface
     {
         return $this->orItems($entityId->getArrayCopy());
+    }
+
+    /**
+     * @return static
+     */
+    public function orIds(array $entityIds): WhereInterface
+    {
+        $list = [];
+        foreach ($entityIds as $entityId) {
+            $list[] = $entityId->getArrayCopy();
+        }
+
+        return $this->orIn(array_keys(reset($list)), $list);
     }
 
     /**

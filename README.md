@@ -8,7 +8,7 @@
 [![Code Climate](https://codeclimate.com/github/fixin/Fixin/badges/gpa.svg)](https://codeclimate.com/github/fixin/Fixin)
 [![HHVM Status](http://hhvm.h4cc.de/badge/fixin/fixin.svg?style=flat)](http://hhvm.h4cc.de/package/fixin/fixin)
 
-Framework for PHP 7.
+Framework for PHP 7
 
 ## Developer Preview
 
@@ -16,7 +16,7 @@ This is a preview. Architecture changes are possible.
 
 ## Requirements
 
-PHP 7+
+PHP 7.1+
 
 ## Status
 

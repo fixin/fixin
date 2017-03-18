@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Storage\Grammar;
@@ -21,11 +23,11 @@ interface GrammarInterface extends ResourceInterface
         STRING_QUOTE = "'";
 
     public function delete(RequestInterface $request): SentenceInterface;
-    public function exists(RequestInterface $request): SentenceInterface;
     public function getValueAsDateTime($value): ?DateTime;
     public function insert(RepositoryInterface $repository, array $set): SentenceInterface;
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): SentenceInterface;
     public function insertMultiple(RepositoryInterface $repository, array $rows): SentenceInterface;
     public function select(RequestInterface $request): SentenceInterface;
+    public function selectExistsValue(RequestInterface $request): SentenceInterface;
     public function update(array $set, RequestInterface $request): SentenceInterface;
 }

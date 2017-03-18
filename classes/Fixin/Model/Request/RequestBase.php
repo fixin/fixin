@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request;
@@ -33,7 +35,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     /**
      * @var bool
      */
-    protected $disctinctResult = false;
+    protected $distinctResult = false;
 
     /**
      * @var array
@@ -176,7 +178,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     public function isDistinctResult(): bool
     {
-        return $this->disctinctResult;
+        return $this->distinctResult;
     }
 
     /**
@@ -265,9 +267,9 @@ abstract class RequestBase extends Prototype implements RequestInterface
     /**
      * @return static
      */
-    public function setDistinctResult(bool $disctinctResult): RequestInterface
+    public function setDistinctResult(bool $distinctResult): RequestInterface
     {
-        $this->disctinctResult = $disctinctResult;
+        $this->distinctResult = $distinctResult;
 
         return $this;
     }

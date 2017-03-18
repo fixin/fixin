@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View;
@@ -14,7 +16,8 @@ interface ViewInterface extends PrototypeInterface
     public const
         OPTION_ENGINE = 'engine',
         OPTION_FILE_RESOLVER = 'fileResolver',
-        OPTION_POSTFIX_TO_ENGINE_MAP = 'postfixToEngineMap';
+        OPTION_POSTFIX_TO_ENGINE_MAP = 'postfixToEngineMap',
+        OPTION_TEMPLATE = 'template';
 
     public function clearChildren(): ViewInterface;
     public function clearVariables(): ViewInterface;
@@ -24,6 +27,11 @@ interface ViewInterface extends PrototypeInterface
      * @return ViewInterface[]
      */
     public function getChildren(): array;
+
+    /**
+     * Get the type of the content
+     */
+    public function getContentType(): string;
 
     /**
      * Get resolved template filename

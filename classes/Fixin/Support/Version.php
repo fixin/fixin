@@ -2,22 +2,16 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Support;
 
 final class Version extends DoNotCreate
 {
-    /**
-     * @var string
-     */
-    const MINIMUM_PHP_VERSION = '7.1';
-
-    /**
-     * Installed version
-     *
-     * @var string
-     */
-    const VERSION = '0.9';
+    public const
+        MINIMUM_PHP_VERSION = '7.1',
+        VERSION = '0.9';
 }

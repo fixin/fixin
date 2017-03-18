@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Storage\Pdo;
@@ -59,28 +61,26 @@ class PdoStorage extends Resource implements StorageInterface
 
     /**
      * @throws Exception\RuntimeException
-     * @return static
      */
-    public function connect(): self
+    protected function connect(): void
     {
         if ($this->resource) {
-            return $this;
+            return;
         }
 
         try {
-            $this->resource =
             $resource = new PDO($this->dsn, $this->username, $this->password);
             $resource->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->password = null;
 
             $class = ucfirst(strtolower($resource->getAttribute(PDO::ATTR_DRIVER_NAME)));
             $this->grammar = $this->container->get(sprintf(static::GRAMMAR_CLASS_MASK, $class));
+
+            $this->resource = $resource;
+            $this->password = null;
         }
         catch (PDOException $e) {
             throw new Exception\RuntimeException(sprintf(static::EXCEPTION_CONNECTION_ERROR, $e->getMessage()));
         }
-
-        return $this;
     }
 
     public function delete(RequestInterface $request): int
@@ -159,9 +159,9 @@ class PdoStorage extends Resource implements StorageInterface
         return $this->query($this->getGrammar()->select($request), $mode);
     }
 
-    public function selectExists(RequestInterface $request): bool
+    public function selectExistsValue(RequestInterface $request): bool
     {
-        return (bool) $this->prepareStatement($this->getGrammar()->exists($request))->fetchColumn();
+        return (bool) $this->prepareStatement($this->getGrammar()->selectExistsValue($request))->fetchColumn();
     }
 
     protected function setDsn(string $dsn): void

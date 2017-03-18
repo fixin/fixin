@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request;
@@ -17,9 +19,8 @@ use Fixin\Model\Storage\StorageResultInterface;
  */
 class Request extends RequestBase {
 
-    const
+    protected const
         MASK_COUNT = 'COUNT(%s)',
-        PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
         PROTOTYPE_UNION = 'Model\Request\Union';
 
     /**
@@ -62,10 +63,7 @@ class Request extends RequestBase {
 
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface
     {
-        return $this->container->clone(static::PROTOTYPE_EXPRESSION, [
-            ExpressionInterface::OPTION_EXPRESSION => $expression,
-            ExpressionInterface::OPTION_PARAMETERS => $parameters
-        ]);
+        return $this->repository->createExpression($expression, $parameters);
     }
 
     public function delete(): int
@@ -85,7 +83,7 @@ class Request extends RequestBase {
 
     public function fetchExistsValue(): bool
     {
-        return $this->repository->selectExists($this);
+        return $this->repository->selectExistsValue($this);
     }
 
     public function fetchFirst(): ?EntityInterface
@@ -93,7 +91,7 @@ class Request extends RequestBase {
         return (clone $this)
             ->setLimit(1)
             ->fetch()
-            ->current();
+                ->current();
     }
 
     public function fetchRawData(): StorageResultInterface
@@ -103,7 +101,10 @@ class Request extends RequestBase {
 
     public function fetchValue($column)
     {
-        return $this->fetchColumn($column)->current();
+        return (clone $this)
+            ->setLimit(1)
+            ->fetchColumn($column)
+                ->current();
     }
 
     public function getUnionLimit(): ?int

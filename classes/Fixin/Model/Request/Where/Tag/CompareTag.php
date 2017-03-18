@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request\Where\Tag;
@@ -13,10 +15,10 @@ class CompareTag extends Tag {
 
     protected const
         THIS_REQUIRES = [
-        self::OPTION_LEFT => self::TYPE_ANY,
-        self::OPTION_OPERATOR => self::TYPE_STRING,
-        self::OPTION_RIGHT => self::TYPE_ANY,
-    ];
+            self::OPTION_LEFT => self::TYPE_ANY,
+            self::OPTION_OPERATOR => self::TYPE_STRING,
+            self::OPTION_RIGHT => self::TYPE_ANY,
+        ];
 
     public const
         OPERATOR_EQUAL = '=',

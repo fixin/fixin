@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Resource;
@@ -13,10 +15,10 @@ abstract class Resource implements ResourceInterface
         EXCEPTION_INVALID_ARGUMENT = "Invalid '%s' argument: %s allowed",
         EXCEPTION_INVALID_OPTION = "Invalid option name '%s'",
         EXCEPTION_INVALID_RESOURCE = "Invalid '%s' resource: %s allowed",
-        EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a requried %s for %s",
+        EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a required %s for %s",
         THIS_REQUIRES = [],
         THIS_SETS_LAZY = [],
-        TYPE_ANY = 'any',
+        TYPE_ANY = 'any', // TODO REQUIRES_ANY...
         TYPE_ARRAY = 'array',
         TYPE_BOOL = 'bool',
         TYPE_INSTANCE = 'instance',

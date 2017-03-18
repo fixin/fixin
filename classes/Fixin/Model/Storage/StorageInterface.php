@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Storage;
@@ -22,6 +24,6 @@ interface StorageInterface extends ResourceInterface
     public function insertMultiple(RepositoryInterface $repository, array $rows): int;
     public function select(RequestInterface $request): StorageResultInterface;
     public function selectColumn(RequestInterface $request): StorageResultInterface;
-    public function selectExists(RequestInterface $request): bool;
+    public function selectExistsValue(RequestInterface $request): bool;
     public function update(array $set, RequestInterface $request): int;
 }

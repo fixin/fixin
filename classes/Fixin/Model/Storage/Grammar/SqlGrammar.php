@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Storage\Grammar;
@@ -118,15 +120,7 @@ abstract class SqlGrammar extends Grammar
 
     public function delete(RequestInterface $request): SentenceInterface
     {
-        return $this->makeSentence(static::STATEMENT_DELETE, $request, [static::ADD_FROM, static::ADD_WHERE, static::ADD_ORDER_BY, static::ADD_LIMIT]);
-    }
-
-    public function exists(RequestInterface $request): SentenceInterface
-    {
-        /** @var SentenceInterface $sentence */
-        $sentence = $this->container->clone(static::PROTOTYPE_SENTENCE);
-
-        return $sentence->appendClause(static::STATEMENT_SELECT[false], sprintf(static::MASK_EXISTS, $this->requestToString($request, $sentence)));
+        return $this->makeSentence(static::STATEMENT_DELETE, $request, [static::ADD_FROM, static::ADD_JOIN, static::ADD_WHERE, static::ADD_ORDER_BY, static::ADD_LIMIT]);
     }
 
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): SentenceInterface
@@ -214,6 +208,14 @@ abstract class SqlGrammar extends Grammar
         }
 
         return $sentence;
+    }
+
+    public function selectExistsValue(RequestInterface $request): SentenceInterface
+    {
+        /** @var SentenceInterface $sentence */
+        $sentence = $this->container->clone(static::PROTOTYPE_SENTENCE);
+
+        return $sentence->appendClause(static::STATEMENT_SELECT[false], sprintf(static::MASK_EXISTS, $this->requestToString($request, $sentence)));
     }
 
     public function update(array $set, RequestInterface $request): SentenceInterface

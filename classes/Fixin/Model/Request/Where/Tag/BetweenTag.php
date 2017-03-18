@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request\Where\Tag;
@@ -11,10 +13,10 @@ class BetweenTag extends IdentifierTag
 {
     protected const
         THIS_REQUIRES = [
-        self::OPTION_IDENTIFIER => self::TYPE_ANY,
-        self::OPTION_MAX => self::TYPE_ANY,
-        self::OPTION_MIN => self::TYPE_ANY,
-    ];
+            self::OPTION_IDENTIFIER => self::TYPE_ANY,
+            self::OPTION_MAX => self::TYPE_ANY,
+            self::OPTION_MIN => self::TYPE_ANY,
+        ];
 
     public const
         OPTION_MAX = 'max',

@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View;
@@ -85,9 +87,6 @@ class View extends Prototype implements ViewInterface
         return $this->children;
     }
 
-    /**
-     * Get type of the rendered content
-     */
     public function getContentType(): string
     {
         return $this->getEngine()->getContentType();

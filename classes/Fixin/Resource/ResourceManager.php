@@ -2,10 +2,14 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Resource;
+
+use Fixin\Resource\AbstractFactory\AbstractFactoryInterface;
 
 class ResourceManager extends ResourceManagerBase
 {
@@ -20,6 +24,7 @@ class ResourceManager extends ResourceManagerBase
      */
     protected function canProduceByAbstractFactory(string $name): bool
     {
+        /** @var AbstractFactoryInterface $abstractFactory */
         foreach ($this->abstractFactories as $abstractFactory) {
             if ($abstractFactory->canProduce($name)) {
                 return true;

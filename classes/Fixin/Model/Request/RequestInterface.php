@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request;
@@ -112,7 +114,7 @@ interface RequestInterface extends PrototypeInterface
 
     public function setAlias(string $alias): RequestInterface;
     public function setColumns(array $columns): RequestInterface;
-    public function setDistinctResult(bool $disctinctResult): RequestInterface;
+    public function setDistinctResult(bool $distinctResult): RequestInterface;
     public function setGroupBy(array $groupBy): RequestInterface;
     public function setIdFetchEnabled(bool $idFetchEnabled): RequestInterface;
     public function setLimit(?int $limit): RequestInterface;

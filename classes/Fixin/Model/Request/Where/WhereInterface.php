@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request\Where;
@@ -46,12 +48,12 @@ interface WhereInterface extends PrototypeInterface
     public function getTags(): array;
 
     /**
-     * Add: id
+     * Add: and id
      */
     public function id(EntityIdInterface $entityId): WhereInterface;
 
     /**
-     * Add: ids
+     * Add: and ids
      *
      * @param EntityIdInterface[] $entityIds
      */
@@ -107,7 +109,7 @@ interface WhereInterface extends PrototypeInterface
     public function notNull(string $identifier): WhereInterface;
 
     /**
-     * Add an and null
+     * Add: and null
      */
     public function null(string $identifier): WhereInterface;
 
@@ -136,6 +138,13 @@ interface WhereInterface extends PrototypeInterface
      * Add: or id
      */
     public function orId(EntityIdInterface $entityId): WhereInterface;
+
+    /**
+     * Add: or ids
+     *
+     * @param EntityIdInterface[] $entityIds
+     */
+    public function orIds(array $entityIds): WhereInterface;
 
     /**
      * Add: or in
@@ -177,14 +186,14 @@ interface WhereInterface extends PrototypeInterface
     public function orNotIn($identifier, $values): WhereInterface;
 
     /**
-     * Add: or not null
-     */
-    public function orNotNull(string $identifier): WhereInterface;
-
-    /**
      * Add: or not nested where
      */
     public function orNotNested(callable $callback): WhereInterface;
+
+    /**
+     * Add: or not null
+     */
+    public function orNotNull(string $identifier): WhereInterface;
 
     /**
      * Add: or null
