@@ -13,9 +13,9 @@ class BetweenTag extends IdentifierTag
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_IDENTIFIER => self::TYPE_ANY,
-            self::OPTION_MAX => self::TYPE_ANY,
-            self::OPTION_MIN => self::TYPE_ANY,
+            self::OPTION_IDENTIFIER,
+            self::OPTION_MAX,
+            self::OPTION_MIN
         ];
 
     public const

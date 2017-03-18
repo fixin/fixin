@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Controller;
@@ -20,19 +22,19 @@ abstract class HttpRestfulController extends Resource implements ControllerInter
         ],
         CONTENT_TYPE = 'application/json',
         METHOD_MAP = [
-            Http::METHOD_DELETE => 'delete',
-            Http::METHOD_GET => 'get',
-            Http::METHOD_HEAD => 'head',
-            Http::METHOD_OPTIONS => 'options',
-            Http::METHOD_PATCH => 'patch',
-            Http::METHOD_POST => 'post',
-            Http::METHOD_PUT => 'put'
+            Http::METHOD_DELETE => 'deleteMethod',
+            Http::METHOD_GET => 'getMethod',
+            Http::METHOD_HEAD => 'headMethod',
+            Http::METHOD_OPTIONS => 'optionsMethod',
+            Http::METHOD_PATCH => 'patchMethod',
+            Http::METHOD_POST => 'postMethod',
+            Http::METHOD_PUT => 'putMethod'
         ];
 
     /**
      * Delete a resource
      */
-    public function delete(HttpCargoInterface $cargo): HttpCargoInterface
+    public function deleteMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
         return $this->replyMethodNotAllowed($cargo);
     }
@@ -40,9 +42,8 @@ abstract class HttpRestfulController extends Resource implements ControllerInter
     /**
      * Retrieve information
      */
-    public function get(HttpCargoInterface $cargo): HttpCargoInterface
+    public function getMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
-        // TODO rethink method names: get() -> getMethod()?
         return $this->replyMethodNotAllowed($cargo);
     }
 
@@ -64,7 +65,7 @@ abstract class HttpRestfulController extends Resource implements ControllerInter
     /**
      * Metadata of the resource
      */
-    public function head(HttpCargoInterface $cargo): HttpCargoInterface
+    public function headMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
         return $this->replyMethodNotAllowed($cargo);
     }
@@ -72,7 +73,7 @@ abstract class HttpRestfulController extends Resource implements ControllerInter
     /**
      * Allowed methods
      */
-    public function options(HttpCargoInterface $cargo): HttpCargoInterface
+    public function optionsMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
         return $this->replyMethodNotAllowed($cargo);
     }
@@ -80,7 +81,7 @@ abstract class HttpRestfulController extends Resource implements ControllerInter
     /**
      * Patch request
      */
-    public function patch(HttpCargoInterface $cargo): HttpCargoInterface
+    public function patchMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
         return $this->replyMethodNotAllowed($cargo);
     }
@@ -88,7 +89,7 @@ abstract class HttpRestfulController extends Resource implements ControllerInter
     /**
      * Create or replace resource (non-idempotent)
      */
-    public function post(HttpCargoInterface $cargo): HttpCargoInterface
+    public function postMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
         return $this->replyMethodNotAllowed($cargo);
     }
@@ -96,7 +97,7 @@ abstract class HttpRestfulController extends Resource implements ControllerInter
     /**
      * Replace or create resource (idempotent)
      */
-    public function put(HttpCargoInterface $cargo): HttpCargoInterface
+    public function putMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
         return $this->replyMethodNotAllowed($cargo);
     }

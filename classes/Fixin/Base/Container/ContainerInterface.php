@@ -2,12 +2,12 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Container;
-
-use Fixin\Resource\PrototypeInterface;
 
 interface ContainerInterface extends \Serializable
 {

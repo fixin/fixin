@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Cargo;
@@ -22,14 +24,14 @@ class HttpCargo extends Cargo implements HttpCargoInterface
 
     protected const
         THIS_REQUIRES = [
-            self::OPTION_COOKIES => self::TYPE_INSTANCE,
-            self::OPTION_ENVIRONMENT => self::TYPE_INSTANCE,
-            self::OPTION_PARAMETERS => self::TYPE_INSTANCE,
-            self::OPTION_REQUEST_HEADERS => self::TYPE_INSTANCE,
-            self::OPTION_RESPONSE_HEADERS => self::TYPE_INSTANCE,
-            self::OPTION_SERVER => self::TYPE_INSTANCE,
-            self::OPTION_SESSION => self::TYPE_INSTANCE,
-            self::OPTION_URI => self::TYPE_INSTANCE
+            self::OPTION_COOKIES,
+            self::OPTION_ENVIRONMENT,
+            self::OPTION_PARAMETERS,
+            self::OPTION_REQUEST_HEADERS,
+            self::OPTION_RESPONSE_HEADERS,
+            self::OPTION_SERVER,
+            self::OPTION_SESSION,
+            self::OPTION_URI
         ];
 
     /**

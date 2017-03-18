@@ -15,9 +15,9 @@ class CompareTag extends Tag {
 
     protected const
         THIS_REQUIRES = [
-            self::OPTION_LEFT => self::TYPE_ANY,
-            self::OPTION_OPERATOR => self::TYPE_STRING,
-            self::OPTION_RIGHT => self::TYPE_ANY,
+            self::OPTION_LEFT,
+            self::OPTION_OPERATOR,
+            self::OPTION_RIGHT
         ];
 
     public const

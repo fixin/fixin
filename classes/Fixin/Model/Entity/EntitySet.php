@@ -18,7 +18,7 @@ class EntitySet extends Prototype implements EntitySetInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_STORAGE_RESULT => self::TYPE_INSTANCE
+            self::OPTION_STORAGE_RESULT
         ],
         THIS_SETS_LAZY = [
             self::OPTION_ENTITY_CACHE => CacheInterface::class,

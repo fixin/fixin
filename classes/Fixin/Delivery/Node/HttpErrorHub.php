@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Node;
@@ -17,7 +19,7 @@ class HttpErrorHub extends Resource implements NodeInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_ROUTE => self::TYPE_INSTANCE
+            self::OPTION_ROUTE
         ],
         THIS_SETS_LAZY = [
             self::OPTION_ROUTE => RouteInterface::class

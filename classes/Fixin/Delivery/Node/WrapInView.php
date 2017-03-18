@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Node;
@@ -16,8 +18,8 @@ class WrapInView extends Resource implements NodeInterface
     protected const
         ALLOWED_TYPES = ['text/html'],
         THIS_REQUIRES = [
-            self::OPTION_CONTENT_NAME => self::TYPE_STRING,
-            self::OPTION_TEMPLATE => self::TYPE_STRING
+            self::OPTION_CONTENT_NAME,
+            self::OPTION_TEMPLATE
         ];
 
     public const

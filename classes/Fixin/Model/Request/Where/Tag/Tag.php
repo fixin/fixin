@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request\Where\Tag;
@@ -13,7 +15,7 @@ abstract class Tag extends Prototype implements TagInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_JOIN => self::TYPE_STRING
+            self::OPTION_JOIN
         ];
 
     /**

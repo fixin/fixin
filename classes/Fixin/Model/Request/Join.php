@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request;
@@ -15,9 +17,9 @@ class Join extends Prototype implements JoinInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_ALIAS => self::TYPE_STRING,
-            self::OPTION_REPOSITORY => self::TYPE_INSTANCE,
-            self::OPTION_TYPE => self::TYPE_STRING
+            self::OPTION_ALIAS,
+            self::OPTION_REPOSITORY,
+            self::OPTION_TYPE
         ];
 
     /**

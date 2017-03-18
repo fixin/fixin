@@ -19,7 +19,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
         PROTOTYPE_JOIN = 'Model\Request\Join',
         PROTOTYPE_WHERE = 'Model\Request\Where\Where',
         THIS_REQUIRES = [
-            self::OPTION_REPOSITORY => self::TYPE_INSTANCE
+            self::OPTION_REPOSITORY
         ];
 
     /**

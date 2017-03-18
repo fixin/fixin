@@ -2,12 +2,12 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Container;
-
-use Fixin\Resource\Prototype;
 
 class Container implements ContainerInterface
 {
@@ -29,11 +29,6 @@ class Container implements ContainerInterface
     public function serialize(): string
     {
         return serialize($this->values);
-    }
-
-    protected function setValues(array $values): void
-    {
-        $this->values = $values;
     }
 
     public function unserialize($serialized): void

@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Entity;
@@ -15,7 +17,7 @@ class EntityId extends Prototype implements EntityIdInterface
     protected const
         SEPARATOR = ',',
         THIS_REQUIRES = [
-            self::OPTION_REPOSITORY => self::TYPE_INSTANCE
+            self::OPTION_REPOSITORY
         ],
         THIS_SETS_LAZY = [
             self::OPTION_REPOSITORY => RepositoryInterface::class

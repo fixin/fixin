@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Node;
@@ -18,7 +20,7 @@ class HttpRouterHub extends HttpHub
         EXCEPTION_MISSING_ROUTE_PARAMETER = "Missing route parameter '%s'",
         EXCEPTION_UNKNOWN_ROUTE = "Unknown route '%s'",
         THIS_REQUIRES = [
-            self::OPTION_ROUTE_TREE => self::TYPE_ARRAY
+            self::OPTION_ROUTE_TREE
         ];
 
     public const

@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Storage\Pdo;
@@ -19,7 +21,7 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
         EXCEPTION_REWIND_IS_NOT_ALLOWED = 'Rewind is not allowed',
         MASK_TO_STRING = '%s {' . PHP_EOL . "    Position: %d" . PHP_EOL . "    Count: %d" . PHP_EOL . '}' . PHP_EOL,
         THIS_REQUIRES = [
-            self::OPTION_STATEMENT => self::TYPE_INSTANCE
+            self::OPTION_STATEMENT
         ];
 
     public const

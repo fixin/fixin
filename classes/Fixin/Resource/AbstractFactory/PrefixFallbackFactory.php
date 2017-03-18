@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Resource\AbstractFactory;
@@ -13,7 +15,7 @@ class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_SEARCH_ORDER => self::TYPE_ARRAY
+            self::OPTION_SEARCH_ORDER
         ];
 
     public const

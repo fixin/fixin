@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request;
@@ -13,7 +15,7 @@ class Expression extends Prototype implements ExpressionInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_EXPRESSION => self::TYPE_STRING,
+            self::OPTION_EXPRESSION
         ];
 
     /**

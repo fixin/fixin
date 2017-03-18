@@ -16,7 +16,7 @@ class FileResolver extends Resource implements FileResolverInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_FILE_SYSTEM => self::TYPE_INSTANCE
+            self::OPTION_FILE_SYSTEM
         ],
         THIS_SETS_LAZY = [
             self::OPTION_FILE_SYSTEM => FileSystemInterface::class

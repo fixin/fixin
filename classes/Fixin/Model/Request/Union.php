@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request;
@@ -13,8 +15,8 @@ class Union extends Prototype implements UnionInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_REQUEST => self::TYPE_INSTANCE,
-            self::OPTION_TYPE => self::TYPE_STRING
+            self::OPTION_REQUEST,
+            self::OPTION_TYPE
         ];
 
     /**

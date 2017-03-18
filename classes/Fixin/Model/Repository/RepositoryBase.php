@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Repository;
@@ -18,11 +20,11 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface
         EXCEPTION_INVALID_NAME = "Invalid name '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
         THIS_REQUIRES = [
-            self::OPTION_ENTITY_CACHE => self::TYPE_INSTANCE,
-            self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
-            self::OPTION_NAME => self::TYPE_STRING,
-            self::OPTION_PRIMARY_KEY => self::TYPE_ARRAY,
-            self::OPTION_STORAGE => self::TYPE_INSTANCE,
+            self::OPTION_ENTITY_CACHE,
+            self::OPTION_ENTITY_PROTOTYPE,
+            self::OPTION_NAME,
+            self::OPTION_PRIMARY_KEY,
+            self::OPTION_STORAGE
         ],
         THIS_SETS_LAZY = [
             self::OPTION_ENTITY_CACHE => CacheInterface::class,

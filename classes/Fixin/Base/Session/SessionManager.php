@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Session;
@@ -18,9 +20,9 @@ class SessionManager extends Prototype implements SessionManagerInterface
     protected const
         DATA_REGENERATED = 'regenerated',
         THIS_REQUIRES = [
-            self::OPTION_COOKIE_MANAGER => self::TYPE_INSTANCE,
-            self::OPTION_COOKIE_NAME => self::TYPE_STRING,
-            self::OPTION_REPOSITORY => self::TYPE_INSTANCE
+            self::OPTION_COOKIE_MANAGER,
+            self::OPTION_COOKIE_NAME,
+            self::OPTION_REPOSITORY
         ],
         THIS_SETS_LAZY = [
             self::OPTION_COOKIE_MANAGER => CookieManagerInterface::class,

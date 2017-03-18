@@ -15,14 +15,9 @@ abstract class Resource implements ResourceInterface
         EXCEPTION_INVALID_ARGUMENT = "Invalid '%s' argument: %s allowed",
         EXCEPTION_INVALID_OPTION = "Invalid option name '%s'",
         EXCEPTION_INVALID_RESOURCE = "Invalid '%s' resource: %s allowed",
-        EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is a required %s for %s",
+        EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is required for %s",
         THIS_REQUIRES = [],
-        THIS_SETS_LAZY = [],
-        TYPE_ANY = 'any', // TODO REQUIRES_ANY...
-        TYPE_ARRAY = 'array',
-        TYPE_BOOL = 'bool',
-        TYPE_INSTANCE = 'instance',
-        TYPE_STRING = 'string';
+        THIS_SETS_LAZY = [];
 
     /**
      * @var ResourceManagerInterface
@@ -51,57 +46,18 @@ abstract class Resource implements ResourceInterface
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     */
-    private function configurationAnyTest($value): bool
-    {
-        return isset($value);
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     */
-    private function configurationArrayTest($value): bool
-    {
-        return is_array($value) && count($value);
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     */
-    private function configurationBoolTest($value): bool
-    {
-        return is_bool($value);
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     */
-    private function configurationInstanceTest($value): bool
-    {
-        return $value === false || is_object($value);
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     */
-    private function configurationStringTest($value): bool
-    {
-        return is_string($value) && $value !== '';
-    }
-
-    /**
      * @throws Exception\RuntimeException
      * @return static
      */
     protected function configurationTests(): Resource
     {
-        foreach (static::THIS_REQUIRES as $key => $type) {
-            if ($this->{"configuration{$type}Test"}($this->$key)) {
+        foreach (static::THIS_REQUIRES as $key) {
+            $value = $this->{$key};
+            if ($value !== null && $value !== '' && $value !== []) {
                 continue;
             }
 
-            throw new Exception\RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, $type, get_class($this)));
+            throw new Exception\RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, get_class($this)));
         }
 
         return $this;
@@ -157,7 +113,7 @@ abstract class Resource implements ResourceInterface
     /**
      * @throws Exception\InvalidArgumentException
      */
-    protected function setLazyLoadingProperty(string $propertyName, string $interface, $value): void
+    private function setLazyLoadingProperty(string $propertyName, string $interface, $value): void
     {
         // Key
         if (is_string($value)) {

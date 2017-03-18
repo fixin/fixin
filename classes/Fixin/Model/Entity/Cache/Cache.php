@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Entity\Cache;
@@ -15,8 +17,8 @@ abstract class Cache extends Prototype implements CacheInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_ENTITY_PROTOTYPE => self::TYPE_INSTANCE,
-            self::OPTION_REPOSITORY => self::TYPE_INSTANCE,
+            self::OPTION_ENTITY_PROTOTYPE,
+            self::OPTION_REPOSITORY
         ];
 
     /**
