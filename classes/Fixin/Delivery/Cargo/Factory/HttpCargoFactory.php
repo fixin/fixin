@@ -2,13 +2,13 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Cargo\Factory;
 
-use Fixin\Base\Container\ContainerInterface;
-use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Headers\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
@@ -37,21 +37,15 @@ class HttpCargoFactory extends Factory
 
         $options = [
             HttpCargoInterface::OPTION_COOKIES => $cookies,
-            HttpCargoInterface::OPTION_ENVIRONMENT => $container->clone('Base\Container\Container', [
-                ContainerInterface::OPTION_VALUES => $_ENV
-            ]),
+            HttpCargoInterface::OPTION_ENVIRONMENT => $container->clone('Base\Container\Container')->withValues($_ENV),
             HttpCargoInterface::OPTION_METHOD => $method,
-            HttpCargoInterface::OPTION_PARAMETERS => $container->clone('Base\Container\VariableContainer', [
-                VariableContainerInterface::OPTION_VALUES => $_GET
-            ]),
+            HttpCargoInterface::OPTION_PARAMETERS => $container->clone('Base\Container\VariableContainer')->withValues($_GET),
             HttpCargoInterface::OPTION_PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
             HttpCargoInterface::OPTION_REQUEST_HEADERS => $container->clone('Base\Headers\Headers', [
                 HeadersInterface::OPTION_VALUES => $requestHeaders
             ]),
             HttpCargoInterface::OPTION_RESPONSE_HEADERS => $container->clone('Base\Headers\Headers'),
-            HttpCargoInterface::OPTION_SERVER => $container->clone('Base\Container\Container', [
-                ContainerInterface::OPTION_VALUES => $_SERVER
-            ]),
+            HttpCargoInterface::OPTION_SERVER => $container->clone('Base\Container\Container')->withValues($_SERVER),
             HttpCargoInterface::OPTION_SESSION => $container->clone('Base\Session\SessionManager', [
                 SessionManagerInterface::OPTION_COOKIE_MANAGER => $cookies
             ]),

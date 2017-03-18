@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Application;
@@ -51,7 +53,7 @@ class Application implements ApplicationInterface
         $containerClass = $resourceManagerConfig[static::OPTION_RESOURCE_MANAGER_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
         unset($resourceManagerConfig[static::OPTION_RESOURCE_MANAGER_CLASS]);
 
-        // Resoure Manager init
+        // Resource Manager init
         $this->resourceManager = new $containerClass($resourceManagerConfig);
     }
 

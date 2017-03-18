@@ -2,11 +2,15 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View\Engine\Exception;
 
-interface ViewEngineExceptionInterface extends \Fixin\View\Exception\ViewExceptionInterface
+use Fixin\View\Exception\ViewExceptionInterface;
+
+interface ViewEngineExceptionInterface extends ViewExceptionInterface
 {
 }

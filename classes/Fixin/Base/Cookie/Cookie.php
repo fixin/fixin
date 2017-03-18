@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Cookie;
@@ -77,6 +79,7 @@ class Cookie extends Prototype implements CookieInterface
 
     /**
      * @return static
+     * @throws Exception\RuntimeException
      */
     public function sendAs(string $name): CookieInterface
     {

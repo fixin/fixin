@@ -153,6 +153,7 @@ class Repository extends RepositoryBase
 
     /**
      * @return static
+     * @throws Exception\EntityRefreshFaultException
      */
     public function refresh(EntityInterface $entity): RepositoryInterface
     {

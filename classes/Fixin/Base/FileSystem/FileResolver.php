@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\FileSystem;
@@ -61,9 +63,6 @@ class FileResolver extends Resource implements FileResolverInterface
         return null;
     }
 
-    /**
-     * Set default extension for filenames
-     */
     protected function setDefaultExtension(string $defaultExtension): void
     {
         $this->defaultExtension = $defaultExtension;
