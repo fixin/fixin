@@ -2,11 +2,14 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Node;
 
+use Fixin\Base\Json;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Resource\Resource;
 
@@ -24,7 +27,7 @@ class JsonToArray extends Resource implements NodeInterface
                 $content = $this->container->get('Base\Json\Json')->decode($content);
                 $cargo->setContent(is_array($content) ? $content : null);
             }
-            catch (\Fixin\Base\Json\Exception\RuntimeException $e) {
+            catch (Json\Exception\RuntimeException $e) {
                 $cargo->setContent(null);
             }
         }

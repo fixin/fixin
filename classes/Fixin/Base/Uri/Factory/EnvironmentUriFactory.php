@@ -2,15 +2,18 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Uri\Factory;
 
 use Fixin\Base\Uri\UriInterface;
-use Fixin\Resource\Factory\Factory;
+use Fixin\Resource\FactoryInterface;
+use Fixin\Resource\Resource;
 
-class EnvironmentUriFactory extends Factory
+class EnvironmentUriFactory extends Resource implements FactoryInterface
 {
     protected const
         EXCEPTION_CAN_T_DETERMINE = 'Can\'t determine the request URI';

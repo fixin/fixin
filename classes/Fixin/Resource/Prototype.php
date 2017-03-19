@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Resource;
@@ -29,6 +31,6 @@ abstract class Prototype extends Resource implements PrototypeInterface
     {
         return (clone $this)
             ->configureWithOptions($options)
-            ->configurationTests();
+            ->configurationTest(get_class($this));
     }
 }

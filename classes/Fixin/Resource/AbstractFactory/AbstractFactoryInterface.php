@@ -2,22 +2,17 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Resource\ResourceInterface;
+use Fixin\Resource\FactoryInterface;
 
-interface AbstractFactoryInterface extends ResourceInterface
+interface AbstractFactoryInterface extends FactoryInterface
 {
-    /**
-     * Produce resource
-     *
-     * @return object|null
-     */
-    public function __invoke(array $options = null, string $name = null);
-
     /**
      * Determine if we can produce a resource by name
      */

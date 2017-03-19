@@ -2,16 +2,19 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Cargo\Factory;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\Resource\Factory\Factory;
+use Fixin\Resource\FactoryInterface;
+use Fixin\Resource\Resource;
 use Fixin\Support\Ground;
 
-class RuntimeCargoFactory extends Factory
+class RuntimeCargoFactory extends Resource implements FactoryInterface
 {
     public function __invoke(array $options = null, string $name = null): CargoInterface
     {

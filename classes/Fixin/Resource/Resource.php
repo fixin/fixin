@@ -12,10 +12,10 @@ namespace Fixin\Resource;
 abstract class Resource implements ResourceInterface
 {
     protected const
+        EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is required for %s",
         EXCEPTION_INVALID_ARGUMENT = "Invalid '%s' argument: %s allowed",
         EXCEPTION_INVALID_OPTION = "Invalid option name '%s'",
         EXCEPTION_INVALID_RESOURCE = "Invalid '%s' resource: %s allowed",
-        EXCEPTION_CONFIGURATION_REQUIRES = "'%s' is required for %s",
         THIS_REQUIRES = [],
         THIS_SETS_LAZY = [];
 
@@ -29,9 +29,6 @@ abstract class Resource implements ResourceInterface
      */
     private $lazyLoadingProperties = [];
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
     public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
     {
         $this->container = $container;
@@ -42,14 +39,14 @@ abstract class Resource implements ResourceInterface
         }
 
         // Configuration test
-        $this->configurationTests();
+        $this->configurationTest($name);
     }
 
     /**
      * @throws Exception\RuntimeException
      * @return static
      */
-    protected function configurationTests(): Resource
+    protected function configurationTest(string $name): Resource
     {
         foreach (static::THIS_REQUIRES as $key) {
             $value = $this->{$key};
@@ -57,7 +54,7 @@ abstract class Resource implements ResourceInterface
                 continue;
             }
 
-            throw new Exception\RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, get_class($this)));
+            throw new Exception\RuntimeException(sprintf(static::EXCEPTION_CONFIGURATION_REQUIRES, $key, $name));
         }
 
         return $this;
@@ -113,7 +110,7 @@ abstract class Resource implements ResourceInterface
     /**
      * @throws Exception\InvalidArgumentException
      */
-    private function setLazyLoadingProperty(string $propertyName, string $interface, $value): void
+    protected function setLazyLoadingProperty(string $propertyName, string $interface, $value): void
     {
         // Key
         if (is_string($value)) {

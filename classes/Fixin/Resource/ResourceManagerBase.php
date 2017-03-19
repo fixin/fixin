@@ -2,13 +2,14 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Resource;
 
 use Fixin\Resource\AbstractFactory\AbstractFactoryInterface;
-use Fixin\Resource\Factory\FactoryInterface;
 
 abstract class ResourceManagerBase implements ResourceManagerInterface
 {
@@ -19,17 +20,16 @@ abstract class ResourceManagerBase implements ResourceManagerInterface
         EXCEPTION_INVALID_DEFINITION = "Invalid definition registered for name '%s'",
         KEY_CLASS = 'class',
         KEY_OPTIONS = 'options',
-        KEY_RESOLVED = 'resolved';
-
-    public const
-        OPTION_ABSTRACT_FACTORIES = 'abstractFactories',
-        OPTION_DEFINITIONS = 'definitions',
-        OPTION_RESOURCES = 'resources',
-
+        KEY_RESOLVED = 'resolved',
         OPTIONS_INJECT_KEYS = [
             self::OPTION_DEFINITIONS => 'Definition',
             self::OPTION_RESOURCES => 'Resource'
         ];
+
+    public const
+        OPTION_ABSTRACT_FACTORIES = 'abstractFactories',
+        OPTION_DEFINITIONS = 'definitions',
+        OPTION_RESOURCES = 'resources';
 
     /**
      * @var array

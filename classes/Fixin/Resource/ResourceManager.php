@@ -14,10 +14,10 @@ use Fixin\Resource\AbstractFactory\AbstractFactoryInterface;
 class ResourceManager extends ResourceManagerBase
 {
     protected const
-        EXCEPTION_RESOURCE_NOT_FOUND = "Resource not found by name '%s'",
+        EXCEPTION_CAN_T_USE_PROTOTYPE_AS_RESOURCE = "Can't use prototype as resource '%s'",
+        EXCEPTION_CAN_T_USE_RESOURCE_AS_PROTOTYPE = "Can't use resource as prototype '%s'",
         EXCEPTION_PROTOTYPE_NOT_FOUND = "Prototype not found by name '%s'",
-        EXCEPTION_PROTOTYPE_AS_RESOURCE = "Can't use prototype as resource '%s'",
-        EXCEPTION_RESOURCE_AS_PROTOTYPE = "Can't use resource as prototype '%s'";
+        EXCEPTION_RESOURCE_NOT_FOUND = "Resource not found by name '%s'";
 
     /**
      * Determine resource creation via an abstract factory is possible
@@ -47,7 +47,7 @@ class ResourceManager extends ResourceManagerBase
         }
 
         if (!$resource) {
-            throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_RESOURCE_AS_PROTOTYPE, $name));
+            throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_CAN_T_USE_RESOURCE_AS_PROTOTYPE, $name));
         }
 
         throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_PROTOTYPE_NOT_FOUND, $name));
@@ -62,7 +62,7 @@ class ResourceManager extends ResourceManagerBase
         }
 
         if (!$resource) {
-            throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_PROTOTYPE_AS_RESOURCE, $name));
+            throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_CAN_T_USE_PROTOTYPE_AS_RESOURCE, $name));
         }
 
         throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_RESOURCE_NOT_FOUND, $name));

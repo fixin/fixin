@@ -14,13 +14,14 @@ use Fixin\Base\Headers\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
-use Fixin\Resource\Factory\Factory;
+use Fixin\Resource\FactoryInterface;
+use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
 /**
  * @SuppressWarnings(PHPMD.Superglobals)
  */
-class HttpCargoFactory extends Factory
+class HttpCargoFactory extends Resource implements FactoryInterface
 {
     public function __invoke(array $options = null, string $name = null): HttpCargoInterface
     {
@@ -30,10 +31,6 @@ class HttpCargoFactory extends Factory
         ]);
         $method = $_SERVER['REQUEST_METHOD'];
         $requestHeaders = $this->getRequestHeaders();
-
-        // TODO
-        var_dump($requestHeaders);
-        die;
 
         $options = [
             HttpCargoInterface::OPTION_COOKIES => $cookies,

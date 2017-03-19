@@ -2,17 +2,20 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Node\Factory;
 
 use Fixin\Delivery\Node\HttpRouterHub;
-use Fixin\Resource\Factory\Factory;
+use Fixin\Resource\FactoryInterface;
+use Fixin\Resource\Resource;
 use Fixin\Support\Arrays;
 use Fixin\Support\Strings;
 
-class HttpRouterHubFactory extends Factory
+class HttpRouterHubFactory extends Resource implements FactoryInterface
 {
     protected const
         EXCEPTION_INVALID_ROUTE_ARGUMENT = "Invalid route argument for '%s'",
