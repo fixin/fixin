@@ -9,7 +9,7 @@
 
 namespace Fixin\Model\Storage;
 
-use DateTime;
+use DateTimeImmutable;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Resource\ResourceInterface;
@@ -18,7 +18,7 @@ interface StorageInterface extends ResourceInterface
 {
     public function delete(RequestInterface $request): int;
     public function getLastInsertValue(): int;
-    public function getValueAsDateTime($value): ?DateTime;
+    public function getValueAsDateTime($value): ?DateTimeImmutable;
     public function insert(RepositoryInterface $repository, array $set): int;
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
     public function insertMultiple(RepositoryInterface $repository, array $rows): int;

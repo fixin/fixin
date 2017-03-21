@@ -9,7 +9,7 @@
 
 namespace Fixin\Model\Repository;
 
-use DateTime;
+use DateTimeImmutable;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
@@ -71,7 +71,7 @@ interface RepositoryInterface extends ResourceInterface
      */
     public function getPrimaryKey(): array;
 
-    public function getValueAsDateTime($value): ?DateTime;
+    public function getValueAsDateTime($value): ?DateTimeImmutable;
     public function insert(array $set): EntityIdInterface;
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int;
     public function insertMultiple(array $rows): int;

@@ -52,7 +52,7 @@ class Cookie extends Prototype implements CookieInterface
         return $this->domain;
     }
 
-    public function getExpire(): int
+    public function getExpireTime(): int
     {
         return $this->expire;
     }
@@ -103,9 +103,9 @@ class Cookie extends Prototype implements CookieInterface
     /**
      * @return static
      */
-    public function setExpire(int $expire): CookieInterface
+    public function setExpireTime(int $expireTime): CookieInterface
     {
-        $this->expire = $expire;
+        $this->expire = $expireTime;
 
         return $this;
     }

@@ -120,7 +120,7 @@ class HttpRouterHubFactory extends Resource implements FactoryInterface
 
     protected function addRouteItem(array $path, string $uri, array $parameters): void
     {
-        Arrays::set($this->routeTree, $path, [
+        Arrays::setValueAtPath($this->routeTree, $path, [
             HttpRouterHub::ROUTE_URI_HANDLER => $this->scopeName,
             HttpRouterHub::ROUTE_URI_PARAMETERS => array_keys($parameters)
         ]);
@@ -166,7 +166,7 @@ class HttpRouterHubFactory extends Resource implements FactoryInterface
         $segment = array_shift($segments);
 
         // Parameter
-        if (Strings::surroundedBy($segment, '{', '}')) {
+        if (Strings::isSurroundedBy($segment, '{', '}')) {
             $this->addRouteParameterSegment(substr($segment, 1, -1), $segments, $path, $uri, $parameters, $level);
 
             return;

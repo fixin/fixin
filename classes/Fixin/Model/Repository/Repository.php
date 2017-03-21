@@ -9,7 +9,7 @@
 
 namespace Fixin\Model\Repository;
 
-use DateTime;
+use DateTimeImmutable;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
@@ -119,7 +119,7 @@ class Repository extends RepositoryBase
         ]);
     }
 
-    public function getValueAsDateTime($value): ?DateTime
+    public function getValueAsDateTime($value): ?DateTimeImmutable
     {
         return $this->getStorage()->getValueAsDateTime($value);
     }
@@ -127,7 +127,7 @@ class Repository extends RepositoryBase
     public function insert(array $set): EntityIdInterface
     {
         if ($this->getStorage()->insert($this, $set)) {
-            $rowId = Arrays::intersectByKeys($set, $this->primaryKey);
+            $rowId = Arrays::intersectByKeyList($set, $this->primaryKey);
 
             if (isset($this->autoIncrementColumn)) {
                 $rowId[$this->autoIncrementColumn] = $this->storage->getLastInsertValue();
@@ -184,7 +184,7 @@ class Repository extends RepositoryBase
             $request->getWhere()->id($oldId);
             $this->getStorage()->update($set, $request);
 
-            $id = array_replace($oldId->getArrayCopy(), Arrays::intersectByKeys($set, $this->primaryKey));
+            $id = array_replace($oldId->getArrayCopy(), Arrays::intersectByKeyList($set, $this->primaryKey));
             if ($id === $oldId->getArrayCopy()) {
                 return $oldId;
             }

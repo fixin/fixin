@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Cookie;
@@ -13,7 +15,7 @@ interface CookieInterface extends PrototypeInterface
 {
     public const
         OPTION_DOMAIN = 'domain',
-        OPTION_EXPIRE = 'expire',
+        OPTION_EXPIRE_TIME = 'expireTime',
         OPTION_HTTP_ONLY = 'httpOnly',
         OPTION_PATH = 'path',
         OPTION_SECURE = 'secure',
@@ -24,7 +26,7 @@ interface CookieInterface extends PrototypeInterface
     /**
      * Get expire in minutes
      */
-    public function getExpire(): int;
+    public function getExpireTime(): int;
 
     public function getPath(): string;
     public function getValue(): string;
@@ -36,7 +38,7 @@ interface CookieInterface extends PrototypeInterface
     /**
      * Set expire in minutes
      */
-    public function setExpire(int $expire): CookieInterface;
+    public function setExpireTime(int $expireTime): CookieInterface;
 
     public function setHttpOnly(bool $httpOnly): CookieInterface;
     public function setPath(string $path): CookieInterface;

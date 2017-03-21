@@ -9,7 +9,7 @@
 
 namespace Fixin\Model\Storage\Grammar;
 
-use DateTime;
+use DateTimeImmutable;
 use Fixin\Base\Sentence\SentenceInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
@@ -23,7 +23,7 @@ interface GrammarInterface extends ResourceInterface
         STRING_QUOTE = "'";
 
     public function delete(RequestInterface $request): SentenceInterface;
-    public function getValueAsDateTime($value): ?DateTime;
+    public function getValueAsDateTime($value): ?DateTimeImmutable;
     public function insert(RepositoryInterface $repository, array $set): SentenceInterface;
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): SentenceInterface;
     public function insertMultiple(RepositoryInterface $repository, array $rows): SentenceInterface;

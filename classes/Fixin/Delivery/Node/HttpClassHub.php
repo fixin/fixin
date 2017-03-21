@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Node;
@@ -46,7 +48,7 @@ class HttpClassHub extends HttpHub
     protected function getHandlerForPath(string $name): ?CargoHandlerInterface
     {
         if (preg_match(static::CLASS_NAME_PATTERN, $name)) {
-            $fullName = $this->classPrefix . Strings::className($name);
+            $fullName = $this->classPrefix . Strings::toClassName($name);
 
             // Test class
             if ($this->container->has($fullName)) {

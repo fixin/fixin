@@ -12,7 +12,7 @@ namespace Fixin\Base\Container;
 interface ContainerInterface extends \Serializable
 {
     /**
-     * Get value for key or return default value for not-set key
+     * Get value for key or return default value for non-set key
      */
     public function get(string $name, $default = null);
 

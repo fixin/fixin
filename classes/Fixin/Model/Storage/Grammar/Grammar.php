@@ -2,12 +2,15 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Storage\Grammar;
 
-use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Fixin\Base\Sentence\SentenceInterface;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Repository\RepositoryInterface;
@@ -76,7 +79,7 @@ abstract class Grammar extends Resource implements GrammarInterface
         }
 
         // DateTime
-        if ($expression instanceof DateTime) {
+        if ($expression instanceof DateTimeInterface) {
             $expression = $expression->format(static::DATETIME_FORMAT);
         }
 
@@ -100,13 +103,13 @@ abstract class Grammar extends Resource implements GrammarInterface
         return static::PLACEHOLDER;
     }
 
-    public function getValueAsDateTime($value): ?DateTime
+    public function getValueAsDateTime($value): ?DateTimeImmutable
     {
         if (Numbers::isInt($value)) {
-            return new DateTime($value);
+            return new DateTimeImmutable($value);
         }
 
-        return DateTime::createFromFormat(static::DATETIME_FORMAT, $value) ?: null;
+        return DateTimeImmutable::createFromFormat(static::DATETIME_FORMAT, $value) ?: null;
     }
 
     public function insert(RepositoryInterface $repository, array $set): SentenceInterface

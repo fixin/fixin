@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Cookie;
@@ -25,7 +27,7 @@ class CookieManager extends Prototype implements CookieManagerInterface
     public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface
     {
         $this->set($name, null)
-            ->setExpire(static::EXPIRE_MINUTES)
+            ->setExpireTime(static::EXPIRE_MINUTES)
             ->setPath($path)
             ->setDomain($domain);
 

@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\FileSystem;
@@ -30,7 +32,7 @@ class Local extends Resource implements FileSystemInterface
      */
     public function getFileContents(string $filename): string
     {
-        if ($this->isFile($filename)) {
+        if ($this->hasFile($filename)) {
             $content = file_get_contents($filename);
 
             if ($content !== false) {
@@ -49,7 +51,7 @@ class Local extends Resource implements FileSystemInterface
      */
     public function getFileContentsWithLock(string $filename): string
     {
-        if ($this->isFile($filename)) {
+        if ($this->hasFile($filename)) {
             $content = $this->getSharedFileContents($filename);
 
             if ($content !== null) {
@@ -104,22 +106,22 @@ class Local extends Resource implements FileSystemInterface
         return $this;
     }
 
-    public function isDirectory(string $path): bool
+    public function hasDirectory(string $path): bool
     {
         return is_dir($path);
     }
 
-    public function isExisting(string $path): bool
+    public function hasEntry(string $path): bool
     {
         return file_exists($path);
     }
 
-    public function isFile(string $path): bool
+    public function hasFile(string $path): bool
     {
         return is_file($path);
     }
 
-    public function isReadable(string $filename): bool
+    public function hasReadableFile(string $filename): bool
     {
         return is_readable($filename);
     }

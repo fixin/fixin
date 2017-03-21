@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Support;
@@ -16,6 +18,6 @@ trait ToStringTrait
     {
         $items = method_exists($this, '__debugInfo') ? $this->__debugInfo() : (array) $this;
 
-        return Ground::debugText(get_class($this) . ' {' . ($items ? "\n" . VariableInspector::itemsInfo($items, '#444') : '') . '}');
+        return Ground::toDebugText(get_class($this) . ' {' . ($items ? "\n" . VariableInspector::itemsInfo($items) : '') . '}');
     }
 }

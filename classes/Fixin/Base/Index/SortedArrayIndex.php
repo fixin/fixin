@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Index;
@@ -57,7 +59,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     public function __destruct()
     {
         if (isset($this->filename)) {
-            $this->flush();
+            $this->save();
         }
     }
 
@@ -94,18 +96,6 @@ class SortedArrayIndex extends Prototype implements IndexInterface
         }
 
         return $begin;
-    }
-
-    /**
-     * @return static
-     */
-    public function flush(): IndexInterface
-    {
-        if ($this->dirty) {
-            $this->save();
-        }
-
-        return $this;
     }
 
     protected function getFileSystem(): FileSystemInterface
@@ -188,8 +178,8 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     protected function loadArray(array $data): bool
     {
         // Value check
-        $keys = Arrays::arrayForKey($data, static::KEY_KEYS);
-        $values = Arrays::arrayForKey($data, static::KEY_VALUES);
+        $keys = Arrays::getArrayForKey($data, static::KEY_KEYS);
+        $values = Arrays::getArrayForKey($data, static::KEY_VALUES);
 
         if (is_null($keys) || is_null($values) || count($keys) !== count($values)) {
             return false;
@@ -213,12 +203,24 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
+     * @return static
+     */
+    public function save(): IndexInterface
+    {
+        if ($this->dirty) {
+            $this->saveProcess();
+        }
+
+        return $this;
+    }
+
+    /**
      * Save data
      *
      * @throws Exception\RuntimeException
      * @return static
      */
-    protected function save(): self
+    protected function saveProcess(): self
     {
         if (!$this->filename) {
             throw new Exception\RuntimeException(static::EXCEPTION_FILENAME_NOT_SET);

@@ -216,7 +216,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
             $this->modified = false;
 
             foreach ($this->areas as $area) {
-                $area->clearModified();
+                $area->setModified(false);
             }
         }
 
@@ -240,7 +240,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
 
     protected function setupCookie(): void
     {
-        $this->getCookieManager()->set($this->cookieName, $this->sessionId)->setExpire($this->lifetime)->setPath('/');
+        $this->getCookieManager()->set($this->cookieName, $this->sessionId)->setExpireTime($this->lifetime)->setPath('/');
     }
 
     /**

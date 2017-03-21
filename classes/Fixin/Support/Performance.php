@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Support;
@@ -38,7 +40,7 @@ class Performance extends DoNotCreate
 
         // Start
         if (is_null(static::$lastTime)) {
-            echo Ground::debugText("[Performance Measurement start]\n");
+            echo Ground::toDebugText("[Performance Measurement start]\n");
 
             static::$lastMemoryUsage = $memoryUsage;
             static::$lastTime = microtime(true);
@@ -47,7 +49,7 @@ class Performance extends DoNotCreate
         }
 
         // Info
-        static::measureInfo($time, $memoryUsage);
+        static::printMeasureInfo($time, $memoryUsage);
 
         // Store current
         static::$lastMemoryUsage = $memoryUsage;
@@ -72,7 +74,7 @@ class Performance extends DoNotCreate
     /**
      * Display info
      */
-    protected static function measureInfo(float $time, int $memoryUsage): void
+    protected static function printMeasureInfo(float $time, int $memoryUsage): void
     {
         $data = [
             $memoryUsage - static::$lastMemoryUsage,
@@ -80,6 +82,6 @@ class Performance extends DoNotCreate
             memory_get_peak_usage(true)
         ];
 
-        echo Ground::debugText(vsprintf(static::MEASURE_FORMAT, array_merge([number_format(($time - static::$lastTime) * 1000, 4)], array_map('number_format', $data))));
+        echo Ground::toDebugText(vsprintf(static::MEASURE_FORMAT, array_merge([number_format(($time - static::$lastTime) * 1000, 4)], array_map('number_format', $data))));
     }
 }

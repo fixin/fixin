@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Support;
@@ -38,7 +40,7 @@ class VariableInspector extends DoNotCreate
     /**
      * Return list info
      */
-    public static function itemsInfo(array $var, string $color): string
+    public static function itemsInfo(array $var, string $color = '#444'): string
     {
         $result = PHP_EOL;
 
@@ -68,7 +70,7 @@ class VariableInspector extends DoNotCreate
 
         if (method_exists($var, '__debugInfo')) {
             $var = $var->__debugInfo();
-            return $opening . ($var ? "\n" . static::itemsInfo($var, '#444') : '') . '}';
+            return $opening . ($var ? "\n" . static::itemsInfo($var) : '') . '}';
         }
         elseif (method_exists($var, '__toString')) {
             return $opening . htmlspecialchars((string) $var) . '}';

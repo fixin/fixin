@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Support;
@@ -18,27 +20,13 @@ class Strings extends DoNotCreate
         NORMALIZE_LEADING_REPLACE = ["\t" => '    '];
 
     /**
-     * Determine if string begins with a string
+     * Convert "camelCase" or "CamelCase" name to text
      */
-    public static function beginsWith(string $string, string $begin): bool
+    public static function camelCasedToText(string $string): string
     {
-        return strncmp($string, $begin, strlen($begin)) === 0;
-    }
-
-    /**
-     * Convert string to "CamelCase" class name
-     */
-    public static function className(string $string): string
-    {
-        return strtr(ucwords($string, static::CLASS_NAME_WORD_DELIMITERS), static::CLASS_NAME_REPLACE);
-    }
-
-    /**
-     * Determine if string ends with a string
-     */
-    public static function endsWith(string $string, string $end): bool
-    {
-        return substr_compare($string, $end, -strlen($end)) === 0;
+        return preg_replace_callback('/([a-z])([A-Z])/', function($tag) {
+            return "$tag[1] $tag[2]";
+        }, $string);
     }
 
     /**
@@ -64,11 +52,27 @@ class Strings extends DoNotCreate
     }
 
     /**
-     * Convert string to "camelCase" method name
+     * Determine if string begins with a string
      */
-    public static function methodName(string $string): string
+    public static function isBeginningWith(string $string, string $begin): bool
     {
-        return lcfirst(strtr(ucwords($string, static::METHOD_NAME_WORD_DELIMITERS), static::METHOD_NAME_REPLACE));
+        return strncmp($string, $begin, strlen($begin)) === 0;
+    }
+
+    /**
+     * Determine if string ends with a string
+     */
+    public static function isEndingWith(string $string, string $end): bool
+    {
+        return substr_compare($string, $end, -strlen($end)) === 0;
+    }
+
+    /**
+     * Determine if surrounded by $begin and $end
+     */
+    public static function isSurroundedBy(string $string, string $begin, string $end): bool
+    {
+        return static::isBeginningWith($string, $begin) && static::isEndingWith($string, $end);
     }
 
     /**
@@ -90,20 +94,18 @@ class Strings extends DoNotCreate
     }
 
     /**
-     * Determine if surrounded by $begin and $end
+     * Convert string to "CamelCase" class name
      */
-    public static function surroundedBy(string $string, string $begin, string $end): bool
+    public static function toClassName(string $string): string
     {
-        return static::beginsWith($string, $begin) && static::endsWith($string, $end);
+        return strtr(ucwords($string, static::CLASS_NAME_WORD_DELIMITERS), static::CLASS_NAME_REPLACE);
     }
 
     /**
-     * Convert "camelCase" or "CamelCase" name to text
+     * Convert string to "camelCase" method name
      */
-    public static function textFromCamelCase(string $string): string
+    public static function toMethodName(string $string): string
     {
-        return preg_replace_callback('/([a-z])([A-Z])/', function($tag) {
-            return "$tag[1] $tag[2]";
-        }, $string);
+        return lcfirst(strtr(ucwords($string, static::METHOD_NAME_WORD_DELIMITERS), static::METHOD_NAME_REPLACE));
     }
 }

@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Node;
@@ -21,7 +23,7 @@ class ThrowableToText extends Resource implements NodeInterface
     {
         if ($cargo->getContent() instanceof Throwable) {
             $cargo
-                ->setContent(Ground::debugText(htmlspecialchars($cargo->getContent())))
+                ->setContent(Ground::toDebugText(htmlspecialchars($cargo->getContent())))
                 ->setContentType(static::CONTENT_TYPE);
         }
 

@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Container;
@@ -21,16 +23,6 @@ class VariableContainer extends Container implements VariableContainerInterface
     {
         $this->values = [];
         $this->modified = true;
-
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function clearModified(): VariableContainerInterface
-    {
-        $this->modified = false;
 
         return $this;
     }
@@ -58,6 +50,16 @@ class VariableContainer extends Container implements VariableContainerInterface
     {
         $this->values[$name] = $value;
         $this->modified = true;
+
+        return $this;
+    }
+
+    /**
+     * @return static
+     */
+    public function setModified(bool $modified): VariableContainerInterface
+    {
+        $this->modified = $modified;
 
         return $this;
     }

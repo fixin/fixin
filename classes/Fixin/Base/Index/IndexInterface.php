@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Index;
@@ -12,11 +14,6 @@ use Fixin\Resource\PrototypeInterface;
 interface IndexInterface extends PrototypeInterface
 {
     public function clear(): IndexInterface;
-
-    /**
-     * Write data if dirty
-     */
-    public function flush(): IndexInterface;
 
     public function getKeysOf($value): array;
     public function getKeysOfGreaterThan($value): array;
@@ -32,6 +29,11 @@ interface IndexInterface extends PrototypeInterface
      * Rollback modifications to the last saved state
      */
     public function revert(): IndexInterface;
+
+    /**
+     * Write data if dirty
+     */
+    public function save(): IndexInterface;
 
     public function set($key, $value): IndexInterface;
     public function unset($key): IndexInterface;

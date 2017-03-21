@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Support;
@@ -12,14 +14,14 @@ class Arrays extends DoNotCreate
     /**
      * Get array item
      */
-    public static function arrayForKey(array $array, $key): ?array
+    public static function getArrayForKey(array $array, $key): ?array
     {
         $value = $array[$key] ?? null;
 
         return is_array($value) ? $value : null;
     }
 
-    public static function intersectByKeys(array $array, array $keys): array
+    public static function intersectByKeyList(array $array, array $keys): array
     {
         return array_intersect_key($array, array_flip($keys));
     }
@@ -27,7 +29,7 @@ class Arrays extends DoNotCreate
     /**
      * Set value at path
      */
-    public static function set(array &$array, array $path, $data): void
+    public static function setValueAtPath(array &$array, array $path, $data): void
     {
         $current = array_shift($path);
 
@@ -36,7 +38,7 @@ class Arrays extends DoNotCreate
                 $array[$current] = [];
             }
 
-            static::set($array[$current], $path, $data);
+            static::setValueAtPath($array[$current], $path, $data);
 
             return;
         }

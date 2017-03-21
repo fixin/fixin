@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Sentence;
@@ -25,7 +27,7 @@ class Sentence extends Prototype implements SentenceInterface
 
     public function __toString(): string
     {
-        return Ground::debugText($this->text) . Ground::debugText(VariableInspector::arrayInfo($this->parameters));
+        return Ground::toDebugText($this->text) . Ground::toDebugText(VariableInspector::arrayInfo($this->parameters));
     }
 
     /**

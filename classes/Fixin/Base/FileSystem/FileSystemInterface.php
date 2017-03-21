@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\FileSystem;
@@ -29,14 +31,15 @@ interface FileSystemInterface extends ResourceInterface
     public function getFileSize(string $filename): ?int;
     public function getRealPath(string $path): ?string;
     public function includeFilesRecursive(string $path, string $extension): FileSystemInterface;
-    public function isDirectory(string $path): bool;
-    public function isExisting(string $path): bool;
-    public function isFile(string $path): bool;
+    public function hasDirectory(string $path): bool;
 
     /**
-     * Determine if path is a file and is readable
+     * Determine if file system has entry at path
      */
-    public function isReadable(string $filename): bool;
+    public function hasEntry(string $path): bool;
+
+    public function hasFile(string $path): bool;
+    public function hasReadableFile(string $filename): bool;
 
     /**
      * Put the contents of a file

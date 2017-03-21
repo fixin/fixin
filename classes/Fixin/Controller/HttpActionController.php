@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Controller;
@@ -25,7 +27,7 @@ abstract class HttpActionController extends Resource implements ControllerInterf
      */
     protected function getActionMethodName(string $action): string
     {
-        $method = Strings::methodName($action) . 'Action';
+        $method = Strings::toMethodName($action) . 'Action';
 
         // Checking method
         if (method_exists($this, $method)) {

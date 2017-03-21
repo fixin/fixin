@@ -9,7 +9,7 @@
 
 namespace Fixin\Model\Storage\Pdo;
 
-use DateTime;
+use DateTimeImmutable;
 use Fixin\Base\Sentence\SentenceInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\RequestInterface;
@@ -105,7 +105,7 @@ class PdoStorage extends Resource implements StorageInterface
         return $this->resource->lastInsertId();
     }
 
-    public function getValueAsDateTime($value): ?DateTime
+    public function getValueAsDateTime($value): ?DateTimeImmutable
     {
         return $this->getGrammar()->getValueAsDateTime($value);
     }
