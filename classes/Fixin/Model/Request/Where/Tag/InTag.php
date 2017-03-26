@@ -15,12 +15,12 @@ class InTag extends IdentifierTag
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_IDENTIFIER,
-            self::OPTION_VALUES
+            self::IDENTIFIER,
+            self::VALUES
         ];
 
     public const
-        OPTION_VALUES = 'values';
+        VALUES = 'values';
 
     /**
      * @var array|RequestInterface

@@ -24,14 +24,14 @@ use Fixin\Support\Arrays;
 class Repository extends RepositoryBase
 {
     protected const
-        EXCEPTION_ENTITY_REFRESH_ERROR = 'Entity refresh error',
-        EXCEPTION_INVALID_ID = "Invalid ID",
-        EXCEPTION_INVALID_REQUEST = "Invalid request, repository mismatch '%s' '%s'",
-        EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity',
-        PROTOTYPE_ENTITY_ID = 'Model\Entity\EntityId',
-        PROTOTYPE_ENTITY_SET = 'Model\Entity\EntitySet',
-        PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
-        PROTOTYPE_REQUEST = 'Model\Request\Request';
+        ENTITY_ID_PROTOTYPE = 'Model\Entity\EntityId',
+        ENTITY_REFRESH_ERROR_EXCEPTION = 'Entity refresh error',
+        ENTITY_SET_PROTOTYPE = 'Model\Entity\EntitySet',
+        EXPRESSION_PROTOTYPE = 'Model\Request\Expression',
+        INVALID_ID_EXCEPTION = "Invalid ID",
+        INVALID_REQUEST_EXCEPTION = "Invalid request, repository mismatch '%s' '%s'",
+        NOT_STORED_ENTITY_EXCEPTION = 'Not stored entity',
+        REQUEST_PROTOTYPE = 'Model\Request\Request';
 
     public function create(): EntityInterface
     {
@@ -40,9 +40,9 @@ class Repository extends RepositoryBase
 
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface
     {
-        return $this->container->clone(static::PROTOTYPE_EXPRESSION, [
-            ExpressionInterface::OPTION_EXPRESSION => $expression,
-            ExpressionInterface::OPTION_PARAMETERS => $parameters
+        return $this->resourceManager->clone(static::EXPRESSION_PROTOTYPE, [
+            ExpressionInterface::EXPRESSION => $expression,
+            ExpressionInterface::PARAMETERS => $parameters
         ]);
     }
 
@@ -58,7 +58,7 @@ class Repository extends RepositoryBase
                 return $this->createIdWithArray($entityId);
             }
 
-            throw new Exception\InvalidArgumentException(static::EXCEPTION_INVALID_ID);
+            throw new Exception\InvalidArgumentException(static::INVALID_ID_EXCEPTION);
         }
 
         // List
@@ -66,21 +66,21 @@ class Repository extends RepositoryBase
             return $this->createIdWithArray(array_combine($this->primaryKey, $entityId));
         }
 
-        throw new Exception\InvalidArgumentException(static::EXCEPTION_INVALID_ID);
+        throw new Exception\InvalidArgumentException(static::INVALID_ID_EXCEPTION);
     }
 
     private function createIdWithArray(array $entityId): EntityIdInterface
     {
-        return $this->container->clone(static::PROTOTYPE_ENTITY_ID, [
-            EntityIdInterface::OPTION_ENTITY_ID => $entityId,
-            EntityIdInterface::OPTION_REPOSITORY => $this
+        return $this->resourceManager->clone(static::ENTITY_ID_PROTOTYPE, [
+            EntityIdInterface::ENTITY_ID => $entityId,
+            EntityIdInterface::REPOSITORY => $this
         ]);
     }
 
     public function createRequest(): RequestInterface
     {
-        return $this->container->clone(static::PROTOTYPE_REQUEST, [
-            RequestInterface::OPTION_REPOSITORY => $this
+        return $this->resourceManager->clone(static::REQUEST_PROTOTYPE, [
+            RequestInterface::REPOSITORY => $this
         ]);
     }
 
@@ -112,10 +112,10 @@ class Repository extends RepositoryBase
 
     public function getByIds(array $ids): EntitySetInterface
     {
-        return $this->container->clone(static::PROTOTYPE_ENTITY_SET, [
-            EntitySetInterface::OPTION_REPOSITORY => $this,
-            EntitySetInterface::OPTION_ENTITY_CACHE => $this->getEntityCache(),
-            EntitySetInterface::OPTION_ITEMS => $this->getEntityCache()->getByIds($ids)
+        return $this->resourceManager->clone(static::ENTITY_SET_PROTOTYPE, [
+            EntitySetInterface::REPOSITORY => $this,
+            EntitySetInterface::ENTITY_CACHE => $this->getEntityCache(),
+            EntitySetInterface::ITEMS => $this->getEntityCache()->getByIds($ids)
         ]);
     }
 
@@ -152,7 +152,7 @@ class Repository extends RepositoryBase
     }
 
     /**
-     * @return static
+     * @return $this
      * @throws Exception\EntityRefreshFaultException
      */
     public function refresh(EntityInterface $entity): RepositoryInterface
@@ -169,10 +169,10 @@ class Repository extends RepositoryBase
                 return $this;
             }
 
-            throw new Exception\EntityRefreshFaultException(static::EXCEPTION_ENTITY_REFRESH_ERROR);
+            throw new Exception\EntityRefreshFaultException(static::ENTITY_REFRESH_ERROR_EXCEPTION);
         }
 
-        throw new Exception\EntityRefreshFaultException(static::EXCEPTION_NOT_STORED_ENTITY);
+        throw new Exception\EntityRefreshFaultException(static::NOT_STORED_ENTITY_EXCEPTION);
     }
 
     public function save(EntityInterface $entity): EntityIdInterface
@@ -202,11 +202,11 @@ class Repository extends RepositoryBase
         $fetchRequest = clone $request;
         $fetchRequest->setColumns($fetchRequest->isIdFetchEnabled() ? $this->primaryKey : []);
 
-        return $this->container->clone(static::PROTOTYPE_ENTITY_SET, [
-            EntitySetInterface::OPTION_REPOSITORY => $this,
-            EntitySetInterface::OPTION_ENTITY_CACHE => $this->getEntityCache(),
-            EntitySetInterface::OPTION_STORAGE_RESULT => $this->selectRawData($fetchRequest),
-            EntitySetInterface::OPTION_ID_FETCH_MODE => $fetchRequest->isIdFetchEnabled()
+        return $this->resourceManager->clone(static::ENTITY_SET_PROTOTYPE, [
+            EntitySetInterface::REPOSITORY => $this,
+            EntitySetInterface::ENTITY_CACHE => $this->getEntityCache(),
+            EntitySetInterface::STORAGE_RESULT => $this->selectRawData($fetchRequest),
+            EntitySetInterface::ID_FETCH_MODE => $fetchRequest->isIdFetchEnabled()
         ]);
     }
 
@@ -252,6 +252,6 @@ class Repository extends RepositoryBase
             return;
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_REQUEST, $this->getName(), $request->getRepository()->getName()));
+        throw new Exception\InvalidArgumentException(sprintf(static::INVALID_REQUEST_EXCEPTION, $this->getName(), $request->getRepository()->getName()));
     }
 }

@@ -19,7 +19,10 @@ abstract class RequestBase extends Prototype implements RequestInterface
         PROTOTYPE_JOIN = 'Model\Request\Join',
         PROTOTYPE_WHERE = 'Model\Request\Where\Where',
         THIS_REQUIRES = [
-            self::OPTION_REPOSITORY
+            self::REPOSITORY
+        ],
+        THIS_SETS = [
+            self::REPOSITORY => RepositoryInterface::class
         ];
 
     /**
@@ -84,30 +87,30 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): void
     {
-        $this->addJoinItem($type, $repository, $this->container->clone(static::PROTOTYPE_WHERE)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
+        $this->addJoinItem($type, $repository, $this->resourceManager->clone(static::PROTOTYPE_WHERE)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
     }
 
     protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null): void
     {
-        $this->joins[] = $this->container->clone(static::PROTOTYPE_JOIN, [
-            JoinInterface::OPTION_TYPE => $type,
-            JoinInterface::OPTION_REPOSITORY => $repository,
-            JoinInterface::OPTION_ALIAS => $alias ?? $repository->getName(),
-            JoinInterface::OPTION_WHERE => $where
+        $this->joins[] = $this->resourceManager->clone(static::PROTOTYPE_JOIN, [
+            JoinInterface::TYPE => $type,
+            JoinInterface::REPOSITORY => $repository,
+            JoinInterface::ALIAS => $alias ?? $repository->getName(),
+            JoinInterface::WHERE => $where
         ]);
     }
 
     protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null): void
     {
         /** @var WhereInterface $where */
-        $where = $this->container->clone(static::PROTOTYPE_WHERE);
+        $where = $this->resourceManager->clone(static::PROTOTYPE_WHERE);
         $callback($where);
 
         $this->addJoinItem($type, $repository, $where, $alias);
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function crossJoin(RepositoryInterface $repository, string $alias = null): RequestInterface
     {
@@ -133,7 +136,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     public function getHaving(): WhereInterface
     {
-        return $this->having ?? ($this->having = $this->container->clone(static::PROTOTYPE_WHERE));
+        return $this->having ?? ($this->having = $this->resourceManager->clone(static::PROTOTYPE_WHERE));
     }
 
     public function getJoins(): array
@@ -163,7 +166,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     public function getWhere(): WhereInterface
     {
-        return $this->where ?? ($this->where = $this->container->clone(static::PROTOTYPE_WHERE));
+        return $this->where ?? ($this->where = $this->resourceManager->clone(static::PROTOTYPE_WHERE));
     }
 
     public function hasHaving(): bool
@@ -183,7 +186,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     /**
      * @param array|number|string $right
-     * @return static
+     * @return $this
      */
     public function join(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface
     {
@@ -193,7 +196,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function joinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface
     {
@@ -204,7 +207,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     /**
      * @param array|number|string $right
-     * @return static
+     * @return $this
      */
     public function leftJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface
     {
@@ -214,7 +217,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function leftJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface
     {
@@ -225,7 +228,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     /**
      * @param array|number|string $right
-     * @return static
+     * @return $this
      */
     public function rightJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface
     {
@@ -235,7 +238,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function rightJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface
     {
@@ -245,7 +248,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setAlias(string $alias): RequestInterface
     {
@@ -255,7 +258,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setColumns(array $columns): RequestInterface
     {
@@ -265,7 +268,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setDistinctResult(bool $distinctResult): RequestInterface
     {
@@ -275,7 +278,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setGroupBy(array $groupBy): RequestInterface
     {
@@ -285,7 +288,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setLimit(?int $limit): RequestInterface
     {
@@ -295,7 +298,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setLimitForPage(int $page, int $itemsPerPage): RequestInterface
     {
@@ -306,7 +309,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setOffset(int $offset): RequestInterface
     {
@@ -316,17 +319,12 @@ abstract class RequestBase extends Prototype implements RequestInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setOrderBy(array $orderBy): RequestInterface
     {
         $this->orderBy = $orderBy;
 
         return $this;
-    }
-
-    protected function setRepository(RepositoryInterface $repository): void
-    {
-        $this->repository = $repository;
     }
 }

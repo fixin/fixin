@@ -15,11 +15,11 @@ class WhereTag extends Tag
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_WHERE
+            self::WHERE
         ];
 
     public const
-        OPTION_WHERE = 'where';
+        WHERE = 'where';
 
     /**
      * @var WhereInterface

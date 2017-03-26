@@ -13,14 +13,14 @@ class BetweenTag extends IdentifierTag
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_IDENTIFIER,
-            self::OPTION_MAX,
-            self::OPTION_MIN
+            self::IDENTIFIER,
+            self::MAX,
+            self::MIN
         ];
 
     public const
-        OPTION_MAX = 'max',
-        OPTION_MIN = 'min';
+        MAX = 'max',
+        MIN = 'min';
 
     /**
      * @var number|string

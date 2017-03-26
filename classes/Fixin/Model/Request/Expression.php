@@ -15,7 +15,11 @@ class Expression extends Prototype implements ExpressionInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_EXPRESSION
+            self::EXPRESSION
+        ],
+        THIS_SETS = [
+            self::EXPRESSION => self::STRING_TYPE,
+            self::PARAMETERS => self::ARRAY_TYPE
         ];
 
     /**
@@ -36,15 +40,5 @@ class Expression extends Prototype implements ExpressionInterface
     public function getParameters(): array
     {
         return $this->parameters;
-    }
-
-    protected function setExpression(string $expression): void
-    {
-        $this->expression = $expression;
-    }
-
-    protected function setParameters(array $parameters): void
-    {
-        $this->parameters = $parameters;
     }
 }

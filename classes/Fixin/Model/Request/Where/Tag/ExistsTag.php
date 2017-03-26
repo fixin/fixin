@@ -15,11 +15,11 @@ class ExistsTag extends Tag
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_REQUEST
+            self::REQUEST
         ];
 
     public const
-        OPTION_REQUEST = 'request';
+        REQUEST = 'request';
 
     /**
      * @var RequestInterface

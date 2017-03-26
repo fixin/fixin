@@ -19,13 +19,15 @@ use Fixin\Resource\PrototypeInterface;
 interface RequestInterface extends PrototypeInterface
 {
     public const
-        OPTION_REPOSITORY = 'repository';
+        REPOSITORY = 'repository';
 
     public function count(): int;
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface;
 
     /**
      * Add cross join
+     *
+     * @return $this
      */
     public function crossJoin(RepositoryInterface $repository, string $alias = null): RequestInterface;
 
@@ -80,11 +82,14 @@ interface RequestInterface extends PrototypeInterface
      * Add join
      *
      * @param string|number|array $right
+     * @return $this
      */
     public function join(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface;
 
     /**
      * Add join by where callback
+     *
+     * @return $this
      */
     public function joinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface;
 
@@ -92,11 +97,14 @@ interface RequestInterface extends PrototypeInterface
      * Add left join
      *
      * @param string|number|array $right
+     * @return $this
      */
     public function leftJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface;
 
     /**
      * Add left join by where callback
+     *
+     * @return $this
      */
     public function leftJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface;
 
@@ -104,36 +112,95 @@ interface RequestInterface extends PrototypeInterface
      * Add right join
      *
      * @param string|number|array $right
+     * @return $this
      */
     public function rightJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface;
 
     /**
      * Add right join by where callback
+     *
+     * @return $this
      */
     public function rightJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface;
 
+    /**
+     * @return $this
+     */
     public function setAlias(string $alias): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setColumns(array $columns): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setDistinctResult(bool $distinctResult): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setGroupBy(array $groupBy): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setIdFetchEnabled(bool $idFetchEnabled): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setLimit(?int $limit): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setLimitForPage(int $page, int $itemsPerPage): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setOffset(int $offset): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setOrderBy(array $orderBy): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setUnionLimit(?int $unionLimit): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setUnionLimitForPage(int $page, int $itemsPerPage): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setUnionOffset(int $unionOffset): RequestInterface;
+
+    /**
+     * @return $this
+     */
     public function setUnionOrderBy(array $unionOrderBy): RequestInterface;
 
     /**
      * Add union
+     *
+     * @return $this
      */
     public function union(RequestInterface $request): RequestInterface;
 
     /**
      * Add union all
+     *
+     * @return $this
      */
     public function unionAll(RequestInterface $request): RequestInterface;
+
     public function update(array $set): int;
 }

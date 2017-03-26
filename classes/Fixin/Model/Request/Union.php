@@ -15,8 +15,12 @@ class Union extends Prototype implements UnionInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_REQUEST,
-            self::OPTION_TYPE
+            self::REQUEST,
+            self::TYPE
+        ],
+        THIS_SETS = [
+            self::REQUEST => RequestInterface::class,
+            self::TYPE => self::STRING_TYPE
         ];
 
     /**
@@ -37,15 +41,5 @@ class Union extends Prototype implements UnionInterface
     public function getType(): string
     {
         return $this->type;
-    }
-
-    protected function setRequest(RequestInterface $request): void
-    {
-        $this->request = $request;
-    }
-
-    protected function setType(string $type): void
-    {
-        $this->type = $type;
     }
 }

@@ -15,7 +15,7 @@ abstract class Tag extends Prototype implements TagInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_JOIN
+            self::JOIN
         ];
 
     /**

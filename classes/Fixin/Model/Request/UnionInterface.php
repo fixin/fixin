@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request;
@@ -12,8 +14,8 @@ use Fixin\Resource\PrototypeInterface;
 interface UnionInterface extends PrototypeInterface
 {
     public const
-        OPTION_REQUEST = 'request',
-        OPTION_TYPE = 'type',
+        REQUEST = 'request',
+        TYPE = 'type',
         TYPE_ALL = 'all',
         TYPE_NORMAL = 'normal';
 

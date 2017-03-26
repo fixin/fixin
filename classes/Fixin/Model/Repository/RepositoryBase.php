@@ -17,19 +17,23 @@ use Fixin\Resource\Resource;
 abstract class RepositoryBase extends Resource implements RepositoryInterface
 {
     protected const
-        EXCEPTION_INVALID_NAME = "Invalid name '%s'",
+        INVALID_NAME_EXCEPTION = "Invalid name '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
         THIS_REQUIRES = [
-            self::OPTION_ENTITY_CACHE,
-            self::OPTION_ENTITY_PROTOTYPE,
-            self::OPTION_NAME,
-            self::OPTION_PRIMARY_KEY,
-            self::OPTION_STORAGE
+            self::ENTITY_CACHE,
+            self::ENTITY_PROTOTYPE,
+            self::NAME,
+            self::PRIMARY_KEY,
+            self::STORAGE
+        ],
+        THIS_SETS = [
+            self::AUTO_INCREMENT_COLUMN => self::STRING_TYPE,
+            self::PRIMARY_KEY => self::ARRAY_TYPE
         ],
         THIS_SETS_LAZY = [
-            self::OPTION_ENTITY_CACHE => CacheInterface::class,
-            self::OPTION_ENTITY_PROTOTYPE => EntityInterface::class,
-            self::OPTION_STORAGE => StorageInterface::class
+            self::ENTITY_CACHE => CacheInterface::class,
+            self::ENTITY_PROTOTYPE => EntityInterface::class,
+            self::STORAGE => StorageInterface::class
         ];
 
     /**
@@ -69,16 +73,16 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface
 
     protected function getEntityCache(): CacheInterface
     {
-        return $this->entityCache ?: $this->loadLazyProperty(static::OPTION_ENTITY_CACHE, [
-            CacheInterface::OPTION_REPOSITORY => $this,
-            CacheInterface::OPTION_ENTITY_PROTOTYPE => $this->getEntityPrototype()
+        return $this->entityCache ?: $this->loadLazyProperty(static::ENTITY_CACHE, [
+            CacheInterface::REPOSITORY => $this,
+            CacheInterface::ENTITY_PROTOTYPE => $this->getEntityPrototype()
         ]);
     }
 
     protected function getEntityPrototype(): EntityInterface
     {
-        return $this->entityPrototype ?: $this->loadLazyProperty(static::OPTION_ENTITY_PROTOTYPE, [
-            EntityInterface::OPTION_REPOSITORY => $this
+        return $this->entityPrototype ?: $this->loadLazyProperty(static::ENTITY_PROTOTYPE, [
+            EntityInterface::REPOSITORY => $this
         ]);
     }
 
@@ -94,12 +98,7 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface
 
     protected function getStorage(): StorageInterface
     {
-        return $this->storage ?: $this->loadLazyProperty(static::OPTION_STORAGE);
-    }
-
-    protected function setAutoIncrementColumn(string $autoIncrementColumn): void
-    {
-        $this->autoIncrementColumn = $autoIncrementColumn;
+        return $this->storage ?: $this->loadLazyProperty(static::STORAGE);
     }
 
     /**
@@ -113,14 +112,6 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface
             return;
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NAME, $name));
-    }
-
-    /**
-     * @param string[] $primaryKey
-     */
-    protected function setPrimaryKey(array $primaryKey): void
-    {
-        $this->primaryKey = $primaryKey;
+        throw new Exception\InvalidArgumentException(sprintf(static::INVALID_NAME_EXCEPTION, $name));
     }
 }

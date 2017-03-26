@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request\Where;
@@ -35,55 +37,40 @@ abstract class WhereBase extends Prototype implements WhereInterface
      */
     protected $tags = [];
 
-    /**
-     * @return static
-     */
-    protected function addBetween(string $join, bool $negated, $identifier, $min, $max): WhereInterface
+    protected function addBetween(string $join, bool $negated, $identifier, $min, $max): void
     {
-        return $this->addTag(static::PROTOTYPE_BETWEEN_TAG, $join, $negated, [
-            BetweenTag::OPTION_IDENTIFIER => $identifier,
-            BetweenTag::OPTION_MIN => $min,
-            BetweenTag::OPTION_MAX => $max
+        $this->addTag(static::PROTOTYPE_BETWEEN_TAG, $join, $negated, [
+            BetweenTag::IDENTIFIER => $identifier,
+            BetweenTag::MIN => $min,
+            BetweenTag::MAX => $max
         ]);
     }
 
-    /**
-     * @return static
-     */
-    protected function addCompare(string $join, bool $negated, $left, string $operator, $right, string $leftType, string $rightType): WhereInterface
+    protected function addCompare(string $join, bool $negated, $left, string $operator, $right, string $leftType, string $rightType): void
     {
-        return $this->addTag(static::PROTOTYPE_COMPARE_TAG, $join, $negated, [
-            CompareTag::OPTION_LEFT => $this->compareSidePrepare($left, $leftType),
-            CompareTag::OPTION_OPERATOR => $operator,
-            CompareTag::OPTION_RIGHT => $this->compareSidePrepare($right, $rightType)
+        $this->addTag(static::PROTOTYPE_COMPARE_TAG, $join, $negated, [
+            CompareTag::LEFT => $this->compareSidePrepare($left, $leftType),
+            CompareTag::OPERATOR => $operator,
+            CompareTag::RIGHT => $this->compareSidePrepare($right, $rightType)
         ]);
     }
 
-    /**
-     * @return static
-     */
-    protected function addExists(string $join, bool $negated, RequestInterface $request): WhereInterface
+    protected function addExists(string $join, bool $negated, RequestInterface $request): void
     {
-        return $this->addTag(static::PROTOTYPE_EXISTS_TAG, $join, $negated, [
-            ExistsTag::OPTION_REQUEST => $request
+        $this->addTag(static::PROTOTYPE_EXISTS_TAG, $join, $negated, [
+            ExistsTag::REQUEST => $request
         ]);
     }
 
-    /**
-     * @return static
-     */
-    protected function addIn(string $join, bool $negated, $identifier, $values): WhereInterface
+    protected function addIn(string $join, bool $negated, $identifier, $values): void
     {
-        return $this->addTag(static::PROTOTYPE_IN_TAG, $join, $negated, [
-            InTag::OPTION_IDENTIFIER => $identifier,
-            InTag::OPTION_VALUES => $values
+        $this->addTag(static::PROTOTYPE_IN_TAG, $join, $negated, [
+            InTag::IDENTIFIER => $identifier,
+            InTag::VALUES => $values
         ]);
     }
 
-    /**
-     * @return static
-     */
-    protected function addItems(Where $where, array $array): WhereInterface
+    protected function addItems(Where $where, array $array): void
     {
         foreach ($array as $key => $value) {
             if (is_numeric($key)) {
@@ -98,63 +85,47 @@ abstract class WhereBase extends Prototype implements WhereInterface
                 continue;
             }
 
-            $where->compare($key, CompareTag::OPERATOR_EQUAL, $value);
+            $where->compare($key, CompareTag::EQUALS, $value);
         }
-
-        return $this;
     }
 
-    /**
-     * @return static
-     */
-    protected function addNested(string $join, bool $negated, callable $callback): WhereInterface
+    protected function addNested(string $join, bool $negated, callable $callback): void
     {
-        $where = $this->container->clone(static::PROTOTYPE_WHERE);
+        $where = $this->resourceManager->clone(static::PROTOTYPE_WHERE);
         $callback($where);
 
-        return $this->addTag(static::PROTOTYPE_WHERE_TAG, $join, $negated, [
-            WhereTag::OPTION_WHERE => $where
+        $this->addTag(static::PROTOTYPE_WHERE_TAG, $join, $negated, [
+            WhereTag::WHERE => $where
         ]);
     }
 
-    /**
-     * @return static
-     */
-    protected function addNull(string $join, bool $negated, string $identifier): WhereInterface
+    protected function addNull(string $join, bool $negated, string $identifier): void
     {
-        return $this->addTag(static::PROTOTYPE_NULL_TAG, $join, $negated, [
-            NullTag::OPTION_IDENTIFIER => $identifier
+        $this->addTag(static::PROTOTYPE_NULL_TAG, $join, $negated, [
+            NullTag::IDENTIFIER => $identifier
         ]);
     }
 
-    /**
-     * @return static
-     */
-    protected function addSub(string $join, bool $negated, WhereInterface $where): WhereInterface
+    protected function addSub(string $join, bool $negated, WhereInterface $where): void
     {
-        return $this->addTag(static::PROTOTYPE_WHERE_TAG, $join, $negated, [
-            WhereTag::OPTION_WHERE => $where
+        $this->addTag(static::PROTOTYPE_WHERE_TAG, $join, $negated, [
+            WhereTag::WHERE => $where
         ]);
     }
 
-    /**
-     * @return static
-     */
-    protected function addTag(string $prototype, string $join, bool $negated, array $options): WhereInterface
+    protected function addTag(string $prototype, string $join, bool $negated, array $options): void
     {
-        $this->tags[] = $this->container->clone($prototype, [
-            TagInterface::OPTION_JOIN => $join,
-            TagInterface::OPTION_NEGATED => $negated
+        $this->tags[] = $this->resourceManager->clone($prototype, [
+            TagInterface::JOIN => $join,
+            TagInterface::NEGATED => $negated
         ] + $options);
-
-        return $this;
     }
 
     protected function compareSidePrepare($value, string $type)
     {
         if (!$value instanceof ExpressionInterface && !$value instanceof RequestInterface && $type === static::TYPE_IDENTIFIER) {
-            return $this->container->clone(static::PROTOTYPE_EXPRESSION, [
-                ExpressionInterface::OPTION_EXPRESSION => $value
+            return $this->resourceManager->clone(static::PROTOTYPE_EXPRESSION, [
+                ExpressionInterface::EXPRESSION => $value
             ]);
         }
 

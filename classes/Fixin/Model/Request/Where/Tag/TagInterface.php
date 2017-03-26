@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request\Where\Tag;
@@ -14,8 +16,8 @@ interface TagInterface extends PrototypeInterface
     public const
         JOIN_AND = 'and',
         JOIN_OR = 'or',
-        OPTION_JOIN = 'join',
-        OPTION_NEGATED = 'negated';
+        JOIN = 'join',
+        NEGATED = 'negated';
 
     public function getJoin(): string;
     public function isNegated(): bool;

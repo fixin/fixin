@@ -15,21 +15,26 @@ class CompareTag extends Tag {
 
     protected const
         THIS_REQUIRES = [
-            self::OPTION_LEFT,
-            self::OPTION_OPERATOR,
-            self::OPTION_RIGHT
+            self::LEFT,
+            self::OPERATOR,
+            self::RIGHT
+        ],
+        THIS_SETS = [
+            self::LEFT => self::ANY_TYPE,
+            self::OPERATOR => self::STRING_TYPE,
+            self::RIGHT => self::ANY_TYPE
         ];
 
     public const
-        OPERATOR_EQUAL = '=',
-        OPERATOR_GREATER_THAN = '>',
-        OPERATOR_GREATER_THAN_OR_EQUAL = '>=',
-        OPERATOR_LOWER_THAN = '<',
-        OPERATOR_LOWER_THAN_OR_EQUAL = '<=',
-        OPERATOR_NOT_EQUAL = '!=',
-        OPTION_LEFT = 'left',
-        OPTION_OPERATOR = 'operator',
-        OPTION_RIGHT = 'right';
+        GREATER_THAN = '>',
+        GREATER_THAN_OR_EQUALS = '>=',
+        EQUALS = '=',
+        LEFT = 'left',
+        LOWER_THAN = '<',
+        LOWER_THAN_OR_EQUALS = '<=',
+        NOT_EQUALS = '!=',
+        OPERATOR = 'operator',
+        RIGHT = 'right';
 
     /**
      * @var number|string|RequestInterface
@@ -69,30 +74,5 @@ class CompareTag extends Tag {
     public function getRight()
     {
         return $this->right;
-    }
-
-    /**
-     * Set left side
-     *
-     * @param number|string $left
-     */
-    protected function setLeft($left): void
-    {
-        $this->left = $left;
-    }
-
-    protected function setOperator(string $operator): void
-    {
-        $this->operator = $operator;
-    }
-
-    /**
-     * Set right side
-     *
-     * @param number|string|array $right
-     */
-    protected function setRight($right): void
-    {
-        $this->right = $right;
     }
 }

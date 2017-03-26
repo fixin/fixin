@@ -25,27 +25,33 @@ use Fixin\Model\Request\Where\Tag\WhereTag;
 class Where extends WhereBase
 {
     /**
-     * @return static
+     * @return $this
      */
     public function between(string $identifier, $min, $max): WhereInterface
     {
-        return $this->addBetween(BetweenTag::JOIN_AND, false, $identifier, $min, $max);
+        $this->addBetween(BetweenTag::JOIN_AND, false, $identifier, $min, $max);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface
     {
-        return $this->addCompare(TagInterface::JOIN_AND, false, $left, $operator, $right, $leftType, $rightType);
+        $this->addCompare(TagInterface::JOIN_AND, false, $left, $operator, $right, $leftType, $rightType);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function exists(RequestInterface $request): WhereInterface
     {
-        return $this->addExists(ExistsTag::JOIN_AND, false, $request);
+        $this->addExists(ExistsTag::JOIN_AND, false, $request);
+
+        return $this;
     }
 
     public function getTags(): array
@@ -54,7 +60,7 @@ class Where extends WhereBase
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function id(EntityIdInterface $entityId): WhereInterface
     {
@@ -62,7 +68,7 @@ class Where extends WhereBase
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function ids(array $entityIds): WhereInterface
     {
@@ -75,15 +81,17 @@ class Where extends WhereBase
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function in($identifier, $values): WhereInterface
     {
-        return $this->addIn(InTag::JOIN_AND, false, $identifier, $values);
+        $this->addIn(InTag::JOIN_AND, false, $identifier, $values);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function items(array $array): WhereInterface
     {
@@ -93,87 +101,107 @@ class Where extends WhereBase
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function nested(callable $callback): WhereInterface
     {
-        return $this->addNested(WhereTag::JOIN_AND, false, $callback);
+        $this->addNested(WhereTag::JOIN_AND, false, $callback);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function notBetween(string $identifier, $min, $max): WhereInterface
     {
-        return $this->addBetween(BetweenTag::JOIN_AND, true, $identifier, $min, $max);
+        $this->addBetween(BetweenTag::JOIN_AND, true, $identifier, $min, $max);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function notExists(RequestInterface $request): WhereInterface
     {
-        return $this->addExists(ExistsTag::JOIN_AND, true, $request);
+        $this->addExists(ExistsTag::JOIN_AND, true, $request);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function notIn($identifier, $values): WhereInterface
     {
-        return $this->addIn(InTag::JOIN_AND, true, $identifier, $values);
+        $this->addIn(InTag::JOIN_AND, true, $identifier, $values);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function notNested(callable $callback): WhereInterface
     {
-        return $this->addNested(WhereTag::JOIN_AND, true, $callback);
+        $this->addNested(WhereTag::JOIN_AND, true, $callback);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function notNull(string $identifier): WhereInterface
     {
-        return $this->addNull(NullTag::JOIN_AND, true, $identifier);
+        $this->addNull(NullTag::JOIN_AND, true, $identifier);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function null(string $identifier): WhereInterface
     {
-        return $this->addNull(NullTag::JOIN_AND, false, $identifier);
+        $this->addNull(NullTag::JOIN_AND, false, $identifier);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orBetween(string $identifier, $min, $max): WhereInterface
     {
-        return $this->addBetween(BetweenTag::JOIN_OR, false, $identifier, $min, $max);
+        $this->addBetween(BetweenTag::JOIN_OR, false, $identifier, $min, $max);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface
     {
-        return $this->addCompare(TagInterface::JOIN_OR, false, $left, $operator, $right, $leftType, $rightType);
+        $this->addCompare(TagInterface::JOIN_OR, false, $left, $operator, $right, $leftType, $rightType);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orExists(RequestInterface $request): WhereInterface
     {
-        return $this->addExists(ExistsTag::JOIN_OR, false, $request);
+        $this->addExists(ExistsTag::JOIN_OR, false, $request);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orId(EntityIdInterface $entityId): WhereInterface
     {
@@ -181,7 +209,7 @@ class Where extends WhereBase
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orIds(array $entityIds): WhereInterface
     {
@@ -194,15 +222,17 @@ class Where extends WhereBase
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orIn($identifier, $values): WhereInterface
     {
-        return $this->addIn(InTag::JOIN_OR, false, $identifier, $values);
+        $this->addIn(InTag::JOIN_OR, false, $identifier, $values);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orItems(array $array): WhereInterface
     {
@@ -212,74 +242,92 @@ class Where extends WhereBase
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orNested(callable $callback): WhereInterface
     {
-        return $this->addNested(WhereTag::JOIN_OR, false, $callback);
+        $this->addNested(WhereTag::JOIN_OR, false, $callback);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orNotBetween(string $identifier, $min, $max): WhereInterface
     {
-        return $this->addBetween(BetweenTag::JOIN_OR, true, $identifier, $min, $max);
+        $this->addBetween(BetweenTag::JOIN_OR, true, $identifier, $min, $max);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orNotExists(RequestInterface $request): WhereInterface
     {
-        return $this->addExists(ExistsTag::JOIN_OR, true, $request);
+        $this->addExists(ExistsTag::JOIN_OR, true, $request);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orNotIn($identifier, $values): WhereInterface
     {
-        return $this->addIn(InTag::JOIN_OR, true, $identifier, $values);
+        $this->addIn(InTag::JOIN_OR, true, $identifier, $values);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orNotNested(callable $callback): WhereInterface
     {
-        return $this->addNested(WhereTag::JOIN_OR, true, $callback);
+        $this->addNested(WhereTag::JOIN_OR, true, $callback);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orNotNull(string $identifier): WhereInterface
     {
-        return $this->addNull(NullTag::JOIN_OR, true, $identifier);
+        $this->addNull(NullTag::JOIN_OR, true, $identifier);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orNull(string $identifier): WhereInterface
     {
-        return $this->addNull(NullTag::JOIN_OR, false, $identifier);
+        $this->addNull(NullTag::JOIN_OR, false, $identifier);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function orSub(WhereInterface $where): WhereInterface
     {
-        return $this->addSub(WhereTag::JOIN_OR, false, $where);
+        $this->addSub(WhereTag::JOIN_OR, false, $where);
+
+        return $this;
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function sub(WhereInterface $where): WhereInterface
     {
-        return $this->addSub(WhereTag::JOIN_AND, false, $where);
+        $this->addSub(WhereTag::JOIN_AND, false, $where);
+
+        return $this;
     }
 }

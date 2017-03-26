@@ -21,12 +21,12 @@ use Fixin\Resource\ResourceInterface;
 interface RepositoryInterface extends ResourceInterface
 {
     public const
-        OPTION_AUTO_INCREMENT_COLUMN = 'autoIncrementColumn',
-        OPTION_ENTITY_CACHE = 'entityCache',
-        OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
-        OPTION_NAME = 'name',
-        OPTION_PRIMARY_KEY = 'primaryKey',
-        OPTION_STORAGE = 'storage';
+        AUTO_INCREMENT_COLUMN = 'autoIncrementColumn',
+        ENTITY_CACHE = 'entityCache',
+        ENTITY_PROTOTYPE = 'entityPrototype',
+        NAME = 'name',
+        PRIMARY_KEY = 'primaryKey',
+        STORAGE = 'storage';
 
     /**
      * Create entity for the repository
@@ -78,6 +78,8 @@ interface RepositoryInterface extends ResourceInterface
 
     /**
      * Refresh entity from storage
+     *
+     * @return $this
      */
     public function refresh(EntityInterface $entity): RepositoryInterface;
 

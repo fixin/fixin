@@ -20,8 +20,8 @@ use Fixin\Model\Storage\StorageResultInterface;
 class Request extends RequestBase {
 
     protected const
-        MASK_COUNT = 'COUNT(%s)',
-        PROTOTYPE_UNION = 'Model\Request\Union';
+        COUNT_MASK = 'COUNT(%s)',
+        UNION_PROTOTYPE = 'Model\Request\Union';
 
     /**
      * @var bool
@@ -50,15 +50,15 @@ class Request extends RequestBase {
 
     protected function addUnion(string $type, RequestInterface $request): void
     {
-        $this->unions[] = $this->container->clone(static::PROTOTYPE_UNION, [
-            UnionInterface::OPTION_TYPE => $type,
-            UnionInterface::OPTION_REQUEST => $request
+        $this->unions[] = $this->resourceManager->clone(static::UNION_PROTOTYPE, [
+            UnionInterface::TYPE => $type,
+            UnionInterface::REQUEST => $request
         ]);
     }
 
     public function count(): int
     {
-        return $this->fetchValue($this->createExpression(sprintf(static::MASK_COUNT, implode(',', $this->columns ?: ['*']))));
+        return $this->fetchValue($this->createExpression(sprintf(static::COUNT_MASK, implode(',', $this->columns ?: ['*']))));
     }
 
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface
@@ -138,7 +138,7 @@ class Request extends RequestBase {
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setIdFetchEnabled(bool $idFetchEnabled): RequestInterface
     {
@@ -148,7 +148,7 @@ class Request extends RequestBase {
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setUnionLimit(?int $unionLimit): RequestInterface
     {
@@ -158,7 +158,7 @@ class Request extends RequestBase {
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setUnionLimitForPage(int $page, int $itemsPerPage): RequestInterface
     {
@@ -169,7 +169,7 @@ class Request extends RequestBase {
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setUnionOffset(int $unionOffset): RequestInterface
     {
@@ -179,7 +179,7 @@ class Request extends RequestBase {
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setUnionOrderBy(array $unionOrderBy): RequestInterface
     {
@@ -189,7 +189,7 @@ class Request extends RequestBase {
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function union(RequestInterface $request): RequestInterface
     {
@@ -199,7 +199,7 @@ class Request extends RequestBase {
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function unionAll(RequestInterface $request): RequestInterface
     {

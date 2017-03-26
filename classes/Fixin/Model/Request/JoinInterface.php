@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Request;
@@ -14,14 +16,14 @@ use Fixin\Resource\PrototypeInterface;
 interface JoinInterface extends PrototypeInterface
 {
     public const
-        OPTION_ALIAS = 'alias',
-        OPTION_REPOSITORY = 'repository',
-        OPTION_TYPE = 'type',
-        OPTION_WHERE = 'where',
+        ALIAS = 'alias',
+        REPOSITORY = 'repository',
+        TYPE = 'type',
         TYPE_CROSS = 'cross',
         TYPE_INNER = 'inner',
         TYPE_LEFT = 'left',
-        TYPE_RIGHT = 'right';
+        TYPE_RIGHT = 'right',
+        WHERE = 'where';
 
     public function getAlias(): string;
     public function getRepository(): RepositoryInterface;

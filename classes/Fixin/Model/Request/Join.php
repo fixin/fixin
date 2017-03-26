@@ -17,9 +17,15 @@ class Join extends Prototype implements JoinInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_ALIAS,
-            self::OPTION_REPOSITORY,
-            self::OPTION_TYPE
+            self::ALIAS,
+            self::REPOSITORY,
+            self::TYPE
+        ],
+        THIS_SETS = [
+            self::ALIAS => self::STRING_TYPE,
+            self::REPOSITORY => RepositoryInterface::class,
+            self::TYPE => self::STRING_TYPE,
+            self::WHERE => WhereInterface::class
         ];
 
     /**
@@ -60,25 +66,5 @@ class Join extends Prototype implements JoinInterface
     public function getWhere(): ?WhereInterface
     {
         return $this->where;
-    }
-
-    protected function setAlias(string $alias): void
-    {
-        $this->alias = $alias;
-    }
-
-    protected function setRepository(RepositoryInterface $repository): void
-    {
-        $this->repository = $repository;
-    }
-
-    protected function setType(string $type): void
-    {
-        $this->type = $type;
-    }
-
-    protected function setWhere(?WhereInterface $where): void
-    {
-        $this->where = $where;
     }
 }

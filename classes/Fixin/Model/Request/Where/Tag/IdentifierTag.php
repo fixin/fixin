@@ -13,11 +13,11 @@ abstract class IdentifierTag extends Tag
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_IDENTIFIER
+            self::IDENTIFIER
         ];
 
     public const
-        OPTION_IDENTIFIER = 'identifier';
+        IDENTIFIER = 'identifier';
 
     /**
      * @var string|array
