@@ -24,14 +24,23 @@ class HttpCargo extends Cargo implements HttpCargoInterface
 
     protected const
         THIS_REQUIRES = [
-            self::OPTION_COOKIES,
-            self::OPTION_ENVIRONMENT,
-            self::OPTION_PARAMETERS,
-            self::OPTION_REQUEST_HEADERS,
-            self::OPTION_RESPONSE_HEADERS,
-            self::OPTION_SERVER,
-            self::OPTION_SESSION,
-            self::OPTION_URI
+            self::COOKIES,
+            self::ENVIRONMENT,
+            self::PARAMETERS,
+            self::REQUEST_HEADERS,
+            self::RESPONSE_HEADERS,
+            self::SERVER,
+            self::SESSION,
+            self::URI
+        ],
+        THIS_SETS = [
+            self::COOKIES => CookieManagerInterface::class,
+            self::ENVIRONMENT => ContainerInterface::class,
+            self::PARAMETERS => VariableContainerInterface::class,
+            self::REQUEST_HEADERS => HeadersInterface::class,
+            self::RESPONSE_HEADERS => HeadersInterface::class,
+            self::SERVER => ContainerInterface::class,
+            self::SESSION => SessionManagerInterface::class
         ];
 
     /**
@@ -47,7 +56,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
     /**
      * @var string
      */
-    protected $method = Http::METHOD_GET;
+    protected $method = Http::GET_METHOD;
 
     /**
      * @var VariableContainerInterface
@@ -91,7 +100,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
 
     public function getContentType(): string
     {
-        return $this->getResponseHeaders()->get(Http::HEADER_CONTENT_TYPE)[0] ?? '';
+        return $this->getResponseHeaders()->get(Http::CONTENT_TYPE_HEADER)[0] ?? '';
     }
 
     public function getCookies(): CookieManagerInterface
@@ -155,27 +164,17 @@ class HttpCargo extends Cargo implements HttpCargoInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setContentType(string $contentType): CargoInterface
     {
-        $this->responseHeaders->set(Http::HEADER_CONTENT_TYPE, [$contentType]);
+        $this->responseHeaders->set(Http::CONTENT_TYPE_HEADER, [$contentType]);
 
         return $this;
     }
 
-    protected function setCookies(CookieManagerInterface $cookies): void
-    {
-        $this->cookies = $cookies;
-    }
-
-    protected function setEnvironment(ContainerInterface $parameters): void
-    {
-        $this->environment = $parameters;
-    }
-
     /**
-     * @return static
+     * @return $this
      */
     public function setMethod(string $method): HttpCargoInterface
     {
@@ -184,13 +183,8 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this;
     }
 
-    protected function setParameters(VariableContainerInterface $parameters): void
-    {
-        $this->parameters = $parameters;
-    }
-
     /**
-     * @return static
+     * @return $this
      */
     public function setProtocolVersion(string $protocolVersion): HttpCargoInterface
     {
@@ -199,28 +193,8 @@ class HttpCargo extends Cargo implements HttpCargoInterface
         return $this;
     }
 
-    protected function setRequestHeaders(HeadersInterface $requestHeaders): void
-    {
-        $this->requestHeaders = $requestHeaders;
-    }
-
-    protected function setResponseHeaders(HeadersInterface $responseHeaders): void
-    {
-        $this->responseHeaders = $responseHeaders;
-    }
-
-    protected function setServer(ContainerInterface $server): void
-    {
-        $this->server = $server;
-    }
-
-    protected function setSession(SessionManagerInterface $session): void
-    {
-        $this->session = $session;
-    }
-
     /**
-     * @return static
+     * @return $this
      */
     public function setStatusCode(int $statusCode): HttpCargoInterface
     {
@@ -230,7 +204,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setUri(UriInterface $uri): HttpCargoInterface
     {
@@ -240,7 +214,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function unpack(): CargoInterface
     {

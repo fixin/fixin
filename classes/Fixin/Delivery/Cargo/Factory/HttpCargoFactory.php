@@ -14,50 +14,50 @@ use Fixin\Base\Headers\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Resource\Factory;
 use Fixin\Resource\FactoryInterface;
-use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
 /**
  * @SuppressWarnings(PHPMD.Superglobals)
  */
-class HttpCargoFactory extends Resource implements FactoryInterface
+class HttpCargoFactory extends Factory implements FactoryInterface
 {
     public function __invoke(array $options = null, string $name = null): HttpCargoInterface
     {
-        $container = $this->container;
-        $cookies = $container->clone('Base\Cookie\CookieManager', [
-            CookieManagerInterface::OPTION_COOKIES => $_COOKIE
+        $resourceManager = $this->resourceManager;
+        $cookies = $resourceManager->clone('Base\Cookie\CookieManager', [
+            CookieManagerInterface::COOKIES => $_COOKIE
         ]);
         $method = $_SERVER['REQUEST_METHOD'];
         $requestHeaders = $this->getRequestHeaders();
 
         $options = [
-            HttpCargoInterface::OPTION_COOKIES => $cookies,
-            HttpCargoInterface::OPTION_ENVIRONMENT => $container->clone('Base\Container\Container')->withValues($_ENV),
-            HttpCargoInterface::OPTION_METHOD => $method,
-            HttpCargoInterface::OPTION_PARAMETERS => $container->clone('Base\Container\VariableContainer')->withValues($_GET),
-            HttpCargoInterface::OPTION_PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
-            HttpCargoInterface::OPTION_REQUEST_HEADERS => $container->clone('Base\Headers\Headers', [
-                HeadersInterface::OPTION_VALUES => $requestHeaders
+            HttpCargoInterface::COOKIES => $cookies,
+            HttpCargoInterface::ENVIRONMENT => $resourceManager->clone('Base\Container\Container')->withValues($_ENV),
+            HttpCargoInterface::METHOD => $method,
+            HttpCargoInterface::PARAMETERS => $resourceManager->clone('Base\Container\VariableContainer')->withValues($_GET),
+            HttpCargoInterface::PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
+            HttpCargoInterface::REQUEST_HEADERS => $resourceManager->clone('Base\Headers\Headers', [
+                HeadersInterface::VALUES => $requestHeaders
             ]),
-            HttpCargoInterface::OPTION_RESPONSE_HEADERS => $container->clone('Base\Headers\Headers'),
-            HttpCargoInterface::OPTION_SERVER => $container->clone('Base\Container\Container')->withValues($_SERVER),
-            HttpCargoInterface::OPTION_SESSION => $container->clone('Base\Session\SessionManager', [
-                SessionManagerInterface::OPTION_COOKIE_MANAGER => $cookies
+            HttpCargoInterface::RESPONSE_HEADERS => $resourceManager->clone('Base\Headers\Headers'),
+            HttpCargoInterface::SERVER => $resourceManager->clone('Base\Container\Container')->withValues($_SERVER),
+            HttpCargoInterface::SESSION => $resourceManager->clone('Base\Session\SessionManager', [
+                SessionManagerInterface::COOKIE_MANAGER => $cookies
             ]),
-            HttpCargoInterface::OPTION_CONTENT_TYPE => 'text/html',
+            HttpCargoInterface::CONTENT_TYPE => 'text/html',
         ];
 
-        if (in_array($method, [Http::METHOD_POST, Http::METHOD_PUT])) {
-            $options[CargoInterface::OPTION_CONTENT] = $this->getPostParameters();
+        if (in_array($method, [Http::POST_METHOD, Http::PUT_METHOD])) {
+            $options[CargoInterface::CONTENT] = $this->getPostParameters();
 
-            if (isset($requestHeaders[Http::HEADER_CONTENT_TYPE])) {
-                $options[CargoInterface::OPTION_CONTENT_TYPE] = $requestHeaders[Http::HEADER_CONTENT_TYPE];
+            if (isset($requestHeaders[Http::CONTENT_TYPE_HEADER])) {
+                $options[CargoInterface::CONTENT_TYPE] = $requestHeaders[Http::CONTENT_TYPE_HEADER];
             }
         }
 
-        return $container->clone('Delivery\Cargo\HttpCargo', $options);
+        return $resourceManager->clone('Delivery\Cargo\HttpCargo', $options);
     }
 
     protected function getPostParameters(): array

@@ -10,16 +10,16 @@
 namespace Fixin\Delivery\Cargo\Factory;
 
 use Fixin\Delivery\Cargo\CargoInterface;
+use Fixin\Resource\Factory;
 use Fixin\Resource\FactoryInterface;
-use Fixin\Resource\Resource;
 use Fixin\Support\Ground;
 
-class RuntimeCargoFactory extends Resource implements FactoryInterface
+class RuntimeCargoFactory extends Factory implements FactoryInterface
 {
     public function __invoke(array $options = null, string $name = null): CargoInterface
     {
         $factory = 'Delivery\Cargo\Factory\\' . (Ground::isConsole() ? 'ConsoleCargoFactory' : 'HttpCargoFactory');
 
-        return $this->container->clone($factory);
+        return $this->resourceManager->clone($factory);
     }
 }

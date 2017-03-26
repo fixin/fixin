@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Entity;
@@ -16,9 +18,12 @@ abstract class Entity extends Prototype implements EntityInterface
     use ToStringTrait;
 
     protected const
-        EXCEPTION_NOT_STORED_ENTITY = 'Not stored entity',
+        NOT_STORED_ENTITY_EXCEPTION = 'Not stored entity',
+        THIS_SETS = [
+            self::ENTITY_ID => EntityIdInterface::class
+        ],
         THIS_SETS_LAZY = [
-            self::OPTION_REPOSITORY => RepositoryInterface::class
+            self::REPOSITORY => RepositoryInterface::class
         ];
 
     /**
@@ -37,8 +42,8 @@ abstract class Entity extends Prototype implements EntityInterface
     protected $repository;
 
     /**
+     * @return $this
      * @throws Exception\NotStoredEntityException
-     * @return static
      */
     public function delete(): EntityInterface
     {
@@ -49,7 +54,7 @@ abstract class Entity extends Prototype implements EntityInterface
             return $this;
         }
 
-        throw new Exception\NotStoredEntityException(static::EXCEPTION_NOT_STORED_ENTITY);
+        throw new Exception\NotStoredEntityException(static::NOT_STORED_ENTITY_EXCEPTION);
     }
 
     public function getEntityId(): ?EntityIdInterface
@@ -59,7 +64,7 @@ abstract class Entity extends Prototype implements EntityInterface
 
     public function getRepository(): RepositoryInterface
     {
-        return $this->repository ?: $this->loadLazyProperty(static::OPTION_REPOSITORY);
+        return $this->repository ?: $this->loadLazyProperty(static::REPOSITORY);
     }
 
     public function isStored(): bool
@@ -68,7 +73,7 @@ abstract class Entity extends Prototype implements EntityInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function refresh(): EntityInterface
     {
@@ -78,7 +83,7 @@ abstract class Entity extends Prototype implements EntityInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function save(): EntityInterface
     {
@@ -104,10 +109,5 @@ abstract class Entity extends Prototype implements EntityInterface
         }
 
         $this->outdatedSubEntities = [];
-    }
-
-    protected function setEntityId(EntityIdInterface $entityId): void
-    {
-        $this->entityId = $entityId;
     }
 }

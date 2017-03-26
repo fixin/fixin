@@ -17,8 +17,11 @@ abstract class Cache extends Prototype implements CacheInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_ENTITY_PROTOTYPE,
-            self::OPTION_REPOSITORY
+            self::ENTITY_PROTOTYPE,
+            self::REPOSITORY
+        ],
+        THIS_SETS = [
+            self::ENTITY_PROTOTYPE => EntityInterface::class
         ];
 
     /**
@@ -35,11 +38,6 @@ abstract class Cache extends Prototype implements CacheInterface
      * @var RepositoryInterface
      */
     protected $repository;
-
-    protected function setEntityPrototype(EntityInterface $entityPrototype): void
-    {
-        $this->entityPrototype = $entityPrototype;
-    }
 
     protected function setRepository(RepositoryInterface $repository): void
     {

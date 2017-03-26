@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Cargo;
@@ -17,17 +19,17 @@ use Fixin\Base\Uri\UriInterface;
 interface HttpCargoInterface extends CargoInterface
 {
     public const
-        OPTION_COOKIES = 'cookies',
-        OPTION_ENVIRONMENT = 'environment',
-        OPTION_METHOD = 'method',
-        OPTION_PARAMETERS = 'parameters',
-        OPTION_PROTOCOL_VERSION = 'protocolVersion',
-        OPTION_REQUEST_HEADERS = 'requestHeaders',
-        OPTION_RESPONSE_HEADERS = 'responseHeaders',
-        OPTION_SERVER = 'server',
-        OPTION_SESSION = 'session',
-        OPTION_STATUS_CODE = 'statusCode',
-        OPTION_URI = 'uri';
+        COOKIES = 'cookies',
+        ENVIRONMENT = 'environment',
+        METHOD = 'method',
+        PARAMETERS = 'parameters',
+        PROTOCOL_VERSION = 'protocolVersion',
+        REQUEST_HEADERS = 'requestHeaders',
+        RESPONSE_HEADERS = 'responseHeaders',
+        SERVER = 'server',
+        SESSION = 'session',
+        STATUS_CODE = 'statusCode',
+        URI = 'uri';
 
     public function getCookies(): CookieManagerInterface;
     public function getEnvironment(): ContainerInterface;
@@ -40,8 +42,24 @@ interface HttpCargoInterface extends CargoInterface
     public function getSession(): SessionManagerInterface;
     public function getStatusCode(): int;
     public function getUri(): UriInterface;
+
+    /**
+     * @return $this
+     */
     public function setMethod(string $method): HttpCargoInterface;
+
+    /**
+     * @return $this
+     */
     public function setProtocolVersion(string $protocolVersion): HttpCargoInterface;
+
+    /**
+     * @return $this
+     */
     public function setStatusCode(int $statusCode): HttpCargoInterface;
+
+    /**
+     * @return $this
+     */
     public function setUri(UriInterface $requestUri): HttpCargoInterface;
 }

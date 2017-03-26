@@ -18,11 +18,14 @@ class EntitySet extends Prototype implements EntitySetInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_STORAGE_RESULT
+            self::STORAGE_RESULT
+        ],
+        THIS_SETS = [
+            self::ID_FETCH_MODE => self::BOOL_TYPE
         ],
         THIS_SETS_LAZY = [
-            self::OPTION_ENTITY_CACHE => CacheInterface::class,
-            self::OPTION_REPOSITORY => RepositoryInterface::class
+            self::ENTITY_CACHE => CacheInterface::class,
+            self::REPOSITORY => RepositoryInterface::class
         ];
 
     /**
@@ -117,7 +120,7 @@ class EntitySet extends Prototype implements EntitySetInterface
 
     protected function getEntityCache(): CacheInterface
     {
-        return $this->entityCache ?: $this->loadLazyProperty(static::OPTION_ENTITY_CACHE);
+        return $this->entityCache ?: $this->loadLazyProperty(static::ENTITY_CACHE);
     }
 
     public function getEntityIds(): array
@@ -135,7 +138,7 @@ class EntitySet extends Prototype implements EntitySetInterface
 
     public function getRepository(): RepositoryInterface
     {
-        return $this->repository ?: $this->loadLazyProperty(static::OPTION_REPOSITORY);
+        return $this->repository ?: $this->loadLazyProperty(static::REPOSITORY);
     }
 
     public function key(): int
@@ -201,11 +204,6 @@ class EntitySet extends Prototype implements EntitySetInterface
         $this->prefetch();
     }
 
-    protected function setIdFetchMode(bool $idFetchMode): void
-    {
-        $this->idFetchMode = $idFetchMode;
-    }
-
     protected function setItems(array $items): void
     {
         $this->items = $items;
@@ -225,7 +223,7 @@ class EntitySet extends Prototype implements EntitySetInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function shuffle(): EntitySetInterface
     {

@@ -16,17 +16,22 @@ use Fixin\Delivery\Cargo\HttpCargoInterface;
 class HttpRouterHub extends HttpHub
 {
     protected const
-        EXCEPTION_INVALID_HANDLER = "Invalid handler '%s'",
-        EXCEPTION_MISSING_ROUTE_PARAMETER = "Missing route parameter '%s'",
-        EXCEPTION_UNKNOWN_ROUTE = "Unknown route '%s'",
+        INVALID_HANDLER_EXCEPTION = "Invalid handler '%s'",
+        MISSING_ROUTE_PARAMETER_EXCEPTION = "Missing route parameter '%s'",
+        UNKNOWN_ROUTE_EXCEPTION = "Unknown route '%s'",
         THIS_REQUIRES = [
-            self::OPTION_ROUTE_TREE
+            self::ROUTE_TREE
+        ],
+        THIS_SETS = [
+            self::HANDLERS => self::ARRAY_TYPE,
+            self::ROUTE_TREE => self::ARRAY_TYPE,
+            self::ROUTE_URIS => self::ARRAY_TYPE
         ];
 
     public const
-        OPTION_HANDLERS = 'handlers',
-        OPTION_ROUTE_TREE = 'routeTree',
-        OPTION_ROUTE_URIS = 'routeUris',
+        HANDLERS = 'handlers',
+        ROUTE_TREE = 'routeTree',
+        ROUTE_URIS = 'routeUris',
         ROUTE_URI_ANY_PARAMETER = ':',
         ROUTE_URI_HANDLER = 'handler',
         ROUTE_URI_PARAMETERS = 'parameters',
@@ -144,14 +149,14 @@ class HttpRouterHub extends HttpHub
         $handler = $this->handlers[$name];
 
         if (is_string($handler)) {
-            $handler = $this->container->get($handler);
+            $handler = $this->resourceManager->get($handler);
         }
 
         if ($handler instanceof CargoHandlerInterface) {
             return $handler;
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_HANDLER, $name));
+        throw new Exception\InvalidArgumentException(sprintf(static::INVALID_HANDLER_EXCEPTION, $name));
     }
 
     /**
@@ -163,7 +168,7 @@ class HttpRouterHub extends HttpHub
             return vsprintf($this->routeUris[$name][static::ROUTE_URI_URI], $this->routeParameters($name, $parameters));
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_UNKNOWN_ROUTE, $name));
+        throw new Exception\InvalidArgumentException(sprintf(static::UNKNOWN_ROUTE_EXCEPTION, $name));
     }
 
     /**
@@ -188,24 +193,9 @@ class HttpRouterHub extends HttpHub
                 continue;
             }
 
-            throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_MISSING_ROUTE_PARAMETER, $key));
+            throw new Exception\InvalidArgumentException(sprintf(static::MISSING_ROUTE_PARAMETER_EXCEPTION, $key));
         }
 
         return $replaces;
-    }
-
-    protected function setHandlers(array $handlers): void
-    {
-        $this->handlers = $handlers;
-    }
-
-    protected function setRouteTree(array $routeTree): void
-    {
-        $this->routeTree = $routeTree;
-    }
-
-    protected function setRouteUris(array $routeUris): void
-    {
-        $this->routeUris = $routeUris;
     }
 }

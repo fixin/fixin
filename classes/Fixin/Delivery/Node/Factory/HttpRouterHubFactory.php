@@ -10,22 +10,22 @@
 namespace Fixin\Delivery\Node\Factory;
 
 use Fixin\Delivery\Node\HttpRouterHub;
+use Fixin\Resource\Factory;
 use Fixin\Resource\FactoryInterface;
-use Fixin\Resource\Resource;
 use Fixin\Support\Arrays;
 use Fixin\Support\Strings;
 
-class HttpRouterHubFactory extends Resource implements FactoryInterface
+class HttpRouterHubFactory extends Factory implements FactoryInterface
 {
     protected const
-        EXCEPTION_INVALID_ROUTE_ARGUMENT = "Invalid route argument for '%s'",
-        EXCEPTION_NO_ROUTES = "No routes";
+        INVALID_ROUTE_ARGUMENT_EXCEPTION = "Invalid route argument for '%s'",
+        NO_ROUTES_EXCEPTION = "No routes";
 
     public const
-        OPTION_HANDLER = 'handler',
-        OPTION_PATTERNS = 'patterns',
-        OPTION_ROUTES = 'routes',
-        OPTION_URI = 'uri';
+        HANDLER = 'handler',
+        PATTERNS = 'patterns',
+        ROUTES = 'routes',
+        URI = 'uri';
 
     /**
      * @var array
@@ -63,25 +63,25 @@ class HttpRouterHubFactory extends Resource implements FactoryInterface
     public function __invoke(array $options = NULL, string $name = NULL): HttpRouterHub
     {
         // Routes
-        if (isset($options[static::OPTION_ROUTES])) {
+        if (isset($options[static::ROUTES])) {
             // Reset
             $this->reset();
-            $this->patterns = $options[static::OPTION_PATTERNS] ?? [];
+            $this->patterns = $options[static::PATTERNS] ?? [];
 
             // Process
-            $this->addRoutesFromDefinition($options[static::OPTION_ROUTES], '/', '');
+            $this->addRoutesFromDefinition($options[static::ROUTES], '/', '');
 
             // Hub
             if ($this->routeTree) {
-                return new HttpRouterHub($this->container, [
-                    HttpRouterHub::OPTION_ROUTE_TREE => $this->routeTree,
-                    HttpRouterHub::OPTION_ROUTE_URIS => $this->routeUris,
-                    HttpRouterHub::OPTION_HANDLERS => $this->handlers
+                return new HttpRouterHub($this->resourceManager, [
+                    HttpRouterHub::ROUTE_TREE => $this->routeTree,
+                    HttpRouterHub::ROUTE_URIS => $this->routeUris,
+                    HttpRouterHub::HANDLERS => $this->handlers
                 ], $name);
             }
         }
 
-        throw new Exception\RuntimeException(static::EXCEPTION_NO_ROUTES);
+        throw new Exception\RuntimeException(static::NO_ROUTES_EXCEPTION);
     }
 
     /**
@@ -91,10 +91,10 @@ class HttpRouterHubFactory extends Resource implements FactoryInterface
     {
         $this->scopePatterns = $this->patterns;
 
-        if (isset($definition[static::OPTION_PATTERNS])) {
-            $routePatterns = $definition[static::OPTION_PATTERNS];
+        if (isset($definition[static::PATTERNS])) {
+            $routePatterns = $definition[static::PATTERNS];
             if (!is_array($routePatterns)) {
-                throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ROUTE_ARGUMENT, $uri));
+                throw new Exception\InvalidArgumentException(sprintf(static::INVALID_ROUTE_ARGUMENT_EXCEPTION, $uri));
             }
 
             $this->scopePatterns = array_replace($this->scopePatterns, $routePatterns);
@@ -114,7 +114,7 @@ class HttpRouterHubFactory extends Resource implements FactoryInterface
                 continue;
             }
 
-            throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_ROUTE_ARGUMENT, $key));
+            throw new Exception\InvalidArgumentException(sprintf(static::INVALID_ROUTE_ARGUMENT_EXCEPTION, $key));
         }
     }
 
@@ -183,17 +183,17 @@ class HttpRouterHubFactory extends Resource implements FactoryInterface
     protected function addRoutesFromDefinition(array $definition, string $uri, string $namespace): void
     {
         // Uri
-        if (isset($definition[static::OPTION_URI])) {
-            $uri = $this->uri($definition[static::OPTION_URI], $uri);
+        if (isset($definition[static::URI])) {
+            $uri = $this->uri($definition[static::URI], $uri);
 
-            unset($definition[static::OPTION_URI]);
+            unset($definition[static::URI]);
         }
 
         // Route
-        if (isset($definition[static::OPTION_HANDLER])) {
+        if (isset($definition[static::HANDLER])) {
             $namespace = rtrim($namespace, ':');
             $this->scopeName = $namespace;
-            $this->handlers[$namespace] = $definition[static::OPTION_HANDLER];
+            $this->handlers[$namespace] = $definition[static::HANDLER];
 
             $this->addRouteFromDefinition($definition, $uri);
 

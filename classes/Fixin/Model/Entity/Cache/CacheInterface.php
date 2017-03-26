@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Entity\Cache;
@@ -14,10 +16,14 @@ use Fixin\Resource\PrototypeInterface;
 interface CacheInterface extends PrototypeInterface
 {
     public const
-        OPTION_ENTITY_PROTOTYPE = 'entityPrototype',
-        OPTION_REPOSITORY = 'repository';
+        ENTITY_PROTOTYPE = 'entityPrototype',
+        REPOSITORY = 'repository';
 
+    /**
+     * @return $this
+     */
     public function clear(): CacheInterface;
+
     public function fetchResultEntity(StorageResultInterface $storageResult): EntityInterface;
 
     /**
@@ -25,7 +31,18 @@ interface CacheInterface extends PrototypeInterface
      */
     public function getByIds(array $ids): array;
 
+    /**
+     * @return $this
+     */
     public function invalidate(): CacheInterface;
+
+    /**
+     * @return $this
+     */
     public function remove(EntityInterface $entity): CacheInterface;
+
+    /**
+     * @return $this
+     */
     public function update(EntityInterface $entity): CacheInterface;
 }

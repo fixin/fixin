@@ -20,12 +20,12 @@ class HttpClassHub extends HttpHub
 {
     protected const
         CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/',
-        EXCEPTION_INVALID_CLASS = "Class '%s' is invalid, CargoHandlerInterface required";
+        INVALID_CLASS_EXCEPTION = "Class '%s' is invalid, CargoHandlerInterface required";
 
     public const
-        OPTION_BASE_PATH = 'basePath',
-        OPTION_CLASS_PREFIX = 'classPrefix',
-        OPTION_DEPTH = 'depth';
+        BASE_PATH = 'basePath',
+        CLASS_PREFIX = 'classPrefix',
+        DEPTH = 'depth';
 
     /**
      * @var string
@@ -51,14 +51,14 @@ class HttpClassHub extends HttpHub
             $fullName = $this->classPrefix . Strings::toClassName($name);
 
             // Test class
-            if ($this->container->has($fullName)) {
-                $instance = $this->container->get($fullName);
+            if ($this->resourceManager->has($fullName)) {
+                $instance = $this->resourceManager->get($fullName);
 
                 if ($instance instanceof CargoHandlerInterface) {
                     return $instance;
                 }
 
-                throw new Exception\RuntimeException(sprintf(static::EXCEPTION_INVALID_CLASS, get_class($instance)));
+                throw new Exception\RuntimeException(sprintf(static::INVALID_CLASS_EXCEPTION, get_class($instance)));
             }
         }
 

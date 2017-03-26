@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Node;
@@ -19,7 +21,7 @@ class ArrayToJson extends Resource implements NodeInterface
     {
         if (is_array($cargo->getContent())) {
             $cargo
-                ->setContent($this->container->get('Base\Json\Json')->encode($cargo->getContent()))
+                ->setContent($this->resourceManager->get('Base\Json\Json')->encode($cargo->getContent()))
                 ->setContentType(static::CONTENT_TYPE);
         }
 

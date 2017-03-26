@@ -17,10 +17,11 @@ class EntityId extends Prototype implements EntityIdInterface
     protected const
         SEPARATOR = ',',
         THIS_REQUIRES = [
-            self::OPTION_REPOSITORY
+            self::ENTITY_ID,
+            self::REPOSITORY
         ],
         THIS_SETS_LAZY = [
-            self::OPTION_REPOSITORY => RepositoryInterface::class
+            self::REPOSITORY => RepositoryInterface::class,
         ];
 
     /**
@@ -63,7 +64,7 @@ class EntityId extends Prototype implements EntityIdInterface
 
     public function getRepository(): RepositoryInterface
     {
-        return $this->repository ?: $this->loadLazyProperty(static::OPTION_REPOSITORY);
+        return $this->repository ?: $this->loadLazyProperty(static::REPOSITORY);
     }
 
     protected function setEntityId(array $entityId): void

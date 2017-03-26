@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Entity;
@@ -13,8 +15,8 @@ use Fixin\Resource\PrototypeInterface;
 interface EntityIdInterface extends PrototypeInterface
 {
     public const
-        OPTION_ENTITY_ID = 'entityId',
-        OPTION_REPOSITORY = 'repository';
+        ENTITY_ID = 'entityId',
+        REPOSITORY = 'repository';
 
     public function __toString(): string;
     public function deleteEntity(): bool;

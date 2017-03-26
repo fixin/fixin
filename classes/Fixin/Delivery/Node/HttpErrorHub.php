@@ -19,14 +19,14 @@ class HttpErrorHub extends Resource implements NodeInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_ROUTE
+            self::ROUTE
         ],
         THIS_SETS_LAZY = [
-            self::OPTION_ROUTE => RouteInterface::class
+            self::ROUTE => RouteInterface::class
         ];
 
     public const
-        OPTION_ROUTE = 'route';
+        ROUTE = 'route';
 
     /**
      * @var RouteInterface|false|null
@@ -35,7 +35,7 @@ class HttpErrorHub extends Resource implements NodeInterface
 
     protected function getRoute(): RouteInterface
     {
-        return $this->route ?: $this->loadLazyProperty(static::OPTION_ROUTE);
+        return $this->route ?: $this->loadLazyProperty(static::ROUTE);
     }
 
     public function handle(CargoInterface $cargo): CargoInterface

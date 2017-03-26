@@ -15,12 +15,12 @@ use Fixin\Resource\PrototypeInterface;
 interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable
 {
     public const
-        OPTION_ENTITY_CACHE = 'entityCache',
-        OPTION_ID_FETCH_MODE = 'idFetchMode',
-        OPTION_ITEMS = 'items',
-        OPTION_PREFETCH_SIZE = 'prefetchSize',
-        OPTION_REPOSITORY = 'repository',
-        OPTION_STORAGE_RESULT = 'storageResult';
+        ENTITY_CACHE = 'entityCache',
+        ID_FETCH_MODE = 'idFetchMode',
+        ITEMS = 'items',
+        PREFETCH_SIZE = 'prefetchSize',
+        REPOSITORY = 'repository',
+        STORAGE_RESULT = 'storageResult';
 
     /**
      * @return EntityIdInterface[]
@@ -28,5 +28,9 @@ interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable
     public function getEntityIds(): array;
 
     public function getRepository(): RepositoryInterface;
+
+    /**
+     * @return $this
+     */
     public function shuffle(): EntitySetInterface;
 }

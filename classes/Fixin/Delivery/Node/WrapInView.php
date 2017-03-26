@@ -18,13 +18,17 @@ class WrapInView extends Resource implements NodeInterface
     protected const
         ALLOWED_TYPES = ['text/html'],
         THIS_REQUIRES = [
-            self::OPTION_CONTENT_NAME,
-            self::OPTION_TEMPLATE
+            self::CONTENT_NAME,
+            self::TEMPLATE
+        ],
+        THIS_SETS = [
+            self::CONTENT_NAME => self::STRING_TYPE,
+            self::TEMPLATE => self::STRING_TYPE
         ];
 
     public const
-        OPTION_CONTENT_NAME = 'contentName',
-        OPTION_TEMPLATE = 'template';
+        CONTENT_NAME = 'contentName',
+        TEMPLATE = 'template';
 
     /**
      * @var string
@@ -42,8 +46,8 @@ class WrapInView extends Resource implements NodeInterface
             $content = $cargo->getContent();
 
             /** @var ViewInterface $view */
-            $view = $this->container->clone('View\View', [
-                ViewInterface::OPTION_TEMPLATE => $this->template
+            $view = $this->resourceManager->clone('View\View', [
+                ViewInterface::TEMPLATE => $this->template
             ]);
             $cargo->setContent($view);
 
@@ -57,15 +61,5 @@ class WrapInView extends Resource implements NodeInterface
         }
 
         return $cargo;
-    }
-
-    protected function setContentName(string $contentName): void
-    {
-        $this->contentName = $contentName;
-    }
-
-    protected function setTemplate(string $template): void
-    {
-        $this->template = $template;
     }
 }

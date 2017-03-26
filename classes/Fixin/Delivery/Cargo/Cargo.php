@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Cargo;
@@ -42,7 +44,7 @@ class Cargo extends Prototype implements CargoInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setContent($content): CargoInterface
     {
@@ -52,7 +54,7 @@ class Cargo extends Prototype implements CargoInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setContentType(string $contentType): CargoInterface
     {
@@ -62,7 +64,7 @@ class Cargo extends Prototype implements CargoInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setDelivered(bool $delivered): CargoInterface
     {
@@ -72,7 +74,7 @@ class Cargo extends Prototype implements CargoInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function unpack(): CargoInterface
     {

@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Route;
@@ -12,5 +14,5 @@ use Fixin\Delivery\Cargo\CargoHandlerInterface;
 interface RouteInterface extends CargoHandlerInterface
 {
     public const
-        OPTION_NODES = 'nodes';
+        NODES = 'nodes';
 }

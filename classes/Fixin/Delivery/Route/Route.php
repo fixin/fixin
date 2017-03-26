@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Delivery\Route;
@@ -14,7 +16,13 @@ use Fixin\Resource\Resource;
 class Route extends Resource implements RouteInterface
 {
     protected const
-        EXCEPTION_INVALID_NODE = "Invalid node '%s'";
+        INVALID_NODE_EXCEPTION = "Invalid node '%s'",
+        THIS_REQUIRES = [
+            self::NODES
+        ],
+        THIS_SETS = [
+            self::NODES => self::ARRAY_TYPE
+        ];
 
     /**
      * @var NodeInterface[]
@@ -22,58 +30,48 @@ class Route extends Resource implements RouteInterface
     protected $loadedNodes = [];
 
     /**
-     * @var array
+     * @var string[]|NodeInterface[]
      */
     protected $nodes = [];
 
     /**
-     * Get node instance for index
+     * Get node instance for key
      *
      * @throws Exception\InvalidArgumentException
      */
-    protected function getNode(int $index): NodeInterface
+    protected function getNode($key): NodeInterface
     {
-        if (isset($this->loadedNodes[$index])) {
-            return $this->loadedNodes[$index];
+        if (isset($this->loadedNodes[$key])) {
+            return $this->loadedNodes[$key];
         }
 
-        $node = $this->nodes[$index];
+        $node = $this->nodes[$key];
 
         if (is_string($node)) {
-            $node = $this->container->get($node);
+            $node = $this->resourceManager->get($node);
         }
 
         if ($node instanceof NodeInterface) {
-            $this->loadedNodes[$index] = $node;
+            $this->loadedNodes[$key] = $node;
 
             return $node;
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_NODE, $index));
+        throw new Exception\InvalidArgumentException(sprintf(static::INVALID_NODE_EXCEPTION, $key));
     }
 
     public function handle(CargoInterface $cargo): CargoInterface
     {
         $cargo->setDelivered(false);
 
-        $index = 0;
-        $length = count($this->nodes);
-
-        while ($index < $length) {
-            $cargo = $this->getNode($index)->handle($cargo);
+        foreach (array_keys($this->nodes) as $key) {
+            $cargo = $this->getNode($key)->handle($cargo);
 
             if ($cargo->isDelivered()) {
                 break;
             }
-
-            $index++;
         }
 
         return $cargo;
-    }
-
-    protected function setNodes(array $nodes): void
-    {
-        $this->nodes = array_values($nodes);
     }
 }

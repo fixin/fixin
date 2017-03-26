@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Model\Entity\Cache;
@@ -25,7 +27,7 @@ class RuntimeCache extends Cache
     protected $invalidEntities = [];
 
     /**
-     * @return static
+     * @return $this
      */
     public function clear(): CacheInterface
     {
@@ -55,7 +57,7 @@ class RuntimeCache extends Cache
         }
 
         return $this->entities[$key] = $this->entityPrototype->withOptions([
-            EntityInterface::OPTION_ENTITY_ID => $entityId
+            EntityInterface::ENTITY_ID => $entityId
         ])->exchangeArray($data);
     }
 
@@ -80,7 +82,7 @@ class RuntimeCache extends Cache
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function invalidate(): CacheInterface
     {
@@ -91,7 +93,7 @@ class RuntimeCache extends Cache
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function remove(EntityInterface $entity): CacheInterface
     {
@@ -103,7 +105,7 @@ class RuntimeCache extends Cache
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function update(EntityInterface $entity): CacheInterface
     {
