@@ -14,7 +14,10 @@ use Fixin\Resource\Prototype;
 class CookieManager extends Prototype implements CookieManagerInterface
 {
     protected const
-        EXPIRE_MINUTES = -24 * 60 * 7;
+        EXPIRE_MINUTES = -24 * 60 * 7,
+        THIS_SETS = [
+            self::COOKIES => self::ARRAY_TYPE,
+        ];
 
     /**
      * @var string[]|CookieInterface[]
@@ -22,7 +25,7 @@ class CookieManager extends Prototype implements CookieManagerInterface
     protected $cookies = [];
 
     /**
-     * @return static
+     * @return $this
      */
     public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface
     {
@@ -45,13 +48,15 @@ class CookieManager extends Prototype implements CookieManagerInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function sendChanges(): CookieManagerInterface
     {
+        $baseTime = time();
+
         foreach ($this->cookies as $name => $cookie) {
             if ($cookie instanceof CookieInterface) {
-                $cookie->sendAs($name);
+                $cookie->sendAs($name, $baseTime);
 
                 $this->cookies[$name] = $cookie->getValue();
             }
@@ -64,14 +69,9 @@ class CookieManager extends Prototype implements CookieManagerInterface
     {
         if (!isset($this->cookies[$name]) || !($cookie = $this->cookies[$name]) instanceof CookieInterface) {
             $cookie =
-            $this->cookies[$name] = $this->container->clone('Base\Cookie\Cookie');
+            $this->cookies[$name] = $this->resourceManager->clone('Base\Cookie\Cookie');
         }
 
         return $cookie->setValue($value);
-    }
-
-    protected function setCookies(array $cookies): void
-    {
-        $this->cookies = $cookies;
     }
 }

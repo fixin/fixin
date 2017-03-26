@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Serializer;
@@ -13,8 +15,8 @@ use Throwable;
 class PhpSerializer extends Resource implements SerializerInterface
 {
     protected const
-        EXCEPTION_SERIALIZATION_FAILED = 'Serialization failed',
-        EXCEPTION_UNSERIALIZATION_FAILED = 'Unserialization failed';
+        SERIALIZATION_FAILED_EXCEPTION = 'Serialization failed',
+        UNSERIALIZATION_FAILED_EXCEPTION = 'Unserialization failed';
 
     public function serialize($value): string
     {
@@ -22,17 +24,17 @@ class PhpSerializer extends Resource implements SerializerInterface
             return serialize($value);
         }
         catch (Throwable $t) {
-            throw new Exception\RuntimeException(static::EXCEPTION_SERIALIZATION_FAILED, 0, $t);
+            throw new Exception\RuntimeException(static::SERIALIZATION_FAILED_EXCEPTION, 0, $t);
         }
     }
 
-    public function unserialize(string $data, array $allowedClasses = null)
+    public function unserialize(string $serialized, array $allowedClasses = null)
     {
         try {
-            return unserialize($data, isset($allowedClasses) ? ['allowed_classes' => $allowedClasses] : null);
+            return unserialize($serialized, isset($allowedClasses) ? ['allowed_classes' => $allowedClasses] : null);
         }
         catch (Throwable $t) {
-            throw new Exception\RuntimeException(static::EXCEPTION_UNSERIALIZATION_FAILED, 0, $t);
+            throw new Exception\RuntimeException(static::UNSERIALIZATION_FAILED_EXCEPTION, 0, $t);
         }
     }
 }

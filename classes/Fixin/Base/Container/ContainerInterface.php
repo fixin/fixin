@@ -22,7 +22,9 @@ interface ContainerInterface extends \Serializable
     public function has(string $name): bool;
 
     /**
-     * Instance with new values
+     * Cloned instance with new values
+     *
+     * @return static
      */
     public function withValues(array $values): ContainerInterface;
 }

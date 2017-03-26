@@ -22,13 +22,13 @@ abstract class HttpRestfulController extends Resource implements ControllerInter
         ],
         CONTENT_TYPE = 'application/json',
         METHOD_MAP = [
-            Http::METHOD_DELETE => 'deleteMethod',
-            Http::METHOD_GET => 'getMethod',
-            Http::METHOD_HEAD => 'headMethod',
-            Http::METHOD_OPTIONS => 'optionsMethod',
-            Http::METHOD_PATCH => 'patchMethod',
-            Http::METHOD_POST => 'postMethod',
-            Http::METHOD_PUT => 'putMethod'
+            Http::DELETE_METHOD => 'deleteMethod',
+            Http::GET_METHOD => 'getMethod',
+            Http::HEAD_METHOD => 'headMethod',
+            Http::OPTIONS_METHOD => 'optionsMethod',
+            Http::PATCH_METHOD => 'patchMethod',
+            Http::POST_METHOD => 'postMethod',
+            Http::PUT_METHOD => 'putMethod'
         ];
 
     /**

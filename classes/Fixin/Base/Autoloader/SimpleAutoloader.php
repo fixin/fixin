@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Autoloader;
@@ -12,15 +14,10 @@ require_once 'AutoloaderInterface.php';
 class SimpleAutoloader implements AutoloaderInterface
 {
     /**
-     * Registered paths
-     *
      * @var array[]
      */
     protected $paths = [];
 
-    /**
-     * @param array $prefixes
-     */
     public function __construct(array $prefixes = [])
     {
         foreach ($prefixes as $prefix => $path) {
@@ -30,9 +27,6 @@ class SimpleAutoloader implements AutoloaderInterface
         $this->register();
     }
 
-    /**
-     * Add base path(s) for a prefix
-     */
     protected function addPrefixPath(string $prefix, $path): void
     {
         // Prepare prefix
@@ -44,7 +38,7 @@ class SimpleAutoloader implements AutoloaderInterface
         }
     }
 
-    public function autoload(string $class): void
+    public function autoloadCallback(string $class): void
     {
         // Swap '\'
         $class = strtr($class, '\\', DIRECTORY_SEPARATOR);
@@ -73,11 +67,8 @@ class SimpleAutoloader implements AutoloaderInterface
         }
     }
 
-    /**
-     * Register autoload function
-     */
     protected function register(): void
     {
-        spl_autoload_register([$this, 'autoload']);
+        spl_autoload_register([$this, 'autoloadCallback']);
     }
 }

@@ -17,13 +17,13 @@ use Fixin\Resource\Resource;
 class Local extends Resource implements FileSystemInterface
 {
     protected const
-        EXCEPTION_FILE_NOT_EXISTS = "File not exists at '%s'",
-        EXCEPTION_FILE_READ_FAILURE = "File read failure '%s'",
-        EXCEPTION_FILE_WRITE_FAILURE = "File read failure '%s'";
+        FILE_NOT_FOUND_EXCEPTION = "File not found at '%s'",
+        FILE_READ_FAILURE_EXCEPTION = "File read failure '%s'",
+        FILE_WRITE_FAILURE_EXCEPTION = "File write failure '%s'";
 
-    public function delete(string $filename): bool
+    public function delete(string $path): bool
     {
-        return unlink($filename);
+        return unlink($path);
     }
 
     /**
@@ -39,10 +39,10 @@ class Local extends Resource implements FileSystemInterface
                 return $content;
             }
 
-            throw new Exception\FileReadFailureException(sprintf(static::EXCEPTION_FILE_READ_FAILURE, $filename));
+            throw new Exception\FileReadFailureException(sprintf(static::FILE_READ_FAILURE_EXCEPTION, $filename));
         }
 
-        throw new Exception\FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
+        throw new Exception\FileNotFoundException(sprintf(static::FILE_NOT_FOUND_EXCEPTION, $filename));
     }
 
     /**
@@ -58,10 +58,10 @@ class Local extends Resource implements FileSystemInterface
                 return $content;
             }
 
-            throw new Exception\FileReadFailureException(sprintf(static::EXCEPTION_FILE_READ_FAILURE, $filename));
+            throw new Exception\FileReadFailureException(sprintf(static::FILE_READ_FAILURE_EXCEPTION, $filename));
         }
 
-        throw new Exception\FileNotFoundException(sprintf(static::EXCEPTION_FILE_NOT_EXISTS, $filename));
+        throw new Exception\FileNotFoundException(sprintf(static::FILE_NOT_FOUND_EXCEPTION, $filename));
     }
 
     public function getFileSize(string $filename): ?int
@@ -92,7 +92,7 @@ class Local extends Resource implements FileSystemInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function includeFilesRecursive(string $path, string $extension): FileSystemInterface
     {
@@ -116,9 +116,9 @@ class Local extends Resource implements FileSystemInterface
         return file_exists($path);
     }
 
-    public function hasFile(string $path): bool
+    public function hasFile(string $filename): bool
     {
-        return is_file($path);
+        return is_file($filename);
     }
 
     public function hasReadableFile(string $filename): bool
@@ -147,6 +147,6 @@ class Local extends Resource implements FileSystemInterface
             return $written;
         }
 
-        throw new Exception\FileWriteFailureException(sprintf(static::EXCEPTION_FILE_WRITE_FAILURE, $filename));
+        throw new Exception\FileWriteFailureException(sprintf(static::FILE_WRITE_FAILURE_EXCEPTION, $filename));
     }
 }

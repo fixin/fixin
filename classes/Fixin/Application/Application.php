@@ -24,14 +24,14 @@ class Application implements ApplicationInterface
         INTERNAL_SERVER_ERROR_HTML = '<h1>500 Internal server error</h1>';
 
     public const
-        CONFIG_APPLICATION = 'application',
-        CONFIG_RESOURCE_MANAGER = 'resourceManager',
-        OPTION_CARGO = 'cargo',
-        OPTION_RESOURCE_MANAGER_CLASS = 'resourceManagerClass',
-        OPTION_ERROR_ROUTE = 'errorRoute',
-        OPTION_ROUTE = 'route';
+        APPLICATION_ROOT = 'application',
+        CARGO = 'cargo',
+        ERROR_ROUTE = 'errorRoute',
+        RESOURCE_MANAGER_CLASS = 'resourceManagerClass',
+        RESOURCE_MANAGER_ROOT = 'resourceManager',
+        ROUTE = 'route';
 
-    /**
+        /**
      * @var array
      */
     protected $config;
@@ -44,14 +44,14 @@ class Application implements ApplicationInterface
     public function __construct(array $config)
     {
         // Config
-        $this->config = $config[static::CONFIG_APPLICATION] ?? [];
+        $this->config = $config[static::APPLICATION_ROOT] ?? [];
 
         // Resource Manager config
-        $resourceManagerConfig = $config[static::CONFIG_RESOURCE_MANAGER];
+        $resourceManagerConfig = $config[static::RESOURCE_MANAGER_ROOT];
 
         // Class
-        $containerClass = $resourceManagerConfig[static::OPTION_RESOURCE_MANAGER_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
-        unset($resourceManagerConfig[static::OPTION_RESOURCE_MANAGER_CLASS]);
+        $containerClass = $resourceManagerConfig[static::RESOURCE_MANAGER_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
+        unset($resourceManagerConfig[static::RESOURCE_MANAGER_CLASS]);
 
         // Resource Manager init
         $this->resourceManager = new $containerClass($resourceManagerConfig);
@@ -65,7 +65,7 @@ class Application implements ApplicationInterface
         }
 
         try {
-            $this->resourceManager->get($this->config[static::OPTION_ERROR_ROUTE])
+            $this->resourceManager->get($this->config[static::ERROR_ROUTE])
                 ->handle($cargo)
                 ->unpack();
         }
@@ -85,7 +85,7 @@ class Application implements ApplicationInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function run(): ApplicationInterface
     {
@@ -95,8 +95,8 @@ class Application implements ApplicationInterface
 
         try {
             /** @var CargoInterface $cargo */
-            $cargo = $container->clone($this->config[static::OPTION_CARGO]);
-            $container->get($this->config[static::OPTION_ROUTE])
+            $cargo = $container->clone($this->config[static::CARGO]);
+            $container->get($this->config[static::ROUTE])
                 ->handle($cargo)
                 ->unpack();
         }

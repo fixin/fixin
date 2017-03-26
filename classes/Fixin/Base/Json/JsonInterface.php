@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Json;
@@ -12,10 +14,10 @@ use Fixin\Resource\ResourceInterface;
 interface JsonInterface extends ResourceInterface
 {
     public const
-        OPTION_DECODING_MAX_DEPTH = 'decodingMaxDepth',
-        OPTION_DECODING_OPTIONS = 'decodingOptions',
-        OPTION_ENCODING_MAX_DEPTH = 'encodingMaxDepth',
-        OPTION_ENCODING_OPTIONS = 'encodingOptions';
+        DECODING_MAX_DEPTH = 'decodingMaxDepth',
+        DECODING_OPTIONS = 'decodingOptions',
+        ENCODING_MAX_DEPTH = 'encodingMaxDepth',
+        ENCODING_OPTIONS = 'encodingOptions';
 
     /**
      * Decode JSON string

@@ -2,17 +2,16 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Autoloader;
 
 interface AutoloaderInterface
 {
-    /**
-     * Autoload callback
-     */
-    public function autoload(string $class): void;
+    public function autoloadCallback(string $class): void;
 }
 
 /**

@@ -31,7 +31,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function addParameter($parameter): SentenceInterface
     {
@@ -41,7 +41,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function addParameters(array $parameters): SentenceInterface
     {
@@ -51,7 +51,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function appendClause(string $clause, string $string): SentenceInterface
     {
@@ -61,7 +61,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function appendString(string $string): SentenceInterface
     {
@@ -71,7 +71,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function appendWord(string $word): SentenceInterface
     {
@@ -81,7 +81,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function applyMask(string $mask): SentenceInterface
     {

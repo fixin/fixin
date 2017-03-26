@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Json;
@@ -11,6 +13,14 @@ use Fixin\Resource\Resource;
 
 class Json extends Resource implements JsonInterface
 {
+    protected const
+        THIS_SETS = [
+            self::DECODING_MAX_DEPTH => self::INT_TYPE,
+            self::DECODING_OPTIONS => self::INT_TYPE,
+            self::ENCODING_MAX_DEPTH => self::INT_TYPE,
+            self::ENCODING_OPTIONS => self::INT_TYPE
+        ];
+
     /**
      * @var int
      */
@@ -45,25 +55,5 @@ class Json extends Resource implements JsonInterface
     public function encode($value): string
     {
         return json_encode($value, $this->encodingOptions, $this->encodingMaxDepth);
-    }
-
-    protected function setDecodingMaxDepth(int $decodingMaxDepth): void
-    {
-        $this->decodingMaxDepth = $decodingMaxDepth;
-    }
-
-    protected function setDecodingOptions(int $decodingOptions): void
-    {
-        $this->decodingOptions = $decodingOptions;
-    }
-
-    protected function setEncodingMaxDepth(int $encodingMaxDepth): void
-    {
-        $this->encodingMaxDepth = $encodingMaxDepth;
-    }
-
-    protected function setEncodingOptions(int $encodingOptions): void
-    {
-        $this->encodingOptions = $encodingOptions;
     }
 }

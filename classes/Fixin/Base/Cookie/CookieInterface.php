@@ -14,34 +14,52 @@ use Fixin\Resource\PrototypeInterface;
 interface CookieInterface extends PrototypeInterface
 {
     public const
-        OPTION_DOMAIN = 'domain',
-        OPTION_EXPIRE_TIME = 'expireTime',
-        OPTION_HTTP_ONLY = 'httpOnly',
-        OPTION_PATH = 'path',
-        OPTION_SECURE = 'secure',
-        OPTION_VALUE = 'value';
+        DOMAIN = 'domain',
+        EXPIRE_TIME = 'expireTime',
+        HTTP_ONLY = 'httpOnly',
+        PATH = 'path',
+        SECURE = 'secure',
+        VALUE = 'value';
 
     public function getDomain(): string;
-
-    /**
-     * Get expire in minutes
-     */
     public function getExpireTime(): int;
-
     public function getPath(): string;
     public function getValue(): string;
     public function isHttpOnly(): bool;
     public function isSecure(): bool;
-    public function sendAs(string $name): CookieInterface;
+
+    /**
+     * @return $this
+     */
+    public function sendAs(string $name, int $baseTime): CookieInterface;
+
+    /**
+     * @return $this
+     */
     public function setDomain(string $domain): CookieInterface;
 
     /**
-     * Set expire in minutes
+     * @return $this
      */
     public function setExpireTime(int $expireTime): CookieInterface;
 
+    /**
+     * @return $this
+     */
     public function setHttpOnly(bool $httpOnly): CookieInterface;
+
+    /**
+     * @return $this
+     */
     public function setPath(string $path): CookieInterface;
+
+    /**
+     * @return $this
+     */
     public function setSecure(bool $secure): CookieInterface;
+
+    /**
+     * @return $this
+     */
     public function setValue(string $value): CookieInterface;
 }

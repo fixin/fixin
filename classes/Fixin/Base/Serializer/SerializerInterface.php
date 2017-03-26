@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Serializer;
@@ -16,5 +18,5 @@ interface SerializerInterface extends ResourceInterface
     /**
      * Create value from a serialized string
      */
-    public function unserialize(string $data, array $allowedClasses = null);
+    public function unserialize(string $serialized, array $allowedClasses = null);
 }

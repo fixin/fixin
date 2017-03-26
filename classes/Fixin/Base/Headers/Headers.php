@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Headers;
@@ -11,13 +13,18 @@ use Fixin\Resource\Prototype;
 
 class Headers extends Prototype implements HeadersInterface
 {
+    protected const
+        THIS_SETS = [
+            self::VALUES => self::ARRAY_TYPE
+        ];
+
     /**
      * @var array
      */
     protected $values = [];
 
     /**
-     * @return static
+     * @return $this
      */
     public function add(string $name, string $value): HeadersInterface
     {
@@ -30,7 +37,7 @@ class Headers extends Prototype implements HeadersInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function clear(): HeadersInterface
     {
@@ -56,7 +63,7 @@ class Headers extends Prototype implements HeadersInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function send(): HeadersInterface
     {
@@ -70,17 +77,12 @@ class Headers extends Prototype implements HeadersInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function set(string $name, array $values): HeadersInterface
     {
         $this->values[$name] = $values;
 
         return $this;
-    }
-
-    protected function setValues(array $values): void
-    {
-        $this->values = $values;
     }
 }

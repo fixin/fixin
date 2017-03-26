@@ -20,7 +20,7 @@ abstract class HttpActionController extends Resource implements ControllerInterf
     protected const
         ACTION_PARAMETER = 'action',
         DEFAULT_ACTION = 'index',
-        EXCEPTION_INVALID_RETURN_TYPE = "Method '%s' returned invalid type";
+        INVALID_RETURN_TYPE_EXCEPTION = "Method '%s' returned invalid type";
 
     /**
      * Get method name of action if exists and it is accessible
@@ -75,7 +75,7 @@ abstract class HttpActionController extends Resource implements ControllerInterf
             return $this->replyNotFound($cargo);
         }
 
-        throw new Exception\UnexpectedValueException(sprintf(static::EXCEPTION_INVALID_RETURN_TYPE, $method));
+        throw new Exception\UnexpectedValueException(sprintf(static::INVALID_RETURN_TYPE_EXCEPTION, $method));
     }
 
     /**

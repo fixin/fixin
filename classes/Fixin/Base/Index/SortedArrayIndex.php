@@ -16,17 +16,20 @@ use Fixin\Support\Arrays;
 class SortedArrayIndex extends Prototype implements IndexInterface
 {
     protected const
-        EXCEPTION_FILENAME_NOT_SET = 'Filename not set',
-        EXCEPTION_INVALID_DATA = 'Invalid data',
-        KEY_KEYS = 'keys',
-        KEY_VALUES = 'values',
+        FILENAME_NOT_SET_EXCEPTION = 'Filename not set',
+        INVALID_DATA_EXCEPTION = 'Invalid data',
+        KEYS_KEY = 'keys',
+        THIS_SETS = [
+            self::FILENAME => self::STRING_TYPE
+        ],
         THIS_SETS_LAZY = [
-            self::OPTION_FILE_SYSTEM => FileSystemInterface::class
-        ];
+            self::FILE_SYSTEM => FileSystemInterface::class
+        ],
+        VALUES_KEY = 'values';
 
     public const
-        OPTION_FILE_SYSTEM = 'fileSystem',
-        OPTION_FILENAME = 'filename';
+        FILE_SYSTEM = 'fileSystem',
+        FILENAME = 'filename';
 
     /**
      * @var bool
@@ -64,7 +67,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function clear(): IndexInterface
     {
@@ -100,7 +103,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
 
     protected function getFileSystem(): FileSystemInterface
     {
-        return $this->fileSystem ?: $this->loadLazyProperty(static::OPTION_FILE_SYSTEM);
+        return $this->fileSystem ?: $this->loadLazyProperty(static::FILE_SYSTEM);
     }
 
     public function getKeysOf($value): array
@@ -154,17 +157,17 @@ class SortedArrayIndex extends Prototype implements IndexInterface
      * Load data from the file
      *
      * @throws Exception\RuntimeException
-     * @return static
+     * @return $this
      */
     protected function load(): self
     {
         if (!$this->filename) {
-            throw new Exception\RuntimeException(static::EXCEPTION_FILENAME_NOT_SET);
+            throw new Exception\RuntimeException(static::FILENAME_NOT_SET_EXCEPTION);
         }
 
         $data = unserialize($this->getFileSystem()->getFileContents($this->filename), ['allowed_classes' => false]);
         if (!is_array($data) || !$this->loadArray($data)) {
-            throw new Exception\RuntimeException(static::EXCEPTION_INVALID_DATA);
+            throw new Exception\RuntimeException(static::INVALID_DATA_EXCEPTION);
         }
 
         $this->dirty = false;
@@ -178,8 +181,8 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     protected function loadArray(array $data): bool
     {
         // Value check
-        $keys = Arrays::getArrayForKey($data, static::KEY_KEYS);
-        $values = Arrays::getArrayForKey($data, static::KEY_VALUES);
+        $keys = Arrays::getArrayForKey($data, static::KEYS_KEY);
+        $values = Arrays::getArrayForKey($data, static::VALUES_KEY);
 
         if (is_null($keys) || is_null($values) || count($keys) !== count($values)) {
             return false;
@@ -193,7 +196,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function revert(): IndexInterface
     {
@@ -203,7 +206,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function save(): IndexInterface
     {
@@ -218,17 +221,17 @@ class SortedArrayIndex extends Prototype implements IndexInterface
      * Save data
      *
      * @throws Exception\RuntimeException
-     * @return static
+     * @return $this
      */
     protected function saveProcess(): self
     {
         if (!$this->filename) {
-            throw new Exception\RuntimeException(static::EXCEPTION_FILENAME_NOT_SET);
+            throw new Exception\RuntimeException(static::FILENAME_NOT_SET_EXCEPTION);
         }
 
         $data = [
-            static::KEY_KEYS => $this->keys,
-            static::KEY_VALUES => $this->values
+            static::KEYS_KEY => $this->keys,
+            static::VALUES_KEY => $this->values
         ];
 
         $this->getFileSystem()->putFileContentsWithLock($this->filename, serialize($data));
@@ -239,7 +242,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function set($key, $value): IndexInterface
     {
@@ -255,13 +258,8 @@ class SortedArrayIndex extends Prototype implements IndexInterface
         return $this;
     }
 
-    protected function setFilename(string $filename): void
-    {
-        $this->filename = $filename;
-    }
-
     /**
-     * @return static
+     * @return $this
      */
     public function unset($key): IndexInterface
     {

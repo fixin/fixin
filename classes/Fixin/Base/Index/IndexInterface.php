@@ -13,6 +13,9 @@ use Fixin\Resource\PrototypeInterface;
 
 interface IndexInterface extends PrototypeInterface
 {
+    /**
+     * @return $this
+     */
     public function clear(): IndexInterface;
 
     public function getKeysOf($value): array;
@@ -26,15 +29,24 @@ interface IndexInterface extends PrototypeInterface
     public function getValues(array $keys): array;
 
     /**
-     * Rollback modifications to the last saved state
+     * Revert to the last saved state
+     *
+     * @return $this
      */
     public function revert(): IndexInterface;
 
     /**
-     * Write data if dirty
+     * @return $this
      */
     public function save(): IndexInterface;
 
+    /**
+     * @return $this
+     */
     public function set($key, $value): IndexInterface;
+
+    /**
+     * @return $this
+     */
     public function unset($key): IndexInterface;
 }

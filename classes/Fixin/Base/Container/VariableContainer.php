@@ -17,7 +17,7 @@ class VariableContainer extends Container implements VariableContainerInterface
     protected $modified = false;
 
     /**
-     * @return static
+     * @return $this
      */
     public function clear(): VariableContainerInterface
     {
@@ -33,7 +33,7 @@ class VariableContainer extends Container implements VariableContainerInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function replace(array $values): VariableContainerInterface
     {
@@ -44,7 +44,7 @@ class VariableContainer extends Container implements VariableContainerInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function set(string $name, $value): VariableContainerInterface
     {
@@ -55,7 +55,7 @@ class VariableContainer extends Container implements VariableContainerInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setModified(bool $modified): VariableContainerInterface
     {
@@ -65,7 +65,7 @@ class VariableContainer extends Container implements VariableContainerInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function unset(string $name): VariableContainerInterface
     {

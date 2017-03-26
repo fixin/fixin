@@ -2,12 +2,14 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Session;
 
-use DateTime;
+use DateTimeImmutable;
 use Fixin\Model\Entity\Entity;
 use Fixin\Model\Entity\EntityInterface;
 
@@ -18,7 +20,7 @@ class SessionEntity extends Entity
         SESSION_ID = 'sessionId';
 
     /**
-     * @var DateTime
+     * @var DateTimeImmutable
      */
     protected $accessTime;
 
@@ -42,7 +44,7 @@ class SessionEntity extends Entity
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function exchangeArray(array $data): EntityInterface
     {
@@ -56,9 +58,9 @@ class SessionEntity extends Entity
         return $this;
     }
 
-    public function getAccessTime(): ?DateTime
+    public function getAccessTime(): ?DateTimeImmutable
     {
-        if (!$this->accessTime instanceof DateTime && isset($this->accessTime)) {
+        if (!$this->accessTime instanceof DateTimeImmutable && isset($this->accessTime)) {
             $this->accessTime = $this->getRepository()->getValueAsDateTime($this->accessTime);
         }
 
@@ -76,9 +78,9 @@ class SessionEntity extends Entity
     }
 
     /**
-     * @return static
+     * @return $this
      */
-    public function setAccessTime(?DateTime $accessTime): self
+    public function setAccessTime(?DateTimeImmutable $accessTime): self
     {
         $this->accessTime = $accessTime;
 
@@ -86,7 +88,7 @@ class SessionEntity extends Entity
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setData(array $data): self
     {
@@ -96,7 +98,7 @@ class SessionEntity extends Entity
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setSessionId(?string $sessionId): self
     {

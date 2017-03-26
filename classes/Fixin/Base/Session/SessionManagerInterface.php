@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Session;
@@ -12,14 +14,16 @@ use Fixin\Resource\PrototypeInterface;
 interface SessionManagerInterface extends PrototypeInterface
 {
     public const
-        OPTION_COOKIE_MANAGER = 'cookieManager',
-        OPTION_COOKIE_NAME = 'cookieName',
-        OPTION_LIFETIME = 'lifetime',
-        OPTION_REGENERATION_FORWARD_TIME = 'regenerationForwardTime',
-        OPTION_REPOSITORY = 'repository';
+        COOKIE_MANAGER = 'cookieManager',
+        COOKIE_NAME = 'cookieName',
+        LIFETIME = 'lifetime',
+        REGENERATION_FORWARD_TIME = 'regenerationForwardTime',
+        REPOSITORY = 'repository';
 
     /**
      * Clear data
+     *
+     * @return $this
      */
     public function clear(): SessionManagerInterface;
 
@@ -34,7 +38,18 @@ interface SessionManagerInterface extends PrototypeInterface
      */
     public function isModified(): bool;
 
+    /**
+     * @return $this
+     */
     public function regenerateId(): SessionManagerInterface;
+
+    /**
+     * @return $this
+     */
     public function save(): SessionManagerInterface;
+
+    /**
+     * @return $this
+     */
     public function start(): SessionManagerInterface;
 }

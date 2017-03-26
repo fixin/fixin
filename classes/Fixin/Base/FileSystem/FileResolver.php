@@ -16,10 +16,13 @@ class FileResolver extends Resource implements FileResolverInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_FILE_SYSTEM
+            self::FILE_SYSTEM
+        ],
+        THIS_SETS = [
+            self::DEFAULT_EXTENSION => self::STRING_TYPE
         ],
         THIS_SETS_LAZY = [
-            self::OPTION_FILE_SYSTEM => FileSystemInterface::class
+            self::FILE_SYSTEM => FileSystemInterface::class
         ];
 
     /**
@@ -39,7 +42,7 @@ class FileResolver extends Resource implements FileResolverInterface
 
     protected function getFileSystem(): FileSystemInterface
     {
-        return $this->fileSystem ?: $this->loadLazyProperty(static::OPTION_FILE_SYSTEM);
+        return $this->fileSystem ?: $this->loadLazyProperty(static::FILE_SYSTEM);
     }
 
     public function resolve(string $filename): ?string
@@ -61,11 +64,6 @@ class FileResolver extends Resource implements FileResolverInterface
         }
 
         return null;
-    }
-
-    protected function setDefaultExtension(string $defaultExtension): void
-    {
-        $this->defaultExtension = $defaultExtension;
     }
 
     /**

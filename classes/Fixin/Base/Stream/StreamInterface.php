@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Stream;
@@ -30,13 +32,17 @@ interface StreamInterface
 
     /**
      * Seek to the beginning
+     *
+     * @return $this
      */
     public function rewind(): StreamInterface;
 
     /**
      * Seek to a position
+     *
+     * @return $this
      */
-    public function seek(int $offset, int $whence = SEEK_SET): StreamInterface;
+    public function seek(int $position, int $whence = SEEK_SET): StreamInterface;
 
     /**
      * Write data

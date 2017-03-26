@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Base\Uri;
@@ -11,6 +13,22 @@ use Fixin\Resource\Prototype;
 
 class Uri extends Prototype implements UriInterface
 {
+    protected const
+        THIS_REQUIRES = [
+            self::HOST,
+            self::PATH,
+            self::QUERY,
+        ],
+        THIS_SETS = [
+            self::FRAGMENT => self::STRING_TYPE,
+            self::HOST => self::STRING_TYPE,
+            self::PATH => self::STRING_TYPE,
+            self::PORT => self::INT_TYPE,
+            self::QUERY => self::STRING_TYPE,
+            self::SCHEME => self::STRING_TYPE,
+            self::USER_INFO => self::STRING_TYPE
+        ];
+
     /**
      * @var array
      */
@@ -27,12 +45,12 @@ class Uri extends Prototype implements UriInterface
     /**
      * @var string
      */
-    protected $host = '';
+    protected $host;
 
     /**
      * @var string
      */
-    protected $path = '';
+    protected $path;
 
     /**
      * @var int|null
@@ -42,34 +60,34 @@ class Uri extends Prototype implements UriInterface
     /**
      * @var string
      */
-    protected $query = '';
+    protected $query;
 
     /**
      * @var string
      */
-    protected $scheme = '';
+    protected $scheme;
 
     /**
      * @var string
      */
-    protected $userInfo = '';
+    protected $userInfo;
 
     public function __toString(): string
     {
         return ltrim($this->scheme . '://', ':/')
             . $this->getAuthority()
-            . ($this->path !== '' ? '/' . ltrim($this->path, '/') : '')
+            . ($this->path !== null ? '/' . ltrim($this->path, '/') : '')
             . rtrim('?' . $this->query, '?')
             . rtrim('#' . $this->fragment, '#');
     }
 
-    public function getAuthority(): string
+    public function getAuthority(): ?string
     {
         // Host
         $authority = $this->host;
 
-        if ($authority === '') {
-            return '';
+        if (!$authority) {
+            return null;
         }
 
         // User
@@ -110,12 +128,12 @@ class Uri extends Prototype implements UriInterface
         return $this->query;
     }
 
-    public function getScheme(): string
+    public function getScheme(): ?string
     {
         return $this->scheme;
     }
 
-    public function getUserInfo(): string
+    public function getUserInfo(): ?string
     {
         return $this->userInfo;
     }
@@ -126,40 +144,5 @@ class Uri extends Prototype implements UriInterface
     protected function isStandardPort(int $port, string $scheme): bool
     {
         return $port === $this->defaultSchemePorts[$scheme] ?? null;
-    }
-
-    protected function setFragment(?string $fragment): void
-    {
-        $this->fragment = $fragment;
-    }
-
-    protected function setHost(string $host): void
-    {
-        $this->host = $host;
-    }
-
-    protected function setPath(string $path): void
-    {
-        $this->path = $path;
-    }
-
-    protected function setPort(?int $port): void
-    {
-        $this->port = $port;
-    }
-
-    protected function setQuery(string $query): void
-    {
-        $this->query = $query;
-    }
-
-    protected function setScheme(string $scheme): void
-    {
-        $this->scheme = $scheme;
-    }
-
-    protected function setUserInfo(string $userInfo): void
-    {
-        $this->userInfo = $userInfo;
     }
 }
