@@ -24,14 +24,22 @@ abstract class Resource implements ResourceInterface
             self::OBJECT_TYPE => 'is_object',
             self::SCALAR_TYPE => 'is_scalar',
             self::STRING_TYPE => 'is_string'
+        ],
+        TYPE_NAMES = [
+            self::ANY_TYPE => 'any',
+            self::ARRAY_TYPE => 'array',
+            self::BOOL_TYPE => 'bool',
+            self::CALLABLE_TYPE => 'callable',
+            self::FLOAT_TYPE => 'float',
+            self::INT_TYPE => 'int',
+            self::NULL_TYPE => 'null',
+            self::NUMERIC_TYPE => 'numeric',
+            self::OBJECT_TYPE => 'object',
+            self::SCALAR_TYPE => 'scalar',
+            self::STRING_TYPE => 'string'
         ];
 
     protected const
-        INVALID_ARGUMENT_EXCEPTION = "Invalid '%s' argument: %s allowed",
-        INVALID_OPTION_EXCEPTION = "Invalid option '%s'",
-        INVALID_RESOURCE_EXCEPTION = "Invalid '%s' resource: %s allowed",
-        REQUIRED_PROPERTY_EXCEPTION = "'%s' is required for %s",
-
         ANY_TYPE = 1,
         ARRAY_TYPE = 2,
         BOOL_TYPE = 3,
@@ -46,7 +54,12 @@ abstract class Resource implements ResourceInterface
 
         THIS_REQUIRES = [],
         THIS_SETS = [],
-        THIS_SETS_LAZY = [];
+        THIS_SETS_LAZY = [],
+
+        INVALID_ARGUMENT_EXCEPTION = "Invalid '%s' argument: %s allowed",
+        INVALID_OPTION_EXCEPTION = "Invalid option '%s'",
+        INVALID_RESOURCE_EXCEPTION = "Invalid '%s' resource: %s allowed",
+        REQUIRED_PROPERTY_EXCEPTION = "'%s' is required for %s";
 
     /**
      * @var ResourceManagerInterface
@@ -78,10 +91,7 @@ abstract class Resource implements ResourceInterface
     protected function configurationTest(string $name): Resource
     {
         foreach (static::THIS_REQUIRES as $key) {
-            $value = $this->$key;
-
-            // TODO: notNull / notEmpty?
-            if ($value !== null && $value !== '' && $value !== []) {
+            if (isset($this->$key)) {
                 continue;
             }
 
@@ -92,33 +102,40 @@ abstract class Resource implements ResourceInterface
     }
 
     /**
-     * @throws Exception\InvalidArgumentException
      * @return $this
+     * @throws Exception\InvalidArgumentException
      */
     protected function configureWithOptions(array $options): Resource
     {
         foreach ($options as $name => $value) {
-            // Setter for property
+            // By setter
             if (method_exists($this, $method = 'set' . $name)) {
                 $this->$method($value);
 
                 continue;
             }
 
-            // Normal-loading property
+            // Normal property
             if (isset(static::THIS_SETS[$name])) {
-                if (is_null($value) || $value instanceof ($interface = static::THIS_SETS[$name])) {
-                    $this->$name = $value;
+                foreach ((array) static::THIS_SETS[$name] as $type) {
+                    if (is_int($type)) {
+                        $function = self::TYPE_CHECKS[$type] ?? false;
+                        if ($function === true || ($function && $function($value))) {
+                            $this->$name = $value;
 
-                    continue;
+                            continue 2;
+                        }
+                    }
+                    elseif ($value instanceof $type) {
+                        $this->$name = $value;
+
+                        continue 2;
+                    }
                 }
 
-                $function = self::TYPE_CHECKS[$interface] ?? false;
-                if ($function === true || ($function && $function($value))) {
-                    $this->$name = $value;
-
-                    continue;
-                }
+                $interface = implode(', ', array_map(function ($type) {
+                    return is_int($type) ? (self::TYPE_NAMES[$type] ?? $type) : $type;
+                }, (array) static::THIS_SETS[$name]));
 
                 throw new Exception\InvalidArgumentException(sprintf(static::INVALID_ARGUMENT_EXCEPTION, $name, $interface));
             }
