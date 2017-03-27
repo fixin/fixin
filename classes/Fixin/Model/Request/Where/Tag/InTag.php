@@ -17,6 +17,9 @@ class InTag extends IdentifierTag
         THIS_REQUIRES = [
             self::IDENTIFIER,
             self::VALUES
+        ],
+        THIS_SETS = [
+            self::VALUES => [self::ARRAY_TYPE, RequestInterface::class]
         ];
 
     public const
@@ -33,13 +36,5 @@ class InTag extends IdentifierTag
     public function getValues()
     {
         return $this->values;
-    }
-
-    /**
-     * @param array|RequestInterface $values
-     */
-    protected function setValues($values): void
-    {
-        $this->values = $values;
     }
 }

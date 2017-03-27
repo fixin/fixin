@@ -1,6 +1,5 @@
-.svn
-.DS_Store
 .buildpath
-.project
-.settings
+.DS_Store
+.idea
+.svn
 _work

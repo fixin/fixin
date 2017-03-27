@@ -20,21 +20,22 @@ class CompareTag extends Tag {
             self::RIGHT
         ],
         THIS_SETS = [
-            self::LEFT => self::ANY_TYPE,
+            self::LEFT => [self::SCALAR_TYPE, RequestInterface::class],
             self::OPERATOR => self::STRING_TYPE,
-            self::RIGHT => self::ANY_TYPE
+            self::RIGHT => [self::SCALAR_TYPE, RequestInterface::class, self::ARRAY_TYPE]
         ];
 
     public const
+        LEFT = 'left',
+        OPERATOR = 'operator',
+        RIGHT = 'right',
+
         GREATER_THAN = '>',
         GREATER_THAN_OR_EQUALS = '>=',
         EQUALS = '=',
-        LEFT = 'left',
         LOWER_THAN = '<',
         LOWER_THAN_OR_EQUALS = '<=',
-        NOT_EQUALS = '!=',
-        OPERATOR = 'operator',
-        RIGHT = 'right';
+        NOT_EQUALS = '!=';
 
     /**
      * @var number|string|RequestInterface
@@ -54,7 +55,7 @@ class CompareTag extends Tag {
     /**
      * Get left side
      *
-     * @return number|string
+     * @return number|string|RequestInterface
      */
     public function getLeft()
     {
@@ -69,7 +70,7 @@ class CompareTag extends Tag {
     /**
      * Get right side
      *
-     * @return number|string|array
+     * @return number|string|RequestInterface|array
      */
     public function getRight()
     {

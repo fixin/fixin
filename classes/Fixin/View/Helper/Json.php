@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View\Helper;
@@ -17,11 +19,11 @@ class Json extends Helper
      */
     protected $json;
 
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
+    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
     {
-        parent::__construct($container, $options, $name);
+        parent::__construct($resourceManager, $options, $name);
 
-        $this->json = $container->get('Base\Json\Json');
+        $this->json = $resourceManager->get('Base\Json\Json');
     }
 
     /**

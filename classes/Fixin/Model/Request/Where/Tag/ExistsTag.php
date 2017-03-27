@@ -16,6 +16,9 @@ class ExistsTag extends Tag
     protected const
         THIS_REQUIRES = [
             self::REQUEST
+        ],
+        THIS_SETS = [
+            self::REQUEST => RequestInterface::class
         ];
 
     public const
@@ -29,10 +32,5 @@ class ExistsTag extends Tag
     public function getRequest(): RequestInterface
     {
         return $this->request;
-    }
-
-    protected function setRequest(RequestInterface $request): void
-    {
-        $this->request = $request;
     }
 }

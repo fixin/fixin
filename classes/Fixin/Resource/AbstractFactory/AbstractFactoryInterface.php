@@ -9,10 +9,17 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Resource\FactoryInterface;
+use Fixin\Resource\ResourceInterface;
 
-interface AbstractFactoryInterface extends FactoryInterface
+interface AbstractFactoryInterface extends ResourceInterface
 {
+    /**
+     * Produce resource
+     *
+     * @return object|null
+     */
+    public function __invoke(array $options = null, string $name = null);
+
     /**
      * Determine if we can produce a resource by name
      */

@@ -2,12 +2,21 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Resource;
 
 interface ResourceInterface
 {
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null);
+    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null);
+
+    /**
+     * Cloned instance with replaced Resource Manager
+     *
+     * @return static
+     */
+    public function withResourceManager(ResourceManagerInterface $resourceManager): ResourceInterface;
 }

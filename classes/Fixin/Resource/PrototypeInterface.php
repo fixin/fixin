@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Resource;
@@ -10,7 +12,9 @@ namespace Fixin\Resource;
 interface PrototypeInterface extends ResourceInterface
 {
     /**
-     * Instance with changed options
+     * Cloned instance with changed options
+     *
+     * @return static
      */
     public function withOptions(array $options);
 }

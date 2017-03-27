@@ -16,8 +16,8 @@ use Fixin\Resource\Prototype;
 abstract class RequestBase extends Prototype implements RequestInterface
 {
     protected const
-        PROTOTYPE_JOIN = 'Model\Request\Join',
-        PROTOTYPE_WHERE = 'Model\Request\Where\Where',
+        JOIN_PROTOTYPE = 'Model\Request\Join',
+        WHERE_PROTOTYPE = 'Model\Request\Where\Where',
         THIS_REQUIRES = [
             self::REPOSITORY
         ],
@@ -87,12 +87,12 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): void
     {
-        $this->addJoinItem($type, $repository, $this->resourceManager->clone(static::PROTOTYPE_WHERE)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
+        $this->addJoinItem($type, $repository, $this->resourceManager->clone(static::WHERE_PROTOTYPE)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
     }
 
     protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null): void
     {
-        $this->joins[] = $this->resourceManager->clone(static::PROTOTYPE_JOIN, [
+        $this->joins[] = $this->resourceManager->clone(static::JOIN_PROTOTYPE, [
             JoinInterface::TYPE => $type,
             JoinInterface::REPOSITORY => $repository,
             JoinInterface::ALIAS => $alias ?? $repository->getName(),
@@ -103,7 +103,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
     protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null): void
     {
         /** @var WhereInterface $where */
-        $where = $this->resourceManager->clone(static::PROTOTYPE_WHERE);
+        $where = $this->resourceManager->clone(static::WHERE_PROTOTYPE);
         $callback($where);
 
         $this->addJoinItem($type, $repository, $where, $alias);
@@ -136,7 +136,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     public function getHaving(): WhereInterface
     {
-        return $this->having ?? ($this->having = $this->resourceManager->clone(static::PROTOTYPE_WHERE));
+        return $this->having ?? ($this->having = $this->resourceManager->clone(static::WHERE_PROTOTYPE));
     }
 
     public function getJoins(): array
@@ -166,7 +166,7 @@ abstract class RequestBase extends Prototype implements RequestInterface
 
     public function getWhere(): WhereInterface
     {
-        return $this->where ?? ($this->where = $this->resourceManager->clone(static::PROTOTYPE_WHERE));
+        return $this->where ?? ($this->where = $this->resourceManager->clone(static::WHERE_PROTOTYPE));
     }
 
     public function hasHaving(): bool

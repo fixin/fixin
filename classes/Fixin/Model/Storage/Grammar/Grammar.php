@@ -29,29 +29,29 @@ use Fixin\Support\Numbers;
 abstract class Grammar extends Resource implements GrammarInterface
 {
     protected const
-        EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@",
+        ALIAS_MASK = '%s AS %s',
+        ARRAY_MASK = '(%s)',
+        ASCENDING_ORDER = 'ASC',
+        BETWEEN_MASK = 'BETWEEN %s AND %s',
         DATETIME_FORMAT = 'Y-m-d H:i:s',
-        IDENTIFIER_QUOTE_CLOSE = "`",
-        IDENTIFIER_QUOTE_OPEN = "`",
+        DESCENDING_ORDER = 'DESC',
+        EXISTS_MASK = 'EXISTS(%s)',
+        EXPRESSION_TERMINALS = "\n\r\t '\"`()[]+-*/<>!=&|^,?@",
+        IDENTIFIER_CLOSE_QUOTE = "`",
+        IDENTIFIER_OPEN_QUOTE = "`",
+        IN_MASK = 'IN %s',
+        IS_NULL_WHERE_TAG = [false => 'IS NOT NULL', true => 'IS NULL'],
+        LIMIT_MASK = 'LIMIT %s' . PHP_EOL,
         LIST_SEPARATOR = ', ',
-        LIST_SEPARATOR_MULTI_LINE = ',' . PHP_EOL . "\t",
-        MASK_ALIAS = '%s AS %s',
-        MASK_ARRAY = '(%s)',
-        MASK_BETWEEN = 'BETWEEN %s AND %s',
-        MASK_EXISTS = 'EXISTS(%s)',
-        MASK_IN = 'IN %s',
-        MASK_LIMIT = 'LIMIT %s' . PHP_EOL,
-        MASK_NESTED = "(%s)",
-        MASK_NESTED_MULTI_LINE = '(' . PHP_EOL . "\t%s)" . PHP_EOL,
-        MASK_OFFSET = 'OFFSET %s' . PHP_EOL,
-        MASK_ORDER_BY = 'ORDER BY %s' . PHP_EOL,
-        MASK_ORDER_BY_ITEM = '%s %s',
-        METHOD_WHERE_TAG = 'whereTag',
-        ORDER_ASCENDING = 'ASC',
-        ORDER_DESCENDING = 'DESC',
+        MULTI_LINE_LIST_SEPARATOR = ',' . PHP_EOL . "\t",
+        MULTI_LINE_NESTED_MASK = '(' . PHP_EOL . "\t%s)" . PHP_EOL,
+        NEGATE_WHERE_TAG = [false => '', true => 'NOT '],
+        NESTED_MASK = "(%s)",
+        OFFSET_MASK = 'OFFSET %s' . PHP_EOL,
+        ORDER_BY_MASK = 'ORDER BY %s' . PHP_EOL,
+        ORDER_BY_ITEM_MASK = '%s %s',
         PLACEHOLDER = '?',
-        WHERE_TAG_IS_NULL = [false => 'IS NOT NULL', true => 'IS NULL'],
-        WHERE_TAG_NEGATE = [false => '', true => 'NOT '],
+        WHERE_TAG_METHOD = 'whereTag',
         WHERE_TAG_SEPARATOR = PHP_EOL . "\t %s ";
 
     protected function expressionArrayToString(array $expression, SentenceInterface $sentence): string
@@ -61,7 +61,7 @@ abstract class Grammar extends Resource implements GrammarInterface
             $result[] = $this->expressionToString($item, $sentence);
         }
 
-        return sprintf(static::MASK_ARRAY, implode(static::LIST_SEPARATOR, $result));
+        return sprintf(static::ARRAY_MASK, implode(static::LIST_SEPARATOR, $result));
     }
 
     protected function expressionToString($expression, SentenceInterface $sentence): string
@@ -85,7 +85,7 @@ abstract class Grammar extends Resource implements GrammarInterface
 
         // Request
         elseif ($expression instanceof RequestInterface) {
-            return sprintf(static::MASK_NESTED, $this->requestToString($expression, $sentence));
+            return sprintf(static::NESTED_MASK, $this->requestToString($expression, $sentence));
         }
 
         // ID
@@ -130,7 +130,7 @@ abstract class Grammar extends Resource implements GrammarInterface
         }
         // Request
         elseif ($identifier instanceof RequestInterface) {
-            return sprintf(static::MASK_NESTED, $this->requestToString($identifier, $sentence));
+            return sprintf(static::NESTED_MASK, $this->requestToString($identifier, $sentence));
         }
         elseif (is_array($identifier)) {
             return $this->quoteArrayIdentifier($identifier);
@@ -147,11 +147,11 @@ abstract class Grammar extends Resource implements GrammarInterface
         $result = '';
 
         if ($offset) {
-            $result .= sprintf(static::MASK_OFFSET, $offset);
+            $result .= sprintf(static::OFFSET_MASK, $offset);
         }
 
         if ($limit) {
-            $result .= sprintf(static::MASK_LIMIT, $limit);
+            $result .= sprintf(static::LIMIT_MASK, $limit);
         }
 
         return $result;
@@ -163,7 +163,7 @@ abstract class Grammar extends Resource implements GrammarInterface
     protected function nameToString(string $name, string $alias = null): string
     {
         if ($name !== $alias && !is_null($alias)) {
-            return sprintf(static::MASK_ALIAS, $this->quoteIdentifier($name), $this->quoteIdentifier($alias));
+            return sprintf(static::ALIAS_MASK, $this->quoteIdentifier($name), $this->quoteIdentifier($alias));
         }
 
         return $this->quoteIdentifier($name);
@@ -181,10 +181,10 @@ abstract class Grammar extends Resource implements GrammarInterface
                     continue;
                 }
 
-                $list[] = sprintf(static::MASK_ORDER_BY_ITEM, $this->quoteIdentifier($key), strtoupper($value) === static::ORDER_DESCENDING ? static::ORDER_DESCENDING : static::ORDER_ASCENDING);
+                $list[] = sprintf(static::ORDER_BY_ITEM_MASK, $this->quoteIdentifier($key), strtoupper($value) === static::DESCENDING_ORDER ? static::DESCENDING_ORDER : static::ASCENDING_ORDER);
             }
 
-            return sprintf(static::MASK_ORDER_BY, implode(static::LIST_SEPARATOR, $list));
+            return sprintf(static::ORDER_BY_MASK, implode(static::LIST_SEPARATOR, $list));
         }
 
         return '';
@@ -193,7 +193,7 @@ abstract class Grammar extends Resource implements GrammarInterface
     protected function quoteArrayIdentifier(array $identifier): string
     {
         if (count($identifier) > 1) {
-            return sprintf(static::MASK_ARRAY, implode(static::LIST_SEPARATOR, array_map([$this, 'quoteIdentifier'], $identifier)));
+            return sprintf(static::ARRAY_MASK, implode(static::LIST_SEPARATOR, array_map([$this, 'quoteIdentifier'], $identifier)));
         }
 
         return $this->quoteIdentifier(reset($identifier));
@@ -224,8 +224,8 @@ abstract class Grammar extends Resource implements GrammarInterface
             $tags = explode(static::IDENTIFIER_SEPARATOR, $trimmed);
 
             foreach ($tags as &$tag) {
-                if ($tag[0] !== static::IDENTIFIER_QUOTE_OPEN) {
-                    $tag = static::IDENTIFIER_QUOTE_OPEN . $tag . static::IDENTIFIER_QUOTE_CLOSE;
+                if ($tag[0] !== static::IDENTIFIER_OPEN_QUOTE) {
+                    $tag = static::IDENTIFIER_OPEN_QUOTE . $tag . static::IDENTIFIER_CLOSE_QUOTE;
                 }
             }
 
@@ -254,30 +254,30 @@ abstract class Grammar extends Resource implements GrammarInterface
 
     protected function whereTagBetween(BetweenTag $tag, SentenceInterface $sentence): string
     {
-        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_BETWEEN, $this->expressionToString($tag->getMin(), $sentence)
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::NEGATE_WHERE_TAG[$tag->isNegated()] . sprintf(static::BETWEEN_MASK, $this->expressionToString($tag->getMin(), $sentence)
             , $this->expressionToString($tag->getMax(), $sentence));
     }
 
     protected function whereTagCompare(CompareTag $tag, SentenceInterface $sentence): string
     {
-        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . $this->expressionToString($tag->getLeft(), $sentence) . ' ' . $tag->getOperator() . ' ' . $this->expressionToString($tag->getRight(), $sentence);
+        return static::NEGATE_WHERE_TAG[$tag->isNegated()] . $this->expressionToString($tag->getLeft(), $sentence) . ' ' . $tag->getOperator() . ' ' . $this->expressionToString($tag->getRight(), $sentence);
     }
 
     protected function whereTagExists(ExistsTag $tag, SentenceInterface $sentence): string
     {
-        return static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_EXISTS, $this->requestToString($tag->getRequest(), $sentence));
+        return static::NEGATE_WHERE_TAG[$tag->isNegated()] . sprintf(static::EXISTS_MASK, $this->requestToString($tag->getRequest(), $sentence));
     }
 
     protected function whereTagIn(InTag $tag, SentenceInterface $sentence): string
     {
         $values = $tag->getValues();
 
-        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::WHERE_TAG_NEGATE[$tag->isNegated()] . sprintf(static::MASK_IN, $this->expressionToString($values, $sentence));
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::NEGATE_WHERE_TAG[$tag->isNegated()] . sprintf(static::IN_MASK, $this->expressionToString($values, $sentence));
     }
 
     protected function whereTagNull(NullTag $tag, SentenceInterface $sentence): string
     {
-        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::WHERE_TAG_IS_NULL[!$tag->isNegated()];
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::IS_NULL_WHERE_TAG[!$tag->isNegated()];
     }
 
     /**
@@ -285,7 +285,7 @@ abstract class Grammar extends Resource implements GrammarInterface
      */
     protected function whereTagWhere(WhereTag $tag, SentenceInterface $sentence): string
     {
-        return sprintf(static::MASK_NESTED_MULTI_LINE, $this->whereToString('', $tag->getWhere(), $sentence));
+        return sprintf(static::MULTI_LINE_NESTED_MASK, $this->whereToString('', $tag->getWhere(), $sentence));
     }
 
     protected function whereToString(string $clause, WhereInterface $where, SentenceInterface $sentence): string
@@ -301,7 +301,7 @@ abstract class Grammar extends Resource implements GrammarInterface
                 $class = get_class($tag);
                 $shortName = substr($class, strrpos($class, '\\') + 1, -3);
 
-                $result .= $this->{static::METHOD_WHERE_TAG . $shortName}($tag, $sentence);
+                $result .= $this->{static::WHERE_TAG_METHOD . $shortName}($tag, $sentence);
             }
 
             return $result . PHP_EOL;

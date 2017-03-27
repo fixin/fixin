@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View\Engine;
@@ -11,7 +13,8 @@ use Fixin\Resource\ResourceInterface;
 use Fixin\View\Helper\HelperInterface;
 use Fixin\View\ViewInterface;
 
-interface EngineInterface extends ResourceInterface {
+interface EngineInterface extends ResourceInterface
+{
 
     /**
      * Get type of rendered content

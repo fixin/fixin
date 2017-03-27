@@ -16,6 +16,9 @@ class WhereTag extends Tag
     protected const
         THIS_REQUIRES = [
             self::WHERE
+        ],
+        THIS_SETS = [
+            self::WHERE => WhereInterface::class
         ];
 
     public const
@@ -29,10 +32,5 @@ class WhereTag extends Tag
     public function getWhere(): WhereInterface
     {
         return $this->where;
-    }
-
-    protected function setWhere(WhereInterface $where): void
-    {
-        $this->where = $where;
     }
 }

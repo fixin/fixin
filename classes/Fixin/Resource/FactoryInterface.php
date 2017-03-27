@@ -9,8 +9,13 @@
 
 namespace Fixin\Resource;
 
-interface FactoryInterface extends ResourceInterface
+interface FactoryInterface
 {
+    /**
+     * @param ResourceManagerInterface $resourceManager
+     */
+    public function __construct(ResourceManagerInterface $resourceManager);
+
     /**
      * Produce resource
      *

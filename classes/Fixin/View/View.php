@@ -17,11 +17,14 @@ class View extends Prototype implements ViewInterface
 {
     protected const
         DEFAULT_ENGINE = 'View\Engine\JsonEngine',
-        EXCEPTION_FILE_RESOLVER_NOT_SET = 'File resolver not set',
-        EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE = "Unable to resolve template '%s'",
+        FILE_RESOLVER_NOT_SET_EXCEPTION = 'File resolver not set',
+        UNABLE_TO_RESOLVE_TEMPLATE_EXCEPTION = "Unable to resolve template '%s'",
+        THIS_SETS = [
+            self::POSTFIX_TO_ENGINE_MAP => self::ARRAY_TYPE
+        ],
         THIS_SETS_LAZY = [
-            self::OPTION_ENGINE => EngineInterface::class,
-            self::OPTION_FILE_RESOLVER => FileResolverInterface::class
+            self::ENGINE => EngineInterface::class,
+            self::FILE_RESOLVER => FileResolverInterface::class
         ];
 
     /**
@@ -58,7 +61,7 @@ class View extends Prototype implements ViewInterface
     protected $variables = [];
 
     /**
-     * @return static
+     * @return $this
      */
     public function clearChildren(): ViewInterface
     {
@@ -68,7 +71,7 @@ class View extends Prototype implements ViewInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function clearVariables(): ViewInterface
     {
@@ -98,11 +101,11 @@ class View extends Prototype implements ViewInterface
             return $this->engine;
         }
 
-        if ($engine = $this->loadLazyProperty(static::OPTION_ENGINE)) {
+        if ($engine = $this->loadLazyProperty(static::ENGINE)) {
             return $engine;
         }
 
-        return $this->engine = $this->container->get($this->getEngineNameForTemplate());
+        return $this->engine = $this->resourceManager->get($this->getEngineNameForTemplate());
     }
 
     /**
@@ -129,7 +132,7 @@ class View extends Prototype implements ViewInterface
 
     protected function getFileResolver(): FileResolverInterface
     {
-        return $this->fileResolver ?: $this->loadLazyProperty(static::OPTION_FILE_RESOLVER);
+        return $this->fileResolver ?: $this->loadLazyProperty(static::FILE_RESOLVER);
     }
 
     /**
@@ -154,7 +157,7 @@ class View extends Prototype implements ViewInterface
             return $resolved;
         }
 
-        throw new Exception\RuntimeException(sprintf(static::EXCEPTION_UNABLE_TO_RESOLVE_TEMPLATE, $template));
+        throw new Exception\RuntimeException(sprintf(static::UNABLE_TO_RESOLVE_TEMPLATE_EXCEPTION, $template));
     }
 
     public function getTemplate(): String
@@ -178,7 +181,7 @@ class View extends Prototype implements ViewInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function replaceVariables(array $variables): ViewInterface
     {
@@ -188,7 +191,7 @@ class View extends Prototype implements ViewInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setChild(string $name, ViewInterface $child): ViewInterface
     {
@@ -197,13 +200,8 @@ class View extends Prototype implements ViewInterface
         return $this;
     }
 
-    protected function setPostfixToEngineMap(array $postfixToEngineMap): void
-    {
-        $this->postfixToEngineMap = $postfixToEngineMap;
-    }
-
     /**
-     * @return static
+     * @return $this
      */
     public function setTemplate(string $template): ViewInterface
     {
@@ -213,7 +211,7 @@ class View extends Prototype implements ViewInterface
     }
 
     /**
-     * @return static
+     * @return $this
      */
     public function setVariable(string $name, $value): ViewInterface
     {

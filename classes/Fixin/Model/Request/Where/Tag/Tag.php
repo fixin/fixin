@@ -16,6 +16,10 @@ abstract class Tag extends Prototype implements TagInterface
     protected const
         THIS_REQUIRES = [
             self::JOIN
+        ],
+        THIS_SETS = [
+            self::JOIN => self::STRING_TYPE,
+            self::NEGATED => self::BOOL_TYPE
         ];
 
     /**
@@ -36,15 +40,5 @@ abstract class Tag extends Prototype implements TagInterface
     public function isNegated(): bool
     {
         return $this->negated;
-    }
-
-    protected function setJoin(string $join): void
-    {
-        $this->join = $join;
-    }
-
-    protected function setNegated(bool $negated): void
-    {
-        $this->negated = $negated;
     }
 }

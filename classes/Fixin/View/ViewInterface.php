@@ -14,10 +14,10 @@ use Fixin\Resource\PrototypeInterface;
 interface ViewInterface extends PrototypeInterface
 {
     public const
-        OPTION_ENGINE = 'engine',
-        OPTION_FILE_RESOLVER = 'fileResolver',
-        OPTION_POSTFIX_TO_ENGINE_MAP = 'postfixToEngineMap',
-        OPTION_TEMPLATE = 'template';
+        ENGINE = 'engine',
+        FILE_RESOLVER = 'fileResolver',
+        POSTFIX_TO_ENGINE_MAP = 'postfixToEngineMap',
+        TEMPLATE = 'template';
 
     public function clearChildren(): ViewInterface;
     public function clearVariables(): ViewInterface;

@@ -25,14 +25,19 @@ use PDOStatement;
 class PdoStorage extends Resource implements StorageInterface
 {
     protected const
-        EXCEPTION_CONNECTION_ERROR = "Connection error: %s",
+        CONNECTION_ERROR_EXCEPTION = "Connection error: %s",
         GRAMMAR_CLASS_MASK = 'Model\Storage\Grammar\%sGrammar',
-        PROTOTYPE_STORAGE_RESULT = 'Model\Storage\Pdo\PdoStorageResult';
+        STORAGE_RESULT_PROTOTYPE = 'Model\Storage\Pdo\PdoStorageResult',
+        THIS_SETS = [
+            self::DSN => self::STRING_TYPE,
+            self::PASSWORD => self::STRING_TYPE,
+            self::USERNAME => self::STRING_TYPE
+        ];
 
     public const
-        OPTION_DSN = 'dsn',
-        OPTION_PASSWORD = 'password',
-        OPTION_USERNAME = 'username';
+        DSN = 'dsn',
+        PASSWORD = 'password',
+        USERNAME = 'username';
 
     /**
      * @var string
@@ -73,13 +78,12 @@ class PdoStorage extends Resource implements StorageInterface
             $resource->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $class = ucfirst(strtolower($resource->getAttribute(PDO::ATTR_DRIVER_NAME)));
-            $this->grammar = $this->container->get(sprintf(static::GRAMMAR_CLASS_MASK, $class));
+            $this->grammar = $this->resourceManager->get(sprintf(static::GRAMMAR_CLASS_MASK, $class));
 
             $this->resource = $resource;
-            $this->password = null;
         }
         catch (PDOException $e) {
-            throw new Exception\RuntimeException(sprintf(static::EXCEPTION_CONNECTION_ERROR, $e->getMessage()));
+            throw new Exception\RuntimeException(sprintf(static::CONNECTION_ERROR_EXCEPTION, $e->getMessage()));
         }
     }
 
@@ -139,8 +143,8 @@ class PdoStorage extends Resource implements StorageInterface
         call_user_func_array([$statement, 'setFetchMode'], $mode);
         $statement->execute($sentence->getParameters());
 
-        return $this->container->clone(static::PROTOTYPE_STORAGE_RESULT, [
-            PdoStorageResult::OPTION_STATEMENT => $statement
+        return $this->resourceManager->clone(static::STORAGE_RESULT_PROTOTYPE, [
+            PdoStorageResult::STATEMENT => $statement
         ]);
     }
 
@@ -162,21 +166,6 @@ class PdoStorage extends Resource implements StorageInterface
     public function selectExistsValue(RequestInterface $request): bool
     {
         return (bool) $this->prepareStatement($this->getGrammar()->selectExistsValue($request))->fetchColumn();
-    }
-
-    protected function setDsn(string $dsn): void
-    {
-        $this->dsn = $dsn;
-    }
-
-    protected function setPassword(string $password): void
-    {
-        $this->password = $password;
-    }
-
-    protected function setUsername(string $username): void
-    {
-        $this->username = $username;
     }
 
     public function update(array $set, RequestInterface $request): int

@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View\Engine;
@@ -21,11 +23,11 @@ class PhpEngine extends Engine
      */
     protected $assistant;
 
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
+    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
     {
-        parent::__construct($container, $options, $name);
+        parent::__construct($resourceManager, $options, $name);
 
-        $this->assistant = $this->container->clone('View\Engine\Assistant')->withEngine($this);
+        $this->assistant = $this->resourceManager->clone('View\Engine\Assistant')->withEngine($this);
     }
 
     public function render(ViewInterface $view): string

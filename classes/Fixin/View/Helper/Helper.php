@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View\Helper;
@@ -12,13 +14,13 @@ use Fixin\View\Engine\EngineInterface;
 
 abstract class Helper extends Prototype implements HelperInterface
 {
+    protected const
+        THIS_SETS = [
+            self::ENGINE => EngineInterface::class
+        ];
+
     /**
      * @var EngineInterface
      */
     protected $engine;
-
-    protected function setEngine(EngineInterface $engine): void
-    {
-        $this->engine = $engine;
-    }
 }

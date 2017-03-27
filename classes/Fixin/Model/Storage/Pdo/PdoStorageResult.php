@@ -18,14 +18,14 @@ use PDOStatement;
 class PdoStorageResult extends Prototype implements StorageResultInterface
 {
     protected const
-        EXCEPTION_REWIND_IS_NOT_ALLOWED = 'Rewind is not allowed',
-        MASK_TO_STRING = '%s {' . PHP_EOL . "    Position: %d" . PHP_EOL . "    Count: %d" . PHP_EOL . '}' . PHP_EOL,
+        REWIND_IS_NOT_ALLOWED_EXCEPTION = 'Rewind is not allowed',
         THIS_REQUIRES = [
-            self::OPTION_STATEMENT
-        ];
+            self::STATEMENT
+        ],
+        TO_STRING_MASK = '%s {' . PHP_EOL . "    Position: %d" . PHP_EOL . "    Count: %d" . PHP_EOL . '}' . PHP_EOL;
 
     public const
-        OPTION_STATEMENT = 'statement';
+        STATEMENT = 'statement';
 
     /**
      * @var mixed
@@ -49,7 +49,7 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
 
     public function __toString(): string
     {
-        return Ground::toDebugText(sprintf(static::MASK_TO_STRING, get_class($this), $this->position, $this->count()));
+        return Ground::toDebugText(sprintf(static::TO_STRING_MASK, get_class($this), $this->position, $this->count()));
     }
 
     public function count(): int
@@ -91,7 +91,7 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
     public function rewind(): void
     {
         if ($this->position > 0) {
-            throw new Exception\RuntimeException(static::EXCEPTION_REWIND_IS_NOT_ALLOWED);
+            throw new Exception\RuntimeException(static::REWIND_IS_NOT_ALLOWED_EXCEPTION);
         }
 
         $this->prefetch();

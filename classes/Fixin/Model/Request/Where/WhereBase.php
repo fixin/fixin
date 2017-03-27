@@ -23,14 +23,14 @@ use Fixin\Resource\Prototype;
 abstract class WhereBase extends Prototype implements WhereInterface
 {
     protected const
-        PROTOTYPE_BETWEEN_TAG = 'Model\Request\Where\Tag\BetweenTag',
-        PROTOTYPE_COMPARE_TAG = 'Model\Request\Where\Tag\CompareTag',
-        PROTOTYPE_EXISTS_TAG = 'Model\Request\Where\Tag\ExistsTag',
-        PROTOTYPE_EXPRESSION = 'Model\Request\Expression',
-        PROTOTYPE_IN_TAG = 'Model\Request\Where\Tag\InTag',
-        PROTOTYPE_NULL_TAG = 'Model\Request\Where\Tag\NullTag',
-        PROTOTYPE_WHERE = 'Model\Request\Where\Where',
-        PROTOTYPE_WHERE_TAG = 'Model\Request\Where\Tag\WhereTag';
+        BETWEEN_TAG_PROTOTYPE = 'Model\Request\Where\Tag\BetweenTag',
+        COMPARE_TAG_PROTOTYPE = 'Model\Request\Where\Tag\CompareTag',
+        EXISTS_TAG_PROTOTYPE = 'Model\Request\Where\Tag\ExistsTag',
+        EXPRESSION_PROTOTYPE = 'Model\Request\Expression',
+        IN_TAG_PROTOTYPE = 'Model\Request\Where\Tag\InTag',
+        NULL_TAG_PROTOTYPE = 'Model\Request\Where\Tag\NullTag',
+        WHERE_PROTOTYPE = 'Model\Request\Where\Where',
+        WHERE_TAG_PROTOTYPE = 'Model\Request\Where\Tag\WhereTag';
 
     /**
      * @var TagInterface[]
@@ -39,7 +39,7 @@ abstract class WhereBase extends Prototype implements WhereInterface
 
     protected function addBetween(string $join, bool $negated, $identifier, $min, $max): void
     {
-        $this->addTag(static::PROTOTYPE_BETWEEN_TAG, $join, $negated, [
+        $this->addTag(static::BETWEEN_TAG_PROTOTYPE, $join, $negated, [
             BetweenTag::IDENTIFIER => $identifier,
             BetweenTag::MIN => $min,
             BetweenTag::MAX => $max
@@ -48,7 +48,7 @@ abstract class WhereBase extends Prototype implements WhereInterface
 
     protected function addCompare(string $join, bool $negated, $left, string $operator, $right, string $leftType, string $rightType): void
     {
-        $this->addTag(static::PROTOTYPE_COMPARE_TAG, $join, $negated, [
+        $this->addTag(static::COMPARE_TAG_PROTOTYPE, $join, $negated, [
             CompareTag::LEFT => $this->compareSidePrepare($left, $leftType),
             CompareTag::OPERATOR => $operator,
             CompareTag::RIGHT => $this->compareSidePrepare($right, $rightType)
@@ -57,14 +57,14 @@ abstract class WhereBase extends Prototype implements WhereInterface
 
     protected function addExists(string $join, bool $negated, RequestInterface $request): void
     {
-        $this->addTag(static::PROTOTYPE_EXISTS_TAG, $join, $negated, [
+        $this->addTag(static::EXISTS_TAG_PROTOTYPE, $join, $negated, [
             ExistsTag::REQUEST => $request
         ]);
     }
 
     protected function addIn(string $join, bool $negated, $identifier, $values): void
     {
-        $this->addTag(static::PROTOTYPE_IN_TAG, $join, $negated, [
+        $this->addTag(static::IN_TAG_PROTOTYPE, $join, $negated, [
             InTag::IDENTIFIER => $identifier,
             InTag::VALUES => $values
         ]);
@@ -91,24 +91,24 @@ abstract class WhereBase extends Prototype implements WhereInterface
 
     protected function addNested(string $join, bool $negated, callable $callback): void
     {
-        $where = $this->resourceManager->clone(static::PROTOTYPE_WHERE);
+        $where = $this->resourceManager->clone(static::WHERE_PROTOTYPE);
         $callback($where);
 
-        $this->addTag(static::PROTOTYPE_WHERE_TAG, $join, $negated, [
+        $this->addTag(static::WHERE_TAG_PROTOTYPE, $join, $negated, [
             WhereTag::WHERE => $where
         ]);
     }
 
     protected function addNull(string $join, bool $negated, string $identifier): void
     {
-        $this->addTag(static::PROTOTYPE_NULL_TAG, $join, $negated, [
+        $this->addTag(static::NULL_TAG_PROTOTYPE, $join, $negated, [
             NullTag::IDENTIFIER => $identifier
         ]);
     }
 
     protected function addSub(string $join, bool $negated, WhereInterface $where): void
     {
-        $this->addTag(static::PROTOTYPE_WHERE_TAG, $join, $negated, [
+        $this->addTag(static::WHERE_TAG_PROTOTYPE, $join, $negated, [
             WhereTag::WHERE => $where
         ]);
     }
@@ -124,7 +124,7 @@ abstract class WhereBase extends Prototype implements WhereInterface
     protected function compareSidePrepare($value, string $type)
     {
         if (!$value instanceof ExpressionInterface && !$value instanceof RequestInterface && $type === static::TYPE_IDENTIFIER) {
-            return $this->resourceManager->clone(static::PROTOTYPE_EXPRESSION, [
+            return $this->resourceManager->clone(static::EXPRESSION_PROTOTYPE, [
                 ExpressionInterface::EXPRESSION => $value
             ]);
         }

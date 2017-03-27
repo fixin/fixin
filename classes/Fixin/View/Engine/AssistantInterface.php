@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View\Engine;
@@ -10,7 +12,9 @@ namespace Fixin\View\Engine;
 interface AssistantInterface
 {
     /**
-     * New instance for engine
+     * Cloned instance with engine
+     *
+     * @return static
      */
     public function withEngine(EngineInterface $engine): AssistantInterface;
 }

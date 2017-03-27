@@ -14,9 +14,9 @@ use Fixin\Resource\PrototypeInterface;
 interface TagInterface extends PrototypeInterface
 {
     public const
+        JOIN = 'join',
         JOIN_AND = 'and',
         JOIN_OR = 'or',
-        JOIN = 'join',
         NEGATED = 'negated';
 
     public function getJoin(): string;

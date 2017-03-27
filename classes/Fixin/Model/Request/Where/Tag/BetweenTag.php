@@ -12,10 +12,13 @@ namespace Fixin\Model\Request\Where\Tag;
 class BetweenTag extends IdentifierTag
 {
     protected const
-        THIS_REQUIRES = [
-            self::IDENTIFIER,
+        THIS_REQUIRES = parent::THIS_REQUIRES + [
             self::MAX,
             self::MIN
+        ],
+        THIS_SETS = parent::THIS_SETS + [
+            self::MAX => self::SCALAR_TYPE,
+            self::MIN => self::SCALAR_TYPE
         ];
 
     public const
@@ -50,25 +53,5 @@ class BetweenTag extends IdentifierTag
     public function getMin()
     {
         return $this->min;
-    }
-
-    /**
-     * Set max value
-     *
-     * @param number|string $max
-     */
-    protected function setMax($max): void
-    {
-        $this->max = $max;
-    }
-
-    /**
-     * Set min value
-     *
-     * @param number|string $min
-     */
-    protected function setMin($min): void
-    {
-        $this->min = $min;
     }
 }

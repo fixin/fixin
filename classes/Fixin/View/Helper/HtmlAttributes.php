@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View\Helper;
@@ -17,11 +19,11 @@ class HtmlAttributes extends Helper
      */
     protected $escaper;
 
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
+    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
     {
-        parent::__construct($container, $options, $name);
+        parent::__construct($resourceManager, $options, $name);
 
-        $this->escaper = $container->get('Base\Escaper\Escaper');
+        $this->escaper = $resourceManager->get('Base\Escaper\Escaper');
     }
 
     /**

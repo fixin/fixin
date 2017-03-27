@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View\Engine;
@@ -15,8 +17,8 @@ abstract class Engine extends Resource implements EngineInterface
 {
     protected const
         CONTENT_TYPE = 'text/html',
-        EXCEPTION_INVALID_HELPER_NAME = "Invalid helper name: '%s'",
-        EXCEPTION_NAME_COLLISION = "Child-variable name collision: '%s'",
+        INVALID_HELPER_NAME_EXCEPTION = "Invalid helper name: '%s'",
+        NAME_COLLISION_EXCEPTION = "Child-variable name collision: '%s'",
         HELPER_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/';
 
     /**
@@ -42,12 +44,12 @@ abstract class Engine extends Resource implements EngineInterface
     protected function produceHelper(string $name): HelperInterface
     {
         if (preg_match(static::HELPER_NAME_PATTERN, $name)) {
-            return $this->container->clone('View\Helper\\' . ucfirst($name), [
-                HelperInterface::OPTION_ENGINE => $this
+            return $this->resourceManager->clone('View\Helper\\' . ucfirst($name), [
+                HelperInterface::ENGINE => $this
             ]);
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(static::EXCEPTION_INVALID_HELPER_NAME, $name));
+        throw new Exception\InvalidArgumentException(sprintf(static::INVALID_HELPER_NAME_EXCEPTION, $name));
     }
 
     /**
@@ -66,7 +68,7 @@ abstract class Engine extends Resource implements EngineInterface
         $variables = $view->getVariables();
 
         if ($names = array_intersect_key($data, $variables)) {
-            throw new Exception\KeyCollisionException(sprintf(static::EXCEPTION_NAME_COLLISION, implode("', '", array_keys($names))));
+            throw new Exception\KeyCollisionException(sprintf(static::NAME_COLLISION_EXCEPTION, implode("', '", array_keys($names))));
         }
 
         return $data;

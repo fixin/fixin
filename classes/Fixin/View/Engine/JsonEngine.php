@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\View\Engine;
@@ -22,7 +24,7 @@ class JsonEngine extends Engine
 
     public function render(ViewInterface $view): string
     {
-        $json = $this->json ?? ($this->json = $this->container->get('Base\Json\Json'));
+        $json = $this->json ?? ($this->json = $this->resourceManager->get('Base\Json\Json'));
         $result = [];
 
         // Children

@@ -14,6 +14,9 @@ abstract class IdentifierTag extends Tag
     protected const
         THIS_REQUIRES = [
             self::IDENTIFIER
+        ],
+        THIS_SETS = [
+            self::IDENTIFIER => [self::STRING_TYPE, self::ARRAY_TYPE]
         ];
 
     public const
@@ -30,13 +33,5 @@ abstract class IdentifierTag extends Tag
     public function getIdentifier()
     {
         return $this->identifier;
-    }
-
-    /**
-     * @param string|array $identifier
-     */
-    protected function setIdentifier($identifier): void
-    {
-        $this->identifier = $identifier;
     }
 }

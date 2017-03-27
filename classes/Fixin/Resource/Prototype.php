@@ -14,9 +14,9 @@ abstract class Prototype extends Resource implements PrototypeInterface
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __construct(ResourceManagerInterface $container, array $options = null, string $name = null)
+    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
     {
-        $this->container = $container;
+        $this->resourceManager = $resourceManager;
 
         // Options
         if (isset($options)) {

@@ -15,11 +15,14 @@ class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
 {
     protected const
         THIS_REQUIRES = [
-            self::OPTION_SEARCH_ORDER
+            self::SEARCH_ORDER
+        ],
+        THIS_SETS = [
+            self::SEARCH_ORDER => self::ARRAY_TYPE
         ];
 
     public const
-        OPTION_SEARCH_ORDER = 'searchOrder';
+        SEARCH_ORDER = 'searchOrder';
 
     /**
      * @var array
@@ -35,7 +38,7 @@ class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
     {
         $mapped = $this->map[$name];
 
-        return $mapped ? new $mapped($this->container, $options, $name) : null;
+        return $mapped ? new $mapped($this->resourceManager, $options, $name) : null;
     }
 
     public function canProduce(string $name): bool
@@ -58,10 +61,5 @@ class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
 
         // Not found
         return $this->map[$name] = false;
-    }
-
-    protected function setSearchOrder(array $searchOrder): void
-    {
-        $this->searchOrder = $searchOrder;
     }
 }

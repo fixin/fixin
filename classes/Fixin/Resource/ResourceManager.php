@@ -14,10 +14,10 @@ use Fixin\Resource\AbstractFactory\AbstractFactoryInterface;
 class ResourceManager extends ResourceManagerBase
 {
     protected const
-        EXCEPTION_CAN_T_USE_PROTOTYPE_AS_RESOURCE = "Can't use prototype as resource '%s'",
-        EXCEPTION_CAN_T_USE_RESOURCE_AS_PROTOTYPE = "Can't use resource as prototype '%s'",
-        EXCEPTION_PROTOTYPE_NOT_FOUND = "Prototype not found by name '%s'",
-        EXCEPTION_RESOURCE_NOT_FOUND = "Resource not found by name '%s'";
+        CAN_T_USE_PROTOTYPE_AS_RESOURCE_EXCEPTION = "Can't use prototype as resource '%s'",
+        CAN_T_USE_RESOURCE_AS_PROTOTYPE_EXCEPTION = "Can't use resource as prototype '%s'",
+        PROTOTYPE_NOT_FOUND_EXCEPTION = "Prototype not found by name '%s'",
+        RESOURCE_NOT_FOUND_EXCEPTION = "Resource not found by name '%s'";
 
     /**
      * Determine resource creation via an abstract factory is possible
@@ -47,10 +47,10 @@ class ResourceManager extends ResourceManagerBase
         }
 
         if (!$resource) {
-            throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_CAN_T_USE_RESOURCE_AS_PROTOTYPE, $name));
+            throw new Exception\ResourceNotFoundException(sprintf(static::CAN_T_USE_RESOURCE_AS_PROTOTYPE_EXCEPTION, $name));
         }
 
-        throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_PROTOTYPE_NOT_FOUND, $name));
+        throw new Exception\ResourceNotFoundException(sprintf(static::PROTOTYPE_NOT_FOUND_EXCEPTION, $name));
     }
 
     public function get(string $name)
@@ -62,10 +62,10 @@ class ResourceManager extends ResourceManagerBase
         }
 
         if (!$resource) {
-            throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_CAN_T_USE_PROTOTYPE_AS_RESOURCE, $name));
+            throw new Exception\ResourceNotFoundException(sprintf(static::CAN_T_USE_PROTOTYPE_AS_RESOURCE_EXCEPTION, $name));
         }
 
-        throw new Exception\ResourceNotFoundException(sprintf(static::EXCEPTION_RESOURCE_NOT_FOUND, $name));
+        throw new Exception\ResourceNotFoundException(sprintf(static::RESOURCE_NOT_FOUND_EXCEPTION, $name));
     }
 
     public function has(string $name): bool
