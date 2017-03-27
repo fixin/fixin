@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Support;
@@ -10,7 +12,7 @@ namespace Fixin\Support;
 abstract class DoNotCreate
 {
     protected const
-        EXCEPTION_DO_NOT_CREATE = "Do not create instance of %s";
+        DO_NOT_CREATE_EXCEPTION = "Do not create instance of %s";
 
     /**
      * Block creation
@@ -19,6 +21,6 @@ abstract class DoNotCreate
      */
     final public function __construct()
     {
-        throw new Exception\DoNotCreateException(sprintf(static::EXCEPTION_DO_NOT_CREATE, __CLASS__));
+        throw new Exception\DoNotCreateException(sprintf(static::DO_NOT_CREATE_EXCEPTION, __CLASS__));
     }
 }

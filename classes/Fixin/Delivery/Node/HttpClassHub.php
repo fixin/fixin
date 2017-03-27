@@ -20,7 +20,10 @@ class HttpClassHub extends HttpHub
 {
     protected const
         CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/',
-        INVALID_CLASS_EXCEPTION = "Class '%s' is invalid, CargoHandlerInterface required";
+        INVALID_CLASS_EXCEPTION = "Class '%s' is invalid, CargoHandlerInterface required",
+        THIS_SETS = [
+            self::DEPTH => self::INT_TYPE
+        ];
 
     public const
         BASE_PATH = 'basePath',
@@ -113,10 +116,5 @@ class HttpClassHub extends HttpHub
     protected function setClassPrefix(string $classPrefix): void
     {
         $this->classPrefix = trim($classPrefix, '\\') . '\\';
-    }
-
-    protected function setDepth(int $depth): void
-    {
-        $this->depth = $depth;
     }
 }

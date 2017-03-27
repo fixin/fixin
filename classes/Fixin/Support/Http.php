@@ -2,7 +2,9 @@
 /**
  * Fixin Framework
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 namespace Fixin\Support;
@@ -10,15 +12,15 @@ namespace Fixin\Support;
 class Http extends DoNotCreate
 {
     const
-        HEADER_CONTENT_TYPE = 'Content-Type',
+        CONTENT_TYPE_HEADER = 'Content-Type',
 
-        METHOD_DELETE = 'DELETE',
-        METHOD_GET = 'GET',
-        METHOD_HEAD = 'HEAD',
-        METHOD_OPTIONS = 'OPTIONS',
-        METHOD_PATCH = 'PATCH',
-        METHOD_POST = 'POST',
-        METHOD_PUT = 'PUT',
+        DELETE_METHOD = 'DELETE',
+        GET_METHOD = 'GET',
+        HEAD_METHOD = 'HEAD',
+        OPTIONS_METHOD = 'OPTIONS',
+        PATCH_METHOD = 'PATCH',
+        POST_METHOD = 'POST',
+        PUT_METHOD = 'PUT',
 
         PROTOCOL_VERSION_1_0 = '1.0',
         PROTOCOL_VERSION_1_1 = '1.1',
