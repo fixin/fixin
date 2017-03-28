@@ -55,7 +55,7 @@ class ClassHelper {
         preg_match_all('/^\s*\*\s*@param\s+([^\s]+)\s+\$([^\s]+)$/m', $reflection->getDocComment(), $matches);
 
         foreach ($matches[1] as $index => $type) {
-            $parameters[$matches[2][$index]] = '<span class="FromComment">' . implode('|', array_map([$this, 'classLink'], (explode('|', $type)))) . '</span>';
+            $parameters[$matches[2][$index]] = '<span class="FromComment">' . implode(" |<br />", array_map([$this, 'classLink'], (explode('|', $type)))) . '</span>';
         }
 
         return $parameters;
@@ -90,7 +90,7 @@ class ClassHelper {
      */
     protected function commentTypeFetch($reflection, string $name): string {
         if (preg_match_all('(@' . $name . '\s+([^\s]+))', $reflection->getDocComment(), $matches)) {
-            return '<span class="FromComment">' . implode('|', array_map([$this, 'classLink'], (explode('|', $matches[1][0])))) . '</span>';
+            return '<span class="FromComment">' . implode(" |<br />", array_map([$this, 'classLink'], (explode('|', $matches[1][0])))) . '</span>';
         }
 
         return '';

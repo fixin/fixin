@@ -114,7 +114,7 @@ class SvgEngine {
         $divs = count($items);
         $angleStep = ($endAngle - $startAngle) / $divs;
         $angle = $startAngle + $angleStep / 2;
-        $itemR = max($this->itemSize * 2.6, $divs * ($this->itemSize * 2.4) / M_PI / 2 * 360 / ($endAngle - $startAngle));
+        $itemR = max($this->itemSize * 2.8, $divs * ($this->itemSize * 2.4) / M_PI / 2 * 360 / ($endAngle - $startAngle));
 
         foreach ($items as $item) {
             $px = $x + cos($angle * M_PI / 180) * $itemR;
@@ -126,7 +126,7 @@ class SvgEngine {
             $this->items[$item->getName()] = $item;
 
             if (!in_array($item->getName(), $this->stopAtClasses) && ($children = $item->getChildren())) {
-                $childrenStep = min(max($angleStep / 1.3, 160 / count($children) / 1.3), 180);
+                $childrenStep = min(max($angleStep / 1.5, 160 / count($children) / 1.5), 180);
 
                 $this->placeItems($children, $px, $py, $angle - $childrenStep, $angle + $childrenStep);
             }
@@ -174,7 +174,7 @@ class SvgEngine {
 
             $source .= '<g class="' . $this->itemCssClass($item) . "\">\n"
                 . $this->tag('ellipse', ['cx' => $px, 'cy' => $py, 'rx' => $itemR, 'ry' => $itemR * $this->ellipseRatio])
-                . $this->itemText($px, $py, Strings::textFromCamelCase($item->getShortName()))
+                . $this->itemText($px, $py, Strings::camelCasedToText($item->getShortName()))
                 . "</g>\n";
         }
 

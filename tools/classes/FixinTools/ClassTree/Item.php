@@ -71,7 +71,7 @@ class Item {
         $namespace = $this->reflection->getNamespaceName();
 
         // Factory
-        $factoryOf = Strings::endsWith($this->getName(), 'Factory') ? $this->processor->getItem(implode('\\', explode('\\', $this->reflection->getNamespaceName(), -1)) . '\\' . mb_substr($this->getShortName(), 0, -7)) : null;
+        $factoryOf = Strings::isEndingWith($this->getName(), 'Factory') ? $this->processor->getItem(implode('\\', explode('\\', $this->reflection->getNamespaceName(), -1)) . '\\' . mb_substr($this->getShortName(), 0, -7)) : null;
         if ($factoryOf) {
             return $factoryOf;
         }
@@ -104,7 +104,7 @@ class Item {
 
         foreach ($this->getInterfaces() as $interface) {
             $interfaceName = $interface->name;
-            if (Strings::endsWith($interfaceName, 'Interface') && $name === mb_substr($interfaceName, 0, -9)) {
+            if (Strings::isEndingWith($interfaceName, 'Interface') && $name === mb_substr($interfaceName, 0, -9)) {
                 return $this->processor->getItem($interfaceName);
             }
         }
@@ -183,7 +183,7 @@ class Item {
     }
 
     public function isFactory(): bool {
-        return $this->reflection->isSubclassOf('Fixin\Resource\Factory\FactoryInterface');
+        return $this->reflection->isSubclassOf('Fixin\Resource\FactoryInterface');
     }
 
     public function isInterface(): bool {
