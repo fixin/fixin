@@ -9,7 +9,7 @@
 
 namespace Fixin\Model\Request\Where;
 
-use DateTime;
+use DateTimeImmutable;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\Where\Tag\TagInterface;
@@ -24,8 +24,8 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and between
      *
-     * @param number|string|DateTime $min
-     * @param number|string|DateTime $max
+     * @param number|string|DateTimeImmutable $min
+     * @param number|string|DateTimeImmutable $max
      * @return $this
      */
     public function between(string $identifier, $min, $max): WhereInterface;
@@ -34,7 +34,7 @@ interface WhereInterface extends PrototypeInterface
      * Add: and compare
      *
      * @param string|number|bool $left
-     * @param string|number|bool|array|DateTime $right
+     * @param string|number|bool|array|DateTimeImmutable $right
      * @return $this
      */
     public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface;
@@ -92,8 +92,8 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and not between
      *
-     * @param number|string|DateTime $min
-     * @param number|string|DateTime $max
+     * @param number|string|DateTimeImmutable $min
+     * @param number|string|DateTimeImmutable $max
      * @return $this
      */
     public function notBetween(string $identifier, $min, $max): WhereInterface;
@@ -138,8 +138,8 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or between
      *
-     * @param number|string|DateTime $min
-     * @param number|string|DateTime $max
+     * @param number|string|DateTimeImmutable $min
+     * @param number|string|DateTimeImmutable $max
      * @return $this
      */
     public function orBetween(string $identifier, $min, $max): WhereInterface;
@@ -148,7 +148,7 @@ interface WhereInterface extends PrototypeInterface
      * Add: or compare
      *
      * @param string|number|bool $left
-     * @param string|number|bool|array|DateTime $right
+     * @param string|number|bool|array|DateTimeImmutable $right
      * @return $this
      */
     public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface;
@@ -201,8 +201,8 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or not between
      *
-     * @param number|string|DateTime $min
-     * @param number|string|DateTime $max
+     * @param number|string|DateTimeImmutable $min
+     * @param number|string|DateTimeImmutable $max
      * @return $this
      */
     public function orNotBetween(string $identifier, $min, $max): WhereInterface;
