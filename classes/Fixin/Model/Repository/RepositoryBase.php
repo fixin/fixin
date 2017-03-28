@@ -27,7 +27,7 @@ abstract class RepositoryBase extends Resource implements RepositoryInterface
             self::STORAGE
         ],
         THIS_SETS = [
-            self::AUTO_INCREMENT_COLUMN => self::STRING_TYPE,
+            self::AUTO_INCREMENT_COLUMN => [self::STRING_TYPE, self::NULL_TYPE],
             self::PRIMARY_KEY => self::ARRAY_TYPE
         ],
         THIS_SETS_LAZY = [

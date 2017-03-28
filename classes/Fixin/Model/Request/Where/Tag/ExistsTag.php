@@ -14,10 +14,10 @@ use Fixin\Model\Request\RequestInterface;
 class ExistsTag extends Tag
 {
     protected const
-        THIS_REQUIRES = [
+        THIS_REQUIRES = parent::THIS_REQUIRES + [
             self::REQUEST
         ],
-        THIS_SETS = [
+        THIS_SETS = parent::THIS_SETS + [
             self::REQUEST => RequestInterface::class
         ];
 

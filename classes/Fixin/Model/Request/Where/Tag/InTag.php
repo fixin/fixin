@@ -14,11 +14,10 @@ use Fixin\Model\Request\RequestInterface;
 class InTag extends IdentifierTag
 {
     protected const
-        THIS_REQUIRES = [
-            self::IDENTIFIER,
+        THIS_REQUIRES = parent::THIS_REQUIRES + [
             self::VALUES
         ],
-        THIS_SETS = [
+        THIS_SETS = parent::THIS_SETS + [
             self::VALUES => [self::ARRAY_TYPE, RequestInterface::class]
         ];
 

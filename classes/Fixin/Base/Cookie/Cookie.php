@@ -14,8 +14,8 @@ use Fixin\Resource\Prototype;
 class Cookie extends Prototype implements CookieInterface
 {
     protected const
-        SET_FAILURE_EXCEPTION = "Can't set '%s' cookie",
-        EXPIRE_TO_TIMESTAMP = 60;
+        EXPIRE_TO_TIMESTAMP = 60,
+        SET_FAILURE_EXCEPTION = "Can't set '%s' cookie";
 
     /**
      * @var string

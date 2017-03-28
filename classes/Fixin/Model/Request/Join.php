@@ -25,7 +25,7 @@ class Join extends Prototype implements JoinInterface
             self::ALIAS => self::STRING_TYPE,
             self::REPOSITORY => RepositoryInterface::class,
             self::TYPE => self::STRING_TYPE,
-            self::WHERE => WhereInterface::class
+            self::WHERE => [WhereInterface::class, self::NULL_TYPE]
         ];
 
     /**

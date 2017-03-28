@@ -20,10 +20,10 @@ class Uri extends Prototype implements UriInterface
             self::QUERY,
         ],
         THIS_SETS = [
-            self::FRAGMENT => self::STRING_TYPE,
+            self::FRAGMENT => [self::STRING_TYPE, self::NULL_TYPE],
             self::HOST => self::STRING_TYPE,
             self::PATH => self::STRING_TYPE,
-            self::PORT => self::INT_TYPE,
+            self::PORT => [self::INT_TYPE, self::NULL_TYPE],
             self::QUERY => self::STRING_TYPE,
             self::SCHEME => self::STRING_TYPE,
             self::USER_INFO => self::STRING_TYPE
@@ -45,12 +45,12 @@ class Uri extends Prototype implements UriInterface
     /**
      * @var string
      */
-    protected $host;
+    protected $host = '';
 
     /**
      * @var string
      */
-    protected $path;
+    protected $path = '';
 
     /**
      * @var int|null
@@ -60,17 +60,17 @@ class Uri extends Prototype implements UriInterface
     /**
      * @var string
      */
-    protected $query;
+    protected $query = '';
 
     /**
      * @var string
      */
-    protected $scheme;
+    protected $scheme = '';
 
     /**
      * @var string
      */
-    protected $userInfo;
+    protected $userInfo = '';
 
     public function __toString(): string
     {
@@ -86,7 +86,7 @@ class Uri extends Prototype implements UriInterface
         // Host
         $authority = $this->host;
 
-        if (!$authority) {
+        if ($authority === '') {
             return null;
         }
 
@@ -128,12 +128,12 @@ class Uri extends Prototype implements UriInterface
         return $this->query;
     }
 
-    public function getScheme(): ?string
+    public function getScheme(): string
     {
         return $this->scheme;
     }
 
-    public function getUserInfo(): ?string
+    public function getUserInfo(): string
     {
         return $this->userInfo;
     }

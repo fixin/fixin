@@ -14,12 +14,12 @@ use Fixin\Model\Request\RequestInterface;
 class CompareTag extends Tag {
 
     protected const
-        THIS_REQUIRES = [
+        THIS_REQUIRES = parent::THIS_REQUIRES + [
             self::LEFT,
             self::OPERATOR,
             self::RIGHT
         ],
-        THIS_SETS = [
+        THIS_SETS = parent::THIS_SETS + [
             self::LEFT => [self::SCALAR_TYPE, RequestInterface::class],
             self::OPERATOR => self::STRING_TYPE,
             self::RIGHT => [self::SCALAR_TYPE, RequestInterface::class, self::ARRAY_TYPE]

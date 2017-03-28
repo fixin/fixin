@@ -12,10 +12,10 @@ namespace Fixin\Model\Request\Where\Tag;
 abstract class IdentifierTag extends Tag
 {
     protected const
-        THIS_REQUIRES = [
+        THIS_REQUIRES = parent::THIS_REQUIRES + [
             self::IDENTIFIER
         ],
-        THIS_SETS = [
+        THIS_SETS = parent::THIS_SETS + [
             self::IDENTIFIER => [self::STRING_TYPE, self::ARRAY_TYPE]
         ];
 
