@@ -10,7 +10,7 @@
 $topDir = dirname(__DIR__, 2);
 $resourceManager = include "$topDir/cheats/tools.php";
 
-use \Fixin\Support\VariableInspector;
+use Fixin\Support\VariableInspector;
 
 // Load
 $resourceManager->get('defaultFileSystem')->includeFilesRecursive("$topDir/classes", 'php');
@@ -313,7 +313,7 @@ $showMethods = $showAll ? (ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PR
                                         <?php else: ?>
                                             <td colspan="3"></td>
                                         <?php endif ?>
-                                        <td class="ReturnType" rowspan="<?= $parameterCount ?>"><?= rtrim(': ' . ($returnType ? $helper->classLink($returnType) : $helper->commentReturnType($method)), ': ') ?></td>
+                                        <td class="ReturnType" rowspan="<?= $parameterCount ?>"><?= rtrim(': ' . ($returnType ? ($returnType->allowsNull() ? '?' : '') . $helper->classLink($returnType) : $helper->commentReturnType($method)), ': ') ?></td>
                                         <td class="Comment" rowspan="<?= $parameterCount ?>"><?= $helper->commentText($method) ?></td>
                                     </tr>
                                     <?php foreach ($parameters as $parameter): ?>
