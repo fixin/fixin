@@ -20,7 +20,7 @@ class EnvironmentUriFactory extends Factory implements FactoryInterface
 
     public function __invoke(array $options = NULL, string $name = null)
     {
-        return $this->resourceManager->clone('Base\Uri\Uri', [
+        return $this->resourceManager->clone('Base\Uri\Uri', UriInterface::class, [
             UriInterface::SCHEME => ($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http',
             UriInterface::HOST => $_SERVER['HTTP_HOST'],
             UriInterface::PORT => $_SERVER['SERVER_PORT'],

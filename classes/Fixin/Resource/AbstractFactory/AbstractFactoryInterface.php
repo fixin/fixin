@@ -9,9 +9,9 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Resource\ResourceInterface;
+use Fixin\Resource\ManagedInterface;
 
-interface AbstractFactoryInterface extends ResourceInterface
+interface AbstractFactoryInterface extends ManagedInterface
 {
     /**
      * Produce resource

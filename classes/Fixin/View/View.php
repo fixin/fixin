@@ -105,7 +105,7 @@ class View extends Prototype implements ViewInterface
             return $engine;
         }
 
-        return $this->engine = $this->resourceManager->get($this->getEngineNameForTemplate());
+        return $this->engine = $this->resourceManager->get($this->getEngineNameForTemplate(), EngineInterface::class);
     }
 
     /**

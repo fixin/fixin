@@ -10,18 +10,18 @@
 namespace Fixin\Model\Repository;
 
 use DateTimeImmutable;
+use Fixin\Model\Entity\Cache\CacheInterface;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;
+use Fixin\Resource\Resource;
 use Fixin\Support\Arrays;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
-class Repository extends RepositoryBase
+class Repository extends Resource implements RepositoryInterface
 {
     protected const
         ENTITY_ID_PROTOTYPE = 'Model\Entity\EntityId',
@@ -29,9 +29,57 @@ class Repository extends RepositoryBase
         ENTITY_SET_PROTOTYPE = 'Model\Entity\EntitySet',
         EXPRESSION_PROTOTYPE = 'Model\Request\Expression',
         INVALID_ID_EXCEPTION = "Invalid ID",
+        INVALID_NAME_EXCEPTION = "Invalid name '%s'",
         INVALID_REQUEST_EXCEPTION = "Invalid request, repository mismatch '%s' '%s'",
+        NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
         NOT_STORED_ENTITY_EXCEPTION = 'Not stored entity',
-        REQUEST_PROTOTYPE = 'Model\Request\Request';
+        REQUEST_PROTOTYPE = 'Model\Request\Request',
+        THIS_REQUIRES = [
+            self::ENTITY_CACHE,
+            self::ENTITY_PROTOTYPE,
+            self::NAME,
+            self::PRIMARY_KEY,
+            self::STORAGE
+        ],
+        THIS_SETS = [
+            self::AUTO_INCREMENT_COLUMN => [self::STRING_TYPE, self::NULL_TYPE],
+            self::PRIMARY_KEY => self::ARRAY_TYPE
+        ],
+        THIS_SETS_LAZY = [
+            self::ENTITY_CACHE => CacheInterface::class,
+            self::ENTITY_PROTOTYPE => EntityInterface::class,
+            self::STORAGE => StorageInterface::class
+        ];
+
+    /**
+     * @var string|null
+     */
+    protected $autoIncrementColumn;
+
+    /**
+     * @var CacheInterface|false|null
+     */
+    protected $entityCache;
+
+    /**
+     * @var EntityInterface|false|null
+     */
+    protected $entityPrototype;
+
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @var string[]
+     */
+    protected $primaryKey = ['id'];
+
+    /**
+     * @var StorageInterface|false|null
+     */
+    protected $storage;
 
     public function create(): EntityInterface
     {
@@ -40,7 +88,7 @@ class Repository extends RepositoryBase
 
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface
     {
-        return $this->resourceManager->clone(static::EXPRESSION_PROTOTYPE, [
+        return $this->resourceManager->clone(static::EXPRESSION_PROTOTYPE, ExpressionInterface::class, [
             ExpressionInterface::EXPRESSION => $expression,
             ExpressionInterface::PARAMETERS => $parameters
         ]);
@@ -71,7 +119,7 @@ class Repository extends RepositoryBase
 
     private function createIdWithArray(array $entityId): EntityIdInterface
     {
-        return $this->resourceManager->clone(static::ENTITY_ID_PROTOTYPE, [
+        return $this->resourceManager->clone(static::ENTITY_ID_PROTOTYPE, EntityIdInterface::class, [
             EntityIdInterface::ENTITY_ID => $entityId,
             EntityIdInterface::REPOSITORY => $this
         ]);
@@ -79,7 +127,7 @@ class Repository extends RepositoryBase
 
     public function createRequest(): RequestInterface
     {
-        return $this->resourceManager->clone(static::REQUEST_PROTOTYPE, [
+        return $this->resourceManager->clone(static::REQUEST_PROTOTYPE, RequestInterface::class, [
             RequestInterface::REPOSITORY => $this
         ]);
     }
@@ -103,6 +151,11 @@ class Repository extends RepositoryBase
         return $this->delete($request);
     }
 
+    public function getAutoIncrementColumn(): ?string
+    {
+        return $this->autoIncrementColumn;
+    }
+
     public function getById(EntityIdInterface $id): ?EntityInterface
     {
         $entities = $this->getEntityCache()->getByIds([$id]);
@@ -112,11 +165,41 @@ class Repository extends RepositoryBase
 
     public function getByIds(array $ids): EntitySetInterface
     {
-        return $this->resourceManager->clone(static::ENTITY_SET_PROTOTYPE, [
+        return $this->resourceManager->clone(static::ENTITY_SET_PROTOTYPE, EntitySetInterface::class, [
             EntitySetInterface::REPOSITORY => $this,
             EntitySetInterface::ENTITY_CACHE => $this->getEntityCache(),
             EntitySetInterface::ITEMS => $this->getEntityCache()->getByIds($ids)
         ]);
+    }
+
+    protected function getEntityCache(): CacheInterface
+    {
+        return $this->entityCache ?: $this->loadLazyProperty(static::ENTITY_CACHE, [
+            CacheInterface::REPOSITORY => $this,
+            CacheInterface::ENTITY_PROTOTYPE => $this->getEntityPrototype()
+        ]);
+    }
+
+    protected function getEntityPrototype(): EntityInterface
+    {
+        return $this->entityPrototype ?: $this->loadLazyProperty(static::ENTITY_PROTOTYPE, [
+            EntityInterface::REPOSITORY => $this
+        ]);
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getPrimaryKey(): array
+    {
+        return $this->primaryKey;
+    }
+
+    protected function getStorage(): StorageInterface
+    {
+        return $this->storage ?: $this->loadLazyProperty(static::STORAGE);
     }
 
     public function getValueAsDateTime($value): ?DateTimeImmutable
@@ -202,7 +285,7 @@ class Repository extends RepositoryBase
         $fetchRequest = clone $request;
         $fetchRequest->setColumns($fetchRequest->isIdFetchEnabled() ? $this->primaryKey : []);
 
-        return $this->resourceManager->clone(static::ENTITY_SET_PROTOTYPE, [
+        return $this->resourceManager->clone(static::ENTITY_SET_PROTOTYPE, EntitySetInterface::class, [
             EntitySetInterface::REPOSITORY => $this,
             EntitySetInterface::ENTITY_CACHE => $this->getEntityCache(),
             EntitySetInterface::STORAGE_RESULT => $this->selectRawData($fetchRequest),
@@ -230,6 +313,20 @@ class Repository extends RepositoryBase
     public function selectRawData(RequestInterface $request): StorageResultInterface
     {
         return $this->getStorage()->select($request);
+    }
+
+    /**
+     * @throws Exception\InvalidArgumentException
+     */
+    protected function setName(string $name): void
+    {
+        if (preg_match(static::NAME_PATTERN, $name)) {
+            $this->name = $name;
+
+            return;
+        }
+
+        throw new Exception\InvalidArgumentException(sprintf(static::INVALID_NAME_EXCEPTION, $name));
     }
 
     public function update(array $set, RequestInterface $request): int

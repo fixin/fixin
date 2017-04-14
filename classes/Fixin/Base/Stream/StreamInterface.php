@@ -16,9 +16,9 @@ interface StreamInterface
      */
     public function __toString(): string;
 
-    public function getRemainingContents(): string;
     public function getCurrentPosition(): int;
     public function getMetadata(string $key = null);
+    public function getRemainingContents(): string;
     public function getSize(): ?int;
     public function isEof(): bool;
     public function isReadable(): bool;

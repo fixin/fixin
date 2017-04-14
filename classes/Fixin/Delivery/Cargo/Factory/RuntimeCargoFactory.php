@@ -20,6 +20,6 @@ class RuntimeCargoFactory extends Factory implements FactoryInterface
     {
         $factory = 'Delivery\Cargo\Factory\\' . (Ground::isConsole() ? 'ConsoleCargoFactory' : 'HttpCargoFactory');
 
-        return $this->resourceManager->clone($factory);
+        return $this->resourceManager->clone($factory, CargoInterface::class);
     }
 }

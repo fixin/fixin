@@ -149,7 +149,7 @@ class HttpRouterHub extends HttpHub
         $handler = $this->handlers[$name];
 
         if (is_string($handler)) {
-            $handler = $this->resourceManager->get($handler);
+            return $this->resourceManager->get($handler, CargoHandlerInterface::class);
         }
 
         if ($handler instanceof CargoHandlerInterface) {

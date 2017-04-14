@@ -126,7 +126,7 @@ abstract class SqlGrammar extends Grammar
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): SentenceInterface
     {
         /** @var SentenceInterface $sentence */
-        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE);
+        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE, SentenceInterface::class);
         $sentence
             ->appendWord(static::INSERT_STATEMENT)
             ->appendClause(static::INTO_CLAUSE, $this->quoteIdentifier($repository->getName()));
@@ -150,7 +150,7 @@ abstract class SqlGrammar extends Grammar
     public function insertMultiple(RepositoryInterface $repository, array $rows): SentenceInterface
     {
         /** @var SentenceInterface $sentence */
-        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE);
+        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE, SentenceInterface::class);
         $sentence
             ->appendWord(static::INSERT_STATEMENT)
             ->appendClause(static::INTO_CLAUSE, $this->quoteIdentifier($repository->getName()));
@@ -178,7 +178,7 @@ abstract class SqlGrammar extends Grammar
     protected function makeSentence(string $statement, RequestInterface $request, array $tags): SentenceInterface
     {
         /** @var SentenceInterface $sentence */
-        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE);
+        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE, SentenceInterface::class);
         $sentence->appendWord($statement);
 
         foreach ($tags as $tag) {
@@ -213,7 +213,7 @@ abstract class SqlGrammar extends Grammar
     public function selectExistsValue(RequestInterface $request): SentenceInterface
     {
         /** @var SentenceInterface $sentence */
-        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE);
+        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE, SentenceInterface::class);
 
         return $sentence->appendClause(static::SELECT_STATEMENT[false], sprintf(static::EXISTS_MASK, $this->requestToString($request, $sentence)));
     }
@@ -221,7 +221,7 @@ abstract class SqlGrammar extends Grammar
     public function update(array $set, RequestInterface $request): SentenceInterface
     {
         /** @var SentenceInterface $sentence */
-        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE);
+        $sentence = $this->resourceManager->clone(static::SENTENCE_PROTOTYPE, SentenceInterface::class);
         $sentence->appendClause(static::UPDATE_STATEMENT, $this->requestNameToString($request));
 
         // Set

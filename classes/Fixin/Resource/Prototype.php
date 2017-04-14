@@ -1,29 +1,8 @@
 <?php
-/**
- * Fixin Framework
- *
- * Copyright (c) Attila Jenei
- *
- * http://www.fixinphp.com
- */
-
 namespace Fixin\Resource;
 
-abstract class Prototype extends Resource implements PrototypeInterface
+abstract class Prototype extends Managed implements PrototypeInterface
 {
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
-    {
-        $this->resourceManager = $resourceManager;
-
-        // Options
-        if (isset($options)) {
-            $this->configureWithOptions($options);
-        }
-    }
-
     /**
      * @return static
      */
@@ -32,5 +11,16 @@ abstract class Prototype extends Resource implements PrototypeInterface
         return (clone $this)
             ->configureWithOptions($options)
             ->configurationTest(get_class($this));
+    }
+
+    /**
+     * @return static
+     */
+    public function withResourceManager(ResourceManagerInterface $resourceManager): ResourceInterface
+    {
+        $clone = clone $this;
+        $clone->resourceManager = $resourceManager;
+
+        return $clone;
     }
 }

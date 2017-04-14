@@ -9,6 +9,8 @@
 
 namespace Fixin\Delivery\Cargo\Factory;
 
+use Fixin\Base\Container\ContainerInterface;
+use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Headers\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
@@ -26,7 +28,7 @@ class HttpCargoFactory extends Factory implements FactoryInterface
     public function __invoke(array $options = null, string $name = null): HttpCargoInterface
     {
         $resourceManager = $this->resourceManager;
-        $cookies = $resourceManager->clone('Base\Cookie\CookieManager', [
+        $cookies = $resourceManager->clone('Base\Cookie\CookieManager', CookieManagerInterface::class, [
             CookieManagerInterface::COOKIES => $_COOKIE
         ]);
         $method = $_SERVER['REQUEST_METHOD'];
@@ -34,16 +36,16 @@ class HttpCargoFactory extends Factory implements FactoryInterface
 
         $options = [
             HttpCargoInterface::COOKIES => $cookies,
-            HttpCargoInterface::ENVIRONMENT => $resourceManager->clone('Base\Container\Container')->withValues($_ENV),
+            HttpCargoInterface::ENVIRONMENT => $resourceManager->clone('Base\Container\Container', ContainerInterface::class)->withValues($_ENV),
             HttpCargoInterface::METHOD => $method,
-            HttpCargoInterface::PARAMETERS => $resourceManager->clone('Base\Container\VariableContainer')->withValues($_GET),
+            HttpCargoInterface::PARAMETERS => $resourceManager->clone('Base\Container\VariableContainer', VariableContainerInterface::class)->withValues($_GET),
             HttpCargoInterface::PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
-            HttpCargoInterface::REQUEST_HEADERS => $resourceManager->clone('Base\Headers\Headers', [
+            HttpCargoInterface::REQUEST_HEADERS => $resourceManager->clone('Base\Headers\Headers', HeadersInterface::class, [
                 HeadersInterface::VALUES => $requestHeaders
             ]),
-            HttpCargoInterface::RESPONSE_HEADERS => $resourceManager->clone('Base\Headers\Headers'),
-            HttpCargoInterface::SERVER => $resourceManager->clone('Base\Container\Container')->withValues($_SERVER),
-            HttpCargoInterface::SESSION => $resourceManager->clone('Base\Session\SessionManager', [
+            HttpCargoInterface::RESPONSE_HEADERS => $resourceManager->clone('Base\Headers\Headers', HeadersInterface::class),
+            HttpCargoInterface::SERVER => $resourceManager->clone('Base\Container\Container', ContainerInterface::class)->withValues($_SERVER),
+            HttpCargoInterface::SESSION => $resourceManager->clone('Base\Session\SessionManager', SessionManagerInterface::class, [
                 SessionManagerInterface::COOKIE_MANAGER => $cookies
             ]),
             HttpCargoInterface::CONTENT_TYPE => 'text/html',
@@ -57,7 +59,7 @@ class HttpCargoFactory extends Factory implements FactoryInterface
             }
         }
 
-        return $resourceManager->clone('Delivery\Cargo\HttpCargo', $options);
+        return $resourceManager->clone('Delivery\Cargo\HttpCargo', HttpCargoInterface::class, $options);
     }
 
     protected function getPostParameters(): array

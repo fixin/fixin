@@ -30,14 +30,6 @@ class VariableInspector extends DoNotCreate
     }
 
     /**
-     * Is hidden data
-     */
-    protected static function isHidden(string $key, $value): bool
-    {
-        return is_scalar($value) && stripos($key, 'password') !== false;
-    }
-
-    /**
      * Return list info
      */
     public static function itemsInfo(array $var, string $color = '#444'): string
@@ -51,7 +43,7 @@ class VariableInspector extends DoNotCreate
                 continue;
             }
 
-            if (static::isHidden($key, $value)) {
+            if (is_scalar($value) && stripos($key, 'password') !== false) {
                 $value = '*****';
             }
 

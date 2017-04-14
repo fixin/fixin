@@ -20,7 +20,6 @@ class HttpClassHub extends HttpHub
 {
     protected const
         CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/',
-        INVALID_CLASS_EXCEPTION = "Class '%s' is invalid, CargoHandlerInterface required",
         THIS_SETS = [
             self::DEPTH => self::INT_TYPE
         ];
@@ -55,13 +54,7 @@ class HttpClassHub extends HttpHub
 
             // Test class
             if ($this->resourceManager->has($fullName)) {
-                $instance = $this->resourceManager->get($fullName);
-
-                if ($instance instanceof CargoHandlerInterface) {
-                    return $instance;
-                }
-
-                throw new Exception\RuntimeException(sprintf(static::INVALID_CLASS_EXCEPTION, get_class($instance)));
+                return $this->resourceManager->get($fullName, CargoHandlerInterface::class);
             }
         }
 
@@ -88,7 +81,7 @@ class HttpClassHub extends HttpHub
     /**
      * Handle observed path
      */
-    protected function handlePath(HttpCargoInterface $cargo, string $path): HttpCargoInterface
+    protected function handlePath(HttpCargoInterface $cargo, string $path): CargoInterface
     {
         $depth = $this->depth;
         $tags = explode('/', rtrim($path, '/'), $depth + 2);
@@ -99,9 +92,9 @@ class HttpClassHub extends HttpHub
                 $cargo->getParameters()->set('action', $tags[$depth]);
             }
 
-            // Controller
-            if ($controller = $this->getHandlerForPath(implode('\\', array_slice($tags, 0, $depth)))) {
-                return $controller->handle($cargo);
+            // Handler
+            if ($handler = $this->getHandlerForPath(implode('\\', array_slice($tags, 0, $depth)))) {
+                return $handler->handle($cargo);
             }
         }
 

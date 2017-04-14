@@ -78,7 +78,7 @@ class PdoStorage extends Resource implements StorageInterface
             $resource->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $class = ucfirst(strtolower($resource->getAttribute(PDO::ATTR_DRIVER_NAME)));
-            $this->grammar = $this->resourceManager->get(sprintf(static::GRAMMAR_CLASS_MASK, $class));
+            $this->grammar = $this->resourceManager->get(sprintf(static::GRAMMAR_CLASS_MASK, $class), GrammarInterface::class);
 
             $this->resource = $resource;
         }
@@ -143,7 +143,7 @@ class PdoStorage extends Resource implements StorageInterface
         call_user_func_array([$statement, 'setFetchMode'], $mode);
         $statement->execute($sentence->getParameters());
 
-        return $this->resourceManager->clone(static::STORAGE_RESULT_PROTOTYPE, [
+        return $this->resourceManager->clone(static::STORAGE_RESULT_PROTOTYPE, StorageResultInterface::class, [
             PdoStorageResult::STATEMENT => $statement
         ]);
     }

@@ -49,7 +49,7 @@ class Processor extends Item {
     public function getGroups(): array {
         $groups = [];
 
-        foreach ($this->children as $name => $item) {
+        foreach ($this->children as $item) {
             $groups[$item->getGroup()][] = $item;
         }
 

@@ -11,6 +11,7 @@ namespace Fixin\Application;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Delivery\Route\RouteInterface;
 use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Support\Http;
 use Throwable;
@@ -65,7 +66,7 @@ class Application implements ApplicationInterface
         }
 
         try {
-            $this->resourceManager->get($this->config[static::ERROR_ROUTE])
+            $this->resourceManager->get($this->config[static::ERROR_ROUTE], RouteInterface::class)
                 ->handle($cargo)
                 ->unpack();
         }
@@ -95,13 +96,13 @@ class Application implements ApplicationInterface
 
         try {
             /** @var CargoInterface $cargo */
-            $cargo = $container->clone($this->config[static::CARGO]);
-            $container->get($this->config[static::ROUTE])
+            $cargo = $container->clone($this->config[static::CARGO], CargoInterface::class);
+            $container->get($this->config[static::ROUTE], RouteInterface::class)
                 ->handle($cargo)
                 ->unpack();
         }
         catch (Throwable $t) {
-            $this->errorRoute(($cargo ?? $container->clone('Delivery\Cargo\Cargo'))->setContent($t));
+            $this->errorRoute(($cargo ?? $container->clone('Delivery\Cargo\Cargo', CargoInterface::class))->setContent($t));
         }
 
         return $this;

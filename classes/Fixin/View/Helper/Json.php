@@ -23,7 +23,7 @@ class Json extends Helper
     {
         parent::__construct($resourceManager, $options, $name);
 
-        $this->json = $resourceManager->get('Base\Json\Json');
+        $this->json = $resourceManager->get('Base\Json\Json', JsonInterface::class);
     }
 
     /**

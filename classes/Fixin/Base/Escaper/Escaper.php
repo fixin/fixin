@@ -28,9 +28,9 @@ class Escaper extends Resource implements EscaperInterface
         return mb_substr($this->escapeJsVariable($string), 1, -1);
     }
 
-    public function escapeJsVariable($var): string
+    public function escapeJsVariable($variable): string
     {
-        return strtr(json_encode($var, static::JS_ENCODING_OPTIONS), static::JS_REPLACES);
+        return strtr(json_encode($variable, static::JS_ENCODING_OPTIONS), static::JS_REPLACES);
     }
 
     public function escapeUrl(string $url): string

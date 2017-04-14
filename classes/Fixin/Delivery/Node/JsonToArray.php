@@ -24,7 +24,7 @@ class JsonToArray extends Resource implements NodeInterface
 
         if (!is_array($content) && in_array($cargo->getContentType(), static::ALLOWED_TYPES)) {
             try {
-                $content = $this->resourceManager->get('Base\Json\Json')->decode($content);
+                $content = $this->resourceManager->get('Base\Json\Json', Json\JsonInterface::class)->decode($content);
                 $cargo->setContent(is_array($content) ? $content : null);
             }
             catch (Json\Exception\RuntimeException $e) {

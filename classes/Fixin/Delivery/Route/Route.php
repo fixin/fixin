@@ -48,13 +48,11 @@ class Route extends Resource implements RouteInterface
         $node = $this->nodes[$key];
 
         if (is_string($node)) {
-            $node = $this->resourceManager->get($node);
+            return $this->loadedNodes[$key] = $this->resourceManager->get($node, NodeInterface::class);
         }
 
         if ($node instanceof NodeInterface) {
-            $this->loadedNodes[$key] = $node;
-
-            return $node;
+            return $this->loadedNodes[$key] = $node;
         }
 
         throw new Exception\InvalidArgumentException(sprintf(static::INVALID_NODE_EXCEPTION, $key));

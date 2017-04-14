@@ -10,6 +10,7 @@
 namespace Fixin\View\Engine;
 
 use Fixin\Base\Json\Json;
+use Fixin\Base\Json\JsonInterface;
 use Fixin\View\ViewInterface;
 
 class JsonEngine extends Engine
@@ -24,7 +25,7 @@ class JsonEngine extends Engine
 
     public function render(ViewInterface $view): string
     {
-        $json = $this->json ?? ($this->json = $this->resourceManager->get('Base\Json\Json'));
+        $json = $this->json ?? ($this->json = $this->resourceManager->get('Base\Json\Json', JsonInterface::class));
         $result = [];
 
         // Children

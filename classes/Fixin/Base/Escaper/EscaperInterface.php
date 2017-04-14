@@ -26,7 +26,7 @@ interface EscaperInterface extends ResourceInterface
     /**
      * Escape variable for JavaScript
      */
-    public function escapeJsVariable($var): string;
+    public function escapeJsVariable($variable): string;
 
     /**
      * Escape string for URI
