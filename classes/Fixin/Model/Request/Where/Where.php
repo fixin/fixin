@@ -116,7 +116,7 @@ class Where extends Prototype implements WhereInterface
 
     protected function addTag(string $prototype, string $join, bool $negated, array $options): void
     {
-        $this->tags[] = $this->resourceManager->clone($prototype, [
+        $this->tags[] = $this->resourceManager->clone($prototype, TagInterface::class, [
                 TagInterface::JOIN => $join,
                 TagInterface::NEGATED => $negated
             ] + $options);

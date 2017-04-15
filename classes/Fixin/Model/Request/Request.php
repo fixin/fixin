@@ -125,7 +125,7 @@ class Request extends Prototype implements RequestInterface
 
     protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null): void
     {
-        $this->joins[] = $this->resourceManager->clone(static::JOIN_PROTOTYPE, [
+        $this->joins[] = $this->resourceManager->clone(static::JOIN_PROTOTYPE, JoinInterface::class, [
             JoinInterface::TYPE => $type,
             JoinInterface::REPOSITORY => $repository,
             JoinInterface::ALIAS => $alias ?? $repository->getName(),
