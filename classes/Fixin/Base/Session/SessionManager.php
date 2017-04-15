@@ -268,9 +268,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
         }
 
         /** @var SessionEntity $entity */
-        $entity = $request->fetchFirst();
-
-        if ($entity) {
+        if ($entity = $request->fetchFirst()) {
             $data = $entity->getData();
             if (isset($data[static::DATA_REGENERATED])) {
                 return ($entity->getAccessTime() >= new DateTimeImmutable('-' . $this->regenerationForwardTime . ' MINUTES')) ? $this->startWith($data[static::DATA_REGENERATED]) : false;

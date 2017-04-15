@@ -66,29 +66,22 @@ abstract class Grammar extends Resource implements GrammarInterface
 
     protected function expressionToString($expression, SentenceInterface $sentence): string
     {
-        // Array
         if (is_array($expression)) {
             return $this->expressionArrayToString($expression, $sentence);
         }
 
-        // Expression
         if ($expression instanceof ExpressionInterface) {
             $sentence->addParameters($expression->getParameters());
 
             return $this->quoteExpression($expression->getExpression());
         }
 
-        // DateTime
         if ($expression instanceof DateTimeInterface) {
             $expression = $expression->format(static::DATETIME_FORMAT);
         }
-
-        // Request
         elseif ($expression instanceof RequestInterface) {
             return sprintf(static::NESTED_MASK, $this->requestToString($expression, $sentence));
         }
-
-        // ID
         elseif ($expression instanceof EntityIdInterface) {
             $expression = $expression->getArrayCopy();
             if (count($expression) > 1) {
