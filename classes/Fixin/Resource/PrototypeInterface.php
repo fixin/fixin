@@ -8,12 +8,12 @@ interface PrototypeInterface extends ManagedInterface
      *
      * @return static
      */
-    public function withOptions(array $options);
+    public function withOptions(array $options): PrototypeInterface;
 
     /**
      * Cloned instance with replaced Resource Manager
      *
      * @return static
      */
-    public function withResourceManager(ResourceManagerInterface $resourceManager): ResourceInterface;
+    public function withResourceManager(ResourceManagerInterface $resourceManager): PrototypeInterface;
 }

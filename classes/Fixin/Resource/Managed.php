@@ -85,7 +85,7 @@ abstract class Managed implements ManagedInterface
      * @throws Exception\RuntimeException
      * @return $this
      */
-    protected function configurationTest(string $name): Resource
+    protected function configurationTest(string $name): self
     {
         foreach (static::THIS_REQUIRES as $key) {
             if (isset($this->$key)) {
@@ -102,7 +102,7 @@ abstract class Managed implements ManagedInterface
      * @return $this
      * @throws Exception\InvalidArgumentException
      */
-    protected function configureWithOptions(array $options): Resource
+    protected function configureWithOptions(array $options): self
     {
         foreach ($options as $name => $value) {
             // By setter

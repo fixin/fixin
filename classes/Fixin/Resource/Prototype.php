@@ -14,7 +14,7 @@ abstract class Prototype extends Managed implements PrototypeInterface
     /**
      * @return static
      */
-    public function withOptions(array $options)
+    public function withOptions(array $options): PrototypeInterface
     {
         return (clone $this)
             ->configureWithOptions($options)
@@ -24,7 +24,7 @@ abstract class Prototype extends Managed implements PrototypeInterface
     /**
      * @return static
      */
-    public function withResourceManager(ResourceManagerInterface $resourceManager): ResourceInterface
+    public function withResourceManager(ResourceManagerInterface $resourceManager): PrototypeInterface
     {
         $clone = clone $this;
         $clone->resourceManager = $resourceManager;
