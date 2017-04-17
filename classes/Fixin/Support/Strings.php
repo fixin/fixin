@@ -93,6 +93,27 @@ class Strings extends DoNotCreate
         return rtrim($path, '/\\') . DIRECTORY_SEPARATOR;
     }
 
+    public static function removeMainIndent(array $lines): string
+    {
+        // Indents
+        $left = PHP_INT_MAX;
+
+        foreach ($lines as &$line) {
+            if (trim($line) === '') {
+                continue;
+            }
+
+            $line = static::normalizeLeading($line);
+            $left = min($left, strspn($line, ' '));
+        }
+
+        foreach ($lines as &$line) {
+            $line = mb_substr($line, $left);
+        }
+
+        return implode('', $lines);
+    }
+
     /**
      * Convert string to "CamelCase" class name
      */

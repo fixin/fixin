@@ -27,27 +27,6 @@ class CodeInspector extends DoNotCreate
         $last = array_pop($lines);
         array_push($lines, rtrim(mb_substr($last, 0, mb_strrpos($last, '}'))));
 
-        return static::removeIndent($lines);
-    }
-
-    protected static function removeIndent(array $lines): string
-    {
-        // Indents
-        $left = PHP_INT_MAX;
-
-        foreach ($lines as &$line) {
-            if (trim($line) === '') {
-                continue;
-            }
-
-            $line = Strings::normalizeLeading($line);
-            $left = min($left, strspn($line, ' '));
-        }
-
-        foreach ($lines as &$line) {
-            $line = mb_substr($line, $left);
-        }
-
-        return implode('', $lines);
+        return Strings::removeMainIndent($lines);
     }
 }
