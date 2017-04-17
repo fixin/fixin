@@ -10,12 +10,12 @@
 namespace Fixin\Delivery\Node\Factory;
 
 use Fixin\Delivery\Node\HttpRouterHub;
-use Fixin\Resource\Factory;
 use Fixin\Resource\FactoryInterface;
+use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Support\Arrays;
 use Fixin\Support\Strings;
 
-class HttpRouterHubFactory extends Factory implements FactoryInterface
+class HttpRouterHubFactory implements FactoryInterface
 {
     protected const
         INVALID_ROUTE_ARGUMENT_EXCEPTION = "Invalid route argument for '%s'",
@@ -60,7 +60,7 @@ class HttpRouterHubFactory extends Factory implements FactoryInterface
     /**
      * @throws Exception\RuntimeException
      */
-    public function __invoke(array $options = NULL, string $name = NULL): HttpRouterHub
+    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): HttpRouterHub
     {
         // Routes
         if (isset($options[static::ROUTES])) {
@@ -73,7 +73,7 @@ class HttpRouterHubFactory extends Factory implements FactoryInterface
 
             // Hub
             if ($this->routeTree) {
-                return new HttpRouterHub($this->resourceManager, [
+                return new HttpRouterHub($resourceManager, [
                     HttpRouterHub::ROUTE_TREE => $this->routeTree,
                     HttpRouterHub::ROUTE_URIS => $this->routeUris,
                     HttpRouterHub::HANDLERS => $this->handlers

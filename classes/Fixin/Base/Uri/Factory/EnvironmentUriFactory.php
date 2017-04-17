@@ -12,15 +12,16 @@ namespace Fixin\Base\Uri\Factory;
 use Fixin\Base\Uri\UriInterface;
 use Fixin\Resource\Factory;
 use Fixin\Resource\FactoryInterface;
+use Fixin\Resource\ResourceManagerInterface;
 
-class EnvironmentUriFactory extends Factory implements FactoryInterface
+class EnvironmentUriFactory implements FactoryInterface
 {
     protected const
         CAN_T_DETERMINE_EXCEPTION = 'Can\'t determine the request URI';
 
-    public function __invoke(array $options = NULL, string $name = null)
+    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
     {
-        return $this->resourceManager->clone('Base\Uri\Uri', UriInterface::class, [
+        return $resourceManager->clone('Base\Uri\Uri', UriInterface::class, [
             UriInterface::SCHEME => ($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http',
             UriInterface::HOST => $_SERVER['HTTP_HOST'],
             UriInterface::PORT => $_SERVER['SERVER_PORT'],

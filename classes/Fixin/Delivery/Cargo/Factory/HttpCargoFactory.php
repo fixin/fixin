@@ -14,20 +14,19 @@ use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Headers\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
-use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Resource\Factory;
 use Fixin\Resource\FactoryInterface;
+use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Support\Http;
 
 /**
  * @SuppressWarnings(PHPMD.Superglobals)
  */
-class HttpCargoFactory extends Factory implements FactoryInterface
+class HttpCargoFactory implements FactoryInterface
 {
-    public function __invoke(array $options = null, string $name = null): HttpCargoInterface
+    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): HttpCargoInterface
     {
-        $resourceManager = $this->resourceManager;
         $cookies = $resourceManager->clone('Base\Cookie\CookieManager', CookieManagerInterface::class, [
             CookieManagerInterface::COOKIES => $_COOKIE
         ]);
@@ -52,10 +51,10 @@ class HttpCargoFactory extends Factory implements FactoryInterface
         ];
 
         if (in_array($method, [Http::POST_METHOD, Http::PUT_METHOD])) {
-            $options[CargoInterface::CONTENT] = $this->getPostParameters();
+            $options[HttpCargoInterface::CONTENT] = $this->getPostParameters();
 
             if (isset($requestHeaders[Http::CONTENT_TYPE_HEADER])) {
-                $options[CargoInterface::CONTENT_TYPE] = $requestHeaders[Http::CONTENT_TYPE_HEADER];
+                $options[HttpCargoInterface::CONTENT_TYPE] = $requestHeaders[Http::CONTENT_TYPE_HEADER];
             }
         }
 
