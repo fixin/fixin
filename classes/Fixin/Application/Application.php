@@ -32,7 +32,7 @@ class Application implements ApplicationInterface
         RESOURCE_MANAGER_ROOT = 'resourceManager',
         ROUTE = 'route';
 
-        /**
+    /**
      * @var array
      */
     protected $config;

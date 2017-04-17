@@ -230,7 +230,9 @@ class SessionManager extends Prototype implements SessionManagerInterface
 
     protected function setupCookie(): void
     {
-        $this->getCookieManager()->set($this->cookieName, $this->sessionId)->setExpireTime($this->lifetime)->setPath('/');
+        $this->getCookieManager()->set($this->cookieName, $this->sessionId)
+            ->setExpireTime($this->lifetime)
+            ->setPath('/');
     }
 
     /**

@@ -93,7 +93,7 @@ class ResourceManager implements ResourceManagerInterface
 
     public function clone(string $name, string $class, array $options = [])
     {
-        $resource = $this->getResource($name, $class);
+        $resource = $this->prepareResource($name, $class);
 
         if ($resource instanceof PrototypeInterface) {
             return $resource->withOptions($options);
@@ -124,7 +124,7 @@ class ResourceManager implements ResourceManagerInterface
 
     public function get(string $name, string $class): ?ResourceInterface
     {
-        $resource = $this->getResource($name, $class);
+        $resource = $this->prepareResource($name, $class);
 
         if ($resource instanceof ResourceInterface) {
             return $resource;
@@ -137,7 +137,12 @@ class ResourceManager implements ResourceManagerInterface
         throw new Exception\ResourceNotFoundException(sprintf(static::RESOURCE_NOT_FOUND_EXCEPTION, $name));
     }
 
-    protected function getResource(string $name, string $class)
+    public function has(string $name): bool
+    {
+        return isset($this->definitions[$name]) || class_exists($name) || $this->canProduceByAbstractFactory($name);
+    }
+
+    protected function prepareResource(string $name, string $class)
     {
         $resource = $this->resources[$name] ?? $this->produceResource($name);
 
@@ -146,11 +151,6 @@ class ResourceManager implements ResourceManagerInterface
         }
 
         throw new Exception\UnexpectedResourceException(sprintf(static::UNEXPECTED_RESOURCE_EXCEPTION, $name, $class));
-    }
-
-    public function has(string $name): bool
-    {
-        return isset($this->definitions[$name]) || class_exists($name) || $this->canProduceByAbstractFactory($name);
     }
 
     /**
