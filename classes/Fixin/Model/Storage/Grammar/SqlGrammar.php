@@ -11,6 +11,7 @@ namespace Fixin\Model\Storage\Grammar;
 
 use Fixin\Base\Sentence\SentenceInterface;
 use Fixin\Model\Repository\RepositoryInterface;
+use Fixin\Model\Request\JoinInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\UnionInterface;
 
@@ -31,7 +32,7 @@ abstract class SqlGrammar extends Grammar
         INSERT_STATEMENT = 'INSERT',
         INTO_CLAUSE = 'INTO',
         JOIN = 'join',
-        JOIN_CLAUSE = 'JOIN',
+        JOIN_CLAUSE = [JoinInterface::TYPE_CROSS => 'CROSS JOIN', JoinInterface::TYPE_INNER => 'INNER JOIN', JoinInterface::TYPE_LEFT => 'LEFT JOIN', JoinInterface::TYPE_RIGHT => 'RIGHT JOIN'],
         JOIN_ON_CLAUSE = "\tON",
         LIMIT = 'limit',
         ORDER_BY = 'orderBy',
@@ -94,7 +95,7 @@ abstract class SqlGrammar extends Grammar
     protected function clauseJoin(RequestInterface $request, SentenceInterface $sentence): void
     {
         foreach ($request->getJoins() as $join) {
-            $sentence->appendClause(static::JOIN_CLAUSE, $this->nameToString($join->getRepository()->getName(), $join->getAlias()));
+            $sentence->appendClause(static::JOIN_CLAUSE[$join->getType()], $this->nameToString($join->getRepository()->getName(), $join->getAlias()));
             if ($where = $join->getWhere()) {
                 $sentence->appendString($this->whereToString(static::JOIN_ON_CLAUSE, $where, $sentence));
             }
