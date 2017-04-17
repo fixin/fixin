@@ -239,7 +239,7 @@ abstract class Grammar extends Resource implements GrammarInterface
     public function toDateTime($value): ?DateTimeImmutable
     {
         if (Numbers::isInt($value)) {
-            return new DateTimeImmutable($value);
+            return new DateTimeImmutable('@' . $value);
         }
 
         return DateTimeImmutable::createFromFormat(static::DATETIME_FORMAT, $value) ?: null;

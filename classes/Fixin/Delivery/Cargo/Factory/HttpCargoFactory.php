@@ -93,7 +93,7 @@ class HttpCargoFactory implements FactoryInterface
 
     protected function getRequestProtocolVersion(): string
     {
-        return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::PROTOCOL_VERSION_1_0)
-            ? Http::PROTOCOL_VERSION_1_0 : Http::PROTOCOL_VERSION_1_1;
+        return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::VERSION_1_0)
+            ? Http::VERSION_1_0 : Http::VERSION_1_1;
     }
 }

@@ -22,10 +22,6 @@ class Http extends DoNotCreate
         POST_METHOD = 'POST',
         PUT_METHOD = 'PUT',
 
-        PROTOCOL_VERSION_1_0 = '1.0',
-        PROTOCOL_VERSION_1_1 = '1.1',
-        PROTOCOL_VERSION_2_0 = '2.0',
-
         STATUS_CONTINUE_100 = 100,
         STATUS_SWITCHING_PROTOCOLS_101 = 101,
         STATUS_PROCESSING_102 = 102,
@@ -84,5 +80,9 @@ class Http extends DoNotCreate
         STATUS_LOOP_DETECTED_508 = 508,
         STATUS_NETWORK_AUTHENTICATION_REQUIRED_511 = 511,
 
-        STATUS_LAST_POSSIBLE_ERROR = 599;
+        STATUS_LAST_POSSIBLE_ERROR = 599,
+
+        VERSION_1_0 = '1.0',
+        VERSION_1_1 = '1.1',
+        VERSION_2_0 = '2.0';
 }

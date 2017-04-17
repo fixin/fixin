@@ -12,7 +12,7 @@ namespace Fixin\Support;
 class Ground extends DoNotCreate
 {
     protected const
-        DEBUG_TEXT_TEMPLATE = '<div style="font-family: monospace; white-space: pre; color: #000; line-height: 1.05">%s</div>';
+        DEBUG_HTML_TEMPLATE = '<div style="font-family: monospace; white-space: pre; color: #000; line-height: 1.05">%s</div>';
 
     /**
      * Check if running in CLI mode
@@ -29,6 +29,6 @@ class Ground extends DoNotCreate
      */
     public static function toDebugText(string $html): string
     {
-        return static::isConsole() ? htmlspecialchars_decode(strip_tags($html)) : sprintf(static::DEBUG_TEXT_TEMPLATE, $html);
+        return static::isConsole() ? htmlspecialchars_decode(strip_tags($html)) : sprintf(static::DEBUG_HTML_TEMPLATE, $html);
     }
 }

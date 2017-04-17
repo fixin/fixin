@@ -66,7 +66,7 @@ class HttpCargo extends Cargo implements HttpCargoInterface
     /**
      * @var string
      */
-    protected $protocolVersion = Http::PROTOCOL_VERSION_1_1;
+    protected $protocolVersion = Http::VERSION_1_1;
 
     /**
      * @var HeadersInterface

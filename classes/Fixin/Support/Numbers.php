@@ -12,7 +12,7 @@ namespace Fixin\Support;
 class Numbers extends DoNotCreate
 {
     /**
-     * Determine if value is int
+     * Determine if value is int or int string 
      */
     public static function isInt($value): bool
     {

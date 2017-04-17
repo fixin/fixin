@@ -16,15 +16,17 @@ return [
                     'param1' => 'test'
                 ]
             ],
-            'byClosure' => function($container) {
-                return new Fixin\ResourceManager\Test($container);
+            'byClosure' => function($resourceManager) {
+                return new Fixin\ResourceManager\Test($resourceManager);
             },
             'byFactory' => 'Fixin\ResourceManager\Factory\RequestFactory',
             'byPrefixFallback' => 'ResourceManager\Test'
         ],
         'abstractFactories' => [
-            'prefixFallback' => 'Fixin\ResourceManager\AbstractFactory\PrefixFallbackAbstractFactory'
+            'prefixFallback' => [
+                'class' => 'Fixin\ResourceManager\AbstractFactory\PrefixFallbackAbstractFactory'
+            ]
         ]
-    ],
+    ]
 ];
 ```
