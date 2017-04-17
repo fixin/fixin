@@ -23,11 +23,11 @@ interface GrammarInterface extends ResourceInterface
         STRING_QUOTE = "'";
 
     public function delete(RequestInterface $request): SentenceInterface;
-    public function getValueAsDateTime($value): ?DateTimeImmutable;
     public function insert(RepositoryInterface $repository, array $set): SentenceInterface;
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): SentenceInterface;
     public function insertMultiple(RepositoryInterface $repository, array $rows): SentenceInterface;
     public function select(RequestInterface $request): SentenceInterface;
     public function selectExistsValue(RequestInterface $request): SentenceInterface;
+    public function toDateTime($value): ?DateTimeImmutable;
     public function update(array $set, RequestInterface $request): SentenceInterface;
 }

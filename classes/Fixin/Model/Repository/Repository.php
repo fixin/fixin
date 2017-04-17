@@ -202,11 +202,6 @@ class Repository extends Resource implements RepositoryInterface
         return $this->storage ?: $this->loadLazyProperty(static::STORAGE);
     }
 
-    public function getValueAsDateTime($value): ?DateTimeImmutable
-    {
-        return $this->getStorage()->getValueAsDateTime($value);
-    }
-
     public function insert(array $set): EntityIdInterface
     {
         if ($this->getStorage()->insert($this, $set)) {
@@ -327,6 +322,11 @@ class Repository extends Resource implements RepositoryInterface
         }
 
         throw new Exception\InvalidArgumentException(sprintf(static::INVALID_NAME_EXCEPTION, $name));
+    }
+
+    public function toDateTime($value): ?DateTimeImmutable
+    {
+        return $this->getStorage()->toDateTime($value);
     }
 
     public function update(array $set, RequestInterface $request): int

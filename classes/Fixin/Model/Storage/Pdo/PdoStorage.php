@@ -109,11 +109,6 @@ class PdoStorage extends Resource implements StorageInterface
         return $this->resource->lastInsertId();
     }
 
-    public function getValueAsDateTime($value): ?DateTimeImmutable
-    {
-        return $this->getGrammar()->getValueAsDateTime($value);
-    }
-
     public function insert(RepositoryInterface $repository, array $set): int
     {
         return $this->execute($this->getGrammar()->insert($repository, $set));
@@ -166,6 +161,11 @@ class PdoStorage extends Resource implements StorageInterface
     public function selectExistsValue(RequestInterface $request): bool
     {
         return (bool) $this->prepareStatement($this->getGrammar()->selectExistsValue($request))->fetchColumn();
+    }
+
+    public function toDateTime($value): ?DateTimeImmutable
+    {
+        return $this->getGrammar()->toDateTime($value);
     }
 
     public function update(array $set, RequestInterface $request): int

@@ -61,7 +61,7 @@ class SessionEntity extends Entity
     public function getAccessTime(): ?DateTimeImmutable
     {
         if (!$this->accessTime instanceof DateTimeImmutable && isset($this->accessTime)) {
-            $this->accessTime = $this->getRepository()->getValueAsDateTime($this->accessTime);
+            $this->accessTime = $this->getRepository()->toDateTime($this->accessTime);
         }
 
         return $this->accessTime;

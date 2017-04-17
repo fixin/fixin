@@ -96,15 +96,6 @@ abstract class Grammar extends Resource implements GrammarInterface
         return static::PLACEHOLDER;
     }
 
-    public function getValueAsDateTime($value): ?DateTimeImmutable
-    {
-        if (Numbers::isInt($value)) {
-            return new DateTimeImmutable($value);
-        }
-
-        return DateTimeImmutable::createFromFormat(static::DATETIME_FORMAT, $value) ?: null;
-    }
-
     public function insert(RepositoryInterface $repository, array $set): SentenceInterface
     {
         return $this->insertMultiple($repository, [$set]);
@@ -245,6 +236,15 @@ abstract class Grammar extends Resource implements GrammarInterface
         return $select->getText();
     }
 
+    public function toDateTime($value): ?DateTimeImmutable
+    {
+        if (Numbers::isInt($value)) {
+            return new DateTimeImmutable($value);
+        }
+
+        return DateTimeImmutable::createFromFormat(static::DATETIME_FORMAT, $value) ?: null;
+    }
+
     protected function whereTagBetween(BetweenTag $tag, SentenceInterface $sentence): string
     {
         return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::NEGATE_WHERE_TAG[$tag->isNegated()] . sprintf(static::BETWEEN_MASK, $this->expressionToString($tag->getMin(), $sentence)
@@ -284,7 +284,7 @@ abstract class Grammar extends Resource implements GrammarInterface
     protected function whereToString(string $clause, WhereInterface $where, SentenceInterface $sentence): string
     {
         if ($tags = $where->getTags()) {
-            $result = rtrim($clause . ' ');
+            $result = rtrim($clause);
 
             foreach ($tags as $index => $tag) {
                 if ($index) {
