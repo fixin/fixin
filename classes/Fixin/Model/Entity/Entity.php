@@ -32,7 +32,7 @@ abstract class Entity extends Prototype implements EntityInterface
     protected $entityId;
 
     /**
-     * @var Entity[]
+     * @var EntityInterface[]
      */
     protected $outdatedSubEntities = array();
 
