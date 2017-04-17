@@ -192,17 +192,13 @@ class ResourceManager implements ResourceManagerInterface
     {
         $class = $definition[static::CLASS_KEY];
 
+        // Name
         if (is_string($class)) {
             $class = $this->createFromDefinition($name, $definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::OPTIONS_KEY]);
         }
 
-        // Factory
-        if ($class instanceof FactoryInterface) {
-            return $class($definition[static::OPTIONS_KEY], $name);
-        }
-
-        // Closure
-        if ($class instanceof \Closure) {
+        // Factory, Closure
+        if ($class instanceof FactoryInterface || $class instanceof \Closure) {
             return $class($this, $definition[static::OPTIONS_KEY], $name);
         }
 
