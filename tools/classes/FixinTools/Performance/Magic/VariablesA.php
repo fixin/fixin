@@ -13,8 +13,8 @@ namespace FixinTools\Performance\Magic;
  * @property callable summary2
  * @property callable summary3
  */
-class VariablesA implements \ArrayAccess {
-
+class VariablesA implements \ArrayAccess
+{
     protected $test = 'test';
 
     /**
@@ -25,120 +25,73 @@ class VariablesA implements \ArrayAccess {
         'x' => ['a' => 0]
     ];
 
-    /**
-     * @param string $name
-     * @return mixed
-     */
-    public function &__get(string $name) {
+    public function &__get(string $name)
+    {
         return $this->variables[$name];
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function __isset(string $name): bool {
+    public function __isset(string $name): bool
+    {
         return isset($this->variables[$name]);
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set(string $name, $value) {
+    public function __set(string $name, $value): void
+    {
         $this->variables[$name] = $value;
     }
 
     /**
      * Simple getter
-     *
-     * @return string
      */
-    public function getTest() {
+    public function getTest(): string
+    {
         return $this->test;
     }
 
-    /**
-     * Get variable value
-     *
-     * @param string $name
-     * @return mixed|null
-     */
-    public function getVariable(string $name) {
+    public function getVariable(string $name)
+    {
         return $this->variables[$name] ?? null;
     }
 
-    /**
-     * Get variables
-     *
-     * @return array
-     */
-    public function getVariables(): array {
+    public function getVariables(): array
+    {
         return $this->variables;
     }
 
-    /**
-     * Has variable
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function hasVariable(string $name): bool {
+    public function hasVariable(string $name): bool
+    {
         return isset($this->variables[$name]);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see ArrayAccess::offsetExists()
-     */
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->variables[$offset]);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see ArrayAccess::offsetGet()
-     */
-    public function &offsetGet($offset) {
+    public function &offsetGet($offset)
+    {
         return $this->variables[$offset];
     }
 
-    /**
-     * {@inheritDoc}
-     * @see ArrayAccess::offsetSet()
-     */
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         $this->variables[$offset] = $value;
     }
 
-    /**
-     * {@inheritDoc}
-     * @see ArrayAccess::offsetUnset()
-     */
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->variables[$offset]);
     }
 
-    /**
-     * Set variable value
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return self
-     */
-    public function setVariable(string $key, $value) {
+    public function setVariable(string $key, $value): self
+    {
         $this->variables[$key] = $value;
 
         return $this;
     }
 
-    /**
-     * Set variables
-     *
-     * @param array $variables
-     * @return self
-     */
-    public function setVariables(array $variables) {
+    public function setVariables(array $variables): self
+    {
         $this->variables = $variables + $this->variables;
 
         return $this;

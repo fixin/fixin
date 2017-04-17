@@ -11,14 +11,15 @@ namespace FixinTools\Performance\Magic;
  * @method escapeHtml($string)
  * @property callable escapeHtml
  */
-class MethodsA {
-
+class MethodsA
+{
     protected $helpers = [];
 
     /**
      * Helper
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->helpers['escapeHtml'] = function($text) {
             return htmlspecialchars($text);
         };
@@ -26,12 +27,9 @@ class MethodsA {
 
     /**
      * Non-accessible method
-     *
-     * @param string $name
-     * @param array $args
-     * @return mixed
      */
-    public function __call(string $name, $args) {
+    public function __call(string $name, $args)
+    {
         if (isset($this->helpers[$name])) {
             return call_user_func_array($this->helpers[$name], $args);
         }
@@ -41,20 +39,17 @@ class MethodsA {
 
     /**
      * Non-accessible property
-     *
-     * @param string $name
-     * @return mixed
      */
-    public function __get(string $name) {
+    public function __get(string $name)
+    {
         return $this->helpers[$name] ?? null;
     }
 
     /**
      * Existing method
-     *
-     * @param mixed $value
      */
-    public function existing($value) {
+    public function existing($value)
+    {
         $this->helpers['escapeHtml']($value);
     }
 }
