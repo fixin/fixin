@@ -9,9 +9,9 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Resource\Resource;
+use Fixin\Resource\Managed;
 
-class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
+class PrefixFallbackFactory extends Managed implements AbstractFactoryInterface
 {
     protected const
         THIS_REQUIRES = [
@@ -25,7 +25,7 @@ class PrefixFallbackFactory extends Resource implements AbstractFactoryInterface
         SEARCH_ORDER = 'searchOrder';
 
     /**
-     * @var array
+     * @var bool[]|string[]
      */
     protected $map = [];
 
