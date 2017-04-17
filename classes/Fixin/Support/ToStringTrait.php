@@ -18,6 +18,6 @@ trait ToStringTrait
     {
         $items = method_exists($this, '__debugInfo') ? $this->__debugInfo() : (array) $this;
 
-        return Ground::toDebugText(get_class($this) . ' {' . ($items ? "\n" . VariableInspector::itemsInfo($items) : '') . '}');
+        return Ground::toDebugText(get_class($this) . ' {' . ($items ? PHP_EOL . VariableInspector::itemsInfo($items) : '') . '}');
     }
 }

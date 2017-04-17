@@ -26,7 +26,7 @@ class VariableInspector extends DoNotCreate
      */
     public static function arrayInfo(array $var): string
     {
-        return '[' . ($var ? "\n" . static::itemsInfo($var, '#754') : '') . ']';
+        return '[' . ($var ? PHP_EOL . static::itemsInfo($var, '#754') : '') . ']';
     }
 
     /**
@@ -62,7 +62,7 @@ class VariableInspector extends DoNotCreate
 
         if (method_exists($var, '__debugInfo')) {
             $var = $var->__debugInfo();
-            return $opening . ($var ? "\n" . static::itemsInfo($var) : '') . '}';
+            return $opening . ($var ? PHP_EOL . static::itemsInfo($var) : '') . '}';
         }
         elseif (method_exists($var, '__toString')) {
             return $opening . htmlspecialchars((string) $var) . '}';

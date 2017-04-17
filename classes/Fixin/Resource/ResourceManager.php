@@ -77,7 +77,7 @@ class ResourceManager implements ResourceManagerInterface
 
         ksort($resources);
 
-        return get_class($this) . " {\n\n    " . implode(",\n    ", $resources) . "\n}";
+        return get_class($this) . ' {' . PHP_EOL . PHP_EOL . '    ' . implode(',' . PHP_EOL . '    ', $resources) . PHP_EOL . '}';
     }
 
     protected function canProduceByAbstractFactory(string $name): bool
