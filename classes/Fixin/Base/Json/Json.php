@@ -41,6 +41,9 @@ class Json extends Resource implements JsonInterface
      */
     protected $encodingMaxDepth = 512;
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     public function decode(string $json)
     {
         $result = json_decode($json, true, $this->decodingMaxDepth, $this->decodingOptions);
@@ -49,11 +52,20 @@ class Json extends Resource implements JsonInterface
             return $result;
         }
 
-        throw new Exception\RuntimeException(json_last_error_msg());
+        throw new Exception\RuntimeException(json_last_error_msg(), json_last_error());
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     public function encode($value): string
     {
-        return json_encode($value, $this->encodingOptions, $this->encodingMaxDepth);
+        $result = json_encode($value, $this->encodingOptions, $this->encodingMaxDepth);
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $result;
+        }
+
+        throw new Exception\RuntimeException(json_last_error_msg(), json_last_error());
     }
 }
