@@ -80,4 +80,9 @@ class PerformanceResult
     {
         return $this->memorySystemPeak;
     }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
 }

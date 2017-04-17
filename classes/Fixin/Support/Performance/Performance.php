@@ -18,14 +18,14 @@ class Performance extends DoNotCreate
         INVALID_REPEAT_COUNT_EXCEPTION = 'Invalid repeat count';
 
     /**
-     * @var number
-     */
-    protected static $lastTime = null;
-
-    /**
      * @var int
      */
     protected static $lastMemoryUsage;
+
+    /**
+     * @var number
+     */
+    protected static $lastTime = null;
 
     public static function measure(string $title = null): PerformanceResult
     {
