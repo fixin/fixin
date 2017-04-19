@@ -160,7 +160,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
      */
     protected function load(): self
     {
-        if (!$this->filename) {
+        if (is_null($this->filename)) {
             throw new Exception\RuntimeException(static::FILENAME_NOT_SET_EXCEPTION);
         }
 
@@ -224,7 +224,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
      */
     protected function saveProcess(): self
     {
-        if (!$this->filename) {
+        if (is_null($this->filename)) {
             throw new Exception\RuntimeException(static::FILENAME_NOT_SET_EXCEPTION);
         }
 

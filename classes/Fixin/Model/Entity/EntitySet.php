@@ -68,7 +68,7 @@ class EntitySet extends Prototype implements EntitySetInterface
     protected $repository;
 
     /**
-     * @var StorageResultInterface|null
+     * @var StorageResultInterface
      */
     protected $storageResult;
 

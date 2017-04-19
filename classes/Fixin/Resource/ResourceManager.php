@@ -147,7 +147,7 @@ class ResourceManager implements ResourceManagerInterface
         $resource = $this->resources[$name] ?? $this->produceResource($name);
 
         if ($resource instanceof $class) {
-            return $class;
+            return $resource;
         }
 
         throw new Exception\UnexpectedResourceException(sprintf(static::UNEXPECTED_RESOURCE_EXCEPTION, $name, $class));
