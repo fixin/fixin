@@ -15,7 +15,15 @@ class Cookie extends Prototype implements CookieInterface
 {
     protected const
         EXPIRE_TO_TIMESTAMP = 60,
-        SET_FAILURE_EXCEPTION = "Can't set '%s' cookie";
+        SET_FAILURE_EXCEPTION = "Can't set '%s' cookie",
+        THIS_SETS = [
+            self::DOMAIN => self::USING_SETTER,
+            self::EXPIRE_TIME => self::USING_SETTER,
+            self::HTTP_ONLY => self::USING_SETTER,
+            self::PATH => self::USING_SETTER,
+            self::SECURE => self::USING_SETTER,
+            self::VALUE => self::USING_SETTER
+        ];
 
     /**
      * @var string
