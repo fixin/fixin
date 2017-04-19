@@ -23,7 +23,7 @@ interface ResourceManagerInterface
      *
      * @return ($class)|ResourceInterface|null
      */
-    public function get(string $name, string $class): ?ResourceInterface;
+    public function get(string $name, string $class);
 
     /**
      * Check if the name has been accessible

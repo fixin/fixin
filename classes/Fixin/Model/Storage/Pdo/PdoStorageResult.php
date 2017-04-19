@@ -19,8 +19,8 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
 {
     protected const
         REWIND_IS_NOT_ALLOWED_EXCEPTION = 'Rewind is not allowed',
-        THIS_REQUIRES = [
-            self::STATEMENT
+        THIS_SETS = [
+            self::STATEMENT => self::USING_SETTER
         ],
         TO_STRING_MASK = '%s {' . PHP_EOL . "    Position: %d" . PHP_EOL . "    Count: %d" . PHP_EOL . '}' . PHP_EOL;
 

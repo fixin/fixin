@@ -10,15 +10,13 @@
 namespace Fixin\Resource\AbstractFactory;
 
 use Fixin\Resource\Managed;
+use Fixin\Support\Types;
 
 class PrefixFallbackFactory extends Managed implements AbstractFactoryInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::SEARCH_ORDER
-        ],
         THIS_SETS = [
-            self::SEARCH_ORDER => self::ARRAY_TYPE
+            self::SEARCH_ORDER => Types::ARRAY
         ];
 
     public const

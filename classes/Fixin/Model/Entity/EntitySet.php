@@ -13,19 +13,18 @@ use Fixin\Model\Entity\Cache\CacheInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 
 class EntitySet extends Prototype implements EntitySetInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::STORAGE_RESULT
-        ],
         THIS_SETS = [
-            self::ID_FETCH_MODE => self::BOOL_TYPE
-        ],
-        THIS_SETS_LAZY = [
-            self::ENTITY_CACHE => CacheInterface::class,
-            self::REPOSITORY => RepositoryInterface::class
+            self::ENTITY_CACHE => [self::LAZY_LOADING => CacheInterface::class, Types::NULL],
+            self::ID_FETCH_MODE => Types::BOOL,
+            self::ITEMS => self::USING_SETTER,
+            self::PREFETCH_SIZE => self::USING_SETTER,
+            self::REPOSITORY => [self::LAZY_LOADING => RepositoryInterface::class, Types::NULL],
+            self::STORAGE_RESULT => [self::USING_SETTER, Types::NULL]
         ];
 
     /**
@@ -69,7 +68,7 @@ class EntitySet extends Prototype implements EntitySetInterface
     protected $repository;
 
     /**
-     * @var StorageResultInterface
+     * @var StorageResultInterface|null
      */
     protected $storageResult;
 

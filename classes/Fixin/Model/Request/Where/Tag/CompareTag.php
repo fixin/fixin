@@ -10,19 +10,15 @@
 namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Support\Types;
 
 class CompareTag extends Tag {
 
     protected const
-        THIS_REQUIRES = parent::THIS_REQUIRES + [
-            self::LEFT,
-            self::OPERATOR,
-            self::RIGHT
-        ],
         THIS_SETS = parent::THIS_SETS + [
-            self::LEFT => [self::SCALAR_TYPE, RequestInterface::class],
-            self::OPERATOR => self::STRING_TYPE,
-            self::RIGHT => [self::SCALAR_TYPE, RequestInterface::class, self::ARRAY_TYPE]
+            self::LEFT => [Types::SCALAR, RequestInterface::class],
+            self::OPERATOR => Types::STRING,
+            self::RIGHT => [Types::SCALAR, RequestInterface::class, Types::ARRAY]
         ];
 
     public const

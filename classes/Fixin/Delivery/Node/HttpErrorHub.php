@@ -18,11 +18,8 @@ use Fixin\Support\Http;
 class HttpErrorHub extends Resource implements NodeInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::ROUTE
-        ],
-        THIS_SETS_LAZY = [
-            self::ROUTE => RouteInterface::class
+        THIS_SETS = [
+            self::ROUTE => [self::LAZY_LOADING => RouteInterface::class]
         ];
 
     public const

@@ -14,24 +14,18 @@ use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Strings;
+use Fixin\Support\Types;
 
 class SessionManager extends Prototype implements SessionManagerInterface
 {
     protected const
         DATA_REGENERATED = 'regenerated',
-        THIS_REQUIRES = [
-            self::COOKIE_MANAGER,
-            self::COOKIE_NAME,
-            self::REPOSITORY
-        ],
         THIS_SETS = [
-            self::COOKIE_NAME => self::STRING_TYPE,
-            self::LIFETIME => self::INT_TYPE,
-            self::REGENERATION_FORWARD_TIME => self::INT_TYPE
-        ],
-        THIS_SETS_LAZY = [
-            self::COOKIE_MANAGER => CookieManagerInterface::class,
-            self::REPOSITORY => RepositoryInterface::class
+            self::COOKIE_MANAGER => [self::LAZY_LOADING => CookieManagerInterface::class],
+            self::COOKIE_NAME => Types::STRING,
+            self::LIFETIME => Types::INT,
+            self::REGENERATION_FORWARD_TIME => Types::INT,
+            self::REPOSITORY => [self::LAZY_LOADING => RepositoryInterface::class]
         ];
 
     /**

@@ -11,18 +11,15 @@ namespace Fixin\Base\FileSystem;
 
 use Fixin\Resource\Resource;
 use Fixin\Support\Strings;
+use Fixin\Support\Types;
 
 class FileResolver extends Resource implements FileResolverInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::FILE_SYSTEM
-        ],
         THIS_SETS = [
-            self::DEFAULT_EXTENSION => self::STRING_TYPE
-        ],
-        THIS_SETS_LAZY = [
-            self::FILE_SYSTEM => FileSystemInterface::class
+            self::DEFAULT_EXTENSION => Types::STRING,
+            self::FILE_SYSTEM => [self::LAZY_LOADING => FileSystemInterface::class],
+            self::PATHS => self::USING_SETTER
         ];
 
     /**

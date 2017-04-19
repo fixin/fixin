@@ -23,24 +23,18 @@ class HttpCargo extends Cargo implements HttpCargoInterface
     use ToStringTrait;
 
     protected const
-        THIS_REQUIRES = [
-            self::COOKIES,
-            self::ENVIRONMENT,
-            self::PARAMETERS,
-            self::REQUEST_HEADERS,
-            self::RESPONSE_HEADERS,
-            self::SERVER,
-            self::SESSION,
-            self::URI
-        ],
-        THIS_SETS = [
+        THIS_SETS = parent::THIS_SETS + [
             self::COOKIES => CookieManagerInterface::class,
             self::ENVIRONMENT => ContainerInterface::class,
+            self::METHOD => self::USING_SETTER,
             self::PARAMETERS => VariableContainerInterface::class,
+            self::PROTOCOL_VERSION => self::USING_SETTER,
             self::REQUEST_HEADERS => HeadersInterface::class,
             self::RESPONSE_HEADERS => HeadersInterface::class,
             self::SERVER => ContainerInterface::class,
-            self::SESSION => SessionManagerInterface::class
+            self::SESSION => SessionManagerInterface::class,
+            self::STATUS_CODE => self::USING_SETTER,
+            self::URI => self::USING_SETTER
         ];
 
     /**

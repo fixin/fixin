@@ -12,6 +12,7 @@ namespace Fixin\Delivery\Node;
 use Fixin\Delivery\Cargo\CargoHandlerInterface;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
+use Fixin\Support\Types;
 
 class HttpRouterHub extends HttpHub
 {
@@ -19,13 +20,10 @@ class HttpRouterHub extends HttpHub
         INVALID_HANDLER_EXCEPTION = "Invalid handler '%s'",
         MISSING_ROUTE_PARAMETER_EXCEPTION = "Missing route parameter '%s'",
         UNKNOWN_ROUTE_EXCEPTION = "Unknown route '%s'",
-        THIS_REQUIRES = [
-            self::ROUTE_TREE
-        ],
         THIS_SETS = [
-            self::HANDLERS => self::ARRAY_TYPE,
-            self::ROUTE_TREE => self::ARRAY_TYPE,
-            self::ROUTE_URIS => self::ARRAY_TYPE
+            self::HANDLERS => Types::ARRAY,
+            self::ROUTE_TREE => Types::ARRAY,
+            self::ROUTE_URIS => Types::ARRAY
         ];
 
     public const

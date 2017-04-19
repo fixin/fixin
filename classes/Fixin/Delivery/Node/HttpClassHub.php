@@ -15,13 +15,16 @@ use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Delivery\Node\Exception;
 use Fixin\Support\Http;
 use Fixin\Support\Strings;
+use Fixin\Support\Types;
 
 class HttpClassHub extends HttpHub
 {
     protected const
         CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/',
         THIS_SETS = [
-            self::DEPTH => self::INT_TYPE
+            self::BASE_PATH => self::USING_SETTER,
+            self::CLASS_PREFIX => self::USING_SETTER,
+            self::DEPTH => Types::INT
         ];
 
     public const

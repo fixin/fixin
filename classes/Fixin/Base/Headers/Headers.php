@@ -10,12 +10,13 @@
 namespace Fixin\Base\Headers;
 
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 
 class Headers extends Prototype implements HeadersInterface
 {
     protected const
         THIS_SETS = [
-            self::VALUES => self::ARRAY_TYPE
+            self::VALUES => Types::ARRAY
         ];
 
     /**

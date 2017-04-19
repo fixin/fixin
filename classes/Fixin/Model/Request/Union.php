@@ -10,17 +10,14 @@
 namespace Fixin\Model\Request;
 
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 
 class Union extends Prototype implements UnionInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::REQUEST,
-            self::TYPE
-        ],
         THIS_SETS = [
             self::REQUEST => RequestInterface::class,
-            self::TYPE => self::STRING_TYPE
+            self::TYPE => Types::STRING
         ];
 
     /**

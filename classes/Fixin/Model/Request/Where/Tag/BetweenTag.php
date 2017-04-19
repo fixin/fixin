@@ -9,16 +9,14 @@
 
 namespace Fixin\Model\Request\Where\Tag;
 
+use Fixin\Support\Types;
+
 class BetweenTag extends IdentifierTag
 {
     protected const
-        THIS_REQUIRES = parent::THIS_REQUIRES + [
-            self::MAX,
-            self::MIN
-        ],
         THIS_SETS = parent::THIS_SETS + [
-            self::MAX => self::SCALAR_TYPE,
-            self::MIN => self::SCALAR_TYPE
+            self::MAX => Types::SCALAR,
+            self::MIN => Types::SCALAR
         ];
 
     public const

@@ -18,6 +18,7 @@ use Fixin\Model\Storage\Grammar\GrammarInterface;
 use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Resource;
+use Fixin\Support\Types;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -29,9 +30,9 @@ class PdoStorage extends Resource implements StorageInterface
         GRAMMAR_CLASS_MASK = 'Model\Storage\Grammar\%sGrammar',
         STORAGE_RESULT_PROTOTYPE = 'Model\Storage\Pdo\PdoStorageResult',
         THIS_SETS = [
-            self::DSN => self::STRING_TYPE,
-            self::PASSWORD => self::STRING_TYPE,
-            self::USERNAME => self::STRING_TYPE
+            self::DSN => Types::STRING,
+            self::PASSWORD => [Types::STRING, Types::NULL],
+            self::USERNAME => [Types::STRING, Types::NULL],
         ];
 
     public const
@@ -50,7 +51,7 @@ class PdoStorage extends Resource implements StorageInterface
     protected $grammar;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $password;
 
@@ -60,7 +61,7 @@ class PdoStorage extends Resource implements StorageInterface
     protected $resource;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $username;
 

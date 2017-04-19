@@ -20,6 +20,7 @@ use Fixin\Model\Storage\StorageInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Resource;
 use Fixin\Support\Arrays;
+use Fixin\Support\Types;
 
 class Repository extends Resource implements RepositoryInterface
 {
@@ -34,21 +35,13 @@ class Repository extends Resource implements RepositoryInterface
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
         NOT_STORED_ENTITY_EXCEPTION = 'Not stored entity',
         REQUEST_PROTOTYPE = 'Model\Request\Request',
-        THIS_REQUIRES = [
-            self::ENTITY_CACHE,
-            self::ENTITY_PROTOTYPE,
-            self::NAME,
-            self::PRIMARY_KEY,
-            self::STORAGE
-        ],
         THIS_SETS = [
-            self::AUTO_INCREMENT_COLUMN => [self::STRING_TYPE, self::NULL_TYPE],
-            self::PRIMARY_KEY => self::ARRAY_TYPE
-        ],
-        THIS_SETS_LAZY = [
-            self::ENTITY_CACHE => CacheInterface::class,
-            self::ENTITY_PROTOTYPE => EntityInterface::class,
-            self::STORAGE => StorageInterface::class
+            self::AUTO_INCREMENT_COLUMN => [Types::STRING, Types::NULL],
+            self::ENTITY_CACHE => [self::LAZY_LOADING => CacheInterface::class],
+            self::ENTITY_PROTOTYPE => [self::LAZY_LOADING => EntityInterface::class],
+            self::NAME => self::USING_SETTER,
+            self::PRIMARY_KEY => Types::ARRAY,
+            self::STORAGE => [self::LAZY_LOADING => StorageInterface::class]
         ];
 
     /**
@@ -57,12 +50,12 @@ class Repository extends Resource implements RepositoryInterface
     protected $autoIncrementColumn;
 
     /**
-     * @var CacheInterface|false|null
+     * @var CacheInterface|false
      */
     protected $entityCache;
 
     /**
-     * @var EntityInterface|false|null
+     * @var EntityInterface|false
      */
     protected $entityPrototype;
 
@@ -77,7 +70,7 @@ class Repository extends Resource implements RepositoryInterface
     protected $primaryKey = ['id'];
 
     /**
-     * @var StorageInterface|false|null
+     * @var StorageInterface|false
      */
     protected $storage;
 

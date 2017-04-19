@@ -11,6 +11,7 @@ namespace Fixin\View;
 
 use Fixin\Base\FileSystem\FileResolverInterface;
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 use Fixin\View\Engine\EngineInterface;
 
 class View extends Prototype implements ViewInterface
@@ -20,11 +21,10 @@ class View extends Prototype implements ViewInterface
         FILE_RESOLVER_NOT_SET_EXCEPTION = 'File resolver not set',
         UNABLE_TO_RESOLVE_TEMPLATE_EXCEPTION = "Unable to resolve template '%s'",
         THIS_SETS = [
-            self::POSTFIX_TO_ENGINE_MAP => self::ARRAY_TYPE
-        ],
-        THIS_SETS_LAZY = [
-            self::ENGINE => EngineInterface::class,
-            self::FILE_RESOLVER => FileResolverInterface::class
+            self::ENGINE => [self::LAZY_LOADING => EngineInterface::class],
+            self::FILE_RESOLVER => [self::LAZY_LOADING => FileResolverInterface::class, Types::NULL],
+            self::POSTFIX_TO_ENGINE_MAP => Types::ARRAY,
+            self::TEMPLATE => self::USING_SETTER
         ];
 
     /**
@@ -33,7 +33,7 @@ class View extends Prototype implements ViewInterface
     protected $children = [];
 
     /**
-     * @var EngineInterface|false|null
+     * @var EngineInterface|false
      */
     protected $engine;
 

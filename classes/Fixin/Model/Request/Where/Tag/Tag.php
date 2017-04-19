@@ -10,16 +10,14 @@
 namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 
 abstract class Tag extends Prototype implements TagInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::JOIN
-        ],
         THIS_SETS = [
-            self::JOIN => self::STRING_TYPE,
-            self::NEGATED => self::BOOL_TYPE
+            self::JOIN => Types::STRING,
+            self::NEGATED => Types::STRING
         ];
 
     /**

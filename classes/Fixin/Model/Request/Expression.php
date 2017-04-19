@@ -10,16 +10,14 @@
 namespace Fixin\Model\Request;
 
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 
 class Expression extends Prototype implements ExpressionInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::EXPRESSION
-        ],
         THIS_SETS = [
-            self::EXPRESSION => self::STRING_TYPE,
-            self::PARAMETERS => self::ARRAY_TYPE
+            self::EXPRESSION => Types::STRING,
+            self::PARAMETERS => Types::ARRAY
         ];
 
     /**

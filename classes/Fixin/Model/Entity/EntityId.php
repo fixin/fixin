@@ -16,12 +16,9 @@ class EntityId extends Prototype implements EntityIdInterface
 {
     protected const
         SEPARATOR = ',',
-        THIS_REQUIRES = [
-            self::ENTITY_ID,
-            self::REPOSITORY
-        ],
-        THIS_SETS_LAZY = [
-            self::REPOSITORY => RepositoryInterface::class,
+        THIS_SETS = [
+            self::ENTITY_ID => self::USING_SETTER,
+            self::REPOSITORY => [self::LAZY_LOADING => RepositoryInterface::class]
         ];
 
     /**
@@ -30,7 +27,7 @@ class EntityId extends Prototype implements EntityIdInterface
     protected $entityId = [];
 
     /**
-     * @var RepositoryInterface|false|null
+     * @var RepositoryInterface|false
      */
     protected $repository;
 

@@ -10,23 +10,19 @@
 namespace Fixin\Base\Uri;
 
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 
 class Uri extends Prototype implements UriInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::HOST,
-            self::PATH,
-            self::QUERY,
-        ],
         THIS_SETS = [
-            self::FRAGMENT => [self::STRING_TYPE, self::NULL_TYPE],
-            self::HOST => self::STRING_TYPE,
-            self::PATH => self::STRING_TYPE,
-            self::PORT => [self::INT_TYPE, self::NULL_TYPE],
-            self::QUERY => self::STRING_TYPE,
-            self::SCHEME => self::STRING_TYPE,
-            self::USER_INFO => self::STRING_TYPE
+            self::FRAGMENT => [Types::STRING, Types::NULL],
+            self::HOST => Types::STRING,
+            self::PATH => Types::STRING,
+            self::PORT => [Types::INT, Types::NULL],
+            self::QUERY => Types::STRING,
+            self::SCHEME => Types::STRING,
+            self::USER_INFO => Types::STRING
         ];
 
     /**

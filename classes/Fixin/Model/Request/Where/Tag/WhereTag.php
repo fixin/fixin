@@ -14,9 +14,6 @@ use Fixin\Model\Request\Where\WhereInterface;
 class WhereTag extends Tag
 {
     protected const
-        THIS_REQUIRES = parent::THIS_REQUIRES + [
-            self::WHERE
-        ],
         THIS_SETS = parent::THIS_SETS + [
             self::WHERE => WhereInterface::class
         ];

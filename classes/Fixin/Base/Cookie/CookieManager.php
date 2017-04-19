@@ -10,13 +10,14 @@
 namespace Fixin\Base\Cookie;
 
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 
 class CookieManager extends Prototype implements CookieManagerInterface
 {
     protected const
         EXPIRE_MINUTES = -24 * 60 * 7,
         THIS_SETS = [
-            self::COOKIES => self::ARRAY_TYPE,
+            self::COOKIES => Types::ARRAY,
         ];
 
     /**

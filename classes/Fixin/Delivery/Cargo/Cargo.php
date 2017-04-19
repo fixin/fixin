@@ -10,9 +10,17 @@
 namespace Fixin\Delivery\Cargo;
 
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 
 class Cargo extends Prototype implements CargoInterface
 {
+    protected const
+        THIS_SETS = [
+            self::CONTENT => [self::USING_SETTER, Types::NULL],
+            self::CONTENT_TYPE => self::USING_SETTER,
+            self::DELIVERED => self::USING_SETTER
+        ];
+
     /**
      * @var mixed
      */

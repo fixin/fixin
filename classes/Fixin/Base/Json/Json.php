@@ -10,15 +10,16 @@
 namespace Fixin\Base\Json;
 
 use Fixin\Resource\Resource;
+use Fixin\Support\Types;
 
 class Json extends Resource implements JsonInterface
 {
     protected const
         THIS_SETS = [
-            self::DECODING_MAX_DEPTH => self::INT_TYPE,
-            self::DECODING_OPTIONS => self::INT_TYPE,
-            self::ENCODING_MAX_DEPTH => self::INT_TYPE,
-            self::ENCODING_OPTIONS => self::INT_TYPE
+            self::DECODING_MAX_DEPTH => Types::INT,
+            self::DECODING_OPTIONS => Types::INT,
+            self::ENCODING_MAX_DEPTH => Types::INT,
+            self::ENCODING_OPTIONS => Types::INT
         ];
 
     /**

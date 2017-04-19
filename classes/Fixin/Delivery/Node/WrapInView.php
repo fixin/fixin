@@ -11,19 +11,16 @@ namespace Fixin\Delivery\Node;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Resource\Resource;
+use Fixin\Support\Types;
 use Fixin\View\ViewInterface;
 
 class WrapInView extends Resource implements NodeInterface
 {
     protected const
         ALLOWED_TYPES = ['text/html'],
-        THIS_REQUIRES = [
-            self::CONTENT_NAME,
-            self::TEMPLATE
-        ],
         THIS_SETS = [
-            self::CONTENT_NAME => self::STRING_TYPE,
-            self::TEMPLATE => self::STRING_TYPE
+            self::CONTENT_NAME => Types::STRING,
+            self::TEMPLATE => Types::STRING
         ];
 
     public const

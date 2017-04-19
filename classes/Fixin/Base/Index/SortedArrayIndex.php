@@ -12,6 +12,7 @@ namespace Fixin\Base\Index;
 use Fixin\Base\FileSystem\FileSystemInterface;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Arrays;
+use Fixin\Support\Types;
 
 class SortedArrayIndex extends Prototype implements IndexInterface
 {
@@ -20,10 +21,8 @@ class SortedArrayIndex extends Prototype implements IndexInterface
         INVALID_DATA_EXCEPTION = 'Invalid data',
         KEYS_KEY = 'keys',
         THIS_SETS = [
-            self::FILENAME => self::STRING_TYPE
-        ],
-        THIS_SETS_LAZY = [
-            self::FILE_SYSTEM => FileSystemInterface::class
+            self::FILE_SYSTEM => [self::LAZY_LOADING => FileSystemInterface::class, Types::NULL],
+            self::FILENAME => [Types::STRING, Types::NULL]
         ],
         VALUES_KEY = 'values';
 
@@ -42,9 +41,9 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     protected $fileSystem;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $filename = '';
+    protected $filename;
 
     /**
      * @var array

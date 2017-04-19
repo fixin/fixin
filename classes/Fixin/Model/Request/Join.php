@@ -12,20 +12,16 @@ namespace Fixin\Model\Request;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
 
 class Join extends Prototype implements JoinInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::ALIAS,
-            self::REPOSITORY,
-            self::TYPE
-        ],
         THIS_SETS = [
-            self::ALIAS => self::STRING_TYPE,
+            self::ALIAS => Types::STRING,
             self::REPOSITORY => RepositoryInterface::class,
-            self::TYPE => self::STRING_TYPE,
-            self::WHERE => [WhereInterface::class, self::NULL_TYPE]
+            self::TYPE => Types::STRING,
+            self::WHERE => [WhereInterface::class, Types::NULL]
         ];
 
     /**

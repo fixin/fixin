@@ -12,6 +12,7 @@ namespace Fixin\Model\Entity;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 use Fixin\Support\ToStringTrait;
+use Fixin\Support\Types;
 
 abstract class Entity extends Prototype implements EntityInterface
 {
@@ -20,10 +21,8 @@ abstract class Entity extends Prototype implements EntityInterface
     protected const
         NOT_STORED_ENTITY_EXCEPTION = 'Not stored entity',
         THIS_SETS = [
-            self::ENTITY_ID => EntityIdInterface::class
-        ],
-        THIS_SETS_LAZY = [
-            self::REPOSITORY => RepositoryInterface::class
+            self::ENTITY_ID => [EntityIdInterface::class, Types::NULL],
+            self::REPOSITORY => [self::LAZY_LOADING => RepositoryInterface::class]
         ];
 
     /**

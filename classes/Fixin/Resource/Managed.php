@@ -9,57 +9,20 @@
 
 namespace Fixin\Resource;
 
+use Fixin\Support\Types;
+
 abstract class Managed implements ManagedInterface
 {
     protected const
-        ANY_TYPE = 1,
-        ARRAY_TYPE = 2,
-        BOOL_TYPE = 3,
-        CALLABLE_TYPE = 4,
-        FLOAT_TYPE = 5,
-        INT_TYPE = 6,
-        NULL_TYPE = 7,
-        NUMERIC_TYPE = 8,
-        OBJECT_TYPE = 9,
-        SCALAR_TYPE = 10,
-        STRING_TYPE = 11,
-
-        OPTION_TYPE_CHECKS = [
-            self::ANY_TYPE => true,
-            self::ARRAY_TYPE => 'is_array',
-            self::BOOL_TYPE => 'is_bool',
-            self::CALLABLE_TYPE => 'is_callable',
-            self::FLOAT_TYPE => 'is_float',
-            self::INT_TYPE => 'is_int',
-            self::NULL_TYPE => 'is_null',
-            self::NUMERIC_TYPE => 'is_numeric',
-            self::OBJECT_TYPE => 'is_object',
-            self::SCALAR_TYPE => 'is_scalar',
-            self::STRING_TYPE => 'is_string'
-        ],
-
-        OPTION_TYPE_NAMES = [
-            self::ANY_TYPE => 'any',
-            self::ARRAY_TYPE => 'array',
-            self::BOOL_TYPE => 'bool',
-            self::CALLABLE_TYPE => 'callable',
-            self::FLOAT_TYPE => 'float',
-            self::INT_TYPE => 'int',
-            self::NULL_TYPE => 'null',
-            self::NUMERIC_TYPE => 'numeric',
-            self::OBJECT_TYPE => 'object',
-            self::SCALAR_TYPE => 'scalar',
-            self::STRING_TYPE => 'string'
-        ],
-
-        THIS_REQUIRES = [],
-        THIS_SETS = [],
-        THIS_SETS_LAZY = [],
-
         INVALID_ARGUMENT_EXCEPTION = "Invalid '%s' argument: %s allowed",
         INVALID_OPTION_EXCEPTION = "Invalid option '%s'",
         INVALID_RESOURCE_EXCEPTION = "Invalid '%s' resource: %s allowed",
-        REQUIRED_PROPERTY_EXCEPTION = "'%s' is required for %s";
+        LAZY_LOADING = -1,
+        OPTION_TYPE_CHECKS = Types::CHECK_FUNCTIONS,
+        OPTION_TYPE_NAMES = Types::NAME_LIST,
+        REQUIRED_PROPERTY_EXCEPTION = "'%s' is required for %s",
+        THIS_SETS = [],
+        USING_SETTER = -2;
 
     /**
      * @var array[]
@@ -82,47 +45,43 @@ abstract class Managed implements ManagedInterface
     }
 
     /**
-     * @throws Exception\RuntimeException
-     * @return $this
-     */
-    protected function configurationTest(string $name): self
-    {
-        foreach (static::THIS_REQUIRES as $key) {
-            if (isset($this->$key)) {
-                continue;
-            }
-
-            throw new Exception\RuntimeException(sprintf(static::REQUIRED_PROPERTY_EXCEPTION, $key, $name));
-        }
-
-        return $this;
-    }
-
-    /**
      * @return $this
      * @throws Exception\InvalidArgumentException
      */
     protected function configureWithOptions(array $options): self
     {
         foreach ($options as $name => $value) {
-            // By setter
-            if (method_exists($this, $method = 'set' . $name)) {
-                $this->$method($value);
-
-                continue;
-            }
-
-            // Normal property
             if (isset(static::THIS_SETS[$name])) {
-                foreach ((array) static::THIS_SETS[$name] as $type) {
+                $types = (array) static::THIS_SETS[$name];
+
+                // Lazy-loading
+                if (isset($value) && isset($types[static::LAZY_LOADING])) {
+                    $this->setLazyLoadingProperty($name, $types[static::LAZY_LOADING], $value);
+
+                    continue;
+                }
+
+                foreach ($types as $type) {
+                    // Setter
+                    if ($type === self::USING_SETTER) {
+                        $this->{"set$name"}($value);
+
+                        continue 2;
+                    }
+
+                    // Common types
                     if (is_int($type)) {
+                        /** @var callable|bool $function */
                         $function = self::OPTION_TYPE_CHECKS[$type] ?? false;
+
                         if ($function === true || ($function && $function($value))) {
                             $this->$name = $value;
 
                             continue 2;
                         }
                     }
+
+                    // Class
                     elseif ($value instanceof $type) {
                         $this->$name = $value;
 
@@ -132,20 +91,23 @@ abstract class Managed implements ManagedInterface
 
                 $interface = implode(', ', array_map(function ($type) {
                     return is_int($type) ? (self::OPTION_TYPE_NAMES[$type] ?? $type) : $type;
-                }, (array) static::THIS_SETS[$name]));
+                }, $types));
 
                 throw new Exception\InvalidArgumentException(sprintf(static::INVALID_ARGUMENT_EXCEPTION, $name, $interface));
             }
 
-            // Lazy-loading property
-            if (isset(static::THIS_SETS_LAZY[$name])) {
-                $this->setLazyLoadingProperty($name, static::THIS_SETS_LAZY[$name], $value);
-
-                continue;
-            }
-
             throw new Exception\InvalidArgumentException(sprintf(static::INVALID_OPTION_EXCEPTION, $name));
         }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function configurationTest(string $name): self
+    {
+        $this->requirementTest($name);
 
         return $this;
     }
@@ -163,6 +125,17 @@ abstract class Managed implements ManagedInterface
         }
 
         return $this->$propertyName = null;
+    }
+
+    protected function requirementTest(string $name): void
+    {
+        foreach (static::THIS_SETS as $key => $type) {
+            if (isset($this->$key) || $type === Types::NULL || (is_array($type) && in_array(Types::NULL, $type, true))) {
+                continue;
+            }
+
+            throw new Exception\RuntimeException(sprintf(static::REQUIRED_PROPERTY_EXCEPTION, $key, $name));
+        }
     }
 
     /**
@@ -188,4 +161,5 @@ abstract class Managed implements ManagedInterface
 
         throw new Exception\InvalidArgumentException(sprintf(static::INVALID_ARGUMENT_EXCEPTION, $propertyName, 'string or ' . $interface));
     }
+
 }

@@ -12,16 +12,14 @@ namespace Fixin\Delivery\Route;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Node\NodeInterface;
 use Fixin\Resource\Resource;
+use Fixin\Support\Types;
 
 class Route extends Resource implements RouteInterface
 {
     protected const
         INVALID_NODE_EXCEPTION = "Invalid node '%s'",
-        THIS_REQUIRES = [
-            self::NODES
-        ],
         THIS_SETS = [
-            self::NODES => self::ARRAY_TYPE
+            self::NODES => Types::ARRAY
         ];
 
     /**

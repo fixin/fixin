@@ -10,15 +10,13 @@
 namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Model\Request\RequestInterface;
+use Fixin\Support\Types;
 
 class InTag extends IdentifierTag
 {
     protected const
-        THIS_REQUIRES = parent::THIS_REQUIRES + [
-            self::VALUES
-        ],
         THIS_SETS = parent::THIS_SETS + [
-            self::VALUES => [self::ARRAY_TYPE, RequestInterface::class]
+            self::VALUES => [Types::ARRAY, RequestInterface::class]
         ];
 
     public const

@@ -16,12 +16,9 @@ use Fixin\Resource\Prototype;
 abstract class Cache extends Prototype implements CacheInterface
 {
     protected const
-        THIS_REQUIRES = [
-            self::ENTITY_PROTOTYPE,
-            self::REPOSITORY
-        ],
         THIS_SETS = [
-            self::ENTITY_PROTOTYPE => EntityInterface::class
+            self::ENTITY_PROTOTYPE => EntityInterface::class,
+            self::REPOSITORY => self::USING_SETTER
         ];
 
     /**

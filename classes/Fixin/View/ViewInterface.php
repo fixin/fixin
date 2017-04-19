@@ -19,8 +19,16 @@ interface ViewInterface extends PrototypeInterface
         POSTFIX_TO_ENGINE_MAP = 'postfixToEngineMap',
         TEMPLATE = 'template';
 
+    /**
+     * @return $this
+     */
     public function clearChildren(): ViewInterface;
+
+    /**
+     * @return $this
+     */
     public function clearVariables(): ViewInterface;
+
     public function getChild(string $name): ?ViewInterface;
 
     /**
@@ -42,8 +50,24 @@ interface ViewInterface extends PrototypeInterface
     public function getVariable(string $name);
     public function getVariables(): array;
     public function render();
+
+    /**
+     * @return $this
+     */
     public function replaceVariables(array $variables): ViewInterface;
+
+    /**
+     * @return $this
+     */
     public function setChild(string $name, ViewInterface $child): ViewInterface;
+
+    /**
+     * @return $this
+     */
     public function setTemplate(string $template): ViewInterface;
+
+    /**
+     * @return $this
+     */
     public function setVariable(string $name, $value): ViewInterface;
 }
