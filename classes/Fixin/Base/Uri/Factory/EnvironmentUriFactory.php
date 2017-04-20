@@ -24,7 +24,7 @@ class EnvironmentUriFactory implements FactoryInterface
         return $resourceManager->clone('Base\Uri\Uri', UriInterface::class, [
             UriInterface::SCHEME => ($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http',
             UriInterface::HOST => $_SERVER['HTTP_HOST'],
-            UriInterface::PORT => $_SERVER['SERVER_PORT'],
+            UriInterface::PORT => (int) $_SERVER['SERVER_PORT'],
             UriInterface::PATH => $this->getPath(),
             UriInterface::QUERY => $_SERVER['QUERY_STRING']
         ]);

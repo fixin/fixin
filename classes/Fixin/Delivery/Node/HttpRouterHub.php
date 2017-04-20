@@ -128,7 +128,7 @@ class HttpRouterHub extends HttpHub
         $segments = explode('/', trim($cargo->getUri()->getPath(), '/'));
         $count = count($segments);
 
-        if (isset($this->routeTree[$count]) && false !== $found = $this->findHandler($segments, $this->routeTree[$count], [])) {
+        if (isset($this->routeTree[$count]) && null !== $found = $this->findHandler($segments, $this->routeTree[$count], [])) {
             $cargo->getParameters()->replace($found[static::ROUTE_URI_PARAMETERS]);
 
             return $this->getHandler($found[static::ROUTE_URI_HANDLER])->handle($cargo);

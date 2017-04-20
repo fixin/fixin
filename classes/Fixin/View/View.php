@@ -21,7 +21,7 @@ class View extends Prototype implements ViewInterface
         FILE_RESOLVER_NOT_SET_EXCEPTION = 'File resolver not set',
         UNABLE_TO_RESOLVE_TEMPLATE_EXCEPTION = "Unable to resolve template '%s'",
         THIS_SETS = [
-            self::ENGINE => [self::LAZY_LOADING => EngineInterface::class],
+            self::ENGINE => [self::LAZY_LOADING => EngineInterface::class, Types::NULL],
             self::FILE_RESOLVER => [self::LAZY_LOADING => FileResolverInterface::class, Types::NULL],
             self::POSTFIX_TO_ENGINE_MAP => Types::ARRAY,
             self::TEMPLATE => self::USING_SETTER

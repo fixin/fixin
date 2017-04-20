@@ -1,4 +1,9 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 return (function($config) {
     $fixinPath = dirname(__DIR__);

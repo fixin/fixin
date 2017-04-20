@@ -14,8 +14,8 @@ use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
 use Fixin\Base\Headers\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
+use Fixin\Base\Uri\UriInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
-use Fixin\Resource\Factory;
 use Fixin\Resource\FactoryInterface;
 use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Support\Http;
@@ -47,6 +47,7 @@ class HttpCargoFactory implements FactoryInterface
             HttpCargoInterface::SESSION => $resourceManager->clone('Base\Session\SessionManager', SessionManagerInterface::class, [
                 SessionManagerInterface::COOKIE_MANAGER => $cookies
             ]),
+            HttpCargoInterface::URI => $resourceManager->clone('Base\Uri\Factory\EnvironmentUriFactory', UriInterface::class),
             HttpCargoInterface::CONTENT_TYPE => 'text/html',
         ];
 

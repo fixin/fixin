@@ -111,8 +111,13 @@ class Request extends Prototype implements RequestInterface
     protected $where;
 
     public function __clone() {
-        $this->having = clone $this->having;
-        $this->where = clone $this->where;
+        if ($this->having) {
+            $this->having = clone $this->having;
+        }
+
+        if ($this->where) {
+            $this->where = clone $this->where;
+        }
     }
 
     protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): void
