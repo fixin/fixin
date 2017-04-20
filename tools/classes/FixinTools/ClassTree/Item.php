@@ -78,7 +78,7 @@ class Item {
 
         // Main Class
         $mainClass = $this->processor->getMainClass($namespace);
-        if ($mainClass && $mainClass->getName() !== $this->getName()) {
+        if ($mainClass && !$mainClass->isSubclassOf($this) && $mainClass->getName() !== $this->getName()) {
             return $mainClass;
         }
 

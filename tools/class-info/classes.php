@@ -10,10 +10,10 @@
 $topDir = dirname(__DIR__, 2);
 $resourceManager = include "$topDir/cheats/tools.php";
 
-use Fixin\Support\VariableInspector;
+use Fixin\Base\FileSystem\FileSystemInterface;use Fixin\Support\VariableInspector;
 
 // Load
-$resourceManager->get('defaultFileSystem')->includeFilesRecursive("$topDir/classes", 'php');
+$resourceManager->get('defaultFileSystem', FileSystemInterface::class)->includeFilesRecursive("$topDir/classes", 'php');
 
 // Functions
 $helper = new \FixinTools\Base\ClassHelper();
