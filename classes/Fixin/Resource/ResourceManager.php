@@ -14,8 +14,8 @@ use Fixin\Resource\AbstractFactory\AbstractFactoryInterface;
 class ResourceManager implements ResourceManagerInterface
 {
     protected const
-        CAN_T_USE_PROTOTYPE_AS_RESOURCE_EXCEPTION = "Can't use prototype as resource '%s'",
-        CAN_T_USE_RESOURCE_AS_PROTOTYPE_EXCEPTION = "Can't use resource as prototype '%s'",
+        PROTOTYPE_AS_RESOURCE_EXCEPTION = "Can't use prototype as resource '%s'",
+        RESOURCE_AS_PROTOTYPE_EXCEPTION = "Can't use resource as prototype '%s'",
         CLASS_KEY = 'class',
         CLASS_NOT_FOUND_EXCEPTION = "Class not found for '%s'",
         INJECT_KEYS = [
@@ -91,6 +91,9 @@ class ResourceManager implements ResourceManagerInterface
         return false;
     }
 
+    /**
+     * @throws Exception\ResourceNotFoundException
+     */
     public function clone(string $name, string $class, array $options = [])
     {
         $resource = $this->prepareResource($name, $class);
@@ -104,7 +107,7 @@ class ResourceManager implements ResourceManagerInterface
         }
 
         if (!$resource) {
-            throw new Exception\ResourceNotFoundException(sprintf(static::CAN_T_USE_RESOURCE_AS_PROTOTYPE_EXCEPTION, $name));
+            throw new Exception\ResourceNotFoundException(sprintf(static::RESOURCE_AS_PROTOTYPE_EXCEPTION, $name));
         }
 
         throw new Exception\ResourceNotFoundException(sprintf(static::PROTOTYPE_NOT_FOUND_EXCEPTION, $name));
@@ -122,6 +125,9 @@ class ResourceManager implements ResourceManagerInterface
         return null;
     }
 
+    /**
+     * @throws Exception\ResourceNotFoundException
+     */
     public function get(string $name, string $class): ?ResourceInterface
     {
         $resource = $this->prepareResource($name, $class);
@@ -131,7 +137,7 @@ class ResourceManager implements ResourceManagerInterface
         }
 
         if (!$resource) {
-            throw new Exception\ResourceNotFoundException(sprintf(static::CAN_T_USE_PROTOTYPE_AS_RESOURCE_EXCEPTION, $name));
+            throw new Exception\ResourceNotFoundException(sprintf(static::PROTOTYPE_AS_RESOURCE_EXCEPTION, $name));
         }
 
         throw new Exception\ResourceNotFoundException(sprintf(static::RESOURCE_NOT_FOUND_EXCEPTION, $name));
@@ -142,6 +148,9 @@ class ResourceManager implements ResourceManagerInterface
         return isset($this->definitions[$name]) || class_exists($name) || $this->canProduceByAbstractFactory($name);
     }
 
+    /**
+     * @throws Exception\UnexpectedResourceException
+     */
     protected function prepareResource(string $name, string $class)
     {
         $resource = $this->resources[$name] ?? $this->produceResource($name);
@@ -156,7 +165,7 @@ class ResourceManager implements ResourceManagerInterface
     /**
      * @return object
      * @throws Exception\ClassNotFoundException
-     * @throws Exception\ResourceFaultException
+     * @throws Exception\InvalidArgumentException
      */
     protected function produceResource(string $name)
     {
@@ -174,7 +183,7 @@ class ResourceManager implements ResourceManagerInterface
             throw new Exception\ClassNotFoundException(sprintf(static::CLASS_NOT_FOUND_EXCEPTION, $name));
         }
 
-        throw new Exception\ResourceFaultException(sprintf(static::INVALID_DEFINITION_EXCEPTION, $name));
+        throw new Exception\InvalidArgumentException(sprintf(static::INVALID_DEFINITION_EXCEPTION, $name));
     }
 
     protected function produceResourceFromAbstractFactories(string $name, array $options = null)

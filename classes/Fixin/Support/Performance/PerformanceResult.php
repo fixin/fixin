@@ -58,7 +58,7 @@ class PerformanceResult
     {
         $data = [$this->memoryChange, $this->memoryPeak, $this->memorySystemPeak];
 
-        return Ground::toDebugText(vsprintf(static::TO_STRING_FORMAT, array_merge([$this->title, number_format($this->elapsedTime, 4)], array_map('number_format', $data))));
+        return Ground::toDebugBlock(vsprintf(static::TO_STRING_FORMAT, array_merge([$this->title, number_format($this->elapsedTime, 4)], array_map('number_format', $data))));
     }
 
     public function getElapsedTime(): int

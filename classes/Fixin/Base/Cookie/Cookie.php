@@ -87,7 +87,7 @@ class Cookie extends Prototype implements CookieInterface
 
     /**
      * @return $this
-     * @throws Exception\RuntimeException
+     * @throws Exception\SetFailureException
      */
     public function sendAs(string $name, int $baseTime): CookieInterface
     {
@@ -95,7 +95,7 @@ class Cookie extends Prototype implements CookieInterface
             return $this;
         }
 
-        throw new Exception\RuntimeException(sprintf(static::SET_FAILURE_EXCEPTION, $name));
+        throw new Exception\SetFailureException(sprintf(static::SET_FAILURE_EXCEPTION, $name));
     }
 
     /**

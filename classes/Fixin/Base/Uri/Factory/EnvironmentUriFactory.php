@@ -10,7 +10,6 @@
 namespace Fixin\Base\Uri\Factory;
 
 use Fixin\Base\Uri\UriInterface;
-use Fixin\Resource\Factory;
 use Fixin\Resource\FactoryInterface;
 use Fixin\Resource\ResourceManagerInterface;
 

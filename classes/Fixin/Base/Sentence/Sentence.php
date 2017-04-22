@@ -27,7 +27,7 @@ class Sentence extends Prototype implements SentenceInterface
 
     public function __toString(): string
     {
-        return Ground::toDebugText($this->text) . Ground::toDebugText(VariableInspector::arrayInfo($this->parameters));
+        return Ground::toDebugBlock($this->text) . Ground::toDebugText(VariableInspector::arrayInfo($this->parameters));
     }
 
     /**

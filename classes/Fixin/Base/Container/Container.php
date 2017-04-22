@@ -16,6 +16,11 @@ class Container implements ContainerInterface
      */
     protected $values = [];
 
+    public function __debugInfo()
+    {
+        return $this->values;
+    }
+
     public function get(string $name, $default = null)
     {
         return $this->values[$name] ?? $default;

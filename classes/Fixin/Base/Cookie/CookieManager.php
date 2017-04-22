@@ -25,6 +25,11 @@ class CookieManager extends Prototype implements CookieManagerInterface
      */
     protected $cookies = [];
 
+    public function __debugInfo()
+    {
+        return $this->cookies;
+    }
+
     /**
      * @return $this
      */

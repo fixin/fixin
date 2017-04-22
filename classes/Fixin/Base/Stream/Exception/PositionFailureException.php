@@ -7,8 +7,8 @@
  * http://www.fixinphp.com
  */
 
-namespace Fixin\Resource\Exception;
+namespace Fixin\Base\Stream\Exception;
 
-class ResourceFaultException extends RuntimeException
+class PositionFailureException extends RuntimeException
 {
 }

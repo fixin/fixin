@@ -26,7 +26,7 @@ class VariableInspector extends DoNotCreate
      */
     public static function arrayInfo(array $var): string
     {
-        return '[' . ($var ? PHP_EOL . static::itemsInfo($var, '#754') : '') . ']';
+        return $var ? PHP_EOL . '[' . static::itemsInfo($var, '#754') . ']' : '[]';
     }
 
     /**
@@ -58,17 +58,20 @@ class VariableInspector extends DoNotCreate
      */
     public static function objectInfo($var): string
     {
-        $opening = get_class($var) . ' {';
+        $opening = '<i>' . get_class($var) . '</i> ';
 
         if (method_exists($var, '__debugInfo')) {
             $var = $var->__debugInfo();
-            return $opening . ($var ? PHP_EOL . static::itemsInfo($var) : '') . '}';
+            return $opening . '{' . ($var ? static::itemsInfo($var) : '') . '}';
+        }
+        elseif (method_exists($var, 'debugDescription')) {
+            return $opening . $var->debugDescription();
         }
         elseif (method_exists($var, '__toString')) {
-            return $opening . htmlspecialchars((string) $var) . '}';
+            return $opening . '{' . static::scalarInfo((string) $var) . '}';
         }
 
-        return $opening . '}';
+        return $opening;
     }
 
     /**
@@ -90,7 +93,7 @@ class VariableInspector extends DoNotCreate
             return sprintf(static::VALUE_TEMPLATE, $color, $var);
         }
 
-        return sprintf(static::VALUE_TEMPLATE, '#c00', '"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"');
+        return sprintf(static::VALUE_TEMPLATE, '#c00', '"' . Ground::toDebugText(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"');
     }
 
     /**

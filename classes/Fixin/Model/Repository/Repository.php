@@ -26,7 +26,7 @@ class Repository extends Resource implements RepositoryInterface
 {
     protected const
         ENTITY_ID_PROTOTYPE = 'Model\Entity\EntityId',
-        ENTITY_REFRESH_ERROR_EXCEPTION = 'Entity refresh error',
+        ENTITY_REFRESH_FAILURE_EXCEPTION = 'Entity refresh error',
         ENTITY_SET_PROTOTYPE = 'Model\Entity\EntitySet',
         EXPRESSION_PROTOTYPE = 'Model\Request\Expression',
         INVALID_ID_EXCEPTION = "Invalid ID",
@@ -223,8 +223,10 @@ class Repository extends Resource implements RepositoryInterface
     }
 
     /**
-     * @return $this
      * @throws Exception\EntityRefreshFaultException
+     * @throws Exception\NotStoredEntityException
+     *
+     * @return $this
      */
     public function refresh(EntityInterface $entity): RepositoryInterface
     {
@@ -240,10 +242,10 @@ class Repository extends Resource implements RepositoryInterface
                 return $this;
             }
 
-            throw new Exception\EntityRefreshFaultException(static::ENTITY_REFRESH_ERROR_EXCEPTION);
+            throw new Exception\EntityRefreshFaultException(static::ENTITY_REFRESH_FAILURE_EXCEPTION);
         }
 
-        throw new Exception\EntityRefreshFaultException(static::NOT_STORED_ENTITY_EXCEPTION);
+        throw new Exception\NotStoredEntityException(static::NOT_STORED_ENTITY_EXCEPTION);
     }
 
     public function save(EntityInterface $entity): EntityIdInterface
@@ -334,7 +336,7 @@ class Repository extends Resource implements RepositoryInterface
     }
 
     /**
-     * @throws Exception\InvalidArgumentException
+     * @throws Exception\InvalidRequestException
      */
     protected function validateRequest(RequestInterface $request): void
     {
@@ -342,6 +344,6 @@ class Repository extends Resource implements RepositoryInterface
             return;
         }
 
-        throw new Exception\InvalidArgumentException(sprintf(static::INVALID_REQUEST_EXCEPTION, $this->getName(), $request->getRepository()->getName()));
+        throw new Exception\InvalidRequestException(sprintf(static::INVALID_REQUEST_EXCEPTION, $this->getName(), $request->getRepository()->getName()));
     }
 }

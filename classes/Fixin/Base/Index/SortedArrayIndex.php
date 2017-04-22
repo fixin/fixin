@@ -17,7 +17,7 @@ use Fixin\Support\Types;
 class SortedArrayIndex extends Prototype implements IndexInterface
 {
     protected const
-        FILENAME_NOT_SET_EXCEPTION = 'Filename not set',
+        MISSING_FILENAME_EXCEPTION = 'Filename not set',
         INVALID_DATA_EXCEPTION = 'Invalid data',
         KEYS_KEY = 'keys',
         THIS_SETS = [
@@ -156,17 +156,18 @@ class SortedArrayIndex extends Prototype implements IndexInterface
      * Load data from the file
      *
      * @throws Exception\RuntimeException
+     * @throws Exception\InvalidDataException
      * @return $this
      */
     protected function load(): self
     {
         if (is_null($this->filename)) {
-            throw new Exception\RuntimeException(static::FILENAME_NOT_SET_EXCEPTION);
+            throw new Exception\RuntimeException(static::MISSING_FILENAME_EXCEPTION);
         }
 
         $data = unserialize($this->getFileSystem()->getFileContents($this->filename), ['allowed_classes' => false]);
         if (!is_array($data) || !$this->loadArray($data)) {
-            throw new Exception\RuntimeException(static::INVALID_DATA_EXCEPTION);
+            throw new Exception\InvalidDataException(static::INVALID_DATA_EXCEPTION);
         }
 
         $this->dirty = false;
@@ -225,7 +226,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     protected function saveProcess(): self
     {
         if (is_null($this->filename)) {
-            throw new Exception\RuntimeException(static::FILENAME_NOT_SET_EXCEPTION);
+            throw new Exception\RuntimeException(static::MISSING_FILENAME_EXCEPTION);
         }
 
         $data = [

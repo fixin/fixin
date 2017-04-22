@@ -11,12 +11,12 @@ namespace Fixin\Model\Entity;
 
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
-use Fixin\Support\ToStringTrait;
+use Fixin\Support\DebugDescriptionTrait;
 use Fixin\Support\Types;
 
 abstract class Entity extends Prototype implements EntityInterface
 {
-    use ToStringTrait;
+    use DebugDescriptionTrait;
 
     protected const
         NOT_STORED_ENTITY_EXCEPTION = 'Not stored entity',
@@ -61,7 +61,7 @@ abstract class Entity extends Prototype implements EntityInterface
         return $this->entityId;
     }
 
-    public function getRepository(): RepositoryInterface
+    protected function getRepository(): RepositoryInterface
     {
         return $this->repository ?: $this->loadLazyProperty(static::REPOSITORY);
     }

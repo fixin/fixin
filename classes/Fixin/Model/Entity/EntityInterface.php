@@ -9,7 +9,6 @@
 
 namespace Fixin\Model\Entity;
 
-use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\PrototypeInterface;
 
 interface EntityInterface extends PrototypeInterface
@@ -35,7 +34,6 @@ interface EntityInterface extends PrototypeInterface
     public function exchangeArray(array $data): EntityInterface;
 
     public function getEntityId(): ?EntityIdInterface;
-    public function getRepository(): RepositoryInterface;
     public function isStored(): bool;
 
     /**

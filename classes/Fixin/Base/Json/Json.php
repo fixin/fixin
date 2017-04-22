@@ -43,7 +43,7 @@ class Json extends Resource implements JsonInterface
     protected $encodingMaxDepth = 512;
 
     /**
-     * @throws Exception\RuntimeException
+     * @throws Exception\DecodingFailureException
      */
     public function decode(string $json)
     {
@@ -53,11 +53,11 @@ class Json extends Resource implements JsonInterface
             return $result;
         }
 
-        throw new Exception\RuntimeException(json_last_error_msg(), json_last_error());
+        throw new Exception\DecodingFailureException(json_last_error_msg(), json_last_error());
     }
 
     /**
-     * @throws Exception\RuntimeException
+     * @throws Exception\EncodingFailureException
      */
     public function encode($value): string
     {
@@ -67,6 +67,6 @@ class Json extends Resource implements JsonInterface
             return $result;
         }
 
-        throw new Exception\RuntimeException(json_last_error_msg(), json_last_error());
+        throw new Exception\EncodingFailureException(json_last_error_msg(), json_last_error());
     }
 }

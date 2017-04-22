@@ -24,11 +24,16 @@ class Ground extends DoNotCreate
         return $isConsole ?? ($isConsole = PHP_SAPI === 'cli');
     }
 
+    public static function toDebugBlock(string $html): string
+    {
+        return static::isConsole() ? htmlspecialchars_decode(strip_tags($html)) : sprintf(static::DEBUG_HTML_TEMPLATE, $html);
+    }
+
     /**
      * Display debug text for environment
      */
     public static function toDebugText(string $html): string
     {
-        return static::isConsole() ? htmlspecialchars_decode(strip_tags($html)) : sprintf(static::DEBUG_HTML_TEMPLATE, $html);
+        return static::isConsole() ? htmlspecialchars_decode(strip_tags($html)) : $html;
     }
 }

@@ -58,7 +58,7 @@ abstract class HttpActionController extends Resource implements ControllerInterf
     /**
      * Call method and handle different answer types
      *
-     * @throws Exception\UnexpectedValueException
+     * @throws Exception\InvalidReturnTypeException
      */
     protected function handleMethod(HttpCargoInterface $cargo, string $method): CargoInterface
     {
@@ -75,7 +75,7 @@ abstract class HttpActionController extends Resource implements ControllerInterf
             return $this->replyNotFound($cargo);
         }
 
-        throw new Exception\UnexpectedValueException(sprintf(static::INVALID_RETURN_TYPE_EXCEPTION, $method));
+        throw new Exception\InvalidReturnTypeException(sprintf(static::INVALID_RETURN_TYPE_EXCEPTION, $method));
     }
 
     /**

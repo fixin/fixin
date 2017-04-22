@@ -66,7 +66,7 @@ class PdoStorage extends Resource implements StorageInterface
     protected $username;
 
     /**
-     * @throws Exception\RuntimeException
+     * @throws Exception\ConnectionErrorException
      */
     protected function connect(): void
     {
@@ -84,7 +84,7 @@ class PdoStorage extends Resource implements StorageInterface
             $this->resource = $resource;
         }
         catch (PDOException $e) {
-            throw new Exception\RuntimeException(sprintf(static::CONNECTION_ERROR_EXCEPTION, $e->getMessage()));
+            throw new Exception\ConnectionErrorException(sprintf(static::CONNECTION_ERROR_EXCEPTION, $e->getMessage()));
         }
     }
 

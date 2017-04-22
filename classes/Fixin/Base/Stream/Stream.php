@@ -17,10 +17,10 @@ class Stream implements StreamInterface
         NOT_READABLE_EXCEPTION = 'Stream is not readable',
         NOT_SEEKABLE_EXCEPTION = 'Stream is not seekable',
         NOT_WRITABLE_EXCEPTION = 'Stream is not writable',
-        READ_ERROR_EXCEPTION = 'Stream read error',
-        SEEK_ERROR_EXCEPTION = 'Stream seek error',
-        UNABLE_TO_DETERMINE_POSITION_EXCEPTION = 'Unable to determine position',
-        WRITE_ERROR_EXCEPTION = 'Stream write error';
+        POSITION_FAILURE_EXCEPTION = 'Unable to determine position',
+        READ_FAILURE_EXCEPTION = 'Stream read error',
+        SEEK_FAILURE_EXCEPTION = 'Stream seek error',
+        WRITE_FAILURE_EXCEPTION = 'Stream write error';
 
     /**
      * @var resource
@@ -29,7 +29,7 @@ class Stream implements StreamInterface
 
     /**
      * @param string|resource $stream
-     * @throws Exception\InvalidArgumentException
+     * @throws Exception\InvalidStreamException
      */
     public function __construct($stream, string $mode = 'r')
     {
@@ -45,7 +45,7 @@ class Stream implements StreamInterface
             return;
         }
 
-        throw new Exception\InvalidArgumentException(static::INVALID_STREAM_EXCEPTION);
+        throw new Exception\InvalidStreamException(static::INVALID_STREAM_EXCEPTION);
     }
 
     public function __destruct()
@@ -56,11 +56,12 @@ class Stream implements StreamInterface
     public function __toString(): string
     {
         $this->rewind();
+
         return $this->getRemainingContents();
     }
 
     /**
-     * @throws Exception\RuntimeException
+     * @throws Exception\PositionFailureException
      */
     public function getCurrentPosition(): int
     {
@@ -70,23 +71,24 @@ class Stream implements StreamInterface
             return $result;
         }
 
-        throw new Exception\RuntimeException(static::UNABLE_TO_DETERMINE_POSITION_EXCEPTION);
+        throw new Exception\PositionFailureException(static::POSITION_FAILURE_EXCEPTION);
     }
 
     /**
-     * @throws Exception\RuntimeException
+     * @throws Exception\NotReadableException
+     * @throws Exception\ReadFailureException
      */
     public function getRemainingContents(): string
     {
         if (!$this->isReadable()) {
-            throw new Exception\RuntimeException(static::NOT_READABLE_EXCEPTION);
+            throw new Exception\NotReadableException(static::NOT_READABLE_EXCEPTION);
         }
 
         if (false !== $result = stream_get_contents($this->resource)) {
             return $result;
         }
 
-        throw new Exception\RuntimeException(static::READ_ERROR_EXCEPTION);
+        throw new Exception\ReadFailureException(static::READ_FAILURE_EXCEPTION);
     }
 
     public function getMetadata(string $key = null)
@@ -130,25 +132,26 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws Exception\RuntimeException
+     * @throws Exception\NotReadableException
+     * @throws Exception\ReadFailureException
      */
     public function read(int $length): string
     {
         if (!$this->isReadable()) {
-            throw new Exception\RuntimeException(static::NOT_READABLE_EXCEPTION);
+            throw new Exception\NotReadableException(static::NOT_READABLE_EXCEPTION);
         }
 
         if (false !== $result = fread($this->resource, $length)) {
             return $result;
         }
 
-        throw new Exception\RuntimeException(static::READ_ERROR_EXCEPTION);
+        throw new Exception\ReadFailureException(static::READ_FAILURE_EXCEPTION);
     }
 
     /**
      * Open resource
      *
-     * @throws Exception\InvalidArgumentException
+     * @throws Exception\InvalidStreamException
      */
     protected function resourceByReference(string $reference, string $mode)
     {
@@ -165,7 +168,7 @@ class Stream implements StreamInterface
         restore_error_handler();
 
         if ($error) {
-            throw new Exception\InvalidArgumentException(static::INVALID_STREAM_REFERENCE_EXCEPTION);
+            throw new Exception\InvalidStreamException(static::INVALID_STREAM_REFERENCE_EXCEPTION);
         }
 
         return $stream;
@@ -180,35 +183,37 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws Exception\RuntimeException
+     * @throws Exception\NotSeekableException
+     * @throws Exception\SeekFailureException
      * @return $this
      */
     public function seek(int $position, int $whence = SEEK_SET): StreamInterface
     {
         if (!$this->isSeekable()) {
-            throw new Exception\RuntimeException(static::NOT_SEEKABLE_EXCEPTION);
+            throw new Exception\NotSeekableException(static::NOT_SEEKABLE_EXCEPTION);
         }
 
         if (fseek($this->resource, $position, $whence) === 0) {
             return $this;
         }
 
-        throw new Exception\RuntimeException(static::SEEK_ERROR_EXCEPTION);
+        throw new Exception\SeekFailureException(static::SEEK_FAILURE_EXCEPTION);
     }
 
     /**
-     * @throws Exception\RuntimeException
+     * @throws Exception\NotWritableException
+     * @throws Exception\WriteFailureException
      */
     public function write(string $string): int
     {
         if (!$this->isWritable()) {
-            throw new Exception\RuntimeException(static::NOT_WRITABLE_EXCEPTION);
+            throw new Exception\NotWritableException(static::NOT_WRITABLE_EXCEPTION);
         }
 
         if (false !== $result = fwrite($this->resource, $string)) {
             return $result;
         }
 
-        throw new Exception\RuntimeException(static::WRITE_ERROR_EXCEPTION);
+        throw new Exception\WriteFailureException(static::WRITE_FAILURE_EXCEPTION);
     }
 }

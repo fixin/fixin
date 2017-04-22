@@ -28,7 +28,7 @@ class JsonToArray extends Resource implements NodeInterface
                 $cargo->setContent(is_array($content) ? $content : null);
             }
             catch (Json\Exception\RuntimeException $e) {
-                $cargo->setContent(null);
+                $cargo->setContent($e);
             }
         }
 

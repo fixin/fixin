@@ -23,7 +23,7 @@ class ThrowableToText extends Resource implements NodeInterface
     {
         if ($cargo->getContent() instanceof Throwable) {
             $cargo
-                ->setContent(Ground::toDebugText(htmlspecialchars($cargo->getContent())))
+                ->setContent(Ground::toDebugBlock(htmlspecialchars($cargo->getContent())))
                 ->setContentType(static::CONTENT_TYPE);
         }
 
