@@ -81,6 +81,7 @@ class Application implements ApplicationInterface
         header(static::INTERNAL_SERVER_ERROR_HEADER, true, static::INTERNAL_SERVER_ERROR_CODE);
         echo static::INTERNAL_SERVER_ERROR_HTML;
 
+        // TODO production mode?
         echo $text;
         exit;
     }
@@ -92,8 +93,6 @@ class Application implements ApplicationInterface
     {
         $container = $this->resourceManager;
 
-        // TODO lock
-
         try {
             /** @var CargoInterface $cargo */
             $cargo = $container->clone($this->config[static::CARGO], CargoInterface::class);
@@ -102,7 +101,12 @@ class Application implements ApplicationInterface
                 ->unpack();
         }
         catch (Throwable $t) {
-            $this->errorRoute(($cargo ?? $container->clone('Delivery\Cargo\Cargo', CargoInterface::class))->setContent($t));
+            try {
+                $this->errorRoute(($cargo ?? $container->clone('Delivery\Cargo\Cargo', CargoInterface::class))->setContent($t));
+            }
+            catch (Throwable $t) {
+                $this->internalServerError(get_class($t) . ': ' . $t->getMessage());
+            }
         }
 
         return $this;
