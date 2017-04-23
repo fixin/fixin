@@ -106,7 +106,7 @@ class ResourceManager implements ResourceManagerInterface
             return clone $resource;
         }
 
-        if (!$resource) {
+        if ($resource) {
             throw new Exception\ResourceNotFoundException(sprintf(static::RESOURCE_AS_PROTOTYPE_EXCEPTION, $name));
         }
 
@@ -136,7 +136,7 @@ class ResourceManager implements ResourceManagerInterface
             return $resource;
         }
 
-        if (!$resource) {
+        if ($resource) {
             throw new Exception\ResourceNotFoundException(sprintf(static::PROTOTYPE_AS_RESOURCE_EXCEPTION, $name));
         }
 
