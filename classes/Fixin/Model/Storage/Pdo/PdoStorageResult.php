@@ -49,7 +49,7 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
 
     public function __toString(): string
     {
-        return Ground::toDebugText(sprintf(static::TO_STRING_MASK, get_class($this), $this->position, $this->count()));
+        return Ground::toDebugBlock(sprintf(static::TO_STRING_MASK, get_class($this), $this->position, $this->count()));
     }
 
     public function count(): int

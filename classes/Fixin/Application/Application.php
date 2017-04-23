@@ -51,11 +51,11 @@ class Application implements ApplicationInterface
         $resourceManagerConfig = $config[static::RESOURCE_MANAGER_ROOT];
 
         // Class
-        $containerClass = $resourceManagerConfig[static::RESOURCE_MANAGER_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
+        $resourceManagerClass = $resourceManagerConfig[static::RESOURCE_MANAGER_CLASS] ?? static::DEFAULT_RESOURCE_MANAGER_CLASS;
         unset($resourceManagerConfig[static::RESOURCE_MANAGER_CLASS]);
 
         // Resource Manager init
-        $this->resourceManager = new $containerClass($resourceManagerConfig);
+        $this->resourceManager = new $resourceManagerClass($resourceManagerConfig);
     }
 
     protected function errorRoute(CargoInterface $cargo): void
@@ -91,18 +91,18 @@ class Application implements ApplicationInterface
      */
     public function run(): ApplicationInterface
     {
-        $container = $this->resourceManager;
+        $resourceManager = $this->resourceManager;
 
         try {
             /** @var CargoInterface $cargo */
-            $cargo = $container->clone($this->config[static::CARGO], CargoInterface::class);
-            $container->get($this->config[static::ROUTE], RouteInterface::class)
+            $cargo = $resourceManager->clone($this->config[static::CARGO], CargoInterface::class);
+            $resourceManager->get($this->config[static::ROUTE], RouteInterface::class)
                 ->handle($cargo)
                 ->unpack();
         }
         catch (Throwable $t) {
             try {
-                $this->errorRoute(($cargo ?? $container->clone('Delivery\Cargo\Cargo', CargoInterface::class))->setContent($t));
+                $this->errorRoute(($cargo ?? $resourceManager->clone('Delivery\Cargo\Cargo', CargoInterface::class))->setContent($t));
             }
             catch (Throwable $t) {
                 $this->internalServerError(get_class($t) . ': ' . $t->getMessage());
