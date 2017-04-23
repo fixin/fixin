@@ -56,6 +56,10 @@ abstract class Grammar extends Resource implements GrammarInterface
 
     protected function expressionArrayToString(array $expression, SentenceInterface $sentence): string
     {
+        if (!$expression) {
+            return sprintf(static::ARRAY_MASK, 'null');
+        }
+
         $result = [];
         foreach ($expression as $item) {
             $result[] = $this->expressionToString($item, $sentence);
