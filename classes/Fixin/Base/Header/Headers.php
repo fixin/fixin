@@ -7,7 +7,7 @@
  * http://www.fixinphp.com
  */
 
-namespace Fixin\Base\Headers;
+namespace Fixin\Base\Header;
 
 use Fixin\Resource\Prototype;
 use Fixin\Support\Types;
@@ -23,6 +23,11 @@ class Headers extends Prototype implements HeadersInterface
      * @var array
      */
     protected $values = [];
+
+    public function __debugInfo()
+    {
+        return $this->values;
+    }
 
     /**
      * @return $this

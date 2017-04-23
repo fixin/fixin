@@ -7,7 +7,7 @@
  * http://www.fixinphp.com
  */
 
-namespace Fixin\Base\Headers;
+namespace Fixin\Base\Header;
 
 use Fixin\Resource\PrototypeInterface;
 

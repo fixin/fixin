@@ -12,7 +12,7 @@ namespace Fixin\Delivery\Cargo;
 use Fixin\Base\Container\ContainerInterface;
 use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
-use Fixin\Base\Headers\HeadersInterface;
+use Fixin\Base\Header\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
 

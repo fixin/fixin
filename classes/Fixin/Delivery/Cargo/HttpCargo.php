@@ -12,18 +12,20 @@ namespace Fixin\Delivery\Cargo;
 use Fixin\Base\Container\ContainerInterface;
 use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
-use Fixin\Base\Headers\HeadersInterface;
+use Fixin\Base\Header\HeadersInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
+use Fixin\Support\DebugDescriptionTrait;
 use Fixin\Support\Http;
-use Fixin\Support\ToStringTrait;
+use Fixin\Support\Types;
 
-class HttpCargo extends Cargo implements HttpCargoInterface
+class HttpCargo extends CargoBase implements HttpCargoInterface
 {
-    use ToStringTrait;
+    use DebugDescriptionTrait;
 
     protected const
         THIS_SETS = parent::THIS_SETS + [
+            self::CONTENT_TYPE => [self::USING_SETTER, Types::NULL],
             self::COOKIES => CookieManagerInterface::class,
             self::ENVIRONMENT => ContainerInterface::class,
             self::METHOD => self::USING_SETTER,
