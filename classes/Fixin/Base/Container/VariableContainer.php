@@ -9,8 +9,10 @@
 
 namespace Fixin\Base\Container;
 
-class VariableContainer extends Container implements VariableContainerInterface
+class VariableContainer implements VariableContainerInterface
 {
+    use ContainerTrait;
+
     /**
      * @var bool
      */
@@ -43,6 +45,11 @@ class VariableContainer extends Container implements VariableContainerInterface
         return $this;
     }
 
+    public function serialize(): string
+    {
+        return serialize($this->values);
+    }
+
     /**
      * @return $this
      */
@@ -62,6 +69,11 @@ class VariableContainer extends Container implements VariableContainerInterface
         $this->modified = $modified;
 
         return $this;
+    }
+
+    public function unserialize($serialized): void
+    {
+        $this->values = unserialize($serialized);
     }
 
     /**

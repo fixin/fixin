@@ -29,8 +29,7 @@ class HttpCargoFactory implements FactoryInterface
 {
     protected const
         POST_RELATED_TYPES = ['application/x-www-form-urlencoded', 'multipart/form-data'],
-        STREAM_CLASS = 'Fixin\Base\Stream\Stream',
-        UPLOADED_FILE_PROTOTYPE = 'Base\UploadedFile\UploadedFile';
+        STREAM_CLASS = 'Fixin\Base\Stream\Stream';
 
     public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): HttpCargoInterface
     {
@@ -41,17 +40,15 @@ class HttpCargoFactory implements FactoryInterface
 
         Debug::peek($resourceManager->clone('Delivery\Cargo\HttpCargo', HttpCargoInterface::class, [
             HttpCargoInterface::COOKIES => $cookies,
-            HttpCargoInterface::ENVIRONMENT => $resourceManager->clone('Support\Factory\EnvironmentContainerFactory', ContainerInterface::class),
+            HttpCargoInterface::ENVIRONMENT => $resourceManager->get('Support\Factory\EnvironmentInfoFactory', ContainerInterface::class),
             HttpCargoInterface::METHOD => $_SERVER['REQUEST_METHOD'],
-            HttpCargoInterface::PARAMETERS => $resourceManager->clone('Base\Container\VariableContainer', VariableContainerInterface::class, [
-                VariableContainerInterface::VALUES => $_GET
-            ]),
+            HttpCargoInterface::PARAMETERS => $resourceManager->clone('Base\Container\VariableContainer', VariableContainerInterface::class)->replace($_GET),
             HttpCargoInterface::PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
             HttpCargoInterface::REQUEST_HEADERS => $resourceManager->clone('Base\Header\Headers', HeadersInterface::class, [
                 HeadersInterface::VALUES => $requestHeaders
             ]),
             HttpCargoInterface::RESPONSE_HEADERS => $resourceManager->clone('Base\Header\Headers', HeadersInterface::class),
-            HttpCargoInterface::SERVER => $resourceManager->clone('Support\Factory\ServerContainerFactory', ContainerInterface::class),
+            HttpCargoInterface::SERVER => $resourceManager->get('Support\Factory\ServerInfoFactory', ContainerInterface::class),
             HttpCargoInterface::SESSION => $resourceManager->clone('Base\Session\SessionManager', SessionManagerInterface::class, [
                 SessionManagerInterface::COOKIE_MANAGER => $cookies
             ]),

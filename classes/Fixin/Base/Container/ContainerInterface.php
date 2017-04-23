@@ -9,8 +9,13 @@
 
 namespace Fixin\Base\Container;
 
-interface ContainerInterface extends \Serializable
+use Fixin\Resource\ResourceInterface;
+
+interface ContainerInterface extends ResourceInterface
 {
+    public const
+        VALUES = 'values';
+
     /**
      * Get value for key or return default value for non-set key
      */
@@ -20,11 +25,4 @@ interface ContainerInterface extends \Serializable
      * Determine the key has value
      */
     public function has(string $name): bool;
-
-    /**
-     * Cloned instance with new values
-     *
-     * @return static
-     */
-    public function withValues(array $values): ContainerInterface;
 }

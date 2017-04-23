@@ -9,12 +9,22 @@
 
 namespace Fixin\Base\Container;
 
-interface VariableContainerInterface extends ContainerInterface
+interface VariableContainerInterface extends \Serializable
 {
     /**
      * @return $this
      */
     public function clear(): VariableContainerInterface;
+
+    /**
+     * Get value for key or return default value for non-set key
+     */
+    public function get(string $name, $default = null);
+
+    /**
+     * Determine the key has value
+     */
+    public function has(string $name): bool;
 
     public function isModified(): bool;
 
