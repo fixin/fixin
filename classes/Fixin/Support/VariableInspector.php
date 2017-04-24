@@ -93,7 +93,7 @@ class VariableInspector extends DoNotCreate
             return sprintf(static::VALUE_TEMPLATE, $color, $var);
         }
 
-        return sprintf(static::VALUE_TEMPLATE, '#c00', '"' . Ground::toDebugText(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"');
+        return sprintf(static::VALUE_TEMPLATE, '#c00', '"' . htmlspecialchars(strtr((string) $var, ['"' => '\"', '\n' => '\\n', '\t' => '\\t', "\n" => '\n', "\t" => '\t'])) . '"');
     }
 
     /**
