@@ -17,6 +17,9 @@ use Fixin\Support\Ground;
 
 class RuntimeCargoFactory implements FactoryInterface
 {
+    /**
+     * @SuppressWarning(PHPMD.UnusedFormalParameter)
+     */
     public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): CargoInterface
     {
         $factory = 'Delivery\Cargo\Factory\\' . (Ground::isConsole() ? 'ConsoleCargoFactory' : 'HttpCargoFactory');
