@@ -1,15 +1,22 @@
 <?php
+/**
+ * Fixin Framework
+ *
+ * @copyright  Copyright (c) 2016 Attila Jenei
+ */
 
 return [
     'application' => [
-        'cargo' => 'starterCargo',
-        'route' => 'starterRoute',
+        'cargo' => 'cargo',
+        'route' => 'mainRoute',
         'errorRoute' => 'errorRoute'
     ],
+
     'resourceManager' => [
         'class' => 'Fixin\Resource\ResourceManager',
+
         'definitions' => [
-            // Classes
+            // By class
             'Base\Session\SessionManager' => [
                 'options' => [
                     'repository' => 'Base\Session\SessionRepository'
@@ -23,79 +30,67 @@ return [
                     'entityCache' => 'Model\Entity\Cache\RuntimeCache'
                 ]
             ],
-            'Delivery\Node\HttpErrorHub' => [
-                'options' => [
-                    'route' => 'errorRoute'
-                ]
-            ],
             'Delivery\Node\HttpRouterHub' => [
                 'class' => 'Delivery\Node\Factory\HttpRouterHubFactory'
             ],
             'View\View' => [
                 'options' => [
-                    'fileResolver' => 'viewFileResolver'
+                    'fileResolver' => 'templateFileResolver',
                 ]
             ],
 
-            // Basics
+            // By name
+            'cargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
             'dbStorage' => [
                 'class' => 'Model\Storage\Pdo\PdoStorage',
             ],
-            'defaultFileSystem' => 'Base\FileSystem\Local',
-            'starterCargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
-            'viewFileResolver' => [
+            'localFileSystem' => 'Base\FileSystem\Local',
+            'templateFileResolver' => [
                 'class' => 'Base\FileSystem\FileResolver',
                 'options' => [
                     'defaultExtension' => '.phtml',
-                    'fileSystem' => 'defaultFileSystem'
+                    'fileSystem' => 'localFileSystem'
                 ]
             ],
 
-            // View Wrappers
-            'errorLayoutViewWrapper' => [
-                'class' => 'Delivery\Node\WrapInView',
-                'options' => [
-                    'template' => 'layout/error.phtml',
-                    'contentName' => 'content'
-                ]
-            ],
-            'layoutViewWrapper' => [
-                'class' => 'Delivery\Node\WrapInView',
-                'options' => [
-                    'template' => 'layout/default.phtml',
-                    'contentName' => 'content'
-                ]
-            ],
-
-            // Routes
+            // Error route
             'errorRoute' => [
                 'class' => 'Delivery\Route\Route',
                 'options' => [
                     'nodes' => [
-                        'Delivery\Node\ThrowableToText',
-                        'errorLayoutViewWrapper',
-                        'Delivery\Node\ViewRender',
+                        'errorRoute.throwableToText',
+                        'errorRoute.layoutViewWrapper',
+                        'errorRoute.viewRender'
                     ]
                 ]
             ],
-            'starterRoute' => [
+            'errorRoute.layoutViewWrapper' => [
+                'class' => 'Delivery\Node\WrapInView',
+                'options' => [
+                    'template' => 'layout/error.phtml',
+                ]
+            ],
+            'errorRoute.throwableToText' => 'Delivery\Node\ThrowableToText',
+            'errorRoute.viewRender' => 'Delivery\Node\ViewRender',
+
+            // Main route
+            'mainRoute' => [
                 'class' => 'Delivery\Route\Route',
                 'options' => [
                     'nodes' => [
-                        'Delivery\Node\JsonToArray',
-                        'routerHub',
-                        'controllerClassHub',
-                        'Delivery\Node\HttpNotFoundFallback',
-                        'Delivery\Node\HttpErrorHub',
-                        'layoutViewWrapper',
-                        'Delivery\Node\ViewRender',
-                        'Delivery\Node\ArrayToJson'
+                        'mainRoute.jsonToArray',
+                        'mainRoute.routerHub',
+                        'mainRoute.controllerClassHub',
+                        'mainRoute.notFoundFallback',
+                        'mainRoute.errorHub',
+                        'mainRoute.layoutViewWrapper',
+                        'mainRoute.viewRender',
+                        'mainRoute.arrayToJson'
                     ]
                 ]
             ],
-
-            // Hubs
-            'controllerClassHub' => [
+            'mainRoute.arrayToJson' => 'Delivery\Node\ArrayToJson',
+            'mainRoute.controllerClassHub' => [
                 'class' => 'Delivery\Node\HttpClassHub',
                 'options' => [
                     'basePath' => '/',
@@ -103,7 +98,21 @@ return [
                     'depth' => 2
                 ]
             ],
-            'routerHub' => [
+            'mainRoute.errorHub' => [
+                'class' => 'Delivery\Node\HttpErrorHub',
+                'options' => [
+                    'route' => 'errorRoute'
+                ]
+            ],
+            'mainRoute.jsonToArray' => 'Delivery\Node\JsonToArray',
+            'mainRoute.layoutViewWrapper' => [
+                'class' => 'Delivery\Node\WrapInView',
+                'options' => [
+                    'template' => 'layout/default.phtml',
+                ]
+            ],
+            'mainRoute.notFoundFallback' => 'Delivery\Node\HttpNotFoundFallback',
+            'mainRoute.routerHub' => [
                 'class' => 'Delivery\Node\HttpRouterHub',
                 'options' => [
                     'routes' => [
@@ -117,12 +126,12 @@ return [
                     ]
                 ]
             ],
-
         ],
+
         'abstractFactories' => [
             'prefixFallback' => [
                 'class' => 'Fixin\Resource\AbstractFactory\PrefixFallbackFactory'
             ]
         ]
-    ],
+    ]
 ];

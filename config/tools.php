@@ -10,6 +10,7 @@ return [
         'definitions' => [
             'defaultFileSystem' => 'Base\FileSystem\Local',
         ],
+
         'abstractFactories' => [
             'prefixFallback' => [
                 'class' => 'Fixin\Resource\AbstractFactory\PrefixFallbackFactory',
