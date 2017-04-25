@@ -19,7 +19,6 @@ use Fixin\Base\Uri\UriInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Resource\FactoryInterface;
 use Fixin\Resource\ResourceManagerInterface;
-use Fixin\Support\Debug;
 use Fixin\Support\Http;
 
 /**
@@ -38,7 +37,7 @@ class HttpCargoFactory implements FactoryInterface
         ]);
         $requestHeaders = $this->getRequestHeaders();
 
-        Debug::peek($resourceManager->clone('Delivery\Cargo\HttpCargo', HttpCargoInterface::class, [
+        return $resourceManager->clone('Delivery\Cargo\HttpCargo', HttpCargoInterface::class, [
             HttpCargoInterface::COOKIES => $cookies,
             HttpCargoInterface::ENVIRONMENT => $resourceManager->get('Support\Factory\EnvironmentInfoFactory', ContainerInterface::class),
             HttpCargoInterface::METHOD => $_SERVER['REQUEST_METHOD'],
@@ -53,10 +52,7 @@ class HttpCargoFactory implements FactoryInterface
                 SessionManagerInterface::COOKIE_MANAGER => $cookies
             ]),
             HttpCargoInterface::URI => $resourceManager->clone('Base\Uri\Factory\EnvironmentUriFactory', UriInterface::class),
-        ] + $this->getContentOptions($resourceManager, $requestHeaders[Http::CONTENT_TYPE_HEADER] ?? 'text/html')));
-
-        die;
-        // TODO: Implement __invoke() method.
+        ] + $this->getContentOptions($resourceManager, $requestHeaders[Http::CONTENT_TYPE_HEADER] ?? 'text/html'));
     }
 
     protected function getContentOptions(ResourceManagerInterface $resourceManager, string $contentType): array
