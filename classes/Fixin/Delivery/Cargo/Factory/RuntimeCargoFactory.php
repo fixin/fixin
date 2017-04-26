@@ -18,7 +18,7 @@ use Fixin\Support\Ground;
 class RuntimeCargoFactory implements FactoryInterface
 {
     /**
-     * @SuppressWarning(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): CargoInterface
     {
