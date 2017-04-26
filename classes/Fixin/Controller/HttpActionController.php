@@ -20,7 +20,9 @@ abstract class HttpActionController extends Resource implements ControllerInterf
     protected const
         ACTION_PARAMETER = 'action',
         DEFAULT_ACTION = 'index',
-        INVALID_RETURN_TYPE_EXCEPTION = "Method '%s' returned invalid type";
+        INVALID_RETURN_TYPE_EXCEPTION = "Method '%s' returned invalid type",
+        NOT_FOUND_CONTENT = 'The requested URL was not found.',
+        NOT_FOUND_CONTENT_TYPE = 'text/html';
 
     /**
      * Get method name of action if exists and it is accessible
@@ -78,11 +80,11 @@ abstract class HttpActionController extends Resource implements ControllerInterf
         throw new Exception\InvalidReturnTypeException(sprintf(static::INVALID_RETURN_TYPE_EXCEPTION, $method));
     }
 
-    /**
-     * Reply: Not Found (404)
-     */
     protected function replyNotFound(HttpCargoInterface $cargo): HttpCargoInterface
     {
-        return $cargo->setStatusCode(Http::STATUS_NOT_FOUND_404);
+        return $cargo
+            ->setStatusCode(Http::STATUS_NOT_FOUND_404)
+            ->setContent(static::NOT_FOUND_CONTENT)
+            ->setContentType(static::NOT_FOUND_CONTENT_TYPE);
     }
 }

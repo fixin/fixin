@@ -16,6 +16,10 @@ use Fixin\Support\Http;
 
 abstract class HttpHub extends Resource implements NodeInterface
 {
+    protected const
+        NOT_FOUND_CONTENT = 'The requested URL was not found.',
+        NOT_FOUND_CONTENT_TYPE = 'text/html';
+
     public function handle(CargoInterface $cargo): CargoInterface
     {
         if ($cargo instanceof HttpCargoInterface && $cargo->getStatusCode() === Http::STATUS_CONTINUE_100) {
@@ -26,4 +30,12 @@ abstract class HttpHub extends Resource implements NodeInterface
     }
 
     abstract protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface;
+
+    protected function replyNotFound(HttpCargoInterface $cargo): HttpCargoInterface
+    {
+        return $cargo
+            ->setStatusCode(Http::STATUS_NOT_FOUND_404)
+            ->setContent(static::NOT_FOUND_CONTENT)
+            ->setContentType(static::NOT_FOUND_CONTENT_TYPE);
+    }
 }

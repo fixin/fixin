@@ -13,7 +13,6 @@ use Fixin\Delivery\Cargo\CargoHandlerInterface;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Delivery\Node\Exception;
-use Fixin\Support\Http;
 use Fixin\Support\Strings;
 use Fixin\Support\Types;
 
@@ -75,7 +74,7 @@ class HttpClassHub extends HttpHub
                 return $this->handlePath($cargo, $path);
             }
 
-            return $cargo->setStatusCode(Http::STATUS_NOT_FOUND_404);
+            return $this->replyNotFound($cargo);
         }
 
         return $cargo;
@@ -101,7 +100,7 @@ class HttpClassHub extends HttpHub
             }
         }
 
-        return $cargo->setStatusCode(Http::STATUS_NOT_FOUND_404);
+        return $this->replyNotFound($cargo);
     }
 
     protected function setBasePath(string $basePath): void
