@@ -126,11 +126,15 @@ return [
                     ]
                 ]
             ],
+            'mainRoute.viewRender' => 'Delivery\Node\ViewRender'
         ],
 
         'abstractFactories' => [
             'prefixFallback' => [
-                'class' => 'Fixin\Resource\AbstractFactory\PrefixFallbackFactory'
+                'class' => 'Fixin\Resource\AbstractFactory\PrefixFallbackFactory',
+                'options' => [
+                    'searchOrder' => ['Fixin']
+                ]
             ]
         ]
     ]

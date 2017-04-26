@@ -15,7 +15,7 @@ return [
             'prefixFallback' => [
                 'class' => 'Fixin\Resource\AbstractFactory\PrefixFallbackFactory',
                 'options' => [
-                    'searchOrder' => ['App', 'Fixin']
+                    'searchOrder' => ['Fixin']
                 ]
             ]
         ]
