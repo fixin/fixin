@@ -19,13 +19,20 @@ class WrapInView extends Resource implements NodeInterface
     protected const
         ALLOWED_TYPES = ['text/html'],
         THIS_SETS = [
+            self::CARGO_NAME => Types::STRING,
             self::CONTENT_NAME => Types::STRING,
             self::TEMPLATE => Types::STRING
         ];
 
     public const
+        CARGO_NAME = 'cargoName',
         CONTENT_NAME = 'contentName',
         TEMPLATE = 'template';
+
+    /**
+     * @var string
+     */
+    protected $cargoName = 'cargo';
 
     /**
      * @var string
@@ -54,7 +61,14 @@ class WrapInView extends Resource implements NodeInterface
                 return $cargo;
             }
 
-            $view->setVariable($this->contentName, $content);
+            if (is_array($content)) {
+                $view->replaceVariables($content);
+            }
+            else {
+                $view->setVariable($this->contentName, $content);
+            }
+
+            $view->setVariable($this->cargoName, $cargo);
         }
 
         return $cargo;
