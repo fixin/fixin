@@ -27,7 +27,8 @@ use Fixin\Support\Http;
 class HttpCargoFactory implements FactoryInterface
 {
     protected const
-        POST_RELATED_TYPES = ['application/x-www-form-urlencoded', 'multipart/form-data'],
+        FORM_MIME_TYPES = ['application/x-www-form-urlencoded', 'multipart/form-data'],
+        FORM_PROCESSED_TYPE = 'text/html',
         STREAM_CLASS = 'Fixin\Base\Stream\Stream';
 
     public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): HttpCargoInterface
@@ -57,7 +58,9 @@ class HttpCargoFactory implements FactoryInterface
 
     protected function getContentOptions(ResourceManagerInterface $resourceManager, string $contentType): array
     {
-        if (in_array(strstr($contentType, ';', true), static::POST_RELATED_TYPES)) {
+        $contentType = strstr($contentType, ';', true);
+
+        if (in_array($contentType, static::FORM_MIME_TYPES)) {
             $post = $_POST;
 
             // Files
@@ -71,7 +74,7 @@ class HttpCargoFactory implements FactoryInterface
 
             return [
                 HttpCargoInterface::CONTENT => $post,
-                HttpCargoInterface::CONTENT_TYPE => $contentType
+                HttpCargoInterface::CONTENT_TYPE => self::FORM_PROCESSED_TYPE
             ];
         }
 
