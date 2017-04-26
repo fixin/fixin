@@ -1,10 +1,11 @@
 <?php
 /**
  * Fixin Framework
- *
  * Class, interface, and trait lister
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * Copyright (c) Attila Jenei
+ *
+ * http://www.fixinphp.com
  */
 
 $topDir = dirname(__DIR__, 2);

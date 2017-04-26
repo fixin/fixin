@@ -2,10 +2,11 @@
 /**
  * Fixin Framework
  *
- * Class, interface, and trait lister
+ * Copyright (c) Attila Jenei
  *
- * @copyright  Copyright (c) 2016 Attila Jenei
+ * http://www.fixinphp.com
  */
+
 namespace FixinTools\Base;
 
 class ClassHelper {
