@@ -10,7 +10,6 @@
 namespace Fixin\Delivery\Cargo\Factory;
 
 use Fixin\Delivery\Cargo\CargoInterface;
-use Fixin\Resource\Factory;
 use Fixin\Resource\FactoryInterface;
 use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Support\Ground;
