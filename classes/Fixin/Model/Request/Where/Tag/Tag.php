@@ -10,14 +10,17 @@
 namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Resource\Prototype;
+use Fixin\Support\DebugDescriptionTrait;
 use Fixin\Support\Types;
 
 abstract class Tag extends Prototype implements TagInterface
 {
+    use DebugDescriptionTrait;
+
     protected const
         THIS_SETS = [
             self::JOIN => Types::STRING,
-            self::NEGATED => Types::STRING
+            self::POSITIVE => Types::BOOL
         ];
 
     /**
@@ -28,15 +31,15 @@ abstract class Tag extends Prototype implements TagInterface
     /**
      * @var bool
      */
-    protected $negated = false;
+    protected $positive = true;
 
     public function getJoin(): string
     {
         return $this->join;
     }
 
-    public function isNegated(): bool
+    public function isPositive(): bool
     {
-        return $this->negated;
+        return $this->positive;
     }
 }

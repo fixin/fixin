@@ -15,12 +15,15 @@ use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Prototype;
+use Fixin\Support\DebugDescriptionTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Request extends Prototype implements RequestInterface
 {
+    use DebugDescriptionTrait;
+
     protected const
         COUNT_MASK = 'COUNT(%s)',
         JOIN_PROTOTYPE = 'Model\Request\Join',

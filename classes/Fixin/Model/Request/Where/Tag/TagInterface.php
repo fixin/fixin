@@ -17,8 +17,8 @@ interface TagInterface extends PrototypeInterface
         JOIN = 'join',
         JOIN_AND = 'and',
         JOIN_OR = 'or',
-        NEGATED = 'negated';
+        POSITIVE = 'positive';
 
     public function getJoin(): string;
-    public function isNegated(): bool;
+    public function isPositive(): bool;
 }

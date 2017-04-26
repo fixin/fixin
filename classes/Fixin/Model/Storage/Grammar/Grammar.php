@@ -45,12 +45,12 @@ abstract class Grammar extends Resource implements GrammarInterface
         LIST_SEPARATOR = ', ',
         MULTI_LINE_LIST_SEPARATOR = ',' . PHP_EOL . "\t",
         MULTI_LINE_NESTED_MASK = '(' . PHP_EOL . "\t%s)" . PHP_EOL,
-        NEGATE_WHERE_TAG = [false => '', true => 'NOT '],
         NESTED_MASK = "(%s)",
         OFFSET_MASK = 'OFFSET %s' . PHP_EOL,
         ORDER_BY_MASK = 'ORDER BY %s' . PHP_EOL,
         ORDER_BY_ITEM_MASK = '%s %s',
         PLACEHOLDER = '?',
+        POSITIVE_WHERE_TAG = [true => '', false => 'NOT '],
         WHERE_TAG_METHOD = 'whereTag',
         WHERE_TAG_SEPARATOR = PHP_EOL . "\t %s ";
 
@@ -251,30 +251,30 @@ abstract class Grammar extends Resource implements GrammarInterface
 
     protected function whereTagBetween(BetweenTag $tag, SentenceInterface $sentence): string
     {
-        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::NEGATE_WHERE_TAG[$tag->isNegated()] . sprintf(static::BETWEEN_MASK, $this->expressionToString($tag->getMin(), $sentence)
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::POSITIVE_WHERE_TAG[$tag->isPositive()] . sprintf(static::BETWEEN_MASK, $this->expressionToString($tag->getMin(), $sentence)
             , $this->expressionToString($tag->getMax(), $sentence));
     }
 
     protected function whereTagCompare(CompareTag $tag, SentenceInterface $sentence): string
     {
-        return static::NEGATE_WHERE_TAG[$tag->isNegated()] . $this->expressionToString($tag->getLeft(), $sentence) . ' ' . $tag->getOperator() . ' ' . $this->expressionToString($tag->getRight(), $sentence);
+        return static::POSITIVE_WHERE_TAG[$tag->isPositive()] . $this->expressionToString($tag->getLeft(), $sentence) . ' ' . $tag->getOperator() . ' ' . $this->expressionToString($tag->getRight(), $sentence);
     }
 
     protected function whereTagExists(ExistsTag $tag, SentenceInterface $sentence): string
     {
-        return static::NEGATE_WHERE_TAG[$tag->isNegated()] . sprintf(static::EXISTS_MASK, $this->requestToString($tag->getRequest(), $sentence));
+        return static::POSITIVE_WHERE_TAG[$tag->isPositive()] . sprintf(static::EXISTS_MASK, $this->requestToString($tag->getRequest(), $sentence));
     }
 
     protected function whereTagIn(InTag $tag, SentenceInterface $sentence): string
     {
         $values = $tag->getValues();
 
-        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::NEGATE_WHERE_TAG[$tag->isNegated()] . sprintf(static::IN_MASK, $this->expressionToString($values, $sentence));
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::POSITIVE_WHERE_TAG[$tag->isPositive()] . sprintf(static::IN_MASK, $this->expressionToString($values, $sentence));
     }
 
     protected function whereTagNull(NullTag $tag, SentenceInterface $sentence): string
     {
-        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::IS_NULL_WHERE_TAG[!$tag->isNegated()];
+        return $this->identifierToString($tag->getIdentifier(), $sentence) . ' ' . static::IS_NULL_WHERE_TAG[$tag->isPositive()];
     }
 
     /**
