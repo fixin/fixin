@@ -11,8 +11,8 @@ namespace FixinTools\ClassTree;
 
 use Fixin\Support\Strings;
 
-class SvgEngine {
-
+class SvgEngine
+{
     /**
      * @var float
      */
@@ -23,20 +23,17 @@ class SvgEngine {
      */
     protected $fontSize;
 
-    /**
-     * @var array
-     */
-    protected $groups;
-
-    /**
-     * @var float
-     */
-    protected $itemSize;
+    protected $itemDistance;
 
     /**
      * @var array
      */
     protected $items;
+
+    /**
+     * @var float
+     */
+    protected $itemSize;
 
     /**
      * @var Processor
@@ -53,15 +50,18 @@ class SvgEngine {
      */
     protected $stopAtClasses = [];
 
-    public function __construct(Processor $processor) {
+    public function __construct(Processor $processor)
+    {
         $this->processor = $processor;
     }
 
-    protected function calculateFontSize() {
+    protected function calculateFontSize(): void
+    {
         $this->fontSize = $this->ratio * 0.26 * $this->itemSize;
     }
 
-    protected function explodeRows(string $text): array {
+    protected function explodeRows(string $text): array
+    {
         $words = explode(' ', $text);
 
         $rows = [];
@@ -82,7 +82,8 @@ class SvgEngine {
         return $rows;
     }
 
-    protected function itemCssClass(Item $item): string {
+    protected function itemCssClass(Item $item): string
+    {
         $classes = ['Item'];
         foreach (['Interface', 'Abstract', 'Prototype', 'Resource', 'Factory', 'Exception', 'Trait'] as $test) {
             if ($item->{'is' . $test}()) {
@@ -93,7 +94,8 @@ class SvgEngine {
         return str_replace('Interface Abstract', 'Interface', implode(' ', $classes));
     }
 
-    public function itemText(float $x, float $y, string $text): string {
+    public function itemText(float $x, float $y, string $text): string
+    {
         $rows = $this->explodeRows($text);
         $tspans = '';
         $dy = -count($rows) * 0.7 + 0.25 + 0.75;
@@ -112,44 +114,85 @@ class SvgEngine {
         ], $tspans);
     }
 
-    protected function placeItems(array $items, float $x, float $y, float $startAngle, float $endAngle) {
-        $divs = count($items);
-        $angleStep = ($endAngle - $startAngle) / $divs;
-        $angle = $startAngle + $angleStep / 2;
-        $itemR = max($this->itemSize * 2.8, $divs * ($this->itemSize * 2.4) / M_PI / 2 * 360 / ($endAngle - $startAngle));
+    public function itemWidth(Item $item): float
+    {
+        $childWidth = 0;
+        foreach ($item->getChildren() as $child) {
+            if (!in_array($item->getName(), $this->stopAtClasses) && ($children = $item->getChildren())) {
+                $childWidth += $this->itemWidth($child) * 0.6;
+            }
+        }
 
-        foreach ($items as $item) {
-            $px = $x + cos($angle * M_PI / 180) * $itemR;
-            $py = $y + sin($angle * M_PI / 180) * $itemR * $this->ellipseRatio;
+        return max($this->itemDistance, $childWidth);
+    }
+
+    protected function placeItems(array $items, float $x, float $y, float $angle, float $allowedAngle): void
+    {
+        $itemCount = count($items);
+        $nextAllowedAngle = $itemCount > 1 ? 180 : $allowedAngle;
+
+        $r = $allowedAngle == 360 && $itemCount === 1 ? 0 : $this->itemDistance;
+        $minR = $this->minRay($itemCount,$itemCount * $this->itemDistance, $allowedAngle);
+
+        do {
+            $r = max($r, $minR);
+
+            $widths = [];
+            foreach ($items as $index => $item) {
+                $widths[$index] = $this->itemWidth($item);
+            }
+
+            $fullWidth = array_sum($widths);
+            $minR = $this->minRay($itemCount, $fullWidth, $allowedAngle);
+        } while ($r < $minR);
+
+        $maxWidth = 2 * $r * M_PI * $allowedAngle / 360;
+        $usedAngle = $allowedAngle == 360 ? $allowedAngle : ($allowedAngle * $fullWidth / $maxWidth);
+        $angle -= $usedAngle / 2;
+
+        foreach ($items as $index => $item) {
+            $itemAngle = $usedAngle * $widths[$index] / $fullWidth;
+            $angle += $itemAngle / 2;
+
+            $px = $x + cos($angle * M_PI / 180) * $r;
+            $py = $y + sin($angle * M_PI / 180) * $r * $this->ellipseRatio;
 
             $item->px = $px * $this->ratio;
             $item->py = $py * $this->ratio;
-
             $this->items[$item->getName()] = $item;
 
             if (!in_array($item->getName(), $this->stopAtClasses) && ($children = $item->getChildren())) {
-                $childrenStep = min(max($angleStep / 1.5, 160 / count($children) / 1.5), 180);
-
-                $this->placeItems($children, $px, $py, $angle - $childrenStep, $angle + $childrenStep);
+                $this->placeItems($children, $px, $py, $angle, $nextAllowedAngle);
             }
 
-            $angle += $angleStep;
+            $angle += $itemAngle / 2;
         }
     }
 
-    public function render(array $groups): string {
+    protected function minRay(int $itemCount, float $length, float $allowedAngle): float
+    {
+        if ($itemCount < 2) {
+            return 0;
+        }
+
+        return $length / 2 / M_PI * 360 / $allowedAngle;
+    }
+
+    public function render(array $groups): string
+    {
+        $this->items = [];
+
         $itemGroups = $this->processor->getGroups();
 
-        $this->items = [];
         foreach ($groups as $name => $data) {
-            $shiftAngle = $data['shiftAngle'] ?? 0;
-            $this->placeItems($itemGroups[$name], $data['x'], $data['y'], $shiftAngle + 0, $shiftAngle + 360);
+            $this->placeItems($itemGroups[$name], $data['x'], $data['y'], $data['shiftAngle'] ?? 0, 360);
         }
 
         return $this->renderGroups($groups) . $this->renderLines() . $this->renderItems();
     }
 
-    protected function renderGroups(array $groups): string {
+    protected function renderGroups(array $groups): string
+    {
         $source = '';
 
         foreach ($groups as $data) {
@@ -183,7 +226,8 @@ class SvgEngine {
         return $source;
     }
 
-    protected function renderLines(): string {
+    protected function renderLines(): string
+    {
         $source = '';
 
         foreach ($this->items as $item) {
@@ -202,35 +246,41 @@ class SvgEngine {
         return $source;
     }
 
-    public function setEllipseRatio(float $ellipseRatio): self {
+    public function setEllipseRatio(float $ellipseRatio): self
+    {
         $this->ellipseRatio = $ellipseRatio;
 
         return $this;
     }
 
-    public function setItemSize(float $itemSize): self {
+    public function setItemSize(float $itemSize): self
+    {
         $this->itemSize = $itemSize;
+        $this->itemDistance = $itemSize * 2.6;
         $this->calculateFontSize();
 
         return $this;
     }
 
-    public function setRatio(int $ratio): self {
+    public function setRatio(int $ratio): self
+    {
         $this->ratio = $ratio;
         $this->calculateFontSize();
 
         return $this;
     }
 
-    public function setStopAtClasses(array $stopAtClasses): self {
+    public function setStopAtClasses(array $stopAtClasses): self
+    {
         $this->stopAtClasses = $stopAtClasses;
 
         return $this;
     }
 
-    protected function tag(string $name, array $attributes, string $content = ''): string {
+    protected function tag(string $name, array $attributes, string $content = ''): string
+    {
         $list = [];
-        
+
         foreach ($attributes as $key => $value) {
             $list[] = " $key=\"" . htmlspecialchars($value) . '"';
         }
