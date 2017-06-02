@@ -12,7 +12,7 @@ use FixinTools\Performance\Magic\VariablesA;
 use FixinTools\Performance\Magic\VariablesB;
 
 (function() {
-    include dirname(__DIR__, 3) . '/cheats/tools.php';
+    include dirname(__DIR__, 3) . '/boosts/tools.php';
 
     $loops = 2000000;
     $objectA = new VariablesA();

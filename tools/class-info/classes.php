@@ -9,7 +9,7 @@
  */
 
 $topDir = dirname(__DIR__, 2);
-$resourceManager = include "$topDir/cheats/tools.php";
+$resourceManager = include "$topDir/boosts/tools.php";
 
 use Fixin\Base\FileSystem\FileSystemInterface;use Fixin\Support\VariableInspector;
 

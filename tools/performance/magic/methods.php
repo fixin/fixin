@@ -12,7 +12,7 @@ use FixinTools\Performance\Magic\MethodsA;
 use FixinTools\Performance\Magic\MethodsB;
 
 (function() {
-    include dirname(__DIR__, 3) . '/cheats/tools.php';
+    include dirname(__DIR__, 3) . '/boosts/tools.php';
 
     $loops = 500000;
     $objectA = new MethodsA();
