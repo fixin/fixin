@@ -12,7 +12,7 @@ return (function(?array $config) {
 
     // Config
     if (!isset($config)) {
-        $config = require "{$fixinPath}/config/tools.php";
+        $config = require "{$fixinPath}/config/minimal.php";
     }
 
     // Autoloader
