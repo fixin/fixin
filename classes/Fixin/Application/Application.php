@@ -102,7 +102,7 @@ class Application implements ApplicationInterface
         }
         catch (Throwable $t) {
             try {
-                $this->errorRoute(($cargo ?? $resourceManager->clone('Delivery\Cargo\Cargo', CargoInterface::class))->setContent($t));
+                $this->errorRoute(($cargo ?? $resourceManager->clone('*\Delivery\Cargo\Cargo', CargoInterface::class))->setContent($t));
             }
             catch (Throwable $t) {
                 $this->internalServerError(get_class($t) . ': ' . $t->getMessage());

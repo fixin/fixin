@@ -21,7 +21,7 @@ class RuntimeCargoFactory implements FactoryInterface
      */
     public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): CargoInterface
     {
-        $factory = 'Delivery\Cargo\Factory\\' . (Ground::isConsole() ? 'ConsoleCargoFactory' : 'HttpCargoFactory');
+        $factory = '*\Delivery\Cargo\Factory\\' . (Ground::isConsole() ? 'ConsoleCargoFactory' : 'HttpCargoFactory');
 
         return $resourceManager->clone($factory, CargoInterface::class);
     }

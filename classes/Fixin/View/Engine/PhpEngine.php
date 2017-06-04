@@ -27,7 +27,7 @@ class PhpEngine extends Engine
     {
         parent::__construct($resourceManager, $options, $name);
 
-        $this->assistant = $this->resourceManager->clone('View\Engine\Assistant', AssistantInterface::class)->withEngine($this);
+        $this->assistant = $this->resourceManager->clone('*\View\Engine\Assistant', AssistantInterface::class)->withEngine($this);
     }
 
     public function render(ViewInterface $view): string

@@ -116,7 +116,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
         // New area
         $this->modified = true;
 
-        return $this->areas[$name] = $this->resourceManager->clone('Base\Session\SessionArea', SessionAreaInterface::class);
+        return $this->areas[$name] = $this->resourceManager->clone('*\Base\Session\SessionArea', SessionAreaInterface::class);
     }
 
     protected function getCookieManager(): CookieManagerInterface

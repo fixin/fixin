@@ -12,7 +12,7 @@ namespace Fixin\Resource\AbstractFactory;
 use Fixin\Resource\Managed;
 use Fixin\Support\Types;
 
-class PrefixFallbackFactory extends Managed implements AbstractFactoryInterface
+class NamespaceFallbackFactory extends Managed implements AbstractFactoryInterface
 {
     protected const
         THIS_SETS = [
@@ -41,16 +41,20 @@ class PrefixFallbackFactory extends Managed implements AbstractFactoryInterface
 
     public function canProduce(string $name): bool
     {
+        if ($name[0] !== '*' || $name[1] !== '\\') {
+            return false;
+        }
+
         // Already resolved
         if (isset($this->map[$name])) {
             return (bool) $this->map[$name];
         }
 
         // Mapping
-        foreach ($this->searchOrder as $prefix) {
-            $className = $prefix . '\\' . $name;
+        $nameTail = '\\' . substr($name, 2);
 
-            if (class_exists($className)) {
+        foreach ($this->searchOrder as $rootNamespace) {
+            if (class_exists($className = $rootNamespace . $nameTail)) {
                 $this->map[$name] = $className;
 
                 return true;

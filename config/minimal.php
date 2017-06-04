@@ -10,12 +10,12 @@
 return [
     'resourceManager' => [
         'definitions' => [
-            'defaultFileSystem' => 'Base\FileSystem\Local',
+            'defaultFileSystem' => '*\Base\FileSystem\Local',
         ],
 
         'abstractFactories' => [
-            'prefixFallback' => [
-                'class' => 'Fixin\Resource\AbstractFactory\PrefixFallbackFactory',
+            'namespaceFallback' => [
+                'class' => 'Fixin\Resource\AbstractFactory\NamespaceFallbackFactory',
                 'options' => [
                     'searchOrder' => ['Fixin']
                 ]

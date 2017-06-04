@@ -23,7 +23,7 @@ class HtmlAttributes extends Helper
     {
         parent::__construct($resourceManager, $options, $name);
 
-        $this->escaper = $resourceManager->get('Base\Escaper\Escaper', EscaperInterface::class);
+        $this->escaper = $resourceManager->get('*\Base\Escaper\Escaper', EscaperInterface::class);
     }
 
     /**

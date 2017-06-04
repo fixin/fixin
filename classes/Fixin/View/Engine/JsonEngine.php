@@ -25,7 +25,7 @@ class JsonEngine extends Engine
 
     public function render(ViewInterface $view): string
     {
-        $json = $this->json ?? ($this->json = $this->resourceManager->get('Base\Json\Json', JsonInterface::class));
+        $json = $this->json ?? ($this->json = $this->resourceManager->get('*\Base\Json\Json', JsonInterface::class));
         $result = [];
 
         // Children
