@@ -19,6 +19,7 @@ abstract class HttpActionController extends Resource implements ControllerInterf
 {
     protected const
         ACTION_PARAMETER = 'action',
+        CONTENT_TYPE = 'text/html',
         DEFAULT_ACTION = 'index',
         INVALID_RETURN_TYPE_EXCEPTION = "Method '%s' returned invalid type",
         NOT_FOUND_CONTENT = 'The requested URL was not found.',
@@ -65,7 +66,10 @@ abstract class HttpActionController extends Resource implements ControllerInterf
     protected function handleMethod(HttpCargoInterface $cargo, string $method): CargoInterface
     {
         // Call method
-        $answer = $this->$method($cargo->setStatusCode(Http::STATUS_OK_200));
+        $answer = $this->$method($cargo
+            ->setStatusCode(Http::STATUS_OK_200)
+            ->setContentType(static::CONTENT_TYPE)
+        );
 
         // Cargo
         if ($answer instanceof CargoInterface) {
