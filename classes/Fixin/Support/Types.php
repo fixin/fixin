@@ -30,7 +30,7 @@ class Types extends DoNotCreate
             self::BOOL => 'is_bool',
             self::CALLABLE => 'is_callable',
             self::FLOAT => 'is_float',
-            self::INT => 'is_int', // TODO: Numbers::isInt? a configureWithOptionsnel, hogy olyan legyen mint a setterek?
+            self::INT => 'is_int',
             self::NULL => 'is_null',
             self::NUMERIC => 'is_numeric',
             self::OBJECT => 'is_object',

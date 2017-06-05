@@ -11,7 +11,7 @@ namespace FixinTools\ClassTree;
 
 use Fixin\Support\Strings;
 
-class SvgEngine
+class SvgEngineStored
 {
     /**
      * @var float
@@ -114,67 +114,102 @@ class SvgEngine
         ], $tspans);
     }
 
-    public function itemWidth(Item $item): float
+    protected function itemWidth(Item $item): float
     {
-        $childWidth = 0;
-        foreach ($item->getChildren() as $child) {
-            if (!in_array($item->getName(), $this->stopAtClasses) && ($children = $item->getChildren())) {
-                $childWidth += $this->itemWidth($child) * 0.6;
-            }
-        }
+        return $this->itemDistance;
+        $min = 0;
+        $max = 0;
 
-        return max($this->itemDistance, $childWidth);
+        $this->findMinMax($item, $min, $max);
+
+        return $max - $min;
     }
 
-    protected function placeItems(array $items, float $x, float $y, float $angle, float $allowedAngle): void
+    protected function findMinMax(Item $item, float &$min, float &$max): void
     {
-        $itemCount = count($items);
-        $nextAllowedAngle = $itemCount > 1 ? 180 : $allowedAngle;
+        $min = min($min, $item->px - $this->itemDistance / 2);
+        $max = max($max, $item->px + $this->itemDistance / 2);
 
-        $r = $allowedAngle == 360 && $itemCount === 1 ? 0 : $this->itemDistance;
-        $minR = $this->minRay($itemCount,$itemCount * $this->itemDistance, $allowedAngle);
+        foreach ($item->getChildren() as $child) {
+            if (isset($child->px)) {
+                $this->findMinMax($child, $min, $max);
+            }
+        }
+    }
 
-        do {
-            $r = max($r, $minR);
+    protected function placeItems(array $items, float $allowedAngle): void
+    {
+        $nextAllowedAngle = count($items) > 1 ? 180 : $allowedAngle;
 
-            $widths = [];
-            foreach ($items as $index => $item) {
-                $widths[$index] = $this->itemWidth($item);
+        foreach ($items as $item) {
+            if (!in_array($item->getName(), $this->stopAtClasses)) {
+                $this->placeItems($item->getChildren(), $nextAllowedAngle);
             }
 
-            $fullWidth = array_sum($widths);
-            $minR = $this->minRay($itemCount, $fullWidth, $allowedAngle);
-        } while ($r < $minR);
+            $this->items[$item->getName()] = $item;
+            $item->px = 0;
+            $item->py = 0;
+        }
+
+        $widths = [];
+        foreach ($items as $index => $item) {
+            $widths[$index] = $this->itemWidth($item);
+        }
+        $fullWidth = array_sum($widths);
+
+        $r = max($this->itemDistance, $this->minRay($fullWidth, $allowedAngle));
 
         $maxWidth = 2 * $r * M_PI * $allowedAngle / 360;
-        $usedAngle = $allowedAngle == 360 ? $allowedAngle : ($allowedAngle * $fullWidth / $maxWidth);
-        $angle -= $usedAngle / 2;
+
+        $usedAngle = $allowedAngle === 360 ? $allowedAngle : ($allowedAngle * $fullWidth / $maxWidth);
+
+        $angle = - $usedAngle / 2;
 
         foreach ($items as $index => $item) {
             $itemAngle = $usedAngle * $widths[$index] / $fullWidth;
             $angle += $itemAngle / 2;
 
-            $px = $x + cos($angle * M_PI / 180) * $r;
-            $py = $y + sin($angle * M_PI / 180) * $r * $this->ellipseRatio;
+            $rad = ($angle + 90) / 180 * M_PI;
+            $dx = cos($rad) * $r;
+            $dy = sin($rad) * $r;
 
-            $item->px = $px * $this->ratio;
-            $item->py = $py * $this->ratio;
-            $this->items[$item->getName()] = $item;
-
-            if (!in_array($item->getName(), $this->stopAtClasses) && ($children = $item->getChildren())) {
-                $this->placeItems($children, $px, $py, $angle, $nextAllowedAngle);
-            }
+            $this->transformItem($item, $angle, $dx, $dy);
 
             $angle += $itemAngle / 2;
         }
     }
 
-    protected function minRay(int $itemCount, float $length, float $allowedAngle): float
+    protected function transformItem(Item $item, float $angle, float $dx, float $dy): void
     {
-        if ($itemCount < 2) {
-            return 0;
-        }
+        $rad = $angle / 180 * M_PI;
 
+        $this->transformItemTree($item, cos($rad), sin($rad), $dx, $dy);
+    }
+
+    protected function transformItemTree(Item $item, float $cos, float $sin, float $dx, float $dy): void
+    {
+        $x = $item->px;
+        $y = $item->py;
+
+        $item->px = $x * $cos - $y * $sin + $dx;
+        $item->py = $x * $sin + $y * $cos + $dy;
+
+        foreach ($item->getChildren() as $child) {
+            if (isset($child->px)) {
+                $this->transformItemTree($child, $cos, $sin, $dx, $dy);
+            }
+        }
+    }
+
+    protected function placeItemGroup(array $items, float $angle, float $dx, float $dy): void
+    {
+        foreach ($items as $item) {
+            $this->transformItem($item, $angle, $dx, $dy);
+        }
+    }
+
+    protected function minRay(float $length, float $allowedAngle): float
+    {
         return $length / 2 / M_PI * 360 / $allowedAngle;
     }
 
@@ -185,31 +220,20 @@ class SvgEngine
         $itemGroups = $this->processor->getGroups();
 
         foreach ($groups as $name => $data) {
-            $this->placeItems($itemGroups[$name], $data['x'], $data['y'], $data['shiftAngle'] ?? 0, 360);
+            $this->placeItems($itemGroups[$name], 360);
+            $this->placeItemGroup($itemGroups[$name], $data['shiftAngle'] ?? 0, $data['x'], $data['y']);
         }
 
-        return $this->renderGroups($groups) . $this->renderLines() . $this->renderItems();
+        foreach ($this->items as $item) {
+            $item->px *= $this->ratio;
+            $item->py *= $this->ratio * $this->ellipseRatio;
+        }
+
+        return $this->renderLines() . $this->renderItems();
     }
 
-    protected function renderGroups(array $groups): string
+    protected function renderItems(): string
     {
-        $source = '';
-
-        foreach ($groups as $data) {
-            if (isset($data['label'])) {
-                $source .= $this->tag('text', [
-                    'class' => 'Center Top',
-                    'x' => ($data['x'] + ($data['labelDx'] ?? 0)) * $this->ratio,
-                    'y' => ($data['y'] + ($data['labelDy'] ?? 0)) * $this->ratio,
-                    'dy' => '0.4em'
-                ], htmlspecialchars($data['label']));
-            }
-        }
-
-        return $source;
-    }
-
-    protected function renderItems(): string {
         $source = '';
         $itemR = $this->itemSize * $this->ratio;
 

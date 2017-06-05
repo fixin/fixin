@@ -14,7 +14,7 @@ use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Support\Types;
 
-class HttpRouterHub extends HttpHub
+class HttpRouterHub extends AbstractHttpHub
 {
     protected const
         INVALID_HANDLER_EXCEPTION = "Invalid handler '%s'",

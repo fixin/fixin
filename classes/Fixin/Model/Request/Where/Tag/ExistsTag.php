@@ -11,7 +11,7 @@ namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Model\Request\RequestInterface;
 
-class ExistsTag extends Tag
+class ExistsTag extends AbstractTag
 {
     protected const
         THIS_SETS = parent::THIS_SETS + [

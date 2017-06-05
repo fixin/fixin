@@ -50,7 +50,7 @@ class WrapInView extends Resource implements NodeInterface
             $content = $cargo->getContent();
 
             /** @var ViewInterface $view */
-            $view = $this->resourceManager->clone('View\View', ViewInterface::class, [
+            $view = $this->resourceManager->clone('*\View\View', ViewInterface::class, [
                 ViewInterface::TEMPLATE => $this->template
             ]);
             $cargo->setContent($view);

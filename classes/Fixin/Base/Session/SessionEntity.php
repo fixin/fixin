@@ -13,12 +13,8 @@ use DateTimeImmutable;
 use Fixin\Model\Entity\Entity;
 use Fixin\Model\Entity\EntityInterface;
 
-class SessionEntity extends Entity
+class SessionEntity extends Entity implements SessionEntityInterface
 {
-    public const
-        ACCESS_TIME = 'accessTime',
-        SESSION_ID = 'sessionId';
-
     /**
      * @var DateTimeImmutable
      */
@@ -80,7 +76,7 @@ class SessionEntity extends Entity
     /**
      * @return $this
      */
-    public function setAccessTime(?DateTimeImmutable $accessTime): self
+    public function setAccessTime(?DateTimeImmutable $accessTime): SessionEntityInterface
     {
         $this->accessTime = $accessTime;
 
@@ -90,7 +86,7 @@ class SessionEntity extends Entity
     /**
      * @return $this
      */
-    public function setData(array $data): self
+    public function setData(array $data): SessionEntityInterface
     {
         $this->data = $data;
 
@@ -100,7 +96,7 @@ class SessionEntity extends Entity
     /**
      * @return $this
      */
-    public function setSessionId(?string $sessionId): self
+    public function setSessionId(?string $sessionId): SessionEntityInterface
     {
         $this->sessionId = $sessionId;
 

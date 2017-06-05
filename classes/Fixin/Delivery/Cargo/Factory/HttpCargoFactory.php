@@ -33,26 +33,26 @@ class HttpCargoFactory implements FactoryInterface
 
     public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): HttpCargoInterface
     {
-        $cookies = $resourceManager->clone('Base\Cookie\CookieManager', CookieManagerInterface::class, [
+        $cookies = $resourceManager->clone('*\Base\Cookie\CookieManager', CookieManagerInterface::class, [
             CookieManagerInterface::COOKIES => $_COOKIE,
         ]);
         $requestHeaders = $this->getRequestHeaders();
 
-        return $resourceManager->clone('Delivery\Cargo\HttpCargo', HttpCargoInterface::class, [
+        return $resourceManager->clone('*\Delivery\Cargo\HttpCargo', HttpCargoInterface::class, [
             HttpCargoInterface::COOKIES => $cookies,
-            HttpCargoInterface::ENVIRONMENT => $resourceManager->get('Support\Factory\EnvironmentInfoFactory', ContainerInterface::class),
+            HttpCargoInterface::ENVIRONMENT => $resourceManager->get('*\Support\Factory\EnvironmentInfoFactory', ContainerInterface::class),
             HttpCargoInterface::METHOD => $_SERVER['REQUEST_METHOD'],
-            HttpCargoInterface::PARAMETERS => $resourceManager->clone('Base\Container\VariableContainer', VariableContainerInterface::class)->replace($_GET),
+            HttpCargoInterface::PARAMETERS => $resourceManager->clone('*\Base\Container\VariableContainer', VariableContainerInterface::class)->replace($_GET),
             HttpCargoInterface::PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
-            HttpCargoInterface::REQUEST_HEADERS => $resourceManager->clone('Base\Header\Headers', HeadersInterface::class, [
+            HttpCargoInterface::REQUEST_HEADERS => $resourceManager->clone('*\Base\Header\Headers', HeadersInterface::class, [
                 HeadersInterface::VALUES => $requestHeaders
             ]),
-            HttpCargoInterface::RESPONSE_HEADERS => $resourceManager->clone('Base\Header\Headers', HeadersInterface::class),
-            HttpCargoInterface::SERVER => $resourceManager->get('Support\Factory\ServerInfoFactory', ContainerInterface::class),
-            HttpCargoInterface::SESSION => $resourceManager->clone('Base\Session\SessionManager', SessionManagerInterface::class, [
+            HttpCargoInterface::RESPONSE_HEADERS => $resourceManager->clone('*\Base\Header\Headers', HeadersInterface::class),
+            HttpCargoInterface::SERVER => $resourceManager->get('*\Support\Factory\ServerInfoFactory', ContainerInterface::class),
+            HttpCargoInterface::SESSION => $resourceManager->clone('*\Base\Session\SessionManager', SessionManagerInterface::class, [
                 SessionManagerInterface::COOKIE_MANAGER => $cookies
             ]),
-            HttpCargoInterface::URI => $resourceManager->clone('Base\Uri\Factory\EnvironmentUriFactory', UriInterface::class),
+            HttpCargoInterface::URI => $resourceManager->clone('*\Base\Uri\Factory\EnvironmentUriFactory', UriInterface::class),
         ] + $this->getContentOptions($resourceManager, $requestHeaders[Http::CONTENT_TYPE_HEADER] ?? 'text/html'));
     }
 
@@ -108,7 +108,7 @@ class HttpCargoFactory implements FactoryInterface
             ? Http::VERSION_1_0 : Http::VERSION_1_1;
     }
 
-    protected function processFiles(ResourceManagerInterface $resourceManager, $name, $type, $tempFilename, $error, $size)
+    protected function processFiles(ResourceManagerInterface $resourceManager, $name, $type, $tempFilename, $error, $size): ?array
     {
         // Items
         if (is_array($name)) {
@@ -124,7 +124,7 @@ class HttpCargoFactory implements FactoryInterface
         }
 
         if (is_uploaded_file($tempFilename)) {
-            return $resourceManager->clone('Base\Upload\UploadItem', UploadItemInterface::class, [
+            return $resourceManager->clone('*\Base\Upload\UploadItem', UploadItemInterface::class, [
                 UploadItemInterface::CLIENT_FILENAME => basename($name),
                 UploadItemInterface::CLIENT_MIME_TYPE => $type,
                 UploadItemInterface::TEMP_FILENAME => $tempFilename,
@@ -132,7 +132,5 @@ class HttpCargoFactory implements FactoryInterface
                 UploadItemInterface::SIZE => $size
             ]);
         }
-
-        return null;
     }
 }

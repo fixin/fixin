@@ -9,7 +9,7 @@
 
 namespace Fixin\View\Helper;
 
-class EscapeJs extends EscapeHelper
+class EscapeJs extends AbstractEscapeHelper
 {
     public function escape($value): string
     {

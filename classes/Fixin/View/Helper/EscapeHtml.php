@@ -9,7 +9,7 @@
 
 namespace Fixin\View\Helper;
 
-class EscapeHtml extends EscapeHelper
+class EscapeHtml extends AbstractEscapeHelper
 {
     public function escape($value): string
     {

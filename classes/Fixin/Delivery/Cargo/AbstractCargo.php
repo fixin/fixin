@@ -12,7 +12,7 @@ namespace Fixin\Delivery\Cargo;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Types;
 
-abstract class CargoBase extends Prototype implements CargoInterface
+abstract class AbstractCargo extends Prototype implements CargoInterface
 {
     protected const
         THIS_SETS = [

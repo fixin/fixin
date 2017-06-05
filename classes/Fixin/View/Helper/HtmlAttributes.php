@@ -12,7 +12,7 @@ namespace Fixin\View\Helper;
 use Fixin\Base\Escaper\EscaperInterface;
 use Fixin\Resource\ResourceManagerInterface;
 
-class HtmlAttributes extends Helper
+class HtmlAttributes extends AbstractHelper
 {
     /**
      * @var EscaperInterface
@@ -23,7 +23,7 @@ class HtmlAttributes extends Helper
     {
         parent::__construct($resourceManager, $options, $name);
 
-        $this->escaper = $resourceManager->get('Base\Escaper\Escaper', EscaperInterface::class);
+        $this->escaper = $resourceManager->get('*\Base\Escaper\Escaper', EscaperInterface::class);
     }
 
     /**

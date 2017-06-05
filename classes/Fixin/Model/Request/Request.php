@@ -26,12 +26,12 @@ class Request extends Prototype implements RequestInterface
 
     protected const
         COUNT_MASK = 'COUNT(%s)',
-        JOIN_PROTOTYPE = 'Model\Request\Join',
+        JOIN_PROTOTYPE = '*\Model\Request\Join',
         THIS_SETS = [
             self::REPOSITORY => RepositoryInterface::class
         ],
-        UNION_PROTOTYPE = 'Model\Request\Union',
-        WHERE_PROTOTYPE = 'Model\Request\Where\Where';
+        UNION_PROTOTYPE = '*\Model\Request\Union',
+        WHERE_PROTOTYPE = '*\Model\Request\Where\Where';
 
     /**
      * @var string

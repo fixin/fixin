@@ -13,7 +13,7 @@ use Fixin\Base\Json\Json;
 use Fixin\Base\Json\JsonInterface;
 use Fixin\View\ViewInterface;
 
-class JsonEngine extends Engine
+class JsonEngine extends AbstractEngine
 {
     protected const
         CONTENT_TYPE = 'application/json';
@@ -25,7 +25,7 @@ class JsonEngine extends Engine
 
     public function render(ViewInterface $view): string
     {
-        $json = $this->json ?? ($this->json = $this->resourceManager->get('Base\Json\Json', JsonInterface::class));
+        $json = $this->json ?? ($this->json = $this->resourceManager->get('*\Base\Json\Json', JsonInterface::class));
         $result = [];
 
         // Children

@@ -27,14 +27,14 @@ class Where extends Prototype implements WhereInterface
     use DebugDescriptionTrait;
 
     protected const
-        BETWEEN_TAG_PROTOTYPE = 'Model\Request\Where\Tag\BetweenTag',
-        COMPARE_TAG_PROTOTYPE = 'Model\Request\Where\Tag\CompareTag',
-        EXISTS_TAG_PROTOTYPE = 'Model\Request\Where\Tag\ExistsTag',
-        EXPRESSION_PROTOTYPE = 'Model\Request\Expression',
-        IN_TAG_PROTOTYPE = 'Model\Request\Where\Tag\InTag',
-        NULL_TAG_PROTOTYPE = 'Model\Request\Where\Tag\NullTag',
-        WHERE_PROTOTYPE = 'Model\Request\Where\Where',
-        WHERE_TAG_PROTOTYPE = 'Model\Request\Where\Tag\WhereTag';
+        BETWEEN_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\BetweenTag',
+        COMPARE_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\CompareTag',
+        EXISTS_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\ExistsTag',
+        EXPRESSION_PROTOTYPE = '*\Model\Request\Expression',
+        IN_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\InTag',
+        NULL_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\NullTag',
+        WHERE_PROTOTYPE = '*\Model\Request\Where\Where',
+        WHERE_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\WhereTag';
 
     /**
      * @var TagInterface[]

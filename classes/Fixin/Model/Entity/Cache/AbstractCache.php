@@ -13,7 +13,7 @@ use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\Prototype;
 
-abstract class Cache extends Prototype implements CacheInterface
+abstract class AbstractCache extends Prototype implements CacheInterface
 {
     protected const
         THIS_SETS = [

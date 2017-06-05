@@ -17,14 +17,15 @@ use Fixin\View\Engine\EngineInterface;
 class View extends Prototype implements ViewInterface
 {
     protected const
-        DEFAULT_ENGINE = 'View\Engine\JsonEngine',
+        DEFAULT_ENGINE = '*\View\Engine\JsonEngine',
         FILE_RESOLVER_NOT_SET_EXCEPTION = 'File resolver not set',
         UNABLE_TO_RESOLVE_TEMPLATE_EXCEPTION = "Unable to resolve template '%s'",
         THIS_SETS = [
             self::ENGINE => [self::LAZY_LOADING => EngineInterface::class, Types::NULL],
             self::FILE_RESOLVER => [self::LAZY_LOADING => FileResolverInterface::class, Types::NULL],
             self::POSTFIX_TO_ENGINE_MAP => Types::ARRAY,
-            self::TEMPLATE => self::USING_SETTER
+            self::TEMPLATE => self::USING_SETTER,
+            self::VARIABLES => Types::ARRAY,
         ];
 
     /**
@@ -46,8 +47,8 @@ class View extends Prototype implements ViewInterface
      * @var array
      */
     protected $postfixToEngineMap = [
-        '.php' => 'View\Engine\PhpEngine',
-        '.phtml' => 'View\Engine\PhpEngine'
+        '.php' => '*\View\Engine\PhpEngine',
+        '.phtml' => '*\View\Engine\PhpEngine'
     ];
 
     /**

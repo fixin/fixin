@@ -27,8 +27,8 @@ class PdoStorage extends Resource implements StorageInterface
 {
     protected const
         CONNECTION_ERROR_EXCEPTION = "Connection error: %s",
-        GRAMMAR_CLASS_MASK = 'Model\Storage\Grammar\%sGrammar',
-        STORAGE_RESULT_PROTOTYPE = 'Model\Storage\Pdo\PdoStorageResult',
+        GRAMMAR_CLASS_MASK = '*\Model\Storage\Grammar\%sGrammar',
+        STORAGE_RESULT_PROTOTYPE = '*\Model\Storage\Pdo\PdoStorageResult',
         THIS_SETS = [
             self::DSN => Types::STRING,
             self::PASSWORD => [Types::STRING, Types::NULL],
