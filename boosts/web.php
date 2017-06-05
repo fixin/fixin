@@ -16,10 +16,13 @@ return (function(?array $config) {
     }
 
     // Autoloader
-    $classesPath = "{$fixinPath}/classes";
+    if (!spl_autoload_functions()) {
+        $classesPath = "{$fixinPath}/classes";
 
-    require_once "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
-    new \Fixin\Base\Autoloader\SimpleAutoloader($config['loader']['prefixes'] ?? ['Fixin' => "{$classesPath}/Fixin"]);
+        require_once "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
+        new \Fixin\Base\Autoloader\SimpleAutoloader($config['loader']['prefixes'] ?? ['Fixin' => "{$classesPath}/Fixin"]);
+
+    }
 
     // Application
     return new \Fixin\Application\Application($config);

@@ -33,7 +33,7 @@ class SimpleAutoloader implements AutoloaderInterface
         $prefix = strtr(trim($prefix, '\\'), '\\', DIRECTORY_SEPARATOR);
 
         // Add normalized path(s)
-        foreach (is_array($path) ? $path : [$path] as $item) {
+        foreach ((array) $path as $item) {
             $this->paths[$prefix][] = rtrim($item, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         }
     }
@@ -63,6 +63,20 @@ class SimpleAutoloader implements AutoloaderInterface
                 }
 
                 return;
+            }
+        }
+
+        // Fallback
+        if (isset($this->paths[''])) {
+            $relativeName = $class . '.php';
+
+            // Search through the paths
+            foreach ($this->paths[''] as $path) {
+                if (file_exists($filename = $path . $relativeName)) {
+                    fixinBaseAutoloaderEncapsulatedInclude($filename);
+
+                    return;
+                }
             }
         }
     }
