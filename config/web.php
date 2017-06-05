@@ -43,6 +43,9 @@ return [
 
             // By name
             'cargo' => '*\Delivery\Cargo\Factory\RuntimeCargoFactory',
+            'config' => [
+                'class' => '*\Base\Container\Container',
+            ],
             'dbStorage' => [
                 'class' => '*\Model\Storage\Pdo\PdoStorage',
             ],
