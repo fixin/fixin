@@ -13,7 +13,7 @@ use Fixin\Resource\ResourceManagerInterface;
 use Fixin\View\ViewInterface;
 use Throwable;
 
-class PhpEngine extends Engine
+class PhpEngine extends AbstractEngine
 {
     protected const
         NO_TEMPLATE = 'No template';

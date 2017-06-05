@@ -12,7 +12,7 @@ namespace Fixin\View\Helper;
 use Fixin\Base\Escaper\EscaperInterface;
 use Fixin\Resource\ResourceManagerInterface;
 
-abstract class EscapeHelper extends Helper
+abstract class AbstractEscapeHelper extends AbstractHelper
 {
     /**
      * @var EscaperInterface

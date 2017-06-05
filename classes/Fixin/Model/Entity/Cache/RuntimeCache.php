@@ -12,7 +12,7 @@ namespace Fixin\Model\Entity\Cache;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Storage\StorageResultInterface;
 
-class RuntimeCache extends Cache
+class RuntimeCache extends AbstractCache
 {
     // TODO add expire after time
 

@@ -11,7 +11,7 @@ namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Support\Types;
 
-abstract class IdentifierTag extends Tag
+abstract class AbstractIdentifierTag extends AbstractTag
 {
     protected const
         THIS_SETS = parent::THIS_SETS + [

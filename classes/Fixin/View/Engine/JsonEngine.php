@@ -13,7 +13,7 @@ use Fixin\Base\Json\Json;
 use Fixin\Base\Json\JsonInterface;
 use Fixin\View\ViewInterface;
 
-class JsonEngine extends Engine
+class JsonEngine extends AbstractEngine
 {
     protected const
         CONTENT_TYPE = 'application/json';

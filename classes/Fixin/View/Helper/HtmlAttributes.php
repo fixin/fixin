@@ -12,7 +12,7 @@ namespace Fixin\View\Helper;
 use Fixin\Base\Escaper\EscaperInterface;
 use Fixin\Resource\ResourceManagerInterface;
 
-class HtmlAttributes extends Helper
+class HtmlAttributes extends AbstractHelper
 {
     /**
      * @var EscaperInterface

@@ -26,7 +26,7 @@ use Fixin\Model\Request\Where\WhereInterface;
 use Fixin\Resource\Resource;
 use Fixin\Support\Numbers;
 
-abstract class Grammar extends Resource implements GrammarInterface
+abstract class AbstractGrammar extends Resource implements GrammarInterface
 {
     protected const
         ALIAS_MASK = '%s AS %s',

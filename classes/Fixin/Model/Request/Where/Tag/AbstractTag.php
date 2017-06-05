@@ -13,7 +13,7 @@ use Fixin\Resource\Prototype;
 use Fixin\Support\DebugDescriptionTrait;
 use Fixin\Support\Types;
 
-abstract class Tag extends Prototype implements TagInterface
+abstract class AbstractTag extends Prototype implements TagInterface
 {
     use DebugDescriptionTrait;
 

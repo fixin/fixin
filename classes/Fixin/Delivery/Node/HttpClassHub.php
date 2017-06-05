@@ -16,7 +16,7 @@ use Fixin\Delivery\Node\Exception;
 use Fixin\Support\Strings;
 use Fixin\Support\Types;
 
-class HttpClassHub extends HttpHub
+class HttpClassHub extends AbstractHttpHub
 {
     protected const
         CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/',

@@ -11,11 +11,10 @@ namespace Fixin\Controller;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
-use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 use Fixin\Support\Strings;
 
-abstract class HttpActionController extends Resource implements ControllerInterface
+abstract class HttpActionController extends AbstractController
 {
     protected const
         ACTION_PARAMETER = 'action',

@@ -11,7 +11,7 @@ namespace Fixin\Base\Validator;
 
 use Fixin\Resource\Prototype;
 
-abstract class Validator extends Prototype implements ValidatorInterface
+abstract class AbstractValidator extends Prototype implements ValidatorInterface
 {
     /**
      * @var string[]

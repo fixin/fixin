@@ -13,7 +13,7 @@ use Fixin\Resource\Resource;
 use Fixin\View\Helper\HelperInterface;
 use Fixin\View\ViewInterface;
 
-abstract class Engine extends Resource implements EngineInterface
+abstract class AbstractEngine extends Resource implements EngineInterface
 {
     protected const
         CONTENT_TYPE = 'text/html',

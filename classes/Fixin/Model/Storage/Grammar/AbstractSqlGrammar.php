@@ -15,7 +15,7 @@ use Fixin\Model\Request\JoinInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\UnionInterface;
 
-abstract class SqlGrammar extends Grammar
+abstract class AbstractSqlGrammar extends AbstractGrammar
 {
     protected const
         ALL_COLUMNS = '*',

@@ -9,7 +9,7 @@
 
 namespace Fixin\View\Helper;
 
-class JsVariable extends EscapeHelper
+class JsVariable extends AbstractEscapeHelper
 {
     public function escape($value): string
     {

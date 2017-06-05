@@ -12,7 +12,7 @@ namespace Fixin\Delivery\Node;
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
 
-class HttpNotFoundFallback extends HttpHub
+class HttpNotFoundFallback extends AbstractHttpHub
 {
     protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface
     {
