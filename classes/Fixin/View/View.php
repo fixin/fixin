@@ -24,7 +24,8 @@ class View extends Prototype implements ViewInterface
             self::ENGINE => [self::LAZY_LOADING => EngineInterface::class, Types::NULL],
             self::FILE_RESOLVER => [self::LAZY_LOADING => FileResolverInterface::class, Types::NULL],
             self::POSTFIX_TO_ENGINE_MAP => Types::ARRAY,
-            self::TEMPLATE => self::USING_SETTER
+            self::TEMPLATE => self::USING_SETTER,
+            self::VARIABLES => Types::ARRAY,
         ];
 
     /**

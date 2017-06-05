@@ -17,7 +17,8 @@ interface ViewInterface extends PrototypeInterface
         ENGINE = 'engine',
         FILE_RESOLVER = 'fileResolver',
         POSTFIX_TO_ENGINE_MAP = 'postfixToEngineMap',
-        TEMPLATE = 'template';
+        TEMPLATE = 'template',
+        VARIABLES = 'variables';
 
     /**
      * @return $this
