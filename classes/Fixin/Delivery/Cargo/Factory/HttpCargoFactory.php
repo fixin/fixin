@@ -108,7 +108,7 @@ class HttpCargoFactory implements FactoryInterface
             ? Http::VERSION_1_0 : Http::VERSION_1_1;
     }
 
-    protected function processFiles(ResourceManagerInterface $resourceManager, $name, $type, $tempFilename, $error, $size)
+    protected function processFiles(ResourceManagerInterface $resourceManager, $name, $type, $tempFilename, $error, $size): ?array
     {
         // Items
         if (is_array($name)) {
@@ -132,7 +132,5 @@ class HttpCargoFactory implements FactoryInterface
                 UploadItemInterface::SIZE => $size
             ]);
         }
-
-        return null;
     }
 }
