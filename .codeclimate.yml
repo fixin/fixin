@@ -11,6 +11,5 @@ engines:
 ratings:    
     paths:
     - classes/**
-    - cheats/**
+    - boosts/**
     - config/**
-    - tools/**
