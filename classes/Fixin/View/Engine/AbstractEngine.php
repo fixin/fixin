@@ -13,7 +13,7 @@ use Fixin\Resource\Resource;
 use Fixin\View\Helper\HelperInterface;
 use Fixin\View\ViewInterface;
 
-abstract class Engine extends Resource implements EngineInterface
+abstract class AbstractEngine extends Resource implements EngineInterface
 {
     protected const
         CONTENT_TYPE = 'text/html',
@@ -44,7 +44,7 @@ abstract class Engine extends Resource implements EngineInterface
     protected function produceHelper(string $name): HelperInterface
     {
         if (preg_match(static::HELPER_NAME_PATTERN, $name)) {
-            return $this->resourceManager->clone('View\Helper\\' . ucfirst($name), HelperInterface::class, [
+            return $this->resourceManager->clone('*\View\Helper\\' . ucfirst($name), HelperInterface::class, [
                 HelperInterface::ENGINE => $this
             ]);
         }

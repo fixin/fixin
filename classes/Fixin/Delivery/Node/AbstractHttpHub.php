@@ -14,7 +14,7 @@ use Fixin\Delivery\Cargo\HttpCargoInterface;
 use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
-abstract class HttpHub extends Resource implements NodeInterface
+abstract class AbstractHttpHub extends Resource implements NodeInterface
 {
     protected const
         NOT_FOUND_CONTENT = 'The requested URL was not found.',

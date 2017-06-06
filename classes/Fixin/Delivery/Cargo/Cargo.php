@@ -9,7 +9,7 @@
 
 namespace Fixin\Delivery\Cargo;
 
-class Cargo extends CargoBase
+class Cargo extends AbstractCargo
 {
     protected const
         THIS_SETS = parent::THIS_SETS + [

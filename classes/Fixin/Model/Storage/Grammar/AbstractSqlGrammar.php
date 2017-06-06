@@ -15,7 +15,7 @@ use Fixin\Model\Request\JoinInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\UnionInterface;
 
-abstract class SqlGrammar extends Grammar
+abstract class AbstractSqlGrammar extends AbstractGrammar
 {
     protected const
         ALL_COLUMNS = '*',
@@ -37,7 +37,7 @@ abstract class SqlGrammar extends Grammar
         LIMIT = 'limit',
         ORDER_BY = 'orderBy',
         SELECT_STATEMENT = [false => 'SELECT', true => 'SELECT DISTINCT'],
-        SENTENCE_PROTOTYPE = 'Base\Sentence\Sentence',
+        SENTENCE_PROTOTYPE = '*\Base\Sentence\Sentence',
         SET_CLAUSE = 'SET',
         UNION_CLAUSE = [UnionInterface::TYPE_NORMAL => 'UNION', UnionInterface::TYPE_ALL => 'UNION ALL'],
         UNION_FIRST_MASK = '(%s)' . PHP_EOL,

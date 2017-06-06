@@ -11,10 +11,9 @@ namespace Fixin\Controller;
 
 use Fixin\Delivery\Cargo\CargoInterface;
 use Fixin\Delivery\Cargo\HttpCargoInterface;
-use Fixin\Resource\Resource;
 use Fixin\Support\Http;
 
-abstract class HttpRestfulController extends Resource implements ControllerInterface
+abstract class HttpRestfulController extends AbstractController
 {
     protected const
         CONTENT_METHOD_NOT_ALLOWED = [

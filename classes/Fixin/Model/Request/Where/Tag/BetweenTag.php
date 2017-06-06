@@ -11,7 +11,7 @@ namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Support\Types;
 
-class BetweenTag extends IdentifierTag
+class BetweenTag extends AbstractIdentifierTag
 {
     protected const
         THIS_SETS = parent::THIS_SETS + [

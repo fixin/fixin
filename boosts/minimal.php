@@ -12,16 +12,15 @@ return (function(?array $config) {
 
     // Config
     if (!isset($config)) {
-        $config = require "{$fixinPath}/config/web.php";
+        $config = require "{$fixinPath}/config/minimal.php";
     }
 
     // Autoloader
     $classesPath = "{$fixinPath}/classes";
 
     require_once "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
-    new \Fixin\Base\Autoloader\SimpleAutoloader($config['loader']['prefixes'] ?? ['Fixin' => "{$classesPath}/Fixin"]);
+    new \Fixin\Base\Autoloader\SimpleAutoloader($config['loader']['prefixes'] ?? ['Fixin' => "{$classesPath}/Fixin", 'FixinTools' => "{$fixinPath}/tools/classes/FixinTools"]);
 
-    // Application
-    return new \Fixin\Application\Application($config);
-
+    // Resource Manager
+    return new \Fixin\Resource\ResourceManager($config['resourceManager']);
 })($config ?? null);

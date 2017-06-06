@@ -19,7 +19,7 @@ use Fixin\Support\DebugDescriptionTrait;
 use Fixin\Support\Http;
 use Fixin\Support\Types;
 
-class HttpCargo extends CargoBase implements HttpCargoInterface
+class HttpCargo extends AbstractCargo implements HttpCargoInterface
 {
     use DebugDescriptionTrait;
 

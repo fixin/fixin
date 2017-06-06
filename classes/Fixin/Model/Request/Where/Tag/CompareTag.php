@@ -12,7 +12,7 @@ namespace Fixin\Model\Request\Where\Tag;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Support\Types;
 
-class CompareTag extends Tag {
+class CompareTag extends AbstractTag {
 
     protected const
         THIS_SETS = parent::THIS_SETS + [

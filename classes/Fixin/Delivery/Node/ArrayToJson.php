@@ -22,7 +22,7 @@ class ArrayToJson extends Resource implements NodeInterface
     {
         if (is_array($cargo->getContent())) {
             $cargo
-                ->setContent($this->resourceManager->get('Base\Json\Json', JsonInterface::class)->encode($cargo->getContent()))
+                ->setContent($this->resourceManager->get('*\Base\Json\Json', JsonInterface::class)->encode($cargo->getContent()))
                 ->setContentType(static::CONTENT_TYPE);
         }
 

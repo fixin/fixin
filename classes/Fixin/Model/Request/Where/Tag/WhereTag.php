@@ -11,7 +11,7 @@ namespace Fixin\Model\Request\Where\Tag;
 
 use Fixin\Model\Request\Where\WhereInterface;
 
-class WhereTag extends Tag
+class WhereTag extends AbstractTag
 {
     protected const
         THIS_SETS = parent::THIS_SETS + [

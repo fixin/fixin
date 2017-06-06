@@ -44,7 +44,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
     protected $cookieName = 'session';
 
     /**
-     * @var SessionEntity
+     * @var SessionEntityInterface
      */
     protected $entity;
 
@@ -94,7 +94,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
     public function deleteGarbageSessions(int $lifetime): int
     {
         $request = $this->getRepository()->createRequest();
-        $request->getWhere()->compare(SessionEntity::ACCESS_TIME, '<', new DateTimeImmutable('+' . $lifetime . ' MINUTES'));
+        $request->getWhere()->compare(SessionEntityInterface::ACCESS_TIME, '<', new DateTimeImmutable('+' . $lifetime . ' MINUTES'));
 
         return $request->delete();
     }
@@ -116,7 +116,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
         // New area
         $this->modified = true;
 
-        return $this->areas[$name] = $this->resourceManager->clone('Base\Session\SessionArea', SessionAreaInterface::class);
+        return $this->areas[$name] = $this->resourceManager->clone('*\Base\Session\SessionArea', SessionAreaInterface::class);
     }
 
     protected function getCookieManager(): CookieManagerInterface
@@ -161,7 +161,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
         return false;
     }
 
-    protected function loadEntity(SessionEntity $entity): void
+    protected function loadEntity(SessionEntityInterface $entity): void
     {
         $this->entity = $entity;
         $this->areas = $entity->getData();
@@ -172,8 +172,8 @@ class SessionManager extends Prototype implements SessionManagerInterface
         }
 
         $request = $this->getRepository()->createRequest();
-        $request->getWhere()->compare(SessionEntity::SESSION_ID, '=', $this->sessionId);
-        $request->update([SessionEntity::ACCESS_TIME => new DateTimeImmutable()]);
+        $request->getWhere()->compare(SessionEntityInterface::SESSION_ID, '=', $this->sessionId);
+        $request->update([SessionEntityInterface::ACCESS_TIME => new DateTimeImmutable()]);
     }
 
     /**
@@ -257,13 +257,13 @@ class SessionManager extends Prototype implements SessionManagerInterface
     protected function startWith(string $sessionId): bool
     {
         $request = $this->getRepository()->createRequest();
-        $where = $request->getWhere()->compare(SessionEntity::SESSION_ID, '=', $sessionId);
+        $where = $request->getWhere()->compare(SessionEntityInterface::SESSION_ID, '=', $sessionId);
 
         if ($this->lifetime) {
-            $where->compare(SessionEntity::ACCESS_TIME, '>=', new DateTimeImmutable('+' . $this->lifetime . ' MINUTES'));
+            $where->compare(SessionEntityInterface::ACCESS_TIME, '>=', new DateTimeImmutable('+' . $this->lifetime . ' MINUTES'));
         }
 
-        /** @var SessionEntity $entity */
+        /** @var SessionEntityInterface $entity */
         if ($entity = $request->fetchFirst()) {
             $data = $entity->getData();
             if (isset($data[static::DATA_REGENERATED])) {

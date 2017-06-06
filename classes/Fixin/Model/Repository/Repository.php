@@ -25,16 +25,16 @@ use Fixin\Support\Types;
 class Repository extends Resource implements RepositoryInterface
 {
     protected const
-        ENTITY_ID_PROTOTYPE = 'Model\Entity\EntityId',
+        ENTITY_ID_PROTOTYPE = '*\Model\Entity\EntityId',
         ENTITY_REFRESH_FAILURE_EXCEPTION = 'Entity refresh error',
-        ENTITY_SET_PROTOTYPE = 'Model\Entity\EntitySet',
-        EXPRESSION_PROTOTYPE = 'Model\Request\Expression',
+        ENTITY_SET_PROTOTYPE = '*\Model\Entity\EntitySet',
+        EXPRESSION_PROTOTYPE = '*\Model\Request\Expression',
         INVALID_ID_EXCEPTION = "Invalid ID",
         INVALID_NAME_EXCEPTION = "Invalid name '%s'",
         INVALID_REQUEST_EXCEPTION = "Invalid request, repository mismatch '%s' '%s'",
         NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_]*$/',
         NOT_STORED_ENTITY_EXCEPTION = 'Not stored entity',
-        REQUEST_PROTOTYPE = 'Model\Request\Request',
+        REQUEST_PROTOTYPE = '*\Model\Request\Request',
         THIS_SETS = [
             self::AUTO_INCREMENT_COLUMN => [Types::STRING, Types::NULL],
             self::ENTITY_CACHE => [self::LAZY_LOADING => CacheInterface::class],

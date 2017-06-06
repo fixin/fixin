@@ -19,36 +19,39 @@ return [
 
         'definitions' => [
             // By class
-            'Base\Session\SessionManager' => [
+            '*\Base\Session\SessionManager' => [
                 'options' => [
-                    'repository' => 'Base\Session\SessionRepository'
+                    'repository' => '*\Base\Session\SessionRepository'
                 ]
             ],
-            'Base\Session\SessionRepository' => [
+            '*\Base\Session\SessionRepository' => [
                 'options' => [
                     'name' => 'system__sessions',
                     'storage' => 'dbStorage',
-                    'entityPrototype' => 'Base\Session\SessionEntity',
-                    'entityCache' => 'Model\Entity\Cache\RuntimeCache'
+                    'entityPrototype' => '*\Base\Session\SessionEntity',
+                    'entityCache' => '*\Model\Entity\Cache\RuntimeCache'
                 ]
             ],
-            'Delivery\Node\HttpRouterHub' => [
-                'class' => 'Delivery\Node\Factory\HttpRouterHubFactory'
+            '*\Delivery\Node\HttpRouterHub' => [
+                'class' => '*\Delivery\Node\Factory\HttpRouterHubFactory'
             ],
-            'View\View' => [
+            '*\View\View' => [
                 'options' => [
                     'fileResolver' => 'templateFileResolver',
                 ]
             ],
 
             // By name
-            'cargo' => 'Delivery\Cargo\Factory\RuntimeCargoFactory',
-            'dbStorage' => [
-                'class' => 'Model\Storage\Pdo\PdoStorage',
+            'cargo' => '*\Delivery\Cargo\Factory\RuntimeCargoFactory',
+            'config' => [
+                'class' => '*\Base\Container\Container',
             ],
-            'localFileSystem' => 'Base\FileSystem\Local',
+            'dbStorage' => [
+                'class' => '*\Model\Storage\Pdo\PdoStorage',
+            ],
+            'localFileSystem' => '*\Base\FileSystem\Local',
             'templateFileResolver' => [
-                'class' => 'Base\FileSystem\FileResolver',
+                'class' => '*\Base\FileSystem\FileResolver',
                 'options' => [
                     'defaultExtension' => '.phtml',
                     'fileSystem' => 'localFileSystem'
@@ -57,7 +60,7 @@ return [
 
             // Error route
             'errorRoute' => [
-                'class' => 'Delivery\Route\Route',
+                'class' => '*\Delivery\Route\Route',
                 'options' => [
                     'nodes' => [
                         'errorRoute.throwableToText',
@@ -67,17 +70,17 @@ return [
                 ]
             ],
             'errorRoute.layoutViewWrapper' => [
-                'class' => 'Delivery\Node\WrapInView',
+                'class' => '*\Delivery\Node\WrapInView',
                 'options' => [
                     'template' => 'layout/error.phtml',
                 ]
             ],
-            'errorRoute.throwableToText' => 'Delivery\Node\ThrowableToText',
-            'errorRoute.viewRender' => 'Delivery\Node\ViewRender',
+            'errorRoute.throwableToText' => '*\Delivery\Node\ThrowableToText',
+            'errorRoute.viewRender' => '*\Delivery\Node\ViewRender',
 
             // Main route
             'mainRoute' => [
-                'class' => 'Delivery\Route\Route',
+                'class' => '*\Delivery\Route\Route',
                 'options' => [
                     'nodes' => [
                         'mainRoute.jsonToArray',
@@ -91,36 +94,36 @@ return [
                     ]
                 ]
             ],
-            'mainRoute.arrayToJson' => 'Delivery\Node\ArrayToJson',
+            'mainRoute.arrayToJson' => '*\Delivery\Node\ArrayToJson',
             'mainRoute.controllerClassHub' => [
-                'class' => 'Delivery\Node\HttpClassHub',
+                'class' => '*\Delivery\Node\HttpClassHub',
                 'options' => [
                     'basePath' => '/',
-                    'classPrefix' => 'Controller',
+                    'classPrefix' => 'App\Controller',
                     'depth' => 2
                 ]
             ],
             'mainRoute.errorHub' => [
-                'class' => 'Delivery\Node\HttpErrorHub',
+                'class' => '*\Delivery\Node\HttpErrorHub',
                 'options' => [
                     'route' => 'errorRoute'
                 ]
             ],
-            'mainRoute.jsonToArray' => 'Delivery\Node\JsonToArray',
+            'mainRoute.jsonToArray' => '*\Delivery\Node\JsonToArray',
             'mainRoute.layoutViewWrapper' => [
-                'class' => 'Delivery\Node\WrapInView',
+                'class' => '*\Delivery\Node\WrapInView',
                 'options' => [
                     'template' => 'layout/default.phtml',
                 ]
             ],
-            'mainRoute.notFoundFallback' => 'Delivery\Node\HttpNotFoundFallback',
+            'mainRoute.notFoundFallback' => '*\Delivery\Node\HttpNotFoundFallback',
             'mainRoute.routerHub' => [
-                'class' => 'Delivery\Node\HttpRouterHub',
+                'class' => '*\Delivery\Node\HttpRouterHub',
                 'options' => [
                     'routes' => [
                         'index' => [
                             'uri' => '/',
-                            'handler' => 'Controller\Index'
+                            'handler' => 'App\Controller\Index'
                         ]
                     ],
                     'patterns' => [
@@ -128,12 +131,12 @@ return [
                     ]
                 ]
             ],
-            'mainRoute.viewRender' => 'Delivery\Node\ViewRender'
+            'mainRoute.viewRender' => '*\Delivery\Node\ViewRender'
         ],
 
         'abstractFactories' => [
-            'prefixFallback' => [
-                'class' => 'Fixin\Resource\AbstractFactory\PrefixFallbackFactory',
+            'namespaceFallback' => [
+                'class' => 'Fixin\Resource\AbstractFactory\NamespaceFallbackFactory',
                 'options' => [
                     'searchOrder' => ['Fixin']
                 ]

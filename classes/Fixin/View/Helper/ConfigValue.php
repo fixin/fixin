@@ -9,33 +9,30 @@
 
 namespace Fixin\View\Helper;
 
-use Fixin\Base\Json\JsonInterface;
+use Fixin\Base\Container\ContainerInterface;
 use Fixin\Resource\ResourceManagerInterface;
 
-class Json extends AbstractHelper
+class ConfigValue extends AbstractHelper
 {
     /**
-     * @var JsonInterface
+     * @var ContainerInterface
      */
-    protected $json;
+    protected $config;
 
     public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
     {
         parent::__construct($resourceManager, $options, $name);
 
-        $this->json = $resourceManager->get('*\Base\Json\Json', JsonInterface::class);
+        $this->config = $resourceManager->get('config', ContainerInterface::class);
     }
 
-    /**
-     * Invoke encode()
-     */
-    public function __invoke($value): string
+    public function __invoke($value)
     {
-        return $this->encode($value);
+        return $this->get($value);
     }
 
-    public function encode($value): string
+    public function get($value)
     {
-        return $this->json->encode($value);
+        return $this->config->get($value);
     }
 }

@@ -12,7 +12,7 @@ namespace Fixin\View\Helper;
 use Fixin\Resource\Prototype;
 use Fixin\View\Engine\EngineInterface;
 
-abstract class Helper extends Prototype implements HelperInterface
+abstract class AbstractHelper extends Prototype implements HelperInterface
 {
     protected const
         THIS_SETS = [
