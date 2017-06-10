@@ -19,7 +19,7 @@ return (function(?array $config) {
     $classesPath = "{$fixinPath}/classes";
 
     require_once "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
-    new \Fixin\Base\Autoloader\SimpleAutoloader($config['loader']['prefixes'] ?? ['Fixin' => "{$classesPath}/Fixin", 'FixinTools' => "{$fixinPath}/tools/classes/FixinTools"]);
+    new \Fixin\Base\Autoloader\SimpleAutoloader($config['loader']['prefixes'] ?? ['Fixin' => "{$classesPath}/Fixin"]);
 
     // Resource Manager
     return new \Fixin\Resource\ResourceManager($config['resourceManager']);
