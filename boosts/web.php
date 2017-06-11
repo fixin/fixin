@@ -24,6 +24,6 @@ return (function(?array $config) {
     }
 
     // Application
-    return new \Fixin\Application\Application($config);
+    return new \Fixin\Application\Application($config, $config['resourceManager']['definitions']['comfig']['options']['development'] ?? false);
 
 })($config ?? null);
