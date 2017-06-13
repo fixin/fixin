@@ -21,10 +21,9 @@ return (function(?array $config) {
 
         require_once "{$classesPath}/Fixin/Base/Autoloader/SimpleAutoloader.php";
         new \Fixin\Base\Autoloader\SimpleAutoloader($config['loader']['prefixes'] ?? ['Fixin' => "{$classesPath}/Fixin"]);
-
     }
 
     // Application
-    return new \Fixin\Application\Application($config);
+    return new \Fixin\Application\Application($config, $config['resourceManager']['definitions']['comfig']['options']['development'] ?? false);
 
 })($config ?? null);

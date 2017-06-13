@@ -38,12 +38,19 @@ class Application implements ApplicationInterface
     protected $config;
 
     /**
+     * @var bool
+     */
+    protected $developmentMode;
+
+    /**
      * @var ResourceManagerInterface
      */
     protected $resourceManager;
 
-    public function __construct(array $config)
+    public function __construct(array $config, bool  $developmentMode = false)
     {
+        $this->developmentMode = $developmentMode;
+
         // Config
         $this->config = $config[static::APPLICATION_ROOT] ?? [];
 
@@ -81,8 +88,12 @@ class Application implements ApplicationInterface
         header(static::INTERNAL_SERVER_ERROR_HEADER, true, static::INTERNAL_SERVER_ERROR_CODE);
         echo static::INTERNAL_SERVER_ERROR_HTML;
 
-        // TODO production mode?
-        echo $text;
+        if ($this->developmentMode) {
+            echo $text;
+            exit;
+        }
+
+        error_log($text);
         exit;
     }
 
