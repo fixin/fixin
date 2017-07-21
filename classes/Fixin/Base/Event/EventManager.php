@@ -18,7 +18,7 @@ class EventManager extends Prototype implements EventManagerInterface
         ADDED_LISTENER_EXCEPTION = "Added listener",
         EXISTING_EVENT_EXCEPTION = "Existing event '%s'",
         NON_EXISTING_EVENT_EXCEPTION = "Non-existing event",
-        UNKNOWN_LISTENER_EXCEPTION = "Unknown exception",
+        UNKNOWN_LISTENER_EXCEPTION = "Unknown listener",
         UNREGISTERED_EVENT_EXCEPTION = "Unregistered event '%s'";
 
     /**
@@ -41,18 +41,18 @@ class EventManager extends Prototype implements EventManagerInterface
      */
     protected $tokens = [];
 
-    protected function notify(string $name, int $token, ?$data): void
+    protected function notify(string $name, int $token, $data): void
     {
-        if ($this->tokens[$name] ?? null === $token) {
+        if ($this->tokens[$name] ?? null !== $token) {
             throw new Exception\UnregisteredEventException(sprintf(static::UNREGISTERED_EVENT_EXCEPTION, $name));
         }
 
-        $event = $data instanceof EventInterface ? $data : $this->resourceManager->clone('Base\Event\Event', EventInterface::class, [
+        $event = $data instanceof EventInterface ? $data : $this->resourceManager->clone('*\Base\Event\Event', EventInterface::class, [
             EventInterface::NAME => $name,
             EventInterface::CONTEXT => $data
         ]);
 
-        foreach ($this->listeners as $listener) {
+        foreach ($this->listeners[$name] as $listener) {
             $listener($event);
         }
     }
@@ -66,7 +66,7 @@ class EventManager extends Prototype implements EventManagerInterface
         $token =
         $this->tokens[$name] = $this->tokenCounter++;
 
-        return function ($data = null) use ($name, $token) {
+        return $this->events[$name] = function ($data = null) use ($name, $token) {
             $this->notify($name, $token, $data);
         };
     }
@@ -86,6 +86,8 @@ class EventManager extends Prototype implements EventManagerInterface
     {
         if (false !== $name = array_search($callback, $this->events)) {
             unset($this->events[$name], $this->tokens[$name]);
+
+            return $this;
         }
 
         throw new NonExistingEventException(static::NON_EXISTING_EVENT_EXCEPTION);
@@ -94,7 +96,7 @@ class EventManager extends Prototype implements EventManagerInterface
     public function unregisterListener(string $name, callable $listener): EventManagerInterface
     {
         if (isset($this->listeners[$name]) && false !== $index = array_search($listener, $this->listeners[$name])) {
-            unset($this->listeners[$index]);
+            unset($this->listeners[$name][$index]);
 
             return $this;
         }
