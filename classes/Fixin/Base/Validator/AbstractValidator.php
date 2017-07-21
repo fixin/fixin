@@ -23,9 +23,9 @@ abstract class AbstractValidator extends Prototype implements ValidatorInterface
      */
     protected $errors = [];
 
-    public function __invoke($value): bool
+    public function __invoke($value, $context = null): bool
     {
-        return $this->isValid($value);
+        return $this->isValid($value, $context);
     }
 
     protected function addError(string $error): void
@@ -38,7 +38,7 @@ abstract class AbstractValidator extends Prototype implements ValidatorInterface
         return $this->errors;
     }
 
-    public function isValid($value): bool
+    public function isValid($value, $context = null): bool
     {
         $this->errors = [];
 
