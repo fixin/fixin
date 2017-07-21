@@ -15,9 +15,10 @@ use Fixin\Resource\Prototype;
 class EventManager extends Prototype implements EventManagerInterface
 {
     protected const
+        ADDED_LISTENER_EXCEPTION = "Added listener",
         EXISTING_EVENT_EXCEPTION = "Existing event '%s'",
         NON_EXISTING_EVENT_EXCEPTION = "Non-existing event",
-        NON_EXISTING_NAMED_EVENT_EXCEPTION = "Non-existing event '%s'",
+        UNKNOWN_LISTENER_EXCEPTION = "Unknown exception",
         UNREGISTERED_EVENT_EXCEPTION = "Unregistered event '%s'";
 
     /**
@@ -40,7 +41,7 @@ class EventManager extends Prototype implements EventManagerInterface
      */
     protected $tokens = [];
 
-    protected function notify(string $name, int $token, $data): void
+    protected function notify(string $name, int $token, ?$data): void
     {
         if ($this->tokens[$name] ?? null === $token) {
             throw new Exception\UnregisteredEventException(sprintf(static::UNREGISTERED_EVENT_EXCEPTION, $name));
@@ -65,16 +66,20 @@ class EventManager extends Prototype implements EventManagerInterface
         $token =
         $this->tokens[$name] = $this->tokenCounter++;
 
-        return $this->events[$name] = function ($data) use ($name, $token) {
+        return function ($data = null) use ($name, $token) {
             $this->notify($name, $token, $data);
         };
     }
 
     public function registerListener(string $name, callable $listener): EventManagerInterface
     {
-        $this->listeners[$name][] = $listener;
+        if (!isset($this->listeners[$name]) || false === array_search($listener, $this->listeners[$name])) {
+            $this->listeners[$name][] = $listener;
 
-        return $this;
+            return $this;
+        }
+
+        throw new Exception\AddedListenerException(static::ADDED_LISTENER_EXCEPTION);
     }
 
     public function unregisterEvent(callable $callback): EventManagerInterface
@@ -94,6 +99,17 @@ class EventManager extends Prototype implements EventManagerInterface
             return $this;
         }
 
-        throw new NonExistingEventException(sprintf(static::NON_EXISTING_NAMED_EVENT_EXCEPTION, $name));
+        throw new Exception\UnknownListenerException(static::UNKNOWN_LISTENER_EXCEPTION);
+    }
+
+    public function unregisterListenerFromAll(callable $listener): EventManagerInterface
+    {
+        foreach ($this->listeners as $name => $listeners) {
+            if (false !== $index = array_search($listener, $listeners)) {
+                unset($this->listeners[$name][$index]);
+            }
+        }
+
+        return $this;
     }
 }

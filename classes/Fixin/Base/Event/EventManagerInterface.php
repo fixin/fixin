@@ -17,4 +17,5 @@ interface EventManagerInterface extends PrototypeInterface
     public function registerListener(string $name, callable $listener): EventManagerInterface;
     public function unregisterEvent(callable $callback): EventManagerInterface;
     public function unregisterListener(string $name, callable $listener): EventManagerInterface;
+    public function unregisterListenerFromAll(callable $listener): EventManagerInterface;
 }
