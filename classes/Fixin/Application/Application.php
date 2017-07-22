@@ -19,10 +19,11 @@ use Throwable;
 class Application implements ApplicationInterface
 {
     protected const
+        CONSOLE_ERROR_TEXT = 'Fatal Error',
         DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\Resource\ResourceManager',
-        INTERNAL_SERVER_ERROR_CODE = 500,
-        INTERNAL_SERVER_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error',
-        INTERNAL_SERVER_ERROR_HTML = '<h1>500 Internal server error</h1>';
+        HTTP_FATAL_ERROR_CODE = 500,
+        HTTP_FATAL_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error',
+        HTTP_FATAL_ERROR_HTML = '<h1>500 Internal server error</h1>';
 
     public const
         APPLICATION_ROOT = 'application',
@@ -30,7 +31,8 @@ class Application implements ApplicationInterface
         ERROR_ROUTE = 'errorRoute',
         RESOURCE_MANAGER_CLASS = 'resourceManagerClass',
         RESOURCE_MANAGER_ROOT = 'resourceManager',
-        ROUTE = 'route';
+        ROUTE = 'route',
+        SHOW_FATAL_ERROR = 'showFatalError';
 
     /**
      * @var array
@@ -72,17 +74,27 @@ class Application implements ApplicationInterface
         }
         catch (Throwable $t) {
             // Double error
-            $this->internalServerError($t->getMessage());
+            $this->fatalError($t->getMessage());
         }
     }
 
-    protected function internalServerError(string $text): void
+    protected function fatalError(string $text): void
     {
-        header(static::INTERNAL_SERVER_ERROR_HEADER, true, static::INTERNAL_SERVER_ERROR_CODE);
-        echo static::INTERNAL_SERVER_ERROR_HTML;
+        if (false == ($this->config[static::SHOW_FATAL_ERROR] ?? true)) {
+            $text = '';
+        }
 
-        // TODO production mode?
-        echo $text;
+        if (PHP_SAPI === 'cli') {
+            echo static::CONSOLE_ERROR_TEXT . PHP_EOL;
+            echo $text . PHP_EOL;
+
+            exit;
+        }
+
+        header(static::HTTP_FATAL_ERROR_HEADER, true, static::HTTP_FATAL_ERROR_CODE);
+        echo static::HTTP_FATAL_ERROR_HTML;
+        echo htmlspecialchars($text);
+
         exit;
     }
 
@@ -105,7 +117,7 @@ class Application implements ApplicationInterface
                 $this->errorRoute(($cargo ?? $resourceManager->clone('*\Delivery\Cargo\Cargo', CargoInterface::class))->setContent($t));
             }
             catch (Throwable $t) {
-                $this->internalServerError(get_class($t) . ': ' . $t->getMessage());
+                $this->fatalError(get_class($t) . ': ' . $t->getMessage());
             }
         }
 
