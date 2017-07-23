@@ -25,4 +25,5 @@ return (function(?array $config) {
 
     // Resource Manager
     return new \Fixin\Resource\ResourceManager($config['resourceManager']);
+
 })($config ?? null);

@@ -78,7 +78,7 @@ return [
             'namespaceFallback' => [
                 'class' => 'Fixin\Resource\AbstractFactory\NamespaceFallbackFactory',
                 'options' => [
-                    'searchOrder' => ['Fixin']
+                    'searchOrder' => ['App', 'Fixin']
                 ]
             ]
         ]

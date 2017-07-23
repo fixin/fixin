@@ -80,20 +80,18 @@ class Application implements ApplicationInterface
 
     protected function fatalError(string $text): void
     {
-        if (false == ($this->config[static::SHOW_FATAL_ERROR] ?? true)) {
-            $text = '';
-        }
+        $output = ($this->config[static::SHOW_FATAL_ERROR] ?? true) ? $text : '';
 
         if (PHP_SAPI === 'cli') {
             echo static::CONSOLE_ERROR_TEXT . PHP_EOL;
-            echo $text . PHP_EOL;
+            echo $output . PHP_EOL;
 
             exit;
         }
 
         header(static::HTTP_FATAL_ERROR_HEADER, true, static::HTTP_FATAL_ERROR_CODE);
         echo static::HTTP_FATAL_ERROR_HTML;
-        echo htmlspecialchars($text);
+        echo htmlspecialchars($output);
 
         error_log($text);
 
