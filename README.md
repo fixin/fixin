@@ -6,21 +6,16 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/fixin/Fixin/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/fixin/Fixin/?branch=master)
 [![Code Climate](https://codeclimate.com/github/fixin/Fixin/badges/gpa.svg)](https://codeclimate.com/github/fixin/Fixin)
-[![HHVM Status](http://hhvm.h4cc.de/badge/fixin/fixin.svg?style=flat)](http://hhvm.h4cc.de/package/fixin/fixin)
 
 Framework for PHP 7
 
-## Developer Preview
+## Alpha Version
 
-This is a preview. Architecture changes are possible.
+This is a preview. Architecture changes are possible. Should not be used in production.
 
 ## Requirements
 
-PHP 7.1+
-
-## Status
-
-It is under development, and should not be used in production.
+PHP 7.1.3+
 
 ## License
 

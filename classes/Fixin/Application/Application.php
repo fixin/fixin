@@ -95,6 +95,8 @@ class Application implements ApplicationInterface
         echo static::HTTP_FATAL_ERROR_HTML;
         echo htmlspecialchars($text);
 
+        error_log($text);
+
         exit;
     }
 
