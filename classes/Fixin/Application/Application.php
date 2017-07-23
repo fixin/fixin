@@ -19,7 +19,7 @@ use Throwable;
 class Application implements ApplicationInterface
 {
     protected const
-        CONSOLE_ERROR_TEXT = 'Fatal Error',
+        CONSOLE_FATAL_ERROR_TEXT = 'Fatal Error',
         DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\Resource\ResourceManager',
         HTTP_FATAL_ERROR_CODE = 500,
         HTTP_FATAL_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error',
@@ -83,7 +83,7 @@ class Application implements ApplicationInterface
         $output = ($this->config[static::SHOW_FATAL_ERROR] ?? true) ? $text : '';
 
         if (PHP_SAPI === 'cli') {
-            echo static::CONSOLE_ERROR_TEXT . PHP_EOL;
+            echo static::CONSOLE_FATAL_ERROR_TEXT . PHP_EOL;
             echo $output . PHP_EOL;
 
             exit;
