@@ -185,18 +185,18 @@ class ResourceManager implements ResourceManagerInterface
             $definition = $this->definitions[$key];
 
             if (is_string($definition)) {
-                // TODO: test self-loop
                 return $this->produceResource($definition, $options, $name);
-            } elseif (is_array($definition)) {
+            }
+            elseif (is_array($definition)) {
                 if (isset($definition[static::OPTIONS_KEY])) {
                     $options += $definition[static::OPTIONS_KEY];
                 }
 
                 if (isset($definition[static::CLASS_KEY])) {
-                    // TODO: test self-loop
                     return $this->produceResource($definition[static::CLASS_KEY], $options, $name);
                 }
-            } elseif ($definition instanceof \Closure) {
+            }
+            elseif ($definition instanceof \Closure) {
                 return $definition($this, $options, $key);
             }
         }
