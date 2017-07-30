@@ -135,12 +135,20 @@ return [
         ],
 
         'abstractFactories' => [
+            'repository' => [
+                'class' => 'Fixin\Resource\AbstractFactory\RepositoryFactory',
+                'options' => [
+                    'prefixDepth' => 1,
+                    'nameDepth' => 1,
+                ]
+            ],
             'namespaceFallback' => [
                 'class' => 'Fixin\Resource\AbstractFactory\NamespaceFallbackFactory',
                 'options' => [
                     'searchOrder' => ['App', 'Fixin']
                 ]
-            ]
+            ],
+            'default' => 'Fixin\Resource\AbstractFactory\DefaultFactory'
         ]
     ]
 ];
