@@ -16,14 +16,14 @@ interface ResourceManagerInterface
      *
      * @return ($class)|PrototypeInterface|object|null
      */
-    public function clone(string $name, string $class, array $options = []);
+    public function clone(string $name, string $expectedClass, array $options = []);
 
     /**
      * Get instance
      *
      * @return ($class)|ResourceInterface|null
      */
-    public function get(string $name, string $class);
+    public function get(string $name, string $expectedClass);
 
     /**
      * Check if the name has been accessible

@@ -17,8 +17,10 @@ return [
             'repository' => [
                 'class' => 'Fixin\Resource\AbstractFactory\RepositoryFactory',
                 'options' => [
-                    'prefixDepth' => 1,
-                    'nameDepth' => 1
+                    'keyPrefix' => 'repository.',
+                    'classPrefix' => '*\\',
+                    'entityCache' => '*\Model\Entity\Cache\RuntimeCache',
+                    'storage' => 'dbStorage'
                 ]
             ],
             'namespaceFallback' => [

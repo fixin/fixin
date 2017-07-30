@@ -9,13 +9,12 @@
 
 namespace Fixin\Resource;
 
-use Fixin\Resource\AbstractFactory\AbstractFactoryInterface;
+use Fixin\Resource\AbstractFactory\AbstractFactory;
+use Fixin\Support\Ground;
 
 class ResourceManager implements ResourceManagerInterface
 {
     protected const
-        PROTOTYPE_AS_RESOURCE_EXCEPTION = "Can't use prototype as resource '%s'",
-        RESOURCE_AS_PROTOTYPE_EXCEPTION = "Can't use resource as prototype '%s'",
         CLASS_KEY = 'class',
         CLASS_NOT_FOUND_EXCEPTION = "Class not found for '%s'",
         INJECT_KEYS = [
@@ -23,12 +22,12 @@ class ResourceManager implements ResourceManagerInterface
             self::RESOURCES,
         ],
         INVALID_ABSTRACT_FACTORY_DEFINITION_EXCEPTION = "Invalid abstract factory definition '%s'",
-        INVALID_DEFINITION_EXCEPTION = "Invalid definition registered for name '%s'",
         OPTIONS_KEY = 'options',
+        PROTOTYPE_AS_RESOURCE_EXCEPTION = "Can't use prototype as resource '%s'",
         PROTOTYPE_NOT_FOUND_EXCEPTION = "Prototype not found by name '%s'",
-        RESOLVED_KEY = 'resolved',
+        RESOURCE_AS_PROTOTYPE_EXCEPTION = "Can't use resource as prototype '%s'",
         RESOURCE_NOT_FOUND_EXCEPTION = "Resource not found by name '%s'",
-        UNEXPECTED_RESOURCE_EXCEPTION = "Unexpected resource for name '%s', '%s' expected";
+        UNEXPECTED_RESOURCE_EXCEPTION = "Unexpected resource for name '%s' (%s), '%s' expected";
 
     public const
         ABSTRACT_FACTORIES = 'abstractFactories',
@@ -36,9 +35,19 @@ class ResourceManager implements ResourceManagerInterface
         RESOURCES = 'resources';
 
     /**
-     * @var AbstractFactoryInterface[]
+     * @var AbstractFactory
      */
-    protected $abstractFactories = [];
+    protected $abstractFactoryChain;
+
+    /**
+     * @var string[][]
+     */
+    protected $abstractFactoryDefinitions = [];
+
+    /**
+     * @var array
+     */
+    protected $abstractFactoryMappings = [];
 
     /**
      * @var array
@@ -46,7 +55,12 @@ class ResourceManager implements ResourceManagerInterface
     protected $definitions;
 
     /**
-     * @var ResourceInterface[]
+     * @var bool[]
+     */
+    protected $hasTests = [];
+
+    /**
+     * @var array
      */
     protected $resources;
 
@@ -54,7 +68,7 @@ class ResourceManager implements ResourceManagerInterface
     {
         // Abstract factories
         if (isset($options[static::ABSTRACT_FACTORIES])) {
-            $this->setupAbstractFactories($options[static::ABSTRACT_FACTORIES]);
+            $this->abstractFactoryDefinitions = $options[static::ABSTRACT_FACTORIES];
         }
 
         // Inject options
@@ -77,26 +91,20 @@ class ResourceManager implements ResourceManagerInterface
 
         ksort($resources);
 
-        return get_class($this) . ' {' . PHP_EOL . PHP_EOL . '    ' . implode(',' . PHP_EOL . '    ', $resources) . PHP_EOL . '}';
+        return Ground::toDebugBlock(get_class($this) . ' {' . PHP_EOL . PHP_EOL . '    ' . implode(',' . PHP_EOL . '    ', $resources) . PHP_EOL . '}');
     }
 
-    protected function canProduceByAbstractFactory(string $name): bool
+    protected function canProduceByAbstractFactories(string $key): bool
     {
-        foreach ($this->abstractFactories as $abstractFactory) {
-            if ($abstractFactory->canProduce($name)) {
-                return true;
-            }
-        }
-
-        return false;
+        return ($this->abstractFactoryChain ?? $this->prepareAbstractFactoryChain())->canChainProduce($key);
     }
 
     /**
      * @throws Exception\ResourceNotFoundException
      */
-    public function clone(string $name, string $class, array $options = [])
+    public function clone(string $name, string $expectedClass, array $options = [])
     {
-        $resource = $this->prepareResource($name, $class);
+        $resource = $this->prepareResource($name, $expectedClass);
 
         if ($resource instanceof PrototypeInterface) {
             return $resource->withOptions($options);
@@ -114,23 +122,11 @@ class ResourceManager implements ResourceManagerInterface
     }
 
     /**
-     * @return object|null
-     */
-    protected function createFromDefinition(string $name, array $definition)
-    {
-        if (class_exists($class = $definition[static::CLASS_KEY])) {
-            return new $class($this, $definition[static::OPTIONS_KEY], $name);
-        }
-
-        return null;
-    }
-
-    /**
      * @throws Exception\ResourceNotFoundException
      */
-    public function get(string $name, string $class): ?ResourceInterface
+    public function get(string $name, string $expectedClass)
     {
-        $resource = $this->prepareResource($name, $class);
+        $resource = $this->prepareResource($name, $expectedClass);
 
         if ($resource instanceof ResourceInterface) {
             return $resource;
@@ -145,147 +141,68 @@ class ResourceManager implements ResourceManagerInterface
 
     public function has(string $name): bool
     {
-        return isset($this->definitions[$name]) || class_exists($name) || $this->canProduceByAbstractFactory($name);
+        return $this->hasTests[$name] ?? $this->hasTests[$name] = isset($this->definitions[$name]) || $this->canProduceByAbstractFactories($name);
     }
 
-    /**
-     * @throws Exception\UnexpectedResourceException
-     */
-    protected function prepareResource(string $name, string $class)
+    protected function prepareAbstractFactoryChain(): AbstractFactory
     {
-        $resource = $this->resources[$name] ?? $this->produceResource($name);
+        $definitions = $this->abstractFactoryDefinitions;
+        $this->abstractFactoryDefinitions = [];
 
-        if ($resource instanceof $class) {
-            return $resource;
-        }
+        foreach (array_reverse($definitions) as $key => $definition) {
+            $class = $definition[static::CLASS_KEY] ?? $definition;
 
-        throw new Exception\UnexpectedResourceException(sprintf(static::UNEXPECTED_RESOURCE_EXCEPTION, $name, $class));
-    }
+            $abstractFactory = new $class($this, [AbstractFactory::NEXT => $this->abstractFactoryChain] + ($definition[static::OPTIONS_KEY] ?? []), $key);
 
-    /**
-     * @return object
-     * @throws Exception\ClassNotFoundException
-     * @throws Exception\InvalidArgumentException
-     */
-    protected function produceResource(string $name)
-    {
-        $resource = $this->produceResourceFromDefinition($name, $this->resolveDefinitionName($name));
-
-        // Object
-        if (is_object($resource)) {
-            $this->resources[$name] = $resource;
-
-            return $resource;
-        }
-
-        // Null
-        if (is_null($resource)) {
-            throw new Exception\ClassNotFoundException(sprintf(static::CLASS_NOT_FOUND_EXCEPTION, $name));
-        }
-
-        throw new Exception\InvalidArgumentException(sprintf(static::INVALID_DEFINITION_EXCEPTION, $name));
-    }
-
-    protected function produceResourceFromAbstractFactories(string $name, array $options = null)
-    {
-        foreach ($this->abstractFactories as $abstractFactory) {
-            if ($abstractFactory->canProduce($name)) {
-                return $abstractFactory($options, $name);
-            }
-        }
-
-        return null;
-    }
-
-    protected function produceResourceFromDefinition(string $name, array $definition)
-    {
-        $class = $definition[static::CLASS_KEY];
-
-        // Name
-        if (is_string($class)) {
-            $class = $this->createFromDefinition($name, $definition) ?? $this->produceResourceFromAbstractFactories($class, $definition[static::OPTIONS_KEY]);
-        }
-
-        // Factory, Closure
-        if ($class instanceof FactoryInterface || $class instanceof \Closure) {
-            return $class($this, $definition[static::OPTIONS_KEY], $name);
-        }
-
-        return $class;
-    }
-
-    protected function resolveDefinition($definition, string $name): array
-    {
-        // String
-        if (is_string($definition)) {
-            return $this->resolveDefinitionName($definition);
-        }
-        // Array
-        elseif (is_array($definition)) {
-            return $this->resolveDefinitionArray($definition, $name);
-        }
-
-        return [
-            static::CLASS_KEY => $definition,
-            static::OPTIONS_KEY => null,
-            static::RESOLVED_KEY => true
-        ];
-    }
-
-    protected function resolveDefinitionArray(array $definition, string $name): array
-    {
-        $class = $definition[static::CLASS_KEY] ?? $name;
-
-        if ($class !== $name) {
-            $inherited = $this->resolveDefinitionName($class);
-            unset($definition[static::CLASS_KEY]);
-
-            return array_replace_recursive($inherited, $definition);
-        }
-
-        return [
-            static::CLASS_KEY => $class,
-            static::OPTIONS_KEY => $definition[static::OPTIONS_KEY] ?? null,
-            static::RESOLVED_KEY => true
-        ];
-    }
-
-    protected function resolveDefinitionName(string $name): array
-    {
-        if (isset($this->definitions[$name])) {
-            $definition = $this->definitions[$name];
-
-            if (is_array($definition)) {
-                if (isset($definition[static::RESOLVED_KEY])) {
-                    return $definition;
-                }
-
-                return $this->definitions[$name] = $this->resolveDefinitionArray($definition, $name);
-            }
-
-            return $this->definitions[$name] = $this->resolveDefinition($definition, $name);
-        }
-
-        return [
-            static::CLASS_KEY => $name,
-            static::OPTIONS_KEY => null,
-            static::RESOLVED_KEY => true
-        ];
-    }
-
-    /**
-     * @throws Exception\InvalidArgumentException
-     */
-    protected function setupAbstractFactories(array $abstractFactories): void
-    {
-        foreach ($abstractFactories as $key => $abstractFactory) {
-            $abstractFactory = $this->createFromDefinition($key, $this->resolveDefinitionArray($abstractFactory, ''));
-
-            if (!$abstractFactory instanceof AbstractFactoryInterface) {
+            if (!$abstractFactory instanceof AbstractFactory) {
                 throw new Exception\InvalidArgumentException(sprintf(static::INVALID_ABSTRACT_FACTORY_DEFINITION_EXCEPTION, $key));
             }
 
-            $this->abstractFactories[] = $abstractFactory;
+            $this->abstractFactoryChain = $abstractFactory;
         }
+
+        return $this->abstractFactoryChain;
+    }
+
+    protected function prepareResource(string $name, string $expectedClass)
+    {
+        $resource = $this->resources[$name] ?? $this->resources[$name] = $this->produceResource($name, [], $name);
+
+        if ($resource instanceof $expectedClass) {
+            return $resource;
+        }
+
+        if ($resource === null) {
+            throw new Exception\ClassNotFoundException(sprintf(static::CLASS_NOT_FOUND_EXCEPTION, $name));
+        }
+
+        throw new Exception\UnexpectedResourceException(sprintf(static::UNEXPECTED_RESOURCE_EXCEPTION, $name, get_class($resource), $expectedClass));
+    }
+
+    protected function produceResource(string $key, array $options, string $name)
+    {
+        if (isset($this->definitions[$key])) {
+            $definition = $this->definitions[$key];
+
+            if (is_string($definition)) {
+                // TODO: test self-loop
+                return $this->produceResource($definition, $options, $name);
+            } elseif (is_array($definition)) {
+                if (isset($definition[static::OPTIONS_KEY])) {
+                    $options += $definition[static::OPTIONS_KEY];
+                }
+
+                if (isset($definition[static::CLASS_KEY])) {
+                    // TODO: test self-loop
+                    return $this->produceResource($definition[static::CLASS_KEY], $options, $name);
+                }
+            } elseif ($definition instanceof \Closure) {
+                return $definition($this, $options, $key);
+            }
+        }
+
+        $instance = ($this->abstractFactoryChain ?? $this->prepareAbstractFactoryChain())->chainProduce($key, $options, $name);
+
+        return $instance instanceof FactoryInterface || $instance instanceof \Closure ? $instance($this, $options, $name) : $instance;
     }
 }
