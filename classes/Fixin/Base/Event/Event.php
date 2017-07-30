@@ -16,7 +16,7 @@ class Event extends Prototype implements EventInterface
 {
     protected const
         THIS_SETS = [
-            self::CONTEXT => Types::ANY,
+            self::CONTEXT => [Types::ANY, Types::NULL],
             self::NAME => Types::STRING
         ];
 
