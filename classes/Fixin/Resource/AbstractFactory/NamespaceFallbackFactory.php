@@ -9,13 +9,12 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Resource\Managed;
 use Fixin\Support\Types;
 
-class NamespaceFallbackFactory extends Managed implements AbstractFactoryInterface
+class NamespaceFallbackFactory extends AbstractFactory
 {
     protected const
-        THIS_SETS = [
+        THIS_SETS = parent::THIS_SETS + [
             self::SEARCH_ORDER => Types::ARRAY
         ];
 
@@ -32,36 +31,36 @@ class NamespaceFallbackFactory extends Managed implements AbstractFactoryInterfa
      */
     protected $searchOrder = [];
 
-    public function __invoke(array $options = null, string $name = null)
+    public function canProduce(string $key): bool
     {
-        $mapped = $this->map[$name];
-
-        return $mapped ? new $mapped($this->resourceManager, $options, $name) : null;
-    }
-
-    public function canProduce(string $name): bool
-    {
-        if ($name[0] !== '*' || $name[1] !== '\\') {
+        if ($key[0] !== '*' || $key[1] !== '\\') {
             return false;
         }
 
         // Already resolved
-        if (isset($this->map[$name])) {
-            return (bool) $this->map[$name];
+        if (isset($this->map[$key])) {
+            return (bool) $this->map[$key];
         }
 
         // Mapping
-        $nameTail = '\\' . substr($name, 2);
+        $nameTail = '\\' . substr($key, 2);
 
         foreach ($this->searchOrder as $rootNamespace) {
             if (class_exists($className = $rootNamespace . $nameTail)) {
-                $this->map[$name] = $className;
+                $this->map[$key] = $className;
 
                 return true;
             }
         }
 
         // Not found
-        return $this->map[$name] = false;
+        return $this->map[$key] = false;
+    }
+
+    protected function produce(string $key, array $options, string $name)
+    {
+        $mapped = $this->map[$key];
+
+        return $mapped ? new $mapped($this->resourceManager, $options, $name) : null;
     }
 }

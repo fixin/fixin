@@ -75,6 +75,17 @@ class Strings extends DoNotCreate
         return static::isBeginningWith($string, $begin) && static::isEndingWith($string, $end);
     }
 
+    public static function matchCases(string $string, string $compare): string
+    {
+        foreach (['mb_strtolower', 'mb_strtoupper', 'ucfirst', 'ucwords'] as $function) {
+            if (call_user_func($function, $compare) === $compare) {
+                return call_user_func($function, $string);
+            }
+        }
+
+        return $string;
+    }
+
     /**
      * Replace tabs with spaces in leading of the line
      */
@@ -91,6 +102,20 @@ class Strings extends DoNotCreate
     public static function normalizePath(string $path): string
     {
         return rtrim($path, '/\\') . DIRECTORY_SEPARATOR;
+    }
+
+    public static function patternReplace(string $string, array $cases): string
+    {
+        foreach ($cases as $pattern => $replacement) {
+            $count = 0;
+            $replaced = preg_replace('/^' . $pattern . '$/', $replacement, $string, -1, $count);
+
+            if ($count) {
+                return $replaced;
+            }
+        }
+
+        return $string;
     }
 
     public static function removeMainIndent(array $lines): string
