@@ -15,11 +15,14 @@ class Words extends DoNotCreate
         PLURAL_MODE = 2,
         PLURALIZER_CASES = [
             self::SINGULAR_MODE => [
+                // -x
+                '(.+)ices' => '\1ex',
+
                 // -ch, -s, -x, -z
                 '(.+)(ch|s|x|z)es' => '\1\2',
 
                 // -f, -fe
-                '(.+)v(e?)s' => '\1f\2',
+                '(.+)v(e?)s' => '\1f',
 
                 // -y
                 '(.+)([aeiou])ys' => '\1\2y',
@@ -73,6 +76,7 @@ class Words extends DoNotCreate
                 'woman' => 'women',
             ]
         ],
+        WORD_SEPARATORS = ' ._:/\\|',
         SINGULAR_MODE = 1
     ;
 
@@ -80,14 +84,18 @@ class Words extends DoNotCreate
 
     protected static function pluralizer(string $string, int $mode): string
     {
-        $tags = explode('_', $string);
-        $last = array_pop($tags);
-        $lastLc = mb_strtolower($last);
+        $prefixSize = 0;
+        $length = strlen($string);
 
-        $word = static::$cache[$mode][$lastLc] ?? static::$cache[$mode][$lastLc] = static::PLURALIZER_SPECIALS[$mode][$lastLc] ?? Strings::patternReplace($lastLc, static::PLURALIZER_CASES[$mode]);
-        $tags[] = Strings::matchCases($word, $last);
+        while ($length - $prefixSize > $count = strcspn($string, static::WORD_SEPARATORS, $prefixSize)) {
+            $prefixSize += $count + 1;
+        }
 
-        return implode('_', $tags);
+        $last = substr($string, $prefixSize);
+
+        $word = static::$cache[$mode][$last] ?? static::$cache[$mode][$last] = static::PLURALIZER_SPECIALS[$mode][$last] ?? Strings::patternReplace($last, static::PLURALIZER_CASES[$mode]);
+
+        return substr($string, 0, $prefixSize) . $word;
     }
 
     public static function toPlural(string $string): string
