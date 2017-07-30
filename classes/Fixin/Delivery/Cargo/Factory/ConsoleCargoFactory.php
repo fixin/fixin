@@ -17,6 +17,9 @@ use Fixin\Resource\ResourceManagerInterface;
 
 class ConsoleCargoFactory implements FactoryInterface
 {
+    /**
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
     public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): ConsoleCargoInterface
     {
         $arguments = $_SERVER['argv'];
