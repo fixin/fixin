@@ -29,7 +29,7 @@ class Application implements ApplicationInterface
         APPLICATION_ROOT = 'application',
         CARGO = 'cargo',
         ERROR_ROUTE = 'errorRoute',
-        RESOURCE_MANAGER_CLASS = 'resourceManagerClass',
+        RESOURCE_MANAGER_CLASS = 'class',
         RESOURCE_MANAGER_ROOT = 'resourceManager',
         ROUTE = 'route',
         SHOW_FATAL_ERROR = 'showFatalError';
