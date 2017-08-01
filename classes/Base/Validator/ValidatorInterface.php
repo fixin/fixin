@@ -26,5 +26,5 @@ interface ValidatorInterface extends PrototypeInterface
     /**
      * Validate value
      */
-    public function isValid($value): bool;
+    public function isValid($value, $context = null): bool;
 }

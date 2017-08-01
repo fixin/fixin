@@ -12,7 +12,7 @@ return (function(?array $config) {
 
     // Config
     if (!isset($config)) {
-        $config = require "{$fixinPath}/config/minimal.php";
+        $config = require "{$fixinPath}/config/console.php";
     }
 
     // Autoloader
@@ -23,7 +23,7 @@ return (function(?array $config) {
         new \Fixin\Base\Autoloader\SimpleAutoloader($config['loader']['prefixes'] ?? ['Fixin' => "{$classesPath}/Fixin"]);
     }
 
-    // Resource Manager
-    return new \Fixin\Resource\ResourceManager($config['resourceManager']);
+    // Application
+    return new \Fixin\Application\Application($config);
 
 })($config ?? null);
