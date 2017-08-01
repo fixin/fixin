@@ -18,9 +18,17 @@
     "require": {
         "php": "^7.1"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2"
+    },
     "autoload": {
         "psr-4": {
-            "Fixin\\": "classes/Fixin/"
+            "Fixin\\": "classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FixinTest\\": "tests/"
         }
     },
     "minimum-stability": "dev"
