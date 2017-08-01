@@ -1,3 +1,8 @@
 filter:
     excluded_paths:
         - tools/
+
+build:
+    environment:
+            php:
+                version: 7.1
