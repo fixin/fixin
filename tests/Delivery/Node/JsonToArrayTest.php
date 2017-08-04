@@ -38,6 +38,9 @@ class JsonToArrayTest extends AbstractTest
         ]);
     }
 
+    /**
+     * @covers ::handle
+     */
     public function testArray(): void
     {
         $cargo = $this->mockClass(CargoInterface::class);
@@ -51,6 +54,9 @@ class JsonToArrayTest extends AbstractTest
         $this->assertSame($cargo, $this->node->handle($cargo));
     }
 
+    /**
+     * @covers ::handle
+     */
     public function testInvalidJson(): void
     {
         $cargo = $this->mockClass(CargoInterface::class);
@@ -68,6 +74,7 @@ class JsonToArrayTest extends AbstractTest
     }
 
     /**
+     * @covers ::handle
      * @dataProvider dataJson
      */
     public function testJson(string $type): void
@@ -94,6 +101,9 @@ class JsonToArrayTest extends AbstractTest
         ];
     }
 
+    /**
+     * @covers ::handle
+     */
     public function testNonJson(): void
     {
         $cargo = $this->mockClass(CargoInterface::class);

@@ -37,7 +37,10 @@ class ArrayToJsonTest extends AbstractTest
         ]);
     }
 
-    public function testHandleArray(): void
+    /**
+     * @covers ::handle
+     */
+    public function testArray(): void
     {
         $cargo = $this->mockClass(CargoInterface::class);
         $decoded = ['test' => 'value'];
@@ -53,7 +56,10 @@ class ArrayToJsonTest extends AbstractTest
         $this->node->handle($cargo);
     }
 
-    public function testHandleNonArray(): void
+    /**
+     * @covers ::handle
+     */
+    public function testNonArray(): void
     {
         $cargo = $this->mockClass(CargoInterface::class);
 
