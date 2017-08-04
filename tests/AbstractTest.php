@@ -18,7 +18,7 @@ abstract class AbstractTest extends TestCase
         return new $class(new ResourceManager($resources), $options, 'sut');
     }
 
-    protected function mockClass(string $class)
+    protected function mockClass(string $class): \PHPUnit_Framework_MockObject_MockObject
     {
         return $this->getMockBuilder($class)->disableOriginalConstructor()->getMock();
     }
