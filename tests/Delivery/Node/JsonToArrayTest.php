@@ -16,7 +16,7 @@ use Fixin\Delivery\Node\JsonToArray;
 use FixinTest\AbstractTest;
 
 /**
- * @coversDefaultClass JsonToArray
+ * @coversDefaultClass \Fixin\Delivery\Node\JsonToArray
  */
 class JsonToArrayTest extends AbstractTest
 {
