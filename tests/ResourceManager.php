@@ -16,7 +16,7 @@ class ResourceManager implements ResourceManagerInterface
 {
     protected $resources;
 
-    public function __construct(array $resources)
+    public function __construct(array $resources = [])
     {
         $this->resources = $resources;
     }
@@ -30,7 +30,7 @@ class ResourceManager implements ResourceManagerInterface
         }
 
         if ($instance) {
-            return clone $this->resources[$name];
+            return clone $instance;
         }
 
         throw new \Exception("Prototype not exists '$name'");
