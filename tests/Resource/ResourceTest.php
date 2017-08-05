@@ -38,6 +38,10 @@ class ResourceTest extends AbstractTest
                     'validNullable' => [Types::INT, Types::NULL],
                     'required' => Types::INT
                 ];
+
+            protected $required;
+            protected $valid;
+            protected $validNullable;
         };
 
         if (!$wrong) {

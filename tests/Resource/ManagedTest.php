@@ -51,6 +51,13 @@ class ManagedTest extends AbstractTest
                     'setter' => self::USING_SETTER
                 ];
 
+            protected $class;
+            protected $commonTypes;
+            protected $lazyLoadedByName;
+            protected $lazyLoadedByInstance;
+            protected $multiple;
+            protected $setter;
+
             public function getVars(): array
             {
                 $this->loadLazyProperty('lazyLoadedByName');
