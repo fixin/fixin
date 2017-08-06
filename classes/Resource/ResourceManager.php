@@ -114,11 +114,7 @@ class ResourceManager implements ResourceManagerInterface
             return clone $resource;
         }
 
-        if ($resource) {
-            throw new Exception\ResourceNotFoundException(sprintf(static::RESOURCE_AS_PROTOTYPE_EXCEPTION, $name));
-        }
-
-        throw new Exception\ResourceNotFoundException(sprintf(static::PROTOTYPE_NOT_FOUND_EXCEPTION, $name));
+        throw new Exception\ResourceNotFoundException(sprintf(static::RESOURCE_AS_PROTOTYPE_EXCEPTION, $name));
     }
 
     /**
@@ -132,16 +128,12 @@ class ResourceManager implements ResourceManagerInterface
             return $resource;
         }
 
-        if ($resource) {
-            throw new Exception\ResourceNotFoundException(sprintf(static::PROTOTYPE_AS_RESOURCE_EXCEPTION, $name));
-        }
-
-        throw new Exception\ResourceNotFoundException(sprintf(static::RESOURCE_NOT_FOUND_EXCEPTION, $name));
+        throw new Exception\ResourceNotFoundException(sprintf(static::PROTOTYPE_AS_RESOURCE_EXCEPTION, $name));
     }
 
     public function has(string $name): bool
     {
-        return $this->hasTests[$name] ?? $this->hasTests[$name] = isset($this->definitions[$name]) || $this->canProduceByAbstractFactories($name);
+        return $this->hasTests[$name] ?? $this->hasTests[$name] = isset($this->resources[$name]) || isset($this->definitions[$name]) || $this->canProduceByAbstractFactories($name);
     }
 
     protected function prepareAbstractFactoryChain(): AbstractFactory
@@ -172,11 +164,7 @@ class ResourceManager implements ResourceManagerInterface
             return $resource;
         }
 
-        if ($resource === null) {
-            throw new Exception\ClassNotFoundException(sprintf(static::CLASS_NOT_FOUND_EXCEPTION, $name));
-        }
-
-        throw new Exception\UnexpectedResourceException(sprintf(static::UNEXPECTED_RESOURCE_EXCEPTION, $name, get_class($resource), $expectedClass));
+        throw new Exception\UnexpectedResourceException(sprintf(static::UNEXPECTED_RESOURCE_EXCEPTION, $name, $resource ? get_class($resource) : 'null', $expectedClass));
     }
 
     protected function produceResource(string $key, array $options, string $name)
@@ -202,6 +190,10 @@ class ResourceManager implements ResourceManagerInterface
         }
 
         $instance = ($this->abstractFactoryChain ?? $this->prepareAbstractFactoryChain())->chainProduce($key, $options, $name);
+
+        if ($instance === null) {
+            throw new Exception\ClassNotFoundException(sprintf(static::CLASS_NOT_FOUND_EXCEPTION, $name));
+        }
 
         return $instance instanceof FactoryInterface || $instance instanceof \Closure ? $instance($this, $options, $name) : $instance;
     }
