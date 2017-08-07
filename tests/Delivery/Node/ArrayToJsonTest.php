@@ -20,52 +20,53 @@ use FixinTest\AbstractTest;
 class ArrayToJsonTest extends AbstractTest
 {
     /**
-     * @covers ::handle
+     * @var JsonInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function testHandleArray(): void
+    protected $json;
+
+    /**
+     * @var ArrayToJson
+     */
+    protected $node;
+
+    protected function setUp()
     {
-        $cargo = $this->mockClass(CargoInterface::class);
-        $content = ['test' => 'value'];
-
-        $cargo->method('getContent')
-            ->willReturn($content);
-
-        $json = $this->mockClass(JsonInterface::class);
-        $encoded = 'encoded';
-
-        $json->method('encode')
-            ->with($content)
-            ->willReturn($encoded);
-
-        $cargo->expects($this->once())
-            ->method('setContent')
-            ->with($encoded)
-            ->willReturn($cargo);
-
-        $cargo->expects($this->once())
-            ->method('setContentType')
-            ->with('application/json');
-
-        $node = $this->makeInstance(ArrayToJson::class, [], [
-            '*\Base\Json\Json' => $json
+        $this->json = $this->mockClass(JsonInterface::class);
+        $this->node = $this->makeInstance(ArrayToJson::class, [], [
+            '*\Base\Json\Json' => $this->json
         ]);
-        $node->handle($cargo);
     }
 
-    public function testHandleNonArray(): void
+    /**
+     * @covers ::handle
+     */
+    public function testArray(): void
+    {
+        $cargo = $this->mockClass(CargoInterface::class);
+        $decoded = ['test' => 'value'];
+        $jsonData = 'json';
+
+        $cargo->method('getContent')->willReturn($decoded);
+
+        $this->json->method('encode')->with($decoded)->willReturn($jsonData);
+
+        $cargo->expects($this->once())->method('setContent')->with($jsonData)->willReturn($cargo);
+        $cargo->expects($this->once())->method('setContentType')->with('application/json');
+
+        $this->node->handle($cargo);
+    }
+
+    /**
+     * @covers ::handle
+     */
+    public function testNonArray(): void
     {
         $cargo = $this->mockClass(CargoInterface::class);
 
-        $cargo->method('getContent')
-            ->willReturn('test');
+        $cargo->method('getContent')->willReturn('test');
+        $cargo->expects($this->never())->method('setContent');
+        $cargo->expects($this->never())->method('setContentType');
 
-        $cargo->expects($this->never())
-            ->method('setContent');
-
-        $cargo->expects($this->never())
-            ->method('setContentType');
-
-        $node = $this->makeInstance(ArrayToJson::class);
-        $node->handle($cargo);
+        $this->assertSame($cargo, $this->node->handle($cargo));
     }
 }

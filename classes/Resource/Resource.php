@@ -15,6 +15,6 @@ abstract class Resource extends Managed implements ResourceInterface
     {
         parent::__construct($resourceManager, $options, $name);
 
-        $this->configurationTest($name);
+        $this->configurationTest($name ?? get_class());
     }
 }
