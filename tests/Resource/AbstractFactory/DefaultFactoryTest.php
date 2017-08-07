@@ -19,20 +19,26 @@ use FixinTest\ResourceManager;
 class DefaultFactoryTest extends AbstractTest
 {
     /**
+     * @var DefaultFactory
+     */
+    protected $factory;
+
+    protected function setUp()
+    {
+        $this->factory = new DefaultFactory(new ResourceManager());
+    }
+
+    /**
      * @covers ::canProduce
      */
     public function testCanProduce(): void
     {
-        $factory = new DefaultFactory(new ResourceManager());
-
-        $this->assertTrue($factory->canProduce(\stdClass::class));
-        $this->assertFalse($factory->canProduce('nonExistingClass'));
+        $this->assertTrue($this->factory->canChainProduce(\stdClass::class));
+        $this->assertFalse($this->factory->canChainProduce('nonExistingClass'));
     }
 
     public function testProduce(): void
     {
-        $factory = new DefaultFactory(new ResourceManager());
-
-        $this->assertInstanceOf(\stdClass::class, $factory->produce(\stdClass::class, [], 'test'));
+        $this->assertInstanceOf(\stdClass::class, $this->factory->chainProduce(\stdClass::class, [], 'test'));
     }
 }

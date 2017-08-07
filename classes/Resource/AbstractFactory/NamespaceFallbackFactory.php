@@ -31,7 +31,7 @@ class NamespaceFallbackFactory extends AbstractFactory
      */
     protected $searchOrder = [];
 
-    public function canProduce(string $key): bool
+    protected function canProduce(string $key): bool
     {
         if ($key[0] !== '*' || $key[1] !== '\\') {
             return false;
