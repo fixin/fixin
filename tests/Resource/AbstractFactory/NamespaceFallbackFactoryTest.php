@@ -35,10 +35,15 @@ class NamespaceFallbackFactoryTest extends AbstractTest
     public function testCanProduce(): void
     {
         $this->assertTrue($this->factory->canChainProduce('*\Base\Json\Json'));
+        $this->assertTrue($this->factory->canChainProduce('*\Base\Json\Json')); // cached
+        $this->assertFalse($this->factory->canChainProduce('*\Base\Json\Json2'));
         $this->assertFalse($this->factory->canChainProduce(\stdClass::class));
         $this->assertFalse($this->factory->canChainProduce('nonExistingClass'));
     }
 
+    /**
+     * @covers ::produce
+     */
     public function testProduce(): void
     {
         $this->assertInstanceOf(Json::class, $this->factory->chainProduce('*\Base\Json\Json', [], 'test'));

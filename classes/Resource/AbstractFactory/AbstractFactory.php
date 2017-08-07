@@ -9,10 +9,10 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
-use Fixin\Resource\Managed;
+use Fixin\Resource\Resource;
 use Fixin\Support\Types;
 
-abstract class AbstractFactory extends Managed
+abstract class AbstractFactory extends Resource
 {
     protected const
         THIS_SETS = [

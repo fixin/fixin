@@ -16,6 +16,12 @@ use Fixin\Support\Words;
 
 class RepositoryFactory extends AbstractFactory
 {
+    public const
+        CLASS_PREFIX = 'classPrefix',
+        ENTITY_CACHE = 'entityCache',
+        KEY_PREFIX = 'keyPrefix',
+        STORAGE = 'storage';
+
     protected const
         TABLE_LAST_SEPARATOR = '__',
         TABLE_SEPARATOR = '_',
@@ -26,12 +32,6 @@ class RepositoryFactory extends AbstractFactory
             self::KEY_PREFIX => Types::STRING,
             self::STORAGE => Types::STRING
         ];
-
-    public const
-        CLASS_PREFIX = 'classPrefix',
-        ENTITY_CACHE = 'entityCache',
-        KEY_PREFIX = 'keyPrefix',
-        STORAGE = 'storage';
 
     /**
      * @var string
