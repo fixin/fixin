@@ -60,13 +60,29 @@ class Application implements ApplicationInterface
         $this->resourceManager = new $resourceManagerClass($resourceManagerConfig);
     }
 
-    protected function errorRoute(CargoInterface $cargo): void
+    public function displayErrorPage(int $statusCode): ApplicationInterface
     {
-        // HTTP cargo
-        if ($cargo instanceof HttpCargoInterface) {
-            $cargo->setStatusCode(Http::STATUS_INTERNAL_SERVER_ERROR_500);
+        try {
+            /** @var CargoInterface $cargo */
+            $cargo = $this->resourceManager->clone($this->config[static::CARGO], CargoInterface::class);
+            $cargo->setContentType('text/html');
+
+            // HTTP cargo
+            if ($cargo instanceof HttpCargoInterface) {
+                $cargo->setStatusCode($statusCode);
+            }
+
+            $this->errorRoute($cargo);
+        }
+        catch (Throwable $t) {
+            $this->fatalError($t);
         }
 
+        return $this;
+    }
+
+    protected function errorRoute(CargoInterface $cargo): void
+    {
         try {
             $this->resourceManager->get($this->config[static::ERROR_ROUTE], RouteInterface::class)
                 ->handle($cargo)
@@ -74,12 +90,13 @@ class Application implements ApplicationInterface
         }
         catch (Throwable $t) {
             // Double error
-            $this->fatalError($t->getMessage());
+            $this->fatalError($t);
         }
     }
 
-    protected function fatalError(string $text): void
+    protected function fatalError(Throwable $throwable): void
     {
+        $text = get_class($throwable) . ': ' . $throwable->getMessage();
         $output = ($this->config[static::SHOW_FATAL_ERROR] ?? true) ? $text : '';
 
         if (PHP_SAPI === 'cli') {
@@ -98,9 +115,6 @@ class Application implements ApplicationInterface
         exit;
     }
 
-    /**
-     * @return $this
-     */
     public function run(): ApplicationInterface
     {
         $resourceManager = $this->resourceManager;
@@ -108,16 +122,29 @@ class Application implements ApplicationInterface
         try {
             /** @var CargoInterface $cargo */
             $cargo = $resourceManager->clone($this->config[static::CARGO], CargoInterface::class);
+
             $resourceManager->get($this->config[static::ROUTE], RouteInterface::class)
                 ->handle($cargo)
                 ->unpack();
         }
         catch (Throwable $t) {
             try {
-                $this->errorRoute(($cargo ?? $resourceManager->clone('*\Delivery\Cargo\Cargo', CargoInterface::class))->setContent($t));
+                // Missing cargo
+                if (!$cargo) {
+                    $cargo = $resourceManager->clone('*\Delivery\Cargo\Cargo', CargoInterface::class);
+                }
+
+                $cargo->setContent($t);
+
+                // HTTP cargo
+                if ($cargo instanceof HttpCargoInterface) {
+                    $cargo->setStatusCode(Http::STATUS_INTERNAL_SERVER_ERROR_500);
+                }
+
+                $this->errorRoute($cargo);
             }
             catch (Throwable $t) {
-                $this->fatalError(get_class($t) . ': ' . $t->getMessage());
+                $this->fatalError($t);
             }
         }
 
