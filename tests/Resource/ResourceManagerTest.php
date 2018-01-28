@@ -11,13 +11,10 @@ namespace FixinTest\Resource;
 
 use Fixin\Resource\AbstractFactory\AbstractFactory;
 use Fixin\Resource\AbstractFactory\DefaultFactory;
-use Fixin\Resource\Exception\ClassNotFoundException;
-use Fixin\Resource\Exception\InvalidArgumentException;
-use Fixin\Resource\Exception\UnexpectedResourceException;
+use Fixin\Resource\Exception;
 use Fixin\Resource\Prototype;
 use Fixin\Resource\PrototypeInterface;
 use Fixin\Resource\Resource;
-use Fixin\Resource\ResourceInterface;
 use Fixin\Resource\ResourceManager;
 use FixinTest\AbstractTest;
 use FixinTest\Resource\ResourceManager\TestFactory;
@@ -68,7 +65,7 @@ class ResourceManagerTest extends AbstractTest
 
         $this->expectExceptionMessage("Can't use resource as prototype 'test'");
 
-        $resources->clone('test', ResourceInterface::class);
+        $resources->clone('test', Resource::class);
     }
 
     /**
@@ -95,7 +92,7 @@ class ResourceManagerTest extends AbstractTest
             ]
         ]);
 
-        $cloned = $resources->clone('prototype', PrototypeInterface::class);
+        $cloned = $resources->clone('prototype', Prototype::class);
         $this->assertSame(1, $cloned->withOptionsCalls);
     }
 
@@ -118,8 +115,8 @@ class ResourceManagerTest extends AbstractTest
             ],
         ]);
 
-        $this->assertSame($byClosure, $resources->get('byClosure', ResourceInterface::class));
-        $this->assertSame($byInjection, $resources->get('byInjection', ResourceInterface::class));
+        $this->assertSame($byClosure, $resources->get('byClosure', Resource::class));
+        $this->assertSame($byInjection, $resources->get('byInjection', Resource::class));
     }
 
     /**
@@ -200,7 +197,7 @@ class ResourceManagerTest extends AbstractTest
             ]
         ]);
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(Exception\InvalidArgumentException::class);
 
         $resources->clone('test', \stdClass::class);
     }
@@ -217,7 +214,7 @@ class ResourceManagerTest extends AbstractTest
             ]
         ]);
 
-        $this->expectException(UnexpectedResourceException::class);
+        $this->expectException(Exception\UnexpectedResourceException::class);
         $resources->clone('test', \stdClass::class);
     }
 
@@ -281,7 +278,7 @@ class ResourceManagerTest extends AbstractTest
             ]
         ]);
 
-        $this->expectException(ClassNotFoundException::class);
+        $this->expectException(Exception\ClassNotFoundException::class);
 
         $resources->get('test', \stdClass::class);
     }

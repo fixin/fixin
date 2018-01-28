@@ -7,9 +7,13 @@ engines:
       Naming/ShortMethodName:
         enabled: false     
       Naming/ShortVariable:
-        enabled: false   
+        enabled: false
+      Controversial/Superglobals:
+        enabled: false
 ratings:    
     paths:
-    - classes/**
-    - boosts/**
-    - config/**
+    - "classes/**"
+    - "boosts/**"
+    - "config/**"
+exclude_paths:
+- "tests/"
