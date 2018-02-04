@@ -57,9 +57,9 @@ class ConsoleCargoFactory implements FactoryInterface
         }
 
         return [
-            ConsoleCargoInterface::ARGUMENTS => $resourceManager->clone('*\Base\Container\VariableContainer', VariableContainerInterface::class)->replace($arguments),
+            ConsoleCargoInterface::ARGUMENTS => $resourceManager->clone('*\Base\Container\VariableContainer', VariableContainerInterface::class)->setMultiple($arguments),
             ConsoleCargoInterface::COMMAND => $command,
-            ConsoleCargoInterface::OPTIONS => $resourceManager->clone('*\Base\Container\VariableContainer', VariableContainerInterface::class)->replace($options)
+            ConsoleCargoInterface::OPTIONS => $resourceManager->clone('*\Base\Container\VariableContainer', VariableContainerInterface::class)->setMultiple($options)
         ];
     }
 }

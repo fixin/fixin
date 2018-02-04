@@ -42,7 +42,7 @@ class HttpCargoFactory implements FactoryInterface
             HttpCargoInterface::COOKIES => $cookies,
             HttpCargoInterface::ENVIRONMENT => $resourceManager->get('*\Support\Factory\EnvironmentInfoFactory', ContainerInterface::class),
             HttpCargoInterface::METHOD => $_SERVER['REQUEST_METHOD'],
-            HttpCargoInterface::PARAMETERS => $resourceManager->clone('*\Base\Container\VariableContainer', VariableContainerInterface::class)->replace($_GET),
+            HttpCargoInterface::PARAMETERS => $resourceManager->clone('*\Base\Container\VariableContainer', VariableContainerInterface::class)->setMultiple($_GET),
             HttpCargoInterface::PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
             HttpCargoInterface::REQUEST_HEADERS => $resourceManager->clone('*\Base\Header\Headers', HeadersInterface::class, [
                 HeadersInterface::VALUES => $requestHeaders
