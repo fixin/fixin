@@ -72,7 +72,7 @@ class Uri extends Prototype implements UriInterface
     {
         return ltrim($this->scheme . '://', ':/')
             . $this->getAuthority()
-            . ($this->path !== null ? '/' . ltrim($this->path, '/') : '')
+            . ($this->path !== '' ? '/' . ltrim($this->path, '/') : '')
             . rtrim('?' . $this->query, '?')
             . rtrim('#' . $this->fragment, '#');
     }
@@ -137,8 +137,8 @@ class Uri extends Prototype implements UriInterface
     /**
      * Determine port is default for scheme
      */
-    protected function isStandardPort(int $port, string $scheme): bool
+    protected function isStandardPort(?int $port, string $scheme): bool
     {
-        return $port === $this->defaultSchemePorts[$scheme] ?? null;
+        return $port === $this->defaultSchemePorts[$scheme] ?? false;
     }
 }
