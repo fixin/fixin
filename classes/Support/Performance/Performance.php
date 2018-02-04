@@ -27,7 +27,7 @@ class Performance extends DoNotCreate
      */
     protected static $lastTime = null;
 
-    public static function measure(string $title = null): PerformanceResult
+    public static function measure(string $title = ''): PerformanceResult
     {
         $time = microtime(true);
         $memoryUsage = memory_get_usage();
