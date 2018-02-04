@@ -17,7 +17,7 @@ use Fixin\Support\Types;
 class MemcachedDictionary extends Resource implements DictionaryInterface
 {
     protected const
-        MISSING_SERVER_PARAMETER_EXCEPTION = "Missing server parameter exception '%s': '%s'",
+        MISSING_SERVER_PARAMETER_EXCEPTION = "Missing '%s' server parameter exception for '%s'",
         THIS_SETS = [
             self::PERSISTENT_ID => [Types::STRING, Types::NULL],
             self::SERVERS => [Types::ARRAY]
@@ -77,7 +77,8 @@ class MemcachedDictionary extends Resource implements DictionaryInterface
         }
 
         $this->memcached = new \Memcached($this->persistentId);
-        if ($this->memcached->getServerList() === $servers) {
+
+        if (count($this->memcached->getServerList()) === count($servers)) {
             return;
         }
 
@@ -153,7 +154,7 @@ class MemcachedDictionary extends Resource implements DictionaryInterface
         $parameterCount = count($parameterKeys);
 
         foreach ($this->servers as $key => $server) {
-            $orderedParameters = array_intersect_key($parameterKeys, (array) $server);
+            $orderedParameters = array_intersect_key((array) $server, $parameterKeys);
 
             if (count($orderedParameters) === $parameterCount) {
                 $servers[] = $orderedParameters;
@@ -163,7 +164,7 @@ class MemcachedDictionary extends Resource implements DictionaryInterface
 
             $missingKeys = array_keys(array_diff_key($parameterKeys, $server));
 
-            throw new Exception\InvalidArgumentException(sprintf(static::MISSING_SERVER_PARAMETER_EXCEPTION, $key, implode("', '", $missingKeys)));
+            throw new Exception\InvalidArgumentException(sprintf(static::MISSING_SERVER_PARAMETER_EXCEPTION, implode("', '", $missingKeys), $key));
         }
 
         return $servers;
