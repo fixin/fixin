@@ -78,15 +78,17 @@ class Local extends Resource implements FileSystemInterface
     {
         $contents = null;
 
-        if (($handle = fopen($filename, 'r')) && flock($handle, LOCK_SH)) {
-            $contents = '';
+        if ($handle = fopen($filename, 'r')) {
+            if (flock($handle, LOCK_SH)) {
+                $contents = '';
 
-            while (!feof($handle)) {
-                $contents .= fread($handle, 1048576);
+                while (!feof($handle)) {
+                    $contents .= fread($handle, 1048576);
+                }
             }
-        }
 
-        fclose($handle);
+            fclose($handle);
+        }
 
         return $contents;
     }
