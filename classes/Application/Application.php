@@ -130,7 +130,7 @@ class Application implements ApplicationInterface
         catch (Throwable $t) {
             try {
                 // Missing cargo
-                if (!$cargo) {
+                if (!isset($cargo)) {
                     $cargo = $resourceManager->clone('*\Delivery\Cargo\Cargo', CargoInterface::class);
                 }
 
