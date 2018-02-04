@@ -17,6 +17,19 @@ interface VariableContainerInterface extends \Serializable
     public function clear(): VariableContainerInterface;
 
     /**
+     * @return $this
+     */
+    public function delete(string $name): VariableContainerInterface;
+
+    /**
+     * Delete multiple items
+     *
+     * @param array $keys
+     * @return $this
+     */
+    public function deleteMultiple(array $keys): VariableContainerInterface;
+
+    /**
      * Get value for key or return default value for non-set key
      */
     public function get(string $name, $default = null);
@@ -31,11 +44,6 @@ interface VariableContainerInterface extends \Serializable
     /**
      * @return $this
      */
-    public function replace(array $values): VariableContainerInterface;
-
-    /**
-     * @return $this
-     */
     public function set(string $name, $value): VariableContainerInterface;
 
     /**
@@ -46,5 +54,5 @@ interface VariableContainerInterface extends \Serializable
     /**
      * @return $this
      */
-    public function unset(string $name): VariableContainerInterface;
+    public function setMultiple(array $values): VariableContainerInterface;
 }

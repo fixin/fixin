@@ -29,20 +29,28 @@ class VariableContainer implements VariableContainerInterface
         return $this;
     }
 
-    public function isModified(): bool
-    {
-        return $this->modified;
-    }
-
     /**
      * @return $this
      */
-    public function replace(array $values): VariableContainerInterface
+    public function delete(string $name): VariableContainerInterface
     {
-        $this->values = $values + $this->values;
+        unset($this->values[$name]);
         $this->modified = true;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteMultiple(array $keys): VariableContainerInterface
+    {
+        $this->values = array_diff_key($this->values, array_flip($keys));
+    }
+
+    public function isModified(): bool
+    {
+        return $this->modified;
     }
 
     public function serialize(): string
@@ -71,19 +79,19 @@ class VariableContainer implements VariableContainerInterface
         return $this;
     }
 
-    public function unserialize($serialized): void
-    {
-        $this->values = unserialize($serialized);
-    }
-
     /**
      * @return $this
      */
-    public function unset(string $name): VariableContainerInterface
+    public function setMultiple(array $values): VariableContainerInterface
     {
-        unset($this->values[$name]);
+        $this->values = $values + $this->values;
         $this->modified = true;
 
         return $this;
+    }
+
+    public function unserialize($serialized): void
+    {
+        $this->values = unserialize($serialized);
     }
 }
