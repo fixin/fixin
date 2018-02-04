@@ -24,7 +24,7 @@ class Strings extends DoNotCreate
      */
     public static function camelCasedToText(string $string): string
     {
-        return preg_replace_callback('/([a-z])([A-Z])/', function($tag) {
+        return preg_replace_callback('/([a-z])([A-Z])/', function ($tag) {
             return "$tag[1] $tag[2]";
         }, $string);
     }

@@ -31,7 +31,7 @@ class EnvironmentUriFactory implements FactoryInterface
 
     protected function getPath(): string
     {
-        $uri = $_SERVER['HTTP_X_REWRITE_URL'] ?? $_SERVER['REQUEST_URI'] ?? $_SERVER['ORIG_PATH_INFO'] ?? (function() {
+        $uri = $_SERVER['HTTP_X_REWRITE_URL'] ?? $_SERVER['REQUEST_URI'] ?? $_SERVER['ORIG_PATH_INFO'] ?? (function () {
             throw new Exception\RuntimeException(static::CAN_T_DETERMINE_EXCEPTION);
         })();
 

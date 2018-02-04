@@ -34,7 +34,7 @@ class ResourceManagerTest extends AbstractTest
 
         $resources = new ResourceManager([
             ResourceManager::DEFINITIONS => [
-                'byClosure' => function() use ($byClosure) {
+                'byClosure' => function () use ($byClosure) {
                     return $byClosure;
                 }
             ],
@@ -86,7 +86,7 @@ class ResourceManagerTest extends AbstractTest
 
         $resources = new ResourceManager([
             ResourceManager::DEFINITIONS => [
-                'prototype' => function() use ($prototype) {
+                'prototype' => function () use ($prototype) {
                     return $prototype;
                 }
             ]
@@ -106,7 +106,7 @@ class ResourceManagerTest extends AbstractTest
 
         $resources = new ResourceManager([
             ResourceManager::DEFINITIONS => [
-                'byClosure' => function() use ($byClosure) {
+                'byClosure' => function () use ($byClosure) {
                     return $byClosure;
                 }
             ],
@@ -222,12 +222,12 @@ class ResourceManagerTest extends AbstractTest
     {
         return [
             'null' => [
-                function() {
+                function () {
                     return null;
                 }
             ],
             'resource' => [
-                function() {
+                function () {
                     return new \ArrayObject();
                 }
             ]
@@ -250,7 +250,7 @@ class ResourceManagerTest extends AbstractTest
                     ]
                 ],
                 'byAbstractFactory' => \stdClass::class,
-                'byClosure' => function() use ($byClosure) {
+                'byClosure' => function () use ($byClosure) {
                     return $byClosure;
                 }
             ],

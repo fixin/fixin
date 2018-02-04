@@ -207,7 +207,7 @@ class Where extends Prototype implements WhereInterface
      */
     public function items(array $array): WhereInterface
     {
-        return $this->nested(function(Where $where) use ($array) {
+        return $this->nested(function (Where $where) use ($array) {
             $this->addItems($where, $array);
         });
     }
@@ -348,7 +348,7 @@ class Where extends Prototype implements WhereInterface
      */
     public function orItems(array $array): WhereInterface
     {
-        return $this->orNested(function(Where $where) use ($array) {
+        return $this->orNested(function (Where $where) use ($array) {
             $this->addItems($where, $array);
         });
     }

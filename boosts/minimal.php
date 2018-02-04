@@ -7,7 +7,7 @@
  * http://www.fixinphp.com
  */
 
-return (function(?array $config) {
+return (function (?array $config) {
     $fixinPath = dirname(__DIR__);
 
     // Config

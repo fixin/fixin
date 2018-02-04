@@ -16,7 +16,7 @@ return [
                     'param1' => 'test'
                 ]
             ],
-            'byClosure' => function($resourceManager) {
+            'byClosure' => function ($resourceManager) {
                 return new Fixin\ResourceManager\Test($resourceManager);
             },
             'byFactory' => 'Fixin\ResourceManager\Factory\RequestFactory',

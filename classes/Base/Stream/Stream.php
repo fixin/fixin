@@ -158,7 +158,7 @@ class Stream implements StreamInterface
         $error = null;
 
         // Suppress warnings
-        set_error_handler(function($e) use (&$error) {
+        set_error_handler(function ($e) use (&$error) {
             $error = $e;
         });
 

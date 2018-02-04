@@ -74,7 +74,7 @@ abstract class Managed implements ManagedInterface
                         /** @var callable|bool $function */
                         $function = self::OPTION_TYPE_CHECKS[$type] ?? false;
 
-                        if ($function === true || ($function && $function($value))) {
+                        if ($function === true || ($function && $function ($value))) {
                             $this->$name = $value;
 
                             continue 2;
