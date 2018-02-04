@@ -100,7 +100,8 @@ abstract class Entity extends Prototype implements EntityInterface
         // Delete outdated entities
         $repositories = new \SplObjectStorage();
         foreach ($this->outdatedSubEntities as $entity) {
-            $repositories[$entity->getRepository()] = $entity->getEntityId();
+            $entityId = $entity->getEntityId();
+            $repositories[$entityId->getRepository()][] = $entityId;
         }
 
         foreach ($repositories as $repository) {
