@@ -15,9 +15,6 @@ use Throwable;
 
 class PhpEngine extends AbstractEngine
 {
-    protected const
-        NO_TEMPLATE = 'No template';
-
     /**
      * @var AssistantInterface
      */
@@ -34,9 +31,6 @@ class PhpEngine extends AbstractEngine
     {
         // Template
         $filename = $view->getResolvedTemplate();
-        if (is_null($filename)) {
-            return static::NO_TEMPLATE;
-        }
 
         // Data
         $data = $this->renderChildren($view) + $view->getVariables();
