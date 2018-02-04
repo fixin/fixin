@@ -12,27 +12,32 @@ namespace Fixin\View\Helper;
 use Fixin\Base\Container\ContainerInterface;
 use Fixin\Resource\ResourceManagerInterface;
 
-class ConfigValue extends AbstractHelper
+class ConfigValues extends AbstractHelper
 {
     /**
      * @var ContainerInterface
      */
-    protected $config;
+    protected $__config;
 
     public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
     {
         parent::__construct($resourceManager, $options, $name);
 
-        $this->config = $resourceManager->get('config', ContainerInterface::class);
+        $this->__config = $resourceManager->get('config', ContainerInterface::class);
     }
 
-    public function __invoke($value)
+    public function __get(string $name)
     {
-        return $this->get($value);
+        return $this->$name = $this->__config->get($name);
     }
 
-    public function get($value)
+    public function __invoke($name)
     {
-        return $this->config->get($value);
+        return $this->get($name);
+    }
+
+    public function get($name)
+    {
+        return $this->__config->get($name);
     }
 }
