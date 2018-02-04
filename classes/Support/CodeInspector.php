@@ -20,7 +20,7 @@ class CodeInspector extends DoNotCreate
     {
         // File content
         $reflection = new \ReflectionFunction($function);
-        $file = file($reflection->getFileName());
+        $file = file($reflection->getFileName()) ?: [];
         $lines = array_slice($file, $startLine = $reflection->getStartLine(), $reflection->getEndLine() - $startLine);
 
         // Last row
