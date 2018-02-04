@@ -35,7 +35,7 @@ class CookieManager extends Prototype implements CookieManagerInterface
      */
     public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface
     {
-        $this->set($name, null)
+        $this->set($name, '')
             ->setExpireTime(static::EXPIRE_MINUTES)
             ->setPath($path)
             ->setDomain($domain);
