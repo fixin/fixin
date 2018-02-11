@@ -44,7 +44,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
     protected $cookieName = 'session';
 
     /**
-     * @var SessionEntityInterface
+     * @var SessionEntityInterface|null
      */
     protected $entity;
 
@@ -79,13 +79,15 @@ class SessionManager extends Prototype implements SessionManagerInterface
     protected $started = false;
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function clear(): SessionManagerInterface
     {
-        $this->start();
+        $this->started || $this->start();
 
         $this->areas = [];
+        $this->entity->setData($this->areas);
+
         $this->modified = true;
 
         return $this;
@@ -94,7 +96,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
     public function deleteGarbageSessions(int $lifetime): int
     {
         $request = $this->getRepository()->createRequest();
-        $request->getWhere()->compare(SessionEntityInterface::ACCESS_TIME, '<', new DateTimeImmutable('+' . $lifetime . ' MINUTES'));
+        $request->getWhere()->compare(SessionEntityInterface::ACCESS_TIME, '<', new DateTimeImmutable("+$lifetime MINUTES"));
 
         return $request->delete();
     }
@@ -106,7 +108,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
 
     public function getArea(string $name): SessionAreaInterface
     {
-        $this->start();
+        $this->started || $this->start();
 
         // Existing area
         if (isset($this->areas[$name])) {
@@ -124,16 +126,25 @@ class SessionManager extends Prototype implements SessionManagerInterface
         return $this->cookieManager ?: $this->loadLazyProperty(static::COOKIE_MANAGER);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCookieName(): string
     {
         return $this->cookieName;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getLifetime(): int
     {
         return $this->lifetime;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getRegenerationForwardTime(): int
     {
         return $this->regenerationForwardTime;
@@ -144,9 +155,12 @@ class SessionManager extends Prototype implements SessionManagerInterface
         return $this->repository ?: $this->loadLazyProperty(static::REPOSITORY);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isModified(): bool
     {
-        $this->start();
+        $this->started || $this->start();
 
         if ($this->modified) {
             return true;
@@ -177,21 +191,22 @@ class SessionManager extends Prototype implements SessionManagerInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function regenerateId(): SessionManagerInterface
     {
-        $this->start();
+        $this->started || $this->start();
 
         $this->sessionId = $this->generateId();
         $this->modified = true;
 
         if ($this->entity->isStored()) {
             $this->entity
-            ->setData([static::DATA_REGENERATED => $this->sessionId])
-            ->setAccessTime(new DateTimeImmutable())
-            ->save();
+                ->setData([static::DATA_REGENERATED => $this->sessionId])
+                ->setAccessTime(new DateTimeImmutable())
+                ->save();
 
+            // New entity
             $this->entity = $this->getRepository()->create();
         }
 
@@ -201,7 +216,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function save(): SessionManagerInterface
     {
@@ -230,23 +245,26 @@ class SessionManager extends Prototype implements SessionManagerInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function start(): SessionManagerInterface
     {
-        if (!$this->started) {
-            $this->started = true;
-
-            $sessionId = $this->getCookieManager()->get($this->cookieName);
-            if ($sessionId && $this->startWith($sessionId)) {
-                return $this;
-            }
-
-            // New session
-            $this->areas = [];
-            $this->entity = $this->getRepository()->create();
-            $this->regenerateId();
+        if ($this->started) {
+            return $this;
         }
+
+        $this->started = true;
+
+        $sessionId = $this->getCookieManager()->get($this->cookieName);
+        if ($sessionId && $this->startWithId($sessionId)) {
+            return $this;
+        }
+
+        // New session
+        $this->areas = [];
+        $this->entity = $this->getRepository()->create();
+
+        $this->regenerateId();
 
         return $this;
     }
@@ -254,7 +272,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
     /**
      * Start with stored session id
      */
-    protected function startWith(string $sessionId): bool
+    protected function startWithId(string $sessionId): bool
     {
         $request = $this->getRepository()->createRequest();
         $where = $request->getWhere()->compare(SessionEntityInterface::SESSION_ID, '=', $sessionId);
