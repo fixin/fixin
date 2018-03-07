@@ -62,7 +62,7 @@ class View extends Prototype implements ViewInterface
     protected $variables = [];
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function clearChildren(): ViewInterface
     {
@@ -72,7 +72,7 @@ class View extends Prototype implements ViewInterface
     }
 
     /**
-     * @return $this
+     * @inheritdoc
      */
     public function clearVariables(): ViewInterface
     {
@@ -81,21 +81,35 @@ class View extends Prototype implements ViewInterface
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getChild(string $name): ?ViewInterface
     {
         return $this->children[$name] ?? null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getChildren(): array
     {
         return $this->children;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getContentType(): string
     {
         return $this->getEngine()->getContentType();
     }
 
+    /**
+     * Get engine
+     *
+     * @return EngineInterface
+     */
     protected function getEngine(): EngineInterface
     {
         if ($this->engine) {
@@ -111,6 +125,8 @@ class View extends Prototype implements ViewInterface
 
     /**
      * Get engine name for the template
+     *
+     * @return string
      */
     protected function getEngineNameForTemplate(): string
     {
@@ -131,13 +147,18 @@ class View extends Prototype implements ViewInterface
         return static::DEFAULT_ENGINE;
     }
 
+    /**
+     * Get file resolver
+     *
+     * @return FileResolverInterface
+     */
     protected function getFileResolver(): FileResolverInterface
     {
         return $this->fileResolver ?: $this->loadLazyProperty(static::FILE_RESOLVER);
     }
 
     /**
-     * @throws Exception\RuntimeException
+     * @inheritDoc
      */
     public function getResolvedTemplate(): string
     {
@@ -161,38 +182,40 @@ class View extends Prototype implements ViewInterface
         throw new Exception\RuntimeException(sprintf(static::UNABLE_TO_RESOLVE_TEMPLATE_EXCEPTION, $template));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getTemplate(): String
     {
         return $this->template;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getVariable(string $name)
     {
         return $this->variables[$name] ?? null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getVariables(): array
     {
         return $this->variables;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function render()
     {
         return $this->getEngine()->render($this);
     }
 
     /**
-     * @return $this
-     */
-    public function replaceVariables(array $variables): ViewInterface
-    {
-        $this->variables = $variables + $this->variables;
-
-        return $this;
-    }
-
-    /**
-     * @return $this
+     * @inheritDoc
      */
     public function setChild(string $name, ViewInterface $child): ViewInterface
     {
@@ -202,7 +225,17 @@ class View extends Prototype implements ViewInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
+     */
+    public function setMultipleVariables(array $variables): ViewInterface
+    {
+        $this->variables = $variables + $this->variables;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function setTemplate(string $template): ViewInterface
     {
@@ -212,7 +245,7 @@ class View extends Prototype implements ViewInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setVariable(string $name, $value): ViewInterface
     {

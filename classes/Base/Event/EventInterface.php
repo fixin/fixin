@@ -17,6 +17,17 @@ interface EventInterface extends PrototypeInterface
         CONTEXT = 'context',
         NAME = 'name';
 
+    /**
+     * Get context
+     *
+     * @return mixed
+     */
     public function getContext();
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
     public function getName(): string;
 }

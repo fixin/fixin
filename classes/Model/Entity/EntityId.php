@@ -36,11 +36,17 @@ class EntityId extends Prototype implements EntityIdInterface
      */
     protected $string = '';
 
+    /**
+     * @inheritDoc
+     */
     public function __toString(): string
     {
         return $this->string;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function deleteEntity(): bool
     {
         $request = $this->getRepository()->createRequest();
@@ -49,21 +55,35 @@ class EntityId extends Prototype implements EntityIdInterface
         return $request->delete() > 0;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getArrayCopy(): array
     {
         return $this->entityId;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getEntity(): ?EntityInterface
     {
         return $this->getRepository()->getById($this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getRepository(): RepositoryInterface
     {
         return $this->repository ?: $this->loadLazyProperty(static::REPOSITORY);
     }
 
+    /**
+     * Set entity ID
+     *
+     * @param array $entityId
+     */
     protected function setEntityId(array $entityId): void
     {
         $this->entityId = $entityId;

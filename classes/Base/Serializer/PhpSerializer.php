@@ -19,7 +19,7 @@ class PhpSerializer extends Resource implements SerializerInterface
         UNSERIALIZATION_FAILURE_EXCEPTION = 'Unserialization failed';
 
     /**
-     * @throws Exception\SerializationFailureException
+     * @inheritDoc
      */
     public function serialize($value): string
     {
@@ -32,7 +32,7 @@ class PhpSerializer extends Resource implements SerializerInterface
     }
 
     /**
-     * @throws Exception\UnserializationFailureException
+     * @inheritDoc
      */
     public function unserialize(string $serialized, array $allowedClasses = null)
     {

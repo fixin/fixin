@@ -12,15 +12,8 @@ namespace Fixin\Model\Request\Where\Tag;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Support\Types;
 
-class CompareTag extends AbstractTag {
-
-    protected const
-        THIS_SETS = parent::THIS_SETS + [
-            self::LEFT => [Types::SCALAR, RequestInterface::class],
-            self::OPERATOR => Types::STRING,
-            self::RIGHT => [Types::SCALAR, RequestInterface::class, Types::ARRAY]
-        ];
-
+class ComparisonTag extends AbstractTag
+{
     public const
         LEFT = 'left',
         OPERATOR = 'operator',
@@ -32,6 +25,13 @@ class CompareTag extends AbstractTag {
         LOWER_THAN = '<',
         LOWER_THAN_OR_EQUALS = '<=',
         NOT_EQUALS = '!=';
+
+    protected const
+        THIS_SETS = parent::THIS_SETS + [
+            self::LEFT => [Types::SCALAR, RequestInterface::class],
+            self::OPERATOR => Types::STRING,
+            self::RIGHT => [Types::SCALAR, RequestInterface::class, Types::ARRAY]
+        ];
 
     /**
      * @var number|string|RequestInterface
@@ -58,6 +58,11 @@ class CompareTag extends AbstractTag {
         return $this->left;
     }
 
+    /**
+     * Get operator
+     *
+     * @return string
+     */
     public function getOperator(): string
     {
         return $this->operator;

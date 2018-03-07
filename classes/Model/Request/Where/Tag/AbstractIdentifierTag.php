@@ -13,13 +13,13 @@ use Fixin\Support\Types;
 
 abstract class AbstractIdentifierTag extends AbstractTag
 {
+    public const
+        IDENTIFIER = 'identifier';
+
     protected const
         THIS_SETS = parent::THIS_SETS + [
             self::IDENTIFIER => [Types::STRING, Types::ARRAY]
         ];
-
-    public const
-        IDENTIFIER = 'identifier';
 
     /**
      * @var string|array
@@ -27,6 +27,8 @@ abstract class AbstractIdentifierTag extends AbstractTag
     protected $identifier;
 
     /**
+     * Get identifier
+     *
      * @return string|array
      */
     public function getIdentifier()

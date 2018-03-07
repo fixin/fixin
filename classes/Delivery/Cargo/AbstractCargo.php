@@ -30,18 +30,24 @@ abstract class AbstractCargo extends Prototype implements CargoInterface
      */
     protected $delivered = false;
 
+    /**
+     * @inheritDoc
+     */
     public function getContent()
     {
         return $this->content;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isDelivered(): bool
     {
         return $this->delivered;
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setContent($content): CargoInterface
     {
@@ -51,7 +57,7 @@ abstract class AbstractCargo extends Prototype implements CargoInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setDelivered(bool $delivered): CargoInterface
     {
@@ -61,7 +67,7 @@ abstract class AbstractCargo extends Prototype implements CargoInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function unpack(): CargoInterface
     {

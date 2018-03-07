@@ -18,7 +18,14 @@ class EnvironmentUriFactory implements FactoryInterface
     protected const
         CAN_T_DETERMINE_EXCEPTION = 'Can\'t determine the request URI';
 
-    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * Produce URI
+     *
+     * @param ResourceManagerInterface $resourceManager
+     * @param array|null $options
+     * @return UriInterface
+     */
+    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null): UriInterface
     {
         return $resourceManager->clone('*\Base\Uri\Uri', UriInterface::class, [
             UriInterface::SCHEME => ($https = $_SERVER['HTTPS'] ?? false) && $https !== 'off' ? 'https' : 'http',
@@ -29,6 +36,11 @@ class EnvironmentUriFactory implements FactoryInterface
         ]);
     }
 
+    /**
+     * Get path
+     *
+     * @return string
+     */
     protected function getPath(): string
     {
         $uri = $_SERVER['HTTP_X_REWRITE_URL'] ?? $_SERVER['REQUEST_URI'] ?? $_SERVER['ORIG_PATH_INFO'] ?? (function () {

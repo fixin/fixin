@@ -13,6 +13,9 @@ use Fixin\Resource\Prototype;
 
 abstract class AbstractFilter extends Prototype implements FilterInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function __invoke($value)
     {
         return $this->filter($value);

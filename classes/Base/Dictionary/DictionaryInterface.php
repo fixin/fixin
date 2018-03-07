@@ -18,7 +18,7 @@ interface DictionaryInterface extends ResourceInterface
      *
      * @return $this
      */
-    public function clear(): self;
+    public function clear(): DictionaryInterface;
 
     /**
      * Decrement value of a numeric item
@@ -35,7 +35,7 @@ interface DictionaryInterface extends ResourceInterface
      * @param string $key
      * @return $this
      */
-    public function delete(string $key): self;
+    public function delete(string $key): DictionaryInterface;
 
     /**
      * Delete multiple items
@@ -43,7 +43,7 @@ interface DictionaryInterface extends ResourceInterface
      * @param array $keys
      * @return $this
      */
-    public function deleteMultiple(array $keys): self;
+    public function deleteMultiple(array $keys): DictionaryInterface;
 
     /**
      * Retrieve an item
@@ -75,17 +75,17 @@ interface DictionaryInterface extends ResourceInterface
      *
      * @param string $key
      * @param $value
-     * @param int $seconds
+     * @param int $expireTime
      * @return $this
      */
-    public function set(string $key, $value, int $seconds = 0): self;
+    public function set(string $key, $value, int $expireTime = 0): DictionaryInterface;
 
     /**
      * Store multiple items
      *
      * @param array $items
-     * @param int $seconds
+     * @param int $expireTime
      * @return $this
      */
-    public function setMultiple(array $items, int $seconds = 0): self;
+    public function setMultiple(array $items, int $expireTime = 0): DictionaryInterface;
 }

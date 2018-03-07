@@ -58,31 +58,49 @@ class ConsoleCargo extends Cargo implements ConsoleCargoInterface
      */
     protected $server;
 
+    /**
+     * @inheritDoc
+     */
     public function getArguments(): VariableContainerInterface
     {
         return $this->arguments;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCommand(): ?string
     {
         return $this->command;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getEnvironment(): ContainerInterface
     {
         return $this->environment;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOptions(): VariableContainerInterface
     {
         return $this->options;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getScriptName(): string
     {
         return $this->scriptName;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getServer(): ContainerInterface
     {
         return $this->server;

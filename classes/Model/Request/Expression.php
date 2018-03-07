@@ -30,11 +30,17 @@ class Expression extends Prototype implements ExpressionInterface
      */
     protected $parameters = [];
 
+    /**
+     * @inheritDoc
+     */
     public function getExpression(): string
     {
         return $this->expression;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getParameters(): array
     {
         return $this->parameters;

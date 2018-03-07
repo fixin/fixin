@@ -9,12 +9,12 @@
 
 namespace Fixin\Base\Session;
 
-use DateTimeImmutable;
 use Fixin\Base\Cookie\CookieManagerInterface;
-use Fixin\Model\Repository\RepositoryInterface;
+use Fixin\Base\Dictionary\DictionaryInterface;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Strings;
 use Fixin\Support\Types;
+
 
 class SessionManager extends Prototype implements SessionManagerInterface
 {
@@ -23,9 +23,10 @@ class SessionManager extends Prototype implements SessionManagerInterface
         THIS_SETS = [
             self::COOKIE_MANAGER => [self::LAZY_LOADING => CookieManagerInterface::class],
             self::COOKIE_NAME => Types::STRING,
+            self::KEY_PREFIX => Types::STRING,
             self::LIFETIME => Types::INT,
             self::REGENERATION_FORWARD_TIME => Types::INT,
-            self::REPOSITORY => [self::LAZY_LOADING => RepositoryInterface::class]
+            self::STORE => [self::LAZY_LOADING => DictionaryInterface::class]
         ];
 
     /**
@@ -44,9 +45,9 @@ class SessionManager extends Prototype implements SessionManagerInterface
     protected $cookieName = 'session';
 
     /**
-     * @var SessionEntityInterface|null
+     * @var string
      */
-    protected $entity;
+    protected $keyPrefix = 'session.';
 
     /**
      * @var integer
@@ -61,12 +62,7 @@ class SessionManager extends Prototype implements SessionManagerInterface
     /**
      * @var integer
      */
-    protected $regenerationForwardTime = 1;
-
-    /**
-     * @var RepositoryInterface|false|null
-     */
-    protected $repository;
+    protected $regenerationForwardTime = 60;
 
     /**
      * @var string
@@ -79,6 +75,11 @@ class SessionManager extends Prototype implements SessionManagerInterface
     protected $started = false;
 
     /**
+     * @var DictionaryInterface
+     */
+    protected $store;
+
+    /**
      * @inheritDoc
      */
     public function clear(): SessionManagerInterface
@@ -86,26 +87,25 @@ class SessionManager extends Prototype implements SessionManagerInterface
         $this->started || $this->start();
 
         $this->areas = [];
-        $this->entity->setData($this->areas);
-
         $this->modified = true;
 
         return $this;
     }
 
-    public function deleteGarbageSessions(int $lifetime): int
-    {
-        $request = $this->getRepository()->createRequest();
-        $request->getWhere()->compare(SessionEntityInterface::ACCESS_TIME, '<', new DateTimeImmutable("+$lifetime MINUTES"));
-
-        return $request->delete();
-    }
-
+    /**
+     * Generate ID
+     *
+     * @return string
+     */
     protected function generateId(): string
     {
+        // TODO: revision
         return sha1(Strings::generateRandomAlnum(24) . uniqid('', true) . microtime(true));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getArea(string $name): SessionAreaInterface
     {
         $this->started || $this->start();
@@ -121,6 +121,11 @@ class SessionManager extends Prototype implements SessionManagerInterface
         return $this->areas[$name] = $this->resourceManager->clone('*\Base\Session\SessionArea', SessionAreaInterface::class);
     }
 
+    /**
+     * Get the cookie manager
+     *
+     * @return CookieManagerInterface
+     */
     protected function getCookieManager(): CookieManagerInterface
     {
         return $this->cookieManager ?: $this->loadLazyProperty(static::COOKIE_MANAGER);
@@ -150,9 +155,14 @@ class SessionManager extends Prototype implements SessionManagerInterface
         return $this->regenerationForwardTime;
     }
 
-    protected function getRepository(): RepositoryInterface
+    /**
+     * Get store
+     *
+     * @return DictionaryInterface
+     */
+    protected function getStore(): DictionaryInterface
     {
-        return $this->repository ?: $this->loadLazyProperty(static::REPOSITORY);
+        return $this->store ?: $this->loadLazyProperty(static::STORE);
     }
 
     /**
@@ -175,21 +185,6 @@ class SessionManager extends Prototype implements SessionManagerInterface
         return false;
     }
 
-    protected function loadEntity(SessionEntityInterface $entity): void
-    {
-        $this->entity = $entity;
-        $this->areas = $entity->getData();
-        $this->sessionId = $entity->getSessionId();
-
-        if ($this->lifetime) {
-            $this->setupCookie();
-        }
-
-        $request = $this->getRepository()->createRequest();
-        $request->getWhere()->compare(SessionEntityInterface::SESSION_ID, '=', $this->sessionId);
-        $request->update([SessionEntityInterface::ACCESS_TIME => new DateTimeImmutable()]);
-    }
-
     /**
      * @inheritDoc
      */
@@ -197,20 +192,15 @@ class SessionManager extends Prototype implements SessionManagerInterface
     {
         $this->started || $this->start();
 
-        $this->sessionId = $this->generateId();
+        $sessionId = $this->generateId();
         $this->modified = true;
 
-        if ($this->entity->isStored()) {
-            $this->entity
-                ->setData([static::DATA_REGENERATED => $this->sessionId])
-                ->setAccessTime(new DateTimeImmutable())
-                ->save();
-
-            // New entity
-            $this->entity = $this->getRepository()->create();
+        if ($this->sessionId) {
+            $this->getStore()->set($this->keyPrefix . $this->sessionId, [static::DATA_REGENERATED => $sessionId], $this->regenerationForwardTime);
         }
 
-        $this->setupCookie();
+        $this->sessionId = $sessionId;
+        $this->save();
 
         return $this;
     }
@@ -221,13 +211,11 @@ class SessionManager extends Prototype implements SessionManagerInterface
     public function save(): SessionManagerInterface
     {
         if ($this->started && $this->isModified()) {
-            $this->entity
-                ->setSessionId($this->sessionId)
-                ->setData($this->areas)
-                ->setAccessTime(new DateTimeImmutable())
-                ->save();
+            $this->getStore()->set($this->keyPrefix . $this->sessionId, $this->areas, $this->lifetime);
 
-            $this->modified = false;
+            $this->setupCookie();
+
+            $this->modified = true;
 
             foreach ($this->areas as $area) {
                 $area->setModified(false);
@@ -237,6 +225,9 @@ class SessionManager extends Prototype implements SessionManagerInterface
         return $this;
     }
 
+    /**
+     * Setup cookie
+     */
     protected function setupCookie(): void
     {
         $this->getCookieManager()->set($this->cookieName, $this->sessionId)
@@ -255,14 +246,12 @@ class SessionManager extends Prototype implements SessionManagerInterface
 
         $this->started = true;
 
-        $sessionId = $this->getCookieManager()->get($this->cookieName);
-        if ($sessionId && $this->startWithId($sessionId)) {
+        if (($sessionId = $this->getCookieManager()->get($this->cookieName)) && $this->startWithId($sessionId)) {
             return $this;
         }
 
         // New session
         $this->areas = [];
-        $this->entity = $this->getRepository()->create();
 
         $this->regenerateId();
 
@@ -270,29 +259,35 @@ class SessionManager extends Prototype implements SessionManagerInterface
     }
 
     /**
-     * Start with stored session id
+     * Start session with ID
+     *
+     * @param string $sessionId
+     * @return bool
      */
     protected function startWithId(string $sessionId): bool
     {
-        $request = $this->getRepository()->createRequest();
-        $where = $request->getWhere()->compare(SessionEntityInterface::SESSION_ID, '=', $sessionId);
-
-        if ($this->lifetime) {
-            $where->compare(SessionEntityInterface::ACCESS_TIME, '>=', new DateTimeImmutable('+' . $this->lifetime . ' MINUTES'));
+        if (null === $data = $this->getStore()->get($this->keyPrefix . $sessionId)) {
+            return false;
         }
 
-        /** @var SessionEntityInterface $entity */
-        if ($entity = $request->fetchFirst()) {
-            $data = $entity->getData();
-            if (isset($data[static::DATA_REGENERATED])) {
-                return ($entity->getAccessTime() >= new DateTimeImmutable('-' . $this->regenerationForwardTime . ' MINUTES')) ? $this->startWith($data[static::DATA_REGENERATED]) : false;
-            }
-
-            $this->loadEntity($entity);
-
-            return true;
+        // Regenerated
+        if (isset($data[static::DATA_REGENERATED])) {
+            return $this->startWithId($data[static::DATA_REGENERATED]);
         }
 
-        return false;
+        // Restore areas
+        $areas = [];
+
+        /** @var $area SessionAreaInterface */
+        foreach ($data as $key => $area) {
+            $areas[$key] = $area->withResourceManager($this->resourceManager);
+        }
+
+        $this->areas = $areas;
+        $this->sessionId = $sessionId;
+
+        $this->setupCookie();
+
+        return true;
     }
 }

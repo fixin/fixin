@@ -17,15 +17,15 @@ use Fixin\Support\Strings;
 
 class HttpRouterHubFactory implements FactoryInterface
 {
-    protected const
-        INVALID_ROUTE_ARGUMENT_EXCEPTION = "Invalid route argument for '%s'",
-        NO_ROUTES_EXCEPTION = "No routes";
-
     public const
         HANDLER = 'handler',
         PATTERNS = 'patterns',
         ROUTES = 'routes',
         URI = 'uri';
+
+    protected const
+        INVALID_ROUTE_ARGUMENT_EXCEPTION = "Invalid route argument for '%s'",
+        NO_ROUTES_EXCEPTION = "No routes";
 
     /**
      * @var array
@@ -58,9 +58,13 @@ class HttpRouterHubFactory implements FactoryInterface
     protected $scopePatterns;
 
     /**
-     * @throws Exception\RuntimeException
+     * Produce HTTP router hub
+     *
+     * @param ResourceManagerInterface $resourceManager
+     * @param array|null $options
+     * @return HttpRouterHub
      */
-    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): HttpRouterHub
+    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null): HttpRouterHub
     {
         // Routes
         if (isset($options[static::ROUTES])) {
@@ -77,7 +81,7 @@ class HttpRouterHubFactory implements FactoryInterface
                     HttpRouterHub::ROUTE_TREE => $this->routeTree,
                     HttpRouterHub::ROUTE_URIS => $this->routeUris,
                     HttpRouterHub::HANDLERS => $this->handlers
-                ], $name);
+                ]);
             }
         }
 
@@ -85,6 +89,10 @@ class HttpRouterHubFactory implements FactoryInterface
     }
 
     /**
+     * Add route from definition
+     *
+     * @param array $definition
+     * @param string $uri
      * @throws Exception\InvalidArgumentException
      */
     protected function addRouteFromDefinition(array $definition, string $uri): void
@@ -104,6 +112,11 @@ class HttpRouterHubFactory implements FactoryInterface
     }
 
     /**
+     * Add route group from definition
+     *
+     * @param array $definition
+     * @param string $uri
+     * @param string $namespace
      * @throws Exception\InvalidArgumentException
      */
     protected function addRouteGroupFromDefinition(array $definition, string $uri, string $namespace): void
@@ -118,6 +131,13 @@ class HttpRouterHubFactory implements FactoryInterface
         }
     }
 
+    /**
+     * Add route item
+     *
+     * @param array $path
+     * @param string $uri
+     * @param array $parameters
+     */
     protected function addRouteItem(array $path, string $uri, array $parameters): void
     {
         Arrays::setValueAtPath($this->routeTree, $path, [
@@ -131,6 +151,16 @@ class HttpRouterHubFactory implements FactoryInterface
         ];
     }
 
+    /**
+     * Add route parameter segment
+     *
+     * @param string $name
+     * @param array $segments
+     * @param array $path
+     * @param string $uri
+     * @param array $parameters
+     * @param int $level
+     */
     protected function addRouteParameterSegment(string $name, array $segments, array $path, string $uri, array $parameters, int $level): void
     {
         // Optional
@@ -153,6 +183,15 @@ class HttpRouterHubFactory implements FactoryInterface
         $this->addRouteSegments($segments, $path, $uri . '%s', $parameters, $level + 1);
     }
 
+    /**
+     * Add route segments
+     *
+     * @param array $segments
+     * @param array $path
+     * @param string $uri
+     * @param array $parameters
+     * @param int $level
+     */
     protected function addRouteSegments(array $segments, array $path, string $uri, array $parameters, int $level): void
     {
         // End
@@ -178,7 +217,11 @@ class HttpRouterHubFactory implements FactoryInterface
     }
 
     /**
-     * @throws Exception\InvalidArgumentException
+     * Add routes from definition
+     *
+     * @param array $definition
+     * @param string $uri
+     * @param string $namespace
      */
     protected function addRoutesFromDefinition(array $definition, string $uri, string $namespace): void
     {
@@ -216,6 +259,10 @@ class HttpRouterHubFactory implements FactoryInterface
 
     /**
      * URI overriding (absolute, relative)
+     *
+     * @param string $uri
+     * @param string $inherited
+     * @return string
      */
     protected function uri(string $uri, string $inherited): string
     {

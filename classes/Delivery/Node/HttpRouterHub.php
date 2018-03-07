@@ -16,16 +16,6 @@ use Fixin\Support\Types;
 
 class HttpRouterHub extends AbstractHttpHub
 {
-    protected const
-        INVALID_HANDLER_EXCEPTION = "Invalid handler '%s'",
-        MISSING_ROUTE_PARAMETER_EXCEPTION = "Missing route parameter '%s'",
-        UNKNOWN_ROUTE_EXCEPTION = "Unknown route '%s'",
-        THIS_SETS = [
-            self::HANDLERS => Types::ARRAY,
-            self::ROUTE_TREE => Types::ARRAY,
-            self::ROUTE_URIS => Types::ARRAY
-        ];
-
     public const
         HANDLERS = 'handlers',
         ROUTE_TREE = 'routeTree',
@@ -35,6 +25,16 @@ class HttpRouterHub extends AbstractHttpHub
         ROUTE_URI_PARAMETERS = 'parameters',
         ROUTE_URI_PATTERN_PARAMETER = '?',
         ROUTE_URI_URI = 'uri';
+
+    protected const
+        INVALID_HANDLER_EXCEPTION = "Invalid handler '%s'",
+        MISSING_ROUTE_PARAMETER_EXCEPTION = "Missing route parameter '%s'",
+        UNKNOWN_ROUTE_EXCEPTION = "Unknown route '%s'",
+        THIS_SETS = [
+            self::HANDLERS => Types::ARRAY,
+            self::ROUTE_TREE => Types::ARRAY,
+            self::ROUTE_URIS => Types::ARRAY
+        ];
 
     /**
      * @var array
@@ -58,6 +58,11 @@ class HttpRouterHub extends AbstractHttpHub
 
     /**
      * Find handler for segments
+     *
+     * @param array $segments
+     * @param array $node
+     * @param array $parameters
+     * @return array|null
      */
     protected function findHandler(array $segments, array $node, array $parameters): ?array
     {
@@ -83,6 +88,12 @@ class HttpRouterHub extends AbstractHttpHub
 
     /**
      * Find handler - parameter
+     *
+     * @param array $segments
+     * @param array $node
+     * @param array $parameters
+     * @param string $segment
+     * @return array|null
      */
     protected function findHandlerParameter(array $segments, array $node, array $parameters, string $segment): ?array
     {
@@ -103,6 +114,12 @@ class HttpRouterHub extends AbstractHttpHub
 
     /**
      * Find handler - pattern parameter test
+     *
+     * @param array $segments
+     * @param array $node
+     * @param array $parameters
+     * @param string $segment
+     * @return array|null
      */
     protected function findHandlerPatternParameter(array $segments, array $node, array $parameters, string $segment): ?array
     {
@@ -117,12 +134,19 @@ class HttpRouterHub extends AbstractHttpHub
 
     /**
      * Get handler instance by name
+     *
+     * @param string $name
+     * @return CargoHandlerInterface
+     * @throws Exception\InvalidArgumentException
      */
     protected function getHandler(string $name): CargoHandlerInterface
     {
         return $this->loadedHandlers[$name] ?? ($this->loadedHandlers[$name] = $this->produceHandler($name));
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface
     {
         $segments = explode('/', trim($cargo->getUri()->getPath(), '/'));
@@ -140,6 +164,8 @@ class HttpRouterHub extends AbstractHttpHub
     /**
      * Produce handler
      *
+     * @param string $name
+     * @return CargoHandlerInterface
      * @throws Exception\InvalidArgumentException
      */
     protected function produceHandler(string $name): CargoHandlerInterface
@@ -159,6 +185,11 @@ class HttpRouterHub extends AbstractHttpHub
 
     /**
      * Build route URI
+     *
+     * @param string $name
+     * @param array $parameters
+     * @return string
+     * @throws Exception\InvalidArgumentException
      */
     public function route(string $name, array $parameters): string
     {
@@ -172,6 +203,9 @@ class HttpRouterHub extends AbstractHttpHub
     /**
      * Build route parameter array
      *
+     * @param string $name
+     * @param array $parameters
+     * @return array
      * @throws Exception\InvalidArgumentException
      */
     protected function routeParameters(string $name, array $parameters): array

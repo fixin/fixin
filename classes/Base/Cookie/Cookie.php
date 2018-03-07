@@ -14,7 +14,6 @@ use Fixin\Resource\Prototype;
 class Cookie extends Prototype implements CookieInterface
 {
     protected const
-        EXPIRE_TO_TIMESTAMP = 60,
         SET_FAILURE_EXCEPTION = "Can't set '%s' cookie",
         THIS_SETS = [
             self::DOMAIN => self::USING_SETTER,
@@ -55,43 +54,60 @@ class Cookie extends Prototype implements CookieInterface
      */
     protected $value = '';
 
+    /**
+     * @inheritDoc
+     */
     public function getDomain(): string
     {
         return $this->domain;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getExpireTime(): int
     {
         return $this->expireTime;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getPath(): string
     {
         return $this->path;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getValue(): string
     {
         return $this->value;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isHttpOnly(): bool
     {
         return $this->httpOnly;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isSecure(): bool
     {
         return $this->secure;
     }
 
     /**
-     * @return $this
-     * @throws Exception\SetFailureException
+     * @inheritDoc
      */
     public function sendAs(string $name, int $baseTime): CookieInterface
     {
-        if (setcookie($name, $this->value, $this->expireTime ? $baseTime + $this->expireTime * static::EXPIRE_TO_TIMESTAMP : 0, $this->path, $this->domain, $this->secure, $this->httpOnly)) {
+        if (setcookie($name, $this->value, $this->expireTime ? $baseTime + $this->expireTime : 0, $this->path, $this->domain, $this->secure, $this->httpOnly)) {
             return $this;
         }
 
@@ -99,7 +115,7 @@ class Cookie extends Prototype implements CookieInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setDomain(string $domain): CookieInterface
     {
@@ -109,7 +125,7 @@ class Cookie extends Prototype implements CookieInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setExpireTime(int $expireTime): CookieInterface
     {
@@ -119,7 +135,7 @@ class Cookie extends Prototype implements CookieInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setHttpOnly(bool $httpOnly): CookieInterface
     {
@@ -129,7 +145,7 @@ class Cookie extends Prototype implements CookieInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setPath(string $path): CookieInterface
     {
@@ -139,7 +155,7 @@ class Cookie extends Prototype implements CookieInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setSecure(bool $secure): CookieInterface
     {
@@ -149,7 +165,7 @@ class Cookie extends Prototype implements CookieInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setValue(string $value): CookieInterface
     {

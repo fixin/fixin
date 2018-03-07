@@ -32,6 +32,9 @@ abstract class HttpRestfulController extends AbstractController
 
     /**
      * Delete a resource
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
      */
     public function deleteMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
@@ -40,12 +43,18 @@ abstract class HttpRestfulController extends AbstractController
 
     /**
      * Retrieve information
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
      */
     public function getMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
         return $this->replyMethodNotAllowed($cargo);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function handle(CargoInterface $cargo): CargoInterface
     {
         if ($cargo instanceof HttpCargoInterface) {
@@ -63,6 +72,9 @@ abstract class HttpRestfulController extends AbstractController
 
     /**
      * Metadata of the resource
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
      */
     public function headMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
@@ -71,6 +83,9 @@ abstract class HttpRestfulController extends AbstractController
 
     /**
      * Allowed methods
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
      */
     public function optionsMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
@@ -79,6 +94,9 @@ abstract class HttpRestfulController extends AbstractController
 
     /**
      * Patch request
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
      */
     public function patchMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
@@ -87,6 +105,9 @@ abstract class HttpRestfulController extends AbstractController
 
     /**
      * Create or replace resource (non-idempotent)
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
      */
     public function postMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
@@ -95,6 +116,9 @@ abstract class HttpRestfulController extends AbstractController
 
     /**
      * Replace or create resource (idempotent)
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
      */
     public function putMethod(HttpCargoInterface $cargo): HttpCargoInterface
     {
@@ -103,6 +127,9 @@ abstract class HttpRestfulController extends AbstractController
 
     /**
      * Reply: Method not allowed
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
      */
     protected function replyMethodNotAllowed(HttpCargoInterface $cargo): HttpCargoInterface
     {

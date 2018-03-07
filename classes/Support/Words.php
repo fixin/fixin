@@ -12,8 +12,7 @@ namespace Fixin\Support;
 class Words extends DoNotCreate
 {
     protected const
-        PLURAL_MODE = 2,
-        PLURALIZER_CASES = [
+        NUMBER_CASES = [
             self::SINGULAR_MODE => [
                 // -x
                 '(.+)ices' => '\1ex',
@@ -54,7 +53,9 @@ class Words extends DoNotCreate
                 '(.+)' => '\1s'
             ]
         ],
-        PLURALIZER_SPECIALS = [
+        PLURAL_MODE = 11,
+        SINGULAR_MODE = 1,
+        SPECIAL_NUMBER_CASES = [
             self::SINGULAR_MODE => [
                 'children' => 'child',
                 'data' => 'data',
@@ -76,13 +77,22 @@ class Words extends DoNotCreate
                 'woman' => 'women',
             ]
         ],
-        WORD_SEPARATORS = ' ._:/\\|',
-        SINGULAR_MODE = 1
+        WORD_SEPARATORS = ' ._:/\\|'
     ;
 
-    protected static $cache = [];
+    /**
+     * @var array
+     */
+    protected static $numberCaseCache = [];
 
-    protected static function pluralizer(string $string, int $mode): string
+    /**
+     * Convert number case
+     *
+     * @param string $string
+     * @param int $mode
+     * @return string
+     */
+    protected static function convertNumberCase(string $string, int $mode): string
     {
         $prefixSize = 0;
         $length = strlen($string);
@@ -93,18 +103,30 @@ class Words extends DoNotCreate
 
         $last = substr($string, $prefixSize);
 
-        $word = static::$cache[$mode][$last] ?? static::$cache[$mode][$last] = static::PLURALIZER_SPECIALS[$mode][$last] ?? Strings::patternReplace($last, static::PLURALIZER_CASES[$mode]);
+        $word = static::$numberCaseCache[$mode][$last] ?? static::$numberCaseCache[$mode][$last] = static::SPECIAL_NUMBER_CASES[$mode][$last] ?? Strings::patternReplace($last, static::NUMBER_CASES[$mode]);
 
         return substr($string, 0, $prefixSize) . $word;
     }
 
+    /**
+     * Get plural variation of a word
+     *
+     * @param string $string
+     * @return string
+     */
     public static function toPlural(string $string): string
     {
-        return static::pluralizer($string, static::PLURAL_MODE);
+        return static::convertNumberCase($string, static::PLURAL_MODE);
     }
 
+    /**
+     * Get singular variation of a word
+     *
+     * @param string $string
+     * @return string
+     */
     public static function toSingular(string $string): string
     {
-        return static::pluralizer($string, static::SINGULAR_MODE);
+        return static::convertNumberCase($string, static::SINGULAR_MODE);
     }
 }

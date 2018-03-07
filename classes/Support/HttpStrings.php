@@ -9,7 +9,7 @@
 
 namespace Fixin\Support;
 
-class HttpStrings extends DoNotCreate
+interface HttpStrings
 {
     public const
         STATUSES = [

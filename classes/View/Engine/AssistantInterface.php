@@ -14,6 +14,7 @@ interface AssistantInterface
     /**
      * Cloned instance with engine
      *
+     * @param EngineInterface $engine
      * @return static
      */
     public function withEngine(EngineInterface $engine): AssistantInterface;

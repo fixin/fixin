@@ -18,6 +18,11 @@ use Fixin\Support\Types;
 
 class HttpClassHub extends AbstractHttpHub
 {
+    public const
+        BASE_PATH = 'basePath',
+        CLASS_PREFIX = 'classPrefix',
+        DEPTH = 'depth';
+
     protected const
         CLASS_NAME_PATTERN = '/^[a-zA-Z_][a-zA-Z0-9_\\\\]*$/',
         THIS_SETS = [
@@ -25,11 +30,6 @@ class HttpClassHub extends AbstractHttpHub
             self::CLASS_PREFIX => self::USING_SETTER,
             self::DEPTH => Types::INT
         ];
-
-    public const
-        BASE_PATH = 'basePath',
-        CLASS_PREFIX = 'classPrefix',
-        DEPTH = 'depth';
 
     /**
      * @var string
@@ -47,7 +47,10 @@ class HttpClassHub extends AbstractHttpHub
     protected $depth = 2;
 
     /**
-     * @throws Exception\RuntimeException
+     * Get handler for given path
+     *
+     * @param string $name
+     * @return CargoHandlerInterface|null
      */
     protected function getHandlerForPath(string $name): ?CargoHandlerInterface
     {
@@ -63,6 +66,12 @@ class HttpClassHub extends AbstractHttpHub
         return null;
     }
 
+    /**
+     * Handle HTTP cargo
+     *
+     * @param HttpCargoInterface $cargo
+     * @return CargoInterface
+     */
     protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface
     {
         $path = $cargo->getUri()->getPath();
@@ -82,6 +91,10 @@ class HttpClassHub extends AbstractHttpHub
 
     /**
      * Handle observed path
+     *
+     * @param HttpCargoInterface $cargo
+     * @param string $path
+     * @return CargoInterface
      */
     protected function handlePath(HttpCargoInterface $cargo, string $path): CargoInterface
     {
@@ -103,11 +116,21 @@ class HttpClassHub extends AbstractHttpHub
         return $this->replyNotFound($cargo);
     }
 
+    /**
+     * Set base path
+     *
+     * @param string $basePath
+     */
     protected function setBasePath(string $basePath): void
     {
         $this->basePath = rtrim($basePath, '/') . '/';
     }
 
+    /**
+     * Set class prefix
+     *
+     * @param string $classPrefix
+     */
     protected function setClassPrefix(string $classPrefix): void
     {
         $this->classPrefix = trim($classPrefix, '\\') . '\\';

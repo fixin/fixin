@@ -11,6 +11,9 @@ namespace Fixin\View\Helper;
 
 class EscapeHtml extends AbstractEscapeHelper
 {
+    /**
+     * @inheritDoc
+     */
     public function escape($value): string
     {
         return $this->escaper->escapeHtml((string) $value);

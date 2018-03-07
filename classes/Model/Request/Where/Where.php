@@ -13,7 +13,7 @@ use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\Where\Tag\BetweenTag;
-use Fixin\Model\Request\Where\Tag\CompareTag;
+use Fixin\Model\Request\Where\Tag\ComparisonTag;
 use Fixin\Model\Request\Where\Tag\ExistsTag;
 use Fixin\Model\Request\Where\Tag\InTag;
 use Fixin\Model\Request\Where\Tag\NullTag;
@@ -28,7 +28,7 @@ class Where extends Prototype implements WhereInterface
 
     protected const
         BETWEEN_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\BetweenTag',
-        COMPARE_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\CompareTag',
+        COMPARISON_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\ComparisonTag',
         EXISTS_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\ExistsTag',
         EXPRESSION_PROTOTYPE = '*\Model\Request\Expression',
         IN_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\InTag',
@@ -41,6 +41,15 @@ class Where extends Prototype implements WhereInterface
      */
     protected $tags = [];
 
+    /**
+     * Add between tag
+     *
+     * @param string $join
+     * @param bool $positive
+     * @param $identifier
+     * @param $min
+     * @param $max
+     */
     protected function addBetween(string $join, bool $positive, $identifier, $min, $max): void
     {
         $this->addTag(static::BETWEEN_TAG_PROTOTYPE, $join, $positive, [
@@ -50,15 +59,33 @@ class Where extends Prototype implements WhereInterface
         ]);
     }
 
-    protected function addCompare(string $join, bool $positive, $left, string $operator, $right, string $leftType, string $rightType): void
+    /**
+     * Add comparison tag
+     *
+     * @param string $join
+     * @param bool $positive
+     * @param $left
+     * @param string $operator
+     * @param $right
+     * @param string $leftType
+     * @param string $rightType
+     */
+    protected function addComparison(string $join, bool $positive, $left, string $operator, $right, string $leftType, string $rightType): void
     {
-        $this->addTag(static::COMPARE_TAG_PROTOTYPE, $join, $positive, [
-            CompareTag::LEFT => $this->compareSidePrepare($left, $leftType),
-            CompareTag::OPERATOR => $operator,
-            CompareTag::RIGHT => $this->compareSidePrepare($right, $rightType)
+        $this->addTag(static::COMPARISON_TAG_PROTOTYPE, $join, $positive, [
+            ComparisonTag::LEFT => $this->prepareComparisonSide($left, $leftType),
+            ComparisonTag::OPERATOR => $operator,
+            ComparisonTag::RIGHT => $this->prepareComparisonSide($right, $rightType)
         ]);
     }
 
+    /**
+     * Add exists tag
+     *
+     * @param string $join
+     * @param bool $positive
+     * @param RequestInterface $request
+     */
     protected function addExists(string $join, bool $positive, RequestInterface $request): void
     {
         $this->addTag(static::EXISTS_TAG_PROTOTYPE, $join, $positive, [
@@ -66,6 +93,14 @@ class Where extends Prototype implements WhereInterface
         ]);
     }
 
+    /**
+     * Add in tag
+     *
+     * @param string $join
+     * @param bool $positive
+     * @param $identifier
+     * @param $values
+     */
     protected function addIn(string $join, bool $positive, $identifier, $values): void
     {
         $this->addTag(static::IN_TAG_PROTOTYPE, $join, $positive, [
@@ -74,6 +109,12 @@ class Where extends Prototype implements WhereInterface
         ]);
     }
 
+    /**
+     * Add items
+     *
+     * @param Where $where
+     * @param array $array
+     */
     protected function addItems(Where $where, array $array): void
     {
         foreach ($array as $key => $value) {
@@ -89,10 +130,17 @@ class Where extends Prototype implements WhereInterface
                 continue;
             }
 
-            $where->compare($key, CompareTag::EQUALS, $value);
+            $where->compare($key, ComparisonTag::EQUALS, $value);
         }
     }
 
+    /**
+     * Add nested tag by callback
+     *
+     * @param string $join
+     * @param bool $positive
+     * @param callable $callback
+     */
     protected function addNested(string $join, bool $positive, callable $callback): void
     {
         $where = $this->resourceManager->clone(static::WHERE_PROTOTYPE, WhereInterface::class);
@@ -103,6 +151,13 @@ class Where extends Prototype implements WhereInterface
         ]);
     }
 
+    /**
+     * Add null tag
+     *
+     * @param string $join
+     * @param bool $positive
+     * @param string $identifier
+     */
     protected function addNull(string $join, bool $positive, string $identifier): void
     {
         $this->addTag(static::NULL_TAG_PROTOTYPE, $join, $positive, [
@@ -110,6 +165,13 @@ class Where extends Prototype implements WhereInterface
         ]);
     }
 
+    /**
+     * Add subtag
+     *
+     * @param string $join
+     * @param bool $positive
+     * @param WhereInterface $where
+     */
     protected function addSub(string $join, bool $positive, WhereInterface $where): void
     {
         $this->addTag(static::WHERE_TAG_PROTOTYPE, $join, $positive, [
@@ -117,6 +179,14 @@ class Where extends Prototype implements WhereInterface
         ]);
     }
 
+    /**
+     * Add tag
+     *
+     * @param string $prototype
+     * @param string $join
+     * @param bool $positive
+     * @param array $options
+     */
     protected function addTag(string $prototype, string $join, bool $positive, array $options): void
     {
         $this->tags[] = $this->resourceManager->clone($prototype, TagInterface::class, [
@@ -126,7 +196,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function between(string $identifier, $min, $max): WhereInterface
     {
@@ -136,28 +206,17 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface
     {
-        $this->addCompare(TagInterface::JOIN_AND, true, $left, $operator, $right, $leftType, $rightType);
+        $this->addComparison(TagInterface::JOIN_AND, true, $left, $operator, $right, $leftType, $rightType);
 
         return $this;
     }
 
-    protected function compareSidePrepare($value, string $type)
-    {
-        if (!$value instanceof ExpressionInterface && !$value instanceof RequestInterface && $type === static::TYPE_IDENTIFIER) {
-            return $this->resourceManager->clone(static::EXPRESSION_PROTOTYPE, ExpressionInterface::class, [
-                ExpressionInterface::EXPRESSION => $value
-            ]);
-        }
-
-        return $value;
-    }
-
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function exists(RequestInterface $request): WhereInterface
     {
@@ -166,13 +225,16 @@ class Where extends Prototype implements WhereInterface
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getTags(): array
     {
         return $this->tags;
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function id(EntityIdInterface $entityId): WhereInterface
     {
@@ -180,7 +242,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function ids(array $entityIds): WhereInterface
     {
@@ -193,7 +255,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function in($identifier, $values): WhereInterface
     {
@@ -203,7 +265,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function items(array $array): WhereInterface
     {
@@ -213,7 +275,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function nested(callable $callback): WhereInterface
     {
@@ -223,7 +285,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function notBetween(string $identifier, $min, $max): WhereInterface
     {
@@ -233,7 +295,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function notExists(RequestInterface $request): WhereInterface
     {
@@ -243,7 +305,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function notIn($identifier, $values): WhereInterface
     {
@@ -253,7 +315,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function notNested(callable $callback): WhereInterface
     {
@@ -263,7 +325,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function notNull(string $identifier): WhereInterface
     {
@@ -273,7 +335,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function null(string $identifier): WhereInterface
     {
@@ -283,7 +345,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orBetween(string $identifier, $min, $max): WhereInterface
     {
@@ -293,17 +355,17 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface
     {
-        $this->addCompare(TagInterface::JOIN_OR, true, $left, $operator, $right, $leftType, $rightType);
+        $this->addComparison(TagInterface::JOIN_OR, true, $left, $operator, $right, $leftType, $rightType);
 
         return $this;
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orExists(RequestInterface $request): WhereInterface
     {
@@ -313,7 +375,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orId(EntityIdInterface $entityId): WhereInterface
     {
@@ -321,7 +383,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orIds(array $entityIds): WhereInterface
     {
@@ -334,7 +396,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orIn($identifier, $values): WhereInterface
     {
@@ -344,7 +406,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orItems(array $array): WhereInterface
     {
@@ -354,7 +416,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orNested(callable $callback): WhereInterface
     {
@@ -364,7 +426,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orNotBetween(string $identifier, $min, $max): WhereInterface
     {
@@ -374,7 +436,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orNotExists(RequestInterface $request): WhereInterface
     {
@@ -384,7 +446,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orNotIn($identifier, $values): WhereInterface
     {
@@ -394,7 +456,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orNotNested(callable $callback): WhereInterface
     {
@@ -404,7 +466,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orNotNull(string $identifier): WhereInterface
     {
@@ -414,7 +476,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orNull(string $identifier): WhereInterface
     {
@@ -424,7 +486,7 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function orSub(WhereInterface $where): WhereInterface
     {
@@ -434,7 +496,25 @@ class Where extends Prototype implements WhereInterface
     }
 
     /**
-     * @return $this
+     * Prepare comparison side
+     *
+     * @param $value
+     * @param string $type
+     * @return string
+     */
+    protected function prepareComparisonSide($value, string $type)
+    {
+        if (!$value instanceof ExpressionInterface && !$value instanceof RequestInterface && $type === static::TYPE_IDENTIFIER) {
+            return $this->resourceManager->clone(static::EXPRESSION_PROTOTYPE, ExpressionInterface::class, [
+                ExpressionInterface::EXPRESSION => $value
+            ]);
+        }
+
+        return $value;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function sub(WhereInterface $where): WhereInterface
     {

@@ -113,6 +113,9 @@ class Request extends Prototype implements RequestInterface
      */
     protected $where;
 
+    /**
+     * @inheritDoc
+     */
     public function __clone() {
         if ($this->having) {
             $this->having = clone $this->having;
@@ -123,11 +126,46 @@ class Request extends Prototype implements RequestInterface
         }
     }
 
+    /**
+     * Add join
+     *
+     * @param string $type
+     * @param RepositoryInterface $repository
+     * @param string $left
+     * @param string $operator
+     * @param $right
+     * @param string|null $alias
+     */
     protected function addJoin(string $type, RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): void
     {
         $this->addJoinItem($type, $repository, $this->resourceManager->clone(static::WHERE_PROTOTYPE, WhereInterface::class)->compare($left, $operator, $right, WhereInterface::TYPE_IDENTIFIER, WhereInterface::TYPE_IDENTIFIER), $alias);
     }
 
+    /**
+     * Add join by callback
+     *
+     * @param string $type
+     * @param RepositoryInterface $repository
+     * @param callable $callback
+     * @param string|null $alias
+     */
+    protected function addJoinByCallback(string $type, RepositoryInterface $repository, callable $callback, string $alias = null): void
+    {
+        /** @var WhereInterface $where */
+        $where = $this->resourceManager->clone(static::WHERE_PROTOTYPE, WhereInterface::class);
+        $callback($where);
+
+        $this->addJoinItem($type, $repository, $where, $alias);
+    }
+
+    /**
+     * Add join item
+     *
+     * @param string $type
+     * @param RepositoryInterface $repository
+     * @param WhereInterface|null $where
+     * @param string|null $alias
+     */
     protected function addJoinItem(string $type, RepositoryInterface $repository, WhereInterface $where = null, string $alias = null): void
     {
         $this->joins[] = $this->resourceManager->clone(static::JOIN_PROTOTYPE, JoinInterface::class, [
@@ -138,15 +176,12 @@ class Request extends Prototype implements RequestInterface
         ]);
     }
 
-    protected function addJoinWhere(string $type, RepositoryInterface $repository, callable $callback, string $alias = null): void
-    {
-        /** @var WhereInterface $where */
-        $where = $this->resourceManager->clone(static::WHERE_PROTOTYPE, WhereInterface::class);
-        $callback($where);
-
-        $this->addJoinItem($type, $repository, $where, $alias);
-    }
-
+    /**
+     * Add union
+     *
+     * @param string $type
+     * @param RequestInterface $request
+     */
     protected function addUnion(string $type, RequestInterface $request): void
     {
         $this->unions[] = $this->resourceManager->clone(static::UNION_PROTOTYPE, UnionInterface::class, [
@@ -155,18 +190,24 @@ class Request extends Prototype implements RequestInterface
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function count(): int
     {
         return $this->fetchValue($this->createExpression(sprintf(static::COUNT_MASK, implode(',', $this->columns ?: ['*']))));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface
     {
         return $this->repository->createExpression($expression, $parameters);
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function crossJoin(RepositoryInterface $repository, string $alias = null): RequestInterface
     {
@@ -175,26 +216,41 @@ class Request extends Prototype implements RequestInterface
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function delete(): int
     {
         return $this->repository->delete($this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fetch(): EntitySetInterface
     {
         return $this->repository->select($this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fetchColumn($column): StorageResultInterface
     {
         return $this->repository->selectColumn((clone $this)->setColumns([$column]));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fetchExistsValue(): bool
     {
         return $this->repository->selectExistsValue($this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fetchFirst(): ?EntityInterface
     {
         return (clone $this)
@@ -203,11 +259,17 @@ class Request extends Prototype implements RequestInterface
             ->current();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fetchRawData(): StorageResultInterface
     {
         return $this->repository->selectRawData($this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function fetchValue($column)
     {
         return (clone $this)
@@ -216,104 +278,160 @@ class Request extends Prototype implements RequestInterface
             ->current();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getAlias(): string
     {
         return $this->alias ?? ($this->alias = $this->repository->getName());
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getColumns(): array
     {
         return $this->columns;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getGroupBy(): array
     {
         return $this->groupBy;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHaving(): WhereInterface
     {
         return $this->having ?? ($this->having = $this->resourceManager->clone(static::WHERE_PROTOTYPE, WhereInterface::class));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getJoins(): array
     {
         return $this->joins;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getLimit(): ?int
     {
         return $this->limit;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOffset(): int
     {
         return $this->offset;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getOrderBy(): array
     {
         return $this->orderBy;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getRepository(): RepositoryInterface
     {
         return $this->repository;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getUnionLimit(): ?int
     {
         return $this->unionLimit;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getUnionOffset(): int
     {
         return $this->unionOffset;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getUnionOrderBy(): array
     {
         return $this->unionOrderBy;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getUnions(): array
     {
         return $this->unions;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getWhere(): WhereInterface
     {
         return $this->where ?? ($this->where = $this->resourceManager->clone(static::WHERE_PROTOTYPE, WhereInterface::class));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function hasHaving(): bool
     {
         return isset($this->having);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function hasWhere(): bool
     {
         return isset($this->where);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function insertInto(RepositoryInterface $repository): int
     {
         return $this->repository->insertInto($repository, $this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isIdFetchEnabled(): bool
     {
         return $this->idFetchEnabled;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isDistinctResult(): bool
     {
         return $this->distinctResult;
     }
 
     /**
-     * @param array|number|string $right
-     * @return $this
+     * @inheritDoc
      */
     public function join(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface
     {
@@ -323,18 +441,17 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function joinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface
     {
-        $this->addJoinWhere(JoinInterface::TYPE_INNER, $repository, $callback, $alias);
+        $this->addJoinByCallback(JoinInterface::TYPE_INNER, $repository, $callback, $alias);
 
         return $this;
     }
 
     /**
-     * @param array|number|string $right
-     * @return $this
+     * @inheritDoc
      */
     public function leftJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface
     {
@@ -344,18 +461,17 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function leftJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface
     {
-        $this->addJoinWhere(JoinInterface::TYPE_LEFT, $repository, $callback, $alias);
+        $this->addJoinByCallback(JoinInterface::TYPE_LEFT, $repository, $callback, $alias);
 
         return $this;
     }
 
     /**
-     * @param array|number|string $right
-     * @return $this
+     * @inheritDoc
      */
     public function rightJoin(RepositoryInterface $repository, string $left, string $operator, $right, string $alias = null): RequestInterface
     {
@@ -365,17 +481,17 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function rightJoinWhere(RepositoryInterface $repository, callable $callback, string $alias = null): RequestInterface
     {
-        $this->addJoinWhere(JoinInterface::TYPE_RIGHT, $repository, $callback, $alias);
+        $this->addJoinByCallback(JoinInterface::TYPE_RIGHT, $repository, $callback, $alias);
 
         return $this;
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setAlias(string $alias): RequestInterface
     {
@@ -385,7 +501,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setColumns(array $columns): RequestInterface
     {
@@ -395,7 +511,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setDistinctResult(bool $distinctResult): RequestInterface
     {
@@ -405,7 +521,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setGroupBy(array $groupBy): RequestInterface
     {
@@ -415,7 +531,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setIdFetchEnabled(bool $idFetchEnabled): RequestInterface
     {
@@ -425,7 +541,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setLimit(?int $limit): RequestInterface
     {
@@ -435,7 +551,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setLimitForPage(int $page, int $itemsPerPage): RequestInterface
     {
@@ -446,7 +562,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setOffset(int $offset): RequestInterface
     {
@@ -456,7 +572,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setOrderBy(array $orderBy): RequestInterface
     {
@@ -466,7 +582,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setUnionLimit(?int $unionLimit): RequestInterface
     {
@@ -476,7 +592,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setUnionLimitForPage(int $page, int $itemsPerPage): RequestInterface
     {
@@ -487,7 +603,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setUnionOffset(int $unionOffset): RequestInterface
     {
@@ -497,7 +613,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setUnionOrderBy(array $unionOrderBy): RequestInterface
     {
@@ -507,7 +623,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function union(RequestInterface $request): RequestInterface
     {
@@ -517,7 +633,7 @@ class Request extends Prototype implements RequestInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function unionAll(RequestInterface $request): RequestInterface
     {
@@ -526,6 +642,9 @@ class Request extends Prototype implements RequestInterface
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function update(array $set): int
     {
         return $this->repository->update($set, $this);

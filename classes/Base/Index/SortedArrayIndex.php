@@ -16,6 +16,10 @@ use Fixin\Support\Types;
 
 class SortedArrayIndex extends Prototype implements IndexInterface
 {
+    public const
+        FILE_SYSTEM = 'fileSystem',
+        FILENAME = 'filename';
+
     protected const
         MISSING_FILENAME_EXCEPTION = 'Filename not set',
         INVALID_DATA_EXCEPTION = 'Invalid data',
@@ -25,10 +29,6 @@ class SortedArrayIndex extends Prototype implements IndexInterface
             self::FILENAME => [Types::STRING, Types::NULL]
         ],
         VALUES_KEY = 'values';
-
-    public const
-        FILE_SYSTEM = 'fileSystem',
-        FILENAME = 'filename';
 
     /**
      * @var bool
@@ -66,7 +66,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function clear(): IndexInterface
     {
@@ -79,7 +79,27 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function delete($key): IndexInterface
+    {
+        if (false !== $index = array_search($key, $this->keys)) {
+            array_splice($this->keys, $index, 1);
+            array_splice($this->values, $index, 1);
+
+            $this->dirty = true;
+        }
+
+        return $this;
+    }
+
+    /**
      * Find index for a value
+     *
+     * @param $value
+     * @param int $compareLimit
+     * @param int $begin
+     * @return int
      */
     protected function findIndex($value, int $compareLimit, int $begin = 0): int
     {
@@ -100,51 +120,83 @@ class SortedArrayIndex extends Prototype implements IndexInterface
         return $begin;
     }
 
+    /**
+     * Get file system
+     *
+     * @return FileSystemInterface
+     */
     protected function getFileSystem(): FileSystemInterface
     {
         return $this->fileSystem ?: $this->loadLazyProperty(static::FILE_SYSTEM);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getKeysOf($value): array
     {
         return array_slice($this->keys, $start = $this->findIndex($value, -1), $this->findIndex($value, 0) - $start);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getKeysOfGreaterThan($value): array
     {
         return array_slice($this->keys, $this->findIndex($value, 0));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getKeysOfGreaterThanOrEqual($value): array
     {
         return array_slice($this->keys, $this->findIndex($value, -1));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getKeysOfInterval($beginValue, $endValue): array
     {
         return array_slice($this->keys, $start = $this->findIndex($beginValue, -1), $this->findIndex($endValue, 0, $start + 1) - $start);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getKeysOfLowerThan($value): array
     {
         return array_slice($this->keys, 0, $this->findIndex($value, -1));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getKeysOfLowerThanOrEqual($value): array
     {
         return array_slice($this->keys, 0, $this->findIndex($value, 0));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getKeysOfValues(array $values): array
     {
         return array_intersect_key($this->keys, array_intersect($this->values, $values));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getValue($key)
     {
         return (false !== $index = array_search($key, $this->keys)) ? $this->values[$index] : null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getValues(array $keys): array
     {
         $filtered = array_intersect($this->keys, $keys);
@@ -155,8 +207,6 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     /**
      * Load data from the file
      *
-     * @throws Exception\RuntimeException
-     * @throws Exception\InvalidDataException
      * @return $this
      */
     protected function load(): self
@@ -177,6 +227,9 @@ class SortedArrayIndex extends Prototype implements IndexInterface
 
     /**
      * Load data from array
+     *
+     * @param array $data
+     * @return bool
      */
     protected function loadArray(array $data): bool
     {
@@ -196,7 +249,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function revert(): IndexInterface
     {
@@ -206,7 +259,7 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function save(): IndexInterface
     {
@@ -220,7 +273,6 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     /**
      * Save data
      *
-     * @throws Exception\RuntimeException
      * @return $this
      */
     protected function saveProcess(): self
@@ -242,11 +294,11 @@ class SortedArrayIndex extends Prototype implements IndexInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function set($key, $value): IndexInterface
     {
-        $this->unset($key);
+        $this->delete($key);
 
         $index = $this->findIndex($value, -1);
 
@@ -254,21 +306,6 @@ class SortedArrayIndex extends Prototype implements IndexInterface
         array_splice($this->values, $index, 0, [$value]);
 
         $this->dirty = true;
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function unset($key): IndexInterface
-    {
-        if (false !== $index = array_search($key, $this->keys)) {
-            array_splice($this->keys, $index, 1);
-            array_splice($this->values, $index, 1);
-
-            $this->dirty = true;
-        }
 
         return $this;
     }

@@ -18,5 +18,11 @@ interface FileResolverInterface extends ResourceInterface
         FILE_SYSTEM = 'fileSystem',
         PATHS = 'paths';
 
+    /**
+     * Resolve full path for filename
+     *
+     * @param string $filename
+     * @return null|string
+     */
     public function resolve(string $filename): ?string;
 }

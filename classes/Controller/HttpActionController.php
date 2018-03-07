@@ -26,6 +26,10 @@ abstract class HttpActionController extends AbstractController
 
     /**
      * Get method name of action if exists and it is accessible
+     *
+     * @param string $action
+     * @return string
+     * @throws \ReflectionException
      */
     protected function getActionMethodName(string $action): string
     {
@@ -44,6 +48,9 @@ abstract class HttpActionController extends AbstractController
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function handle(CargoInterface $cargo): CargoInterface
     {
         if ($cargo instanceof HttpCargoInterface) {
@@ -60,7 +67,9 @@ abstract class HttpActionController extends AbstractController
     /**
      * Call method and handle different answer types
      *
-     * @throws Exception\InvalidReturnTypeException
+     * @param HttpCargoInterface $cargo
+     * @param string $method
+     * @return CargoInterface
      */
     protected function handleMethod(HttpCargoInterface $cargo, string $method): CargoInterface
     {
@@ -83,6 +92,12 @@ abstract class HttpActionController extends AbstractController
         throw new Exception\InvalidReturnTypeException(sprintf(static::INVALID_RETURN_TYPE_EXCEPTION, $method));
     }
 
+    /**
+     * Reply Not Found
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
+     */
     protected function replyNotFound(HttpCargoInterface $cargo): HttpCargoInterface
     {
         return $cargo

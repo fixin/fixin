@@ -35,6 +35,8 @@ class Route extends Resource implements RouteInterface
     /**
      * Get node instance for key
      *
+     * @param $key
+     * @return NodeInterface
      * @throws Exception\InvalidArgumentException
      */
     protected function getNode($key): NodeInterface
@@ -56,6 +58,9 @@ class Route extends Resource implements RouteInterface
         throw new Exception\InvalidArgumentException(sprintf(static::INVALID_NODE_EXCEPTION, $key));
     }
 
+    /**
+     * @inheritdoc
+     */
     public function handle(CargoInterface $cargo): CargoInterface
     {
         $cargo->setDelivered(false);

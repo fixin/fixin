@@ -17,6 +17,11 @@ interface EntityInterface extends PrototypeInterface
         ENTITY_ID = 'entityId',
         REPOSITORY = 'repository';
 
+    /**
+     * Collect save data
+     *
+     * @return array
+     */
     public function collectSaveData(): array;
 
     /**
@@ -29,11 +34,23 @@ interface EntityInterface extends PrototypeInterface
     /**
      * Exchange array data
      *
+     * @param array $data
      * @return $this
      */
     public function exchangeArray(array $data): EntityInterface;
 
+    /**
+     * Get entity ID
+     *
+     * @return EntityIdInterface|null
+     */
     public function getEntityId(): ?EntityIdInterface;
+
+    /**
+     * Determine if stored
+     *
+     * @return bool
+     */
     public function isStored(): bool;
 
     /**

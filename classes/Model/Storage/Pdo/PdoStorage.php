@@ -25,6 +25,11 @@ use PDOStatement;
 
 class PdoStorage extends Resource implements StorageInterface
 {
+    public const
+        DSN = 'dsn',
+        PASSWORD = 'password',
+        USERNAME = 'username';
+
     protected const
         CONNECTION_ERROR_EXCEPTION = "Connection error: %s",
         GRAMMAR_CLASS_MASK = '*\Model\Storage\Grammar\%sGrammar',
@@ -34,11 +39,6 @@ class PdoStorage extends Resource implements StorageInterface
             self::PASSWORD => [Types::STRING, Types::NULL],
             self::USERNAME => [Types::STRING, Types::NULL],
         ];
-
-    public const
-        DSN = 'dsn',
-        PASSWORD = 'password',
-        USERNAME = 'username';
 
     /**
      * @var string
@@ -66,7 +66,7 @@ class PdoStorage extends Resource implements StorageInterface
     protected $username;
 
     /**
-     * @throws Exception\ConnectionErrorException
+     * Connect
      */
     protected function connect(): void
     {
@@ -88,16 +88,30 @@ class PdoStorage extends Resource implements StorageInterface
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function delete(RequestInterface $request): int
     {
         return $this->execute($this->getGrammar()->delete($request));
     }
 
+    /**
+     * Execute
+     *
+     * @param SentenceInterface $sentence
+     * @return int
+     */
     protected function execute(SentenceInterface $sentence): int
     {
         return $this->prepareStatement($sentence)->rowCount();
     }
 
+    /**
+     * Get grammar
+     *
+     * @return GrammarInterface
+     */
     protected function getGrammar(): GrammarInterface
     {
         $this->connect();
@@ -105,26 +119,44 @@ class PdoStorage extends Resource implements StorageInterface
         return $this->grammar;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getLastInsertValue(): int
     {
         return $this->resource->lastInsertId();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function insert(RepositoryInterface $repository, array $set): int
     {
         return $this->execute($this->getGrammar()->insert($repository, $set));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int
     {
         return $this->execute($this->getGrammar()->insertInto($repository, $request));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function insertMultiple(RepositoryInterface $repository, array $rows): int
     {
         return $this->execute($this->getGrammar()->insertMultiple($repository, $rows));
     }
 
+    /**
+     * Prepare statement
+     *
+     * @param SentenceInterface $sentence
+     * @return PDOStatement
+     */
     protected function prepareStatement(SentenceInterface $sentence): PDOStatement
     {
         $statement = $this->resource->prepare($sentence->getText());
@@ -133,6 +165,13 @@ class PdoStorage extends Resource implements StorageInterface
         return $statement;
     }
 
+    /**
+     * Query data
+     *
+     * @param SentenceInterface $sentence
+     * @param array $mode
+     * @return StorageResultInterface
+     */
     protected function query(SentenceInterface $sentence, array $mode): StorageResultInterface
     {
         $statement = $this->resource->prepare($sentence->getText());
@@ -144,31 +183,49 @@ class PdoStorage extends Resource implements StorageInterface
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function select(RequestInterface $request): StorageResultInterface
     {
         return $this->selectData($request, [PDO::FETCH_ASSOC]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function selectColumn(RequestInterface $request): StorageResultInterface
     {
         return $this->selectData($request, [PDO::FETCH_COLUMN, 0]);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function selectData(RequestInterface $request, array $mode): StorageResultInterface
     {
         return $this->query($this->getGrammar()->select($request), $mode);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function selectExistsValue(RequestInterface $request): bool
     {
         return (bool) $this->prepareStatement($this->getGrammar()->selectExistsValue($request))->fetchColumn();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toDateTime($value): ?DateTimeImmutable
     {
         return $this->getGrammar()->toDateTime($value);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function update(array $set, RequestInterface $request): int
     {
         return $this->execute($this->getGrammar()->update($set, $request));

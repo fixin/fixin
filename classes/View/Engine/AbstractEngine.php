@@ -26,11 +26,17 @@ abstract class AbstractEngine extends Resource implements EngineInterface
      */
     protected $helpers = [];
 
+    /**
+     * @inheritDoc
+     */
     public function getContentType(): string
     {
         return static::CONTENT_TYPE;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHelper(string $name): HelperInterface
     {
         return $this->helpers[$name] ?? ($this->helpers[$name] = $this->produceHelper($name));
@@ -39,6 +45,8 @@ abstract class AbstractEngine extends Resource implements EngineInterface
     /**
      * Produce helper instance
      *
+     * @param string $name
+     * @return HelperInterface
      * @throws Exception\InvalidArgumentException
      */
     protected function produceHelper(string $name): HelperInterface
@@ -53,7 +61,10 @@ abstract class AbstractEngine extends Resource implements EngineInterface
     }
 
     /**
-     * @throws Exception\KeyCollisionException
+     * Render children
+     *
+     * @param ViewInterface $view
+     * @return array
      */
     protected function renderChildren(ViewInterface $view): array
     {

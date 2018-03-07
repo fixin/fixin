@@ -19,23 +19,38 @@ class ConfigValues extends AbstractHelper
      */
     protected $__config;
 
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * @inheritDoc
+     */
+    public function __construct(ResourceManagerInterface $resourceManager, array $options)
     {
-        parent::__construct($resourceManager, $options, $name);
+        parent::__construct($resourceManager, $options);
 
         $this->__config = $resourceManager->get('config', ContainerInterface::class);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function __get(string $name)
     {
         return $this->$name = $this->__config->get($name);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function __invoke($name)
     {
         return $this->get($name);
     }
 
+    /**
+     * Get value
+     *
+     * @param $name
+     * @return mixed
+     */
     public function get($name)
     {
         return $this->__config->get($name);

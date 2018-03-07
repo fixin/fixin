@@ -25,8 +25,31 @@ interface JoinInterface extends PrototypeInterface
         TYPE_RIGHT = 'right',
         WHERE = 'where';
 
+    /**
+     * Get alias
+     *
+     * @return string
+     */
     public function getAlias(): string;
+
+    /**
+     * Get repository
+     *
+     * @return RepositoryInterface
+     */
     public function getRepository(): RepositoryInterface;
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
     public function getType(): string;
+
+    /**
+     * Get where
+     *
+     * @return WhereInterface|null
+     */
     public function getWhere(): ?WhereInterface;
 }

@@ -13,5 +13,11 @@ use Fixin\Resource\ResourceInterface;
 
 interface CargoHandlerInterface extends ResourceInterface
 {
+    /**
+     * Handle
+     *
+     * @param CargoInterface $cargo
+     * @return CargoInterface
+     */
     public function handle(CargoInterface $cargo): CargoInterface;
 }

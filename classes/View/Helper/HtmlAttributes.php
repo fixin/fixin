@@ -19,15 +19,21 @@ class HtmlAttributes extends AbstractHelper
      */
     protected $escaper;
 
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * @inheritDoc
+     */
+    public function __construct(ResourceManagerInterface $resourceManager, array $options)
     {
-        parent::__construct($resourceManager, $options, $name);
+        parent::__construct($resourceManager, $options);
 
         $this->escaper = $resourceManager->get('*\Base\Escaper\Escaper', EscaperInterface::class);
     }
 
     /**
      * Invoke escape
+     *
+     * @param array $var
+     * @return string
      */
     public function __invoke(array $var): string
     {
@@ -36,6 +42,9 @@ class HtmlAttributes extends AbstractHelper
 
     /**
      * Escape array
+     *
+     * @param array $var
+     * @return string
      */
     public function escape(array $var): string
     {
@@ -54,6 +63,9 @@ class HtmlAttributes extends AbstractHelper
 
     /**
      * Escape single value
+     *
+     * @param $var
+     * @return string
      */
     protected function escapeValue($var): string
     {

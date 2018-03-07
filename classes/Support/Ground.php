@@ -16,6 +16,8 @@ class Ground extends DoNotCreate
 
     /**
      * Check if running in CLI mode
+     *
+     * @return bool
      */
     public static function isConsole(): bool
     {
@@ -24,13 +26,22 @@ class Ground extends DoNotCreate
         return $isConsole ?? ($isConsole = PHP_SAPI === 'cli');
     }
 
+    /**
+     * Debug text block for environment
+     *
+     * @param string $html
+     * @return string
+     */
     public static function toDebugBlock(string $html): string
     {
         return static::isConsole() ? htmlspecialchars_decode(strip_tags($html)) : sprintf(static::DEBUG_HTML_TEMPLATE, $html);
     }
 
     /**
-     * Display debug text for environment
+     * Debug text for environment
+     *
+     * @param string $html
+     * @return string
      */
     public static function toDebugText(string $html): string
     {

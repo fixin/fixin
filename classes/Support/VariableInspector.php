@@ -23,6 +23,9 @@ class VariableInspector extends DoNotCreate
 
     /**
      * Return array info
+     *
+     * @param array $var
+     * @return string
      */
     public static function arrayInfo(array $var): string
     {
@@ -31,6 +34,10 @@ class VariableInspector extends DoNotCreate
 
     /**
      * Return list info
+     *
+     * @param array $var
+     * @param string $color
+     * @return string
      */
     public static function itemsInfo(array $var, string $color = '#444'): string
     {
@@ -55,8 +62,11 @@ class VariableInspector extends DoNotCreate
 
     /**
      * Return object info
+     *
+     * @param $var
+     * @return string
      */
-    public static function objectInfo($var): string
+    public static function objectInfo(object $var): string
     {
         $opening = '<i>' . get_class($var) . '</i> ';
 
@@ -78,6 +88,7 @@ class VariableInspector extends DoNotCreate
      * Return scalar info
      *
      * @param int|float|string|bool $var
+     * @return string
      */
     public static function scalarInfo($var): string
     {
@@ -98,6 +109,9 @@ class VariableInspector extends DoNotCreate
 
     /**
      * Return expression info
+     *
+     * @param mixed $expression
+     * @return string
      */
     public static function valueInfo($expression): string
     {

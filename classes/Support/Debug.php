@@ -11,6 +11,11 @@ namespace Fixin\Support;
 
 class Debug extends DoNotCreate
 {
+    /**
+     * Peek values
+     *
+     * @param $var
+     */
     public static function peek($var): void
     {
         echo Ground::toDebugBlock(VariableInspector::valueInfo($var));

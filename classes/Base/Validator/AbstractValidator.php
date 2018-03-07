@@ -23,21 +23,35 @@ abstract class AbstractValidator extends Prototype implements ValidatorInterface
      */
     protected $errors = [];
 
+    /**
+     * @inheritDoc
+     */
     public function __invoke($value, $context = null): bool
     {
         return $this->isValid($value, $context);
     }
 
+    /**
+     * Add error
+     *
+     * @param string $error
+     */
     protected function addError(string $error): void
     {
         $this->errors[$error] = $this->errorTemplates[$error] ?? $error;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getErrors(): array
     {
         return $this->errors;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isValid($value, $context = null): bool
     {
         $this->errors = [];

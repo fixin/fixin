@@ -14,13 +14,13 @@ use Fixin\Support\Types;
 
 class InTag extends AbstractIdentifierTag
 {
+    public const
+        VALUES = 'values';
+
     protected const
         THIS_SETS = parent::THIS_SETS + [
             self::VALUES => [Types::ARRAY, RequestInterface::class]
         ];
-
-    public const
-        VALUES = 'values';
 
     /**
      * @var array|RequestInterface
@@ -28,6 +28,8 @@ class InTag extends AbstractIdentifierTag
     protected $values;
 
     /**
+     * Get values
+     *
      * @return array|RequestInterface
      */
     public function getValues()

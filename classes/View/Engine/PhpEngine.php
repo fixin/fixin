@@ -20,13 +20,19 @@ class PhpEngine extends AbstractEngine
      */
     protected $assistant;
 
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * @inheritDoc
+     */
+    public function __construct(ResourceManagerInterface $resourceManager, array $options)
     {
-        parent::__construct($resourceManager, $options, $name);
+        parent::__construct($resourceManager, $options);
 
         $this->assistant = $this->resourceManager->clone('*\View\Engine\Assistant', AssistantInterface::class)->withEngine($this);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function render(ViewInterface $view): string
     {
         // Template

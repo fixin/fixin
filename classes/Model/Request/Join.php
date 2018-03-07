@@ -44,21 +44,33 @@ class Join extends Prototype implements JoinInterface
      */
     protected $where;
 
+    /**
+     * @inheritDoc
+     */
     public function getAlias(): string
     {
         return $this->alias;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getRepository(): RepositoryInterface
     {
         return $this->repository;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getType(): string
     {
         return $this->type;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getWhere(): ?WhereInterface
     {
         return $this->where;

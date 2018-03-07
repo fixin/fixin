@@ -16,19 +16,19 @@ use Fixin\Support\Types;
 
 class MemcachedDictionary extends Resource implements DictionaryInterface
 {
-    protected const
-        MISSING_SERVER_PARAMETER_EXCEPTION = "Missing '%s' server parameter exception for '%s'",
-        THIS_SETS = [
-            self::PERSISTENT_ID => [Types::STRING, Types::NULL],
-            self::SERVERS => [Types::ARRAY]
-        ];
-
     public const
         HOST = 'host',
         PERSISTENT_ID = 'persistentId',
         PORT = 'port',
         SERVERS = 'servers',
         WEIGHT = 'weight';
+
+    protected const
+        MISSING_SERVER_PARAMETER_EXCEPTION = "Missing '%s' server parameter exception for '%s'",
+        THIS_SETS = [
+            self::PERSISTENT_ID => [Types::STRING, Types::NULL],
+            self::SERVERS => [Types::ARRAY]
+        ];
 
     /**
      * @var \Memcached
@@ -45,9 +45,12 @@ class MemcachedDictionary extends Resource implements DictionaryInterface
      */
     protected $servers;
 
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * @inheritDoc
+     */
+    public function __construct(ResourceManagerInterface $resourceManager, array $options)
     {
-        parent::__construct($resourceManager, $options, $name);
+        parent::__construct($resourceManager, $options);
 
         $this->connect();
     }
@@ -146,6 +149,7 @@ class MemcachedDictionary extends Resource implements DictionaryInterface
      * Prepare server parameters
      *
      * @return array
+     * @throws Exception\InvalidArgumentException
      */
     protected function prepareServerParameters(): array
     {
@@ -173,9 +177,9 @@ class MemcachedDictionary extends Resource implements DictionaryInterface
     /**
      * @inheritDoc
      */
-    public function set(string $key, $value, int $seconds = 0): DictionaryInterface
+    public function set(string $key, $value, int $expireTime = 0): DictionaryInterface
     {
-        $this->memcached->set($key, $value, $seconds > 0 ? (new \DateTimeImmutable("now +$seconds seconds"))->getTimestamp() : $seconds);
+        $this->memcached->set($key, $value, $expireTime > 0 ? (new \DateTimeImmutable("now +$expireTime seconds"))->getTimestamp() : $expireTime);
 
         return $this;
     }
@@ -183,9 +187,9 @@ class MemcachedDictionary extends Resource implements DictionaryInterface
     /**
      * @inheritDoc
      */
-    public function setMultiple(array $items, int $seconds = 0): DictionaryInterface
+    public function setMultiple(array $items, int $expireTime = 0): DictionaryInterface
     {
-        $this->memcached->setMulti($items, $seconds > 0 ? (new \DateTimeImmutable("now +$seconds seconds"))->getTimestamp() : $seconds);
+        $this->memcached->setMulti($items, $expireTime > 0 ? (new \DateTimeImmutable("now +$expireTime seconds"))->getTimestamp() : $expireTime);
 
         return $this;
     }

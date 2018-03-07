@@ -15,11 +15,17 @@ interface FilterInterface extends PrototypeInterface
 {
     /**
      * Invoke filter()
+     *
+     * @param $value
+     * @return mixed
      */
     public function __invoke($value);
 
     /**
      * Get filtered value
+     *
+     * @param $value
+     * @return mixed
      */
     public function filter($value);
 }

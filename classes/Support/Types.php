@@ -9,7 +9,7 @@
 
 namespace Fixin\Support;
 
-class Types extends DoNotCreate
+interface Types
 {
     public const
         ANY = 1,

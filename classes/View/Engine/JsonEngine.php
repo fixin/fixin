@@ -23,6 +23,9 @@ class JsonEngine extends AbstractEngine
      */
     protected $json;
 
+    /**
+     * @inheritDoc
+     */
     public function render(ViewInterface $view): string
     {
         $json = $this->json ?? ($this->json = $this->resourceManager->get('*\Base\Json\Json', JsonInterface::class));

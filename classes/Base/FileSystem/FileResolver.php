@@ -37,11 +37,19 @@ class FileResolver extends Resource implements FileResolverInterface
      */
     protected $paths = [];
 
+    /**
+     * Get file system
+     *
+     * @return FileSystemInterface
+     */
     protected function getFileSystem(): FileSystemInterface
     {
         return $this->fileSystem ?: $this->loadLazyProperty(static::FILE_SYSTEM);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function resolve(string $filename): ?string
     {
         $fileSystem = $this->getFileSystem();
@@ -65,6 +73,8 @@ class FileResolver extends Resource implements FileResolverInterface
 
     /**
      * Set paths in normalized form
+     *
+     * @param array $paths
      */
     protected function setPaths(array $paths): void
     {

@@ -21,11 +21,17 @@ interface JsonInterface extends ResourceInterface
 
     /**
      * Decode JSON string
+     *
+     * @param string $json
+     * @return mixed
      */
     public function decode(string $json);
 
     /**
      * Encode value to JSON representation
+     *
+     * @param $value
+     * @return string
      */
     public function encode($value): string;
 }

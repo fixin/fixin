@@ -19,6 +19,17 @@ interface UnionInterface extends PrototypeInterface
         TYPE_ALL = 'all',
         TYPE_NORMAL = 'normal';
 
+    /**
+     * Get request
+     *
+     * @return RequestInterface
+     */
     public function getRequest(): RequestInterface;
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
     public function getType(): string;
 }

@@ -41,8 +41,7 @@ abstract class Entity extends Prototype implements EntityInterface
     protected $repository;
 
     /**
-     * @return $this
-     * @throws Exception\NotStoredEntityException
+     * @inheritDoc
      */
     public function delete(): EntityInterface
     {
@@ -56,23 +55,34 @@ abstract class Entity extends Prototype implements EntityInterface
         throw new Exception\NotStoredEntityException(static::NOT_STORED_ENTITY_EXCEPTION);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getEntityId(): ?EntityIdInterface
     {
         return $this->entityId;
     }
 
+    /**
+     * Get repository
+     *
+     * @return RepositoryInterface
+     */
     protected function getRepository(): RepositoryInterface
     {
         return $this->repository ?: $this->loadLazyProperty(static::REPOSITORY);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isStored(): bool
     {
         return isset($this->entityId);
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function refresh(): EntityInterface
     {
@@ -82,7 +92,7 @@ abstract class Entity extends Prototype implements EntityInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function save(): EntityInterface
     {
@@ -95,6 +105,9 @@ abstract class Entity extends Prototype implements EntityInterface
         return $this;
     }
 
+    /**
+     * Save sub entities
+     */
     protected function saveSubEntities(): void
     {
         // Delete outdated entities

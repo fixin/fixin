@@ -12,7 +12,7 @@ namespace Fixin\Delivery\Cargo;
 use Fixin\Base\Container\ContainerInterface;
 use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
-use Fixin\Base\Header\HeadersInterface;
+use Fixin\Base\Header\HeaderManagerInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Uri\UriInterface;
 use Fixin\Support\DebugDescriptionTrait;
@@ -31,8 +31,8 @@ class HttpCargo extends AbstractCargo implements HttpCargoInterface
             self::METHOD => self::USING_SETTER,
             self::PARAMETERS => VariableContainerInterface::class,
             self::PROTOCOL_VERSION => self::USING_SETTER,
-            self::REQUEST_HEADERS => HeadersInterface::class,
-            self::RESPONSE_HEADERS => HeadersInterface::class,
+            self::REQUEST_HEADERS => HeaderManagerInterface::class,
+            self::RESPONSE_HEADERS => HeaderManagerInterface::class,
             self::SERVER => ContainerInterface::class,
             self::SESSION => SessionManagerInterface::class,
             self::STATUS_CODE => self::USING_SETTER,
@@ -65,12 +65,12 @@ class HttpCargo extends AbstractCargo implements HttpCargoInterface
     protected $protocolVersion = Http::VERSION_1_1;
 
     /**
-     * @var HeadersInterface
+     * @var HeaderManagerInterface
      */
     protected $requestHeaders;
 
     /**
-     * @var HeadersInterface
+     * @var HeaderManagerInterface
      */
     protected $responseHeaders;
 
@@ -94,73 +94,112 @@ class HttpCargo extends AbstractCargo implements HttpCargoInterface
      */
     protected $uri;
 
+    /**
+     * @inheritDoc
+     */
     public function getContentType(): string
     {
         return $this->getResponseHeaders()->get(Http::CONTENT_TYPE_HEADER)[0] ?? '';
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getCookies(): CookieManagerInterface
     {
         return $this->cookies;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getEnvironment(): ContainerInterface
     {
         return $this->environment;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMethod(): string
     {
         return $this->method;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getParameters(): VariableContainerInterface
     {
         return $this->parameters;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getProtocolVersion(): string
     {
         return $this->protocolVersion;
     }
 
-    public function getRequestHeaders(): HeadersInterface
+    /**
+     * @inheritDoc
+     */
+    public function getRequestHeaders(): HeaderManagerInterface
     {
         return $this->requestHeaders;
     }
 
-    public function getResponseHeaders(): HeadersInterface
+    /**
+     * @inheritDoc
+     */
+    public function getResponseHeaders(): HeaderManagerInterface
     {
         return $this->responseHeaders;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getServer(): ContainerInterface
     {
         return $this->server;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getSession(): SessionManagerInterface
     {
         return $this->session;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getUri(): UriInterface
     {
         return $this->uri;
     }
 
+    /**
+     * Send status code
+     */
     protected function sendStatusCode(): void
     {
         http_response_code($this->statusCode);
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setContentType(string $contentType): CargoInterface
     {
@@ -170,7 +209,7 @@ class HttpCargo extends AbstractCargo implements HttpCargoInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setMethod(string $method): HttpCargoInterface
     {
@@ -180,7 +219,7 @@ class HttpCargo extends AbstractCargo implements HttpCargoInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setProtocolVersion(string $protocolVersion): HttpCargoInterface
     {
@@ -190,7 +229,7 @@ class HttpCargo extends AbstractCargo implements HttpCargoInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setStatusCode(int $statusCode): HttpCargoInterface
     {
@@ -200,7 +239,7 @@ class HttpCargo extends AbstractCargo implements HttpCargoInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setUri(UriInterface $uri): HttpCargoInterface
     {
@@ -210,7 +249,7 @@ class HttpCargo extends AbstractCargo implements HttpCargoInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function unpack(): CargoInterface
     {

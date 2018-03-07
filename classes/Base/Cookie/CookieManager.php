@@ -15,7 +15,7 @@ use Fixin\Support\Types;
 class CookieManager extends Prototype implements CookieManagerInterface
 {
     protected const
-        EXPIRE_MINUTES = -24 * 60 * 7,
+        EXPIRE_SECONDS = -7 * 24 * 60  * 60,
         THIS_SETS = [
             self::COOKIES => Types::ARRAY,
         ];
@@ -25,36 +25,45 @@ class CookieManager extends Prototype implements CookieManagerInterface
      */
     protected $cookies = [];
 
+    /**
+     * @inheritDoc
+     */
     public function __debugInfo()
     {
         return $this->cookies;
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function expire(string $name, string $path = '', string $domain = ''): CookieManagerInterface
     {
         $this->set($name, '')
-            ->setExpireTime(static::EXPIRE_MINUTES)
+            ->setExpireTime(static::EXPIRE_SECONDS)
             ->setPath($path)
             ->setDomain($domain);
 
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function get(string $name, string $default = null): ?string
     {
         return isset($this->cookies[$name]) ? (($item = $this->cookies[$name]) instanceof CookieInterface ? $item->getValue() : $item) : $default;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function has(string $name): bool
     {
         return isset($this->cookies[$name]);
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function sendChanges(): CookieManagerInterface
     {
@@ -71,6 +80,9 @@ class CookieManager extends Prototype implements CookieManagerInterface
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function set(string $name, string $value): CookieInterface
     {
         if (!isset($this->cookies[$name]) || !($cookie = $this->cookies[$name]) instanceof CookieInterface) {

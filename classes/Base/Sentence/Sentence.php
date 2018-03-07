@@ -25,13 +25,16 @@ class Sentence extends Prototype implements SentenceInterface
      */
     protected $text = '';
 
+    /**
+     * @inheritDoc
+     */
     public function __toString(): string
     {
         return Ground::toDebugBlock($this->text) . Ground::toDebugText(VariableInspector::arrayInfo($this->parameters));
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function addParameter($parameter): SentenceInterface
     {
@@ -41,7 +44,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function addParameters(array $parameters): SentenceInterface
     {
@@ -51,7 +54,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function appendClause(string $clause, string $string): SentenceInterface
     {
@@ -61,7 +64,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function appendString(string $string): SentenceInterface
     {
@@ -71,7 +74,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function appendWord(string $word): SentenceInterface
     {
@@ -81,7 +84,7 @@ class Sentence extends Prototype implements SentenceInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function applyMask(string $mask): SentenceInterface
     {
@@ -90,11 +93,17 @@ class Sentence extends Prototype implements SentenceInterface
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getParameters(): array
     {
         return $this->parameters;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getText(): string
     {
         return $this->text;

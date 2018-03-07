@@ -17,15 +17,15 @@ use PDOStatement;
 
 class PdoStorageResult extends Prototype implements StorageResultInterface
 {
+    public const
+        STATEMENT = 'statement';
+
     protected const
         REWIND_IS_NOT_ALLOWED_EXCEPTION = 'Rewind is not allowed',
         THIS_SETS = [
             self::STATEMENT => self::USING_SETTER
         ],
         TO_STRING_MASK = '%s {' . PHP_EOL . "    Position: %d" . PHP_EOL . "    Count: %d" . PHP_EOL . '}' . PHP_EOL;
-
-    public const
-        STATEMENT = 'statement';
 
     /**
      * @var mixed
@@ -47,16 +47,25 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
      */
     protected $statement;
 
+    /**
+     * @inheritDoc
+     */
     public function __toString(): string
     {
         return Ground::toDebugBlock(sprintf(static::TO_STRING_MASK, get_class($this), $this->position, $this->count()));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function count(): int
     {
         return $this->statement->rowCount();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function current()
     {
         $this->prefetch();
@@ -64,11 +73,17 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
         return $this->currentData;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function key(): int
     {
         return $this->position;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function next(): void
     {
         $this->position++;
@@ -88,6 +103,9 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function rewind(): void
     {
         if ($this->position > 0) {
@@ -97,12 +115,20 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
         $this->prefetch();
     }
 
+    /**
+     * Set statement
+     *
+     * @param PDOStatement $statement
+     */
     protected function setStatement(PDOStatement $statement): void
     {
         $this->statement = $statement;
         $this->currentFetched = false;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function valid(): bool
     {
         $this->prefetch();

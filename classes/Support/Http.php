@@ -9,7 +9,7 @@
 
 namespace Fixin\Support;
 
-class Http extends DoNotCreate
+interface Http
 {
     const
         CONTENT_TYPE_HEADER = 'Content-Type',

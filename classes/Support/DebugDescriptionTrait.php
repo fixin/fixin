@@ -11,6 +11,11 @@ namespace Fixin\Support;
 
 trait DebugDescriptionTrait
 {
+    /**
+     * Debug description for the instance
+     *
+     * @return string
+     */
     public function debugDescription(): string
     {
         if (method_exists($this, '__debugInfo')) {

@@ -21,14 +21,16 @@ class Local extends Resource implements FileSystemInterface
         FILE_READ_FAILURE_EXCEPTION = "File read failure '%s'",
         FILE_WRITE_FAILURE_EXCEPTION = "File write failure '%s'";
 
+    /**
+     * @inheritDoc
+     */
     public function delete(string $path): bool
     {
         return unlink($path);
     }
 
     /**
-     * @throws Exception\FileNotFoundException
-     * @throws Exception\FileReadFailureException
+     * @inheritDoc
      */
     public function getFileContents(string $filename): string
     {
@@ -46,8 +48,7 @@ class Local extends Resource implements FileSystemInterface
     }
 
     /**
-     * @throws Exception\FileNotFoundException
-     * @throws Exception\FileReadFailureException
+     * @inheritDoc
      */
     public function getFileContentsWithLock(string $filename): string
     {
@@ -64,16 +65,28 @@ class Local extends Resource implements FileSystemInterface
         throw new Exception\FileNotFoundException(sprintf(static::FILE_NOT_FOUND_EXCEPTION, $filename));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getFileSize(string $filename): ?int
     {
         return ($size = filesize($filename)) !== false ? $size : null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getRealPath(string $path): ?string
     {
         return ($resolved = realpath($path)) !== false ? $resolved : null;
     }
 
+    /**
+     * Get shared file contents
+     *
+     * @param string $filename
+     * @return null|string
+     */
     protected function getSharedFileContents(string $filename): ?string
     {
         $contents = null;
@@ -94,7 +107,39 @@ class Local extends Resource implements FileSystemInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
+     */
+    public function hasDirectory(string $path): bool
+    {
+        return is_dir($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasEntry(string $path): bool
+    {
+        return file_exists($path);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasFile(string $filename): bool
+    {
+        return is_file($filename);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasReadableFile(string $filename): bool
+    {
+        return is_readable($filename);
+    }
+
+    /**
+     * @inheritDoc
      */
     public function includeFilesRecursive(string $path, string $extension): FileSystemInterface
     {
@@ -108,38 +153,29 @@ class Local extends Resource implements FileSystemInterface
         return $this;
     }
 
-    public function hasDirectory(string $path): bool
-    {
-        return is_dir($path);
-    }
-
-    public function hasEntry(string $path): bool
-    {
-        return file_exists($path);
-    }
-
-    public function hasFile(string $filename): bool
-    {
-        return is_file($filename);
-    }
-
-    public function hasReadableFile(string $filename): bool
-    {
-        return is_readable($filename);
-    }
-
+    /**
+     * @inheritDoc
+     */
     public function putFileContents(string $filename, string $contents): int
     {
         return $this->putFileContentsProcess($filename, $contents, 0);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function putFileContentsWithLock(string $filename, string $contents): int
     {
         return $this->putFileContentsProcess($filename, $contents, LOCK_EX);
     }
 
     /**
-     * @throws Exception\FileWriteFailureException
+     * Put file contents process
+     *
+     * @param string $filename
+     * @param string $contents
+     * @param int $flags
+     * @return int
      */
     protected function putFileContentsProcess(string $filename, string $contents, int $flags): int
     {

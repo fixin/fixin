@@ -33,11 +33,17 @@ abstract class AbstractTag extends Prototype implements TagInterface
      */
     protected $positive = true;
 
+    /**
+     * @inheritDoc
+     */
     public function getJoin(): string
     {
         return $this->join;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isPositive(): bool
     {
         return $this->positive;

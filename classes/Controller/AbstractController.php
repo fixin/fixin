@@ -15,8 +15,18 @@ use Fixin\View\ViewInterface;
 
 abstract class AbstractController extends Resource implements ControllerInterface
 {
+    /**
+     * @var ContainerInterface
+     */
     private $config;
 
+    /**
+     * Create view
+     *
+     * @param null|string $template
+     * @param array $variables
+     * @return ViewInterface
+     */
     protected function createView(?string $template, array $variables = []): ViewInterface
     {
         return $this->resourceManager->clone('*\View\View', ViewInterface::class, [
@@ -25,6 +35,12 @@ abstract class AbstractController extends Resource implements ControllerInterfac
         ]);
     }
 
+    /**
+     * Get config value
+     *
+     * @param string $name
+     * @return mixed
+     */
     protected function getConfigValue(string $name)
     {
         if (!$this->config) {

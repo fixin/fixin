@@ -30,11 +30,17 @@ class Event extends Prototype implements EventInterface
      */
     protected $name;
 
+    /**
+     * @inheritDoc
+     */
     public function getContext()
     {
         return $this->context;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return $this->name;

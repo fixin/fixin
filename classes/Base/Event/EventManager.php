@@ -41,6 +41,9 @@ class EventManager extends Prototype implements EventManagerInterface
      */
     protected $tokens = [];
 
+    /**
+     * @inheritDoc
+     */
     public function addEvent(string $name): callable
     {
         if (isset($this->events[$name])) {
@@ -51,10 +54,13 @@ class EventManager extends Prototype implements EventManagerInterface
         $this->tokens[$name] = $this->tokenCounter++;
 
         return $this->events[$name] = function ($data = null) use ($name, $token) {
-            $this->notify($name, $token, $data);
+            $this->notifyListeners($name, $token, $data);
         };
     }
 
+    /**
+     * @inheritDoc
+     */
     public function addListener(string $name, callable $listener): EventManagerInterface
     {
         if (!isset($this->listeners[$name]) || false === array_search($listener, $this->listeners[$name])) {
@@ -66,7 +72,14 @@ class EventManager extends Prototype implements EventManagerInterface
         throw new Exception\AddedListenerException(static::ADDED_LISTENER_EXCEPTION);
     }
 
-    protected function notify(string $name, int $token, $data): void
+    /**
+     * Notify listeners
+     *
+     * @param string $name
+     * @param int $token
+     * @param $data
+     */
+    protected function notifyListeners(string $name, int $token, $data): void
     {
         if ($this->tokens[$name] ?? null !== $token) {
             throw new Exception\UnregisteredEventException(sprintf(static::UNREGISTERED_EVENT_EXCEPTION, $name));
@@ -82,6 +95,9 @@ class EventManager extends Prototype implements EventManagerInterface
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function removeEvent(callable $callback): EventManagerInterface
     {
         if (false !== $name = array_search($callback, $this->events)) {
@@ -93,6 +109,9 @@ class EventManager extends Prototype implements EventManagerInterface
         throw new NonExistingEventException(static::NON_EXISTING_EVENT_EXCEPTION);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function removeListener(string $name, callable $listener): EventManagerInterface
     {
         if (isset($this->listeners[$name]) && false !== $index = array_search($listener, $this->listeners[$name])) {
@@ -104,6 +123,9 @@ class EventManager extends Prototype implements EventManagerInterface
         throw new Exception\UnknownListenerException(static::UNKNOWN_LISTENER_EXCEPTION);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function removeListenerFromAll(callable $listener): EventManagerInterface
     {
         foreach ($this->listeners as $name => $listeners) {

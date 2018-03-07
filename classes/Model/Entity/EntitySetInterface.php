@@ -23,13 +23,22 @@ interface EntitySetInterface extends PrototypeInterface, \Iterator, \Countable
         STORAGE_RESULT = 'storageResult';
 
     /**
+     * Get entity IDs
+     *
      * @return EntityIdInterface[]
      */
     public function getEntityIds(): array;
 
+    /**
+     * Get repository
+     *
+     * @return RepositoryInterface
+     */
     public function getRepository(): RepositoryInterface;
 
     /**
+     * Shuffle entities
+     *
      * @return $this
      */
     public function shuffle(): EntitySetInterface;

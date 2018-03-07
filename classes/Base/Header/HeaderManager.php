@@ -12,7 +12,7 @@ namespace Fixin\Base\Header;
 use Fixin\Resource\Prototype;
 use Fixin\Support\Types;
 
-class Headers extends Prototype implements HeadersInterface
+class HeaderManager extends Prototype implements HeaderManagerInterface
 {
     protected const
         THIS_SETS = [
@@ -24,15 +24,18 @@ class Headers extends Prototype implements HeadersInterface
      */
     protected $values = [];
 
+    /**
+     * @inheritDoc
+     */
     public function __debugInfo()
     {
         return $this->values;
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
-    public function add(string $name, string $value): HeadersInterface
+    public function add(string $name, string $value): HeaderManagerInterface
     {
         $list = (array) ($this->values[$name] ?? []);
         $list[] = $value;
@@ -43,15 +46,18 @@ class Headers extends Prototype implements HeadersInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
-    public function clear(): HeadersInterface
+    public function clear(): HeaderManagerInterface
     {
         $this->values = [];
 
         return $this;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function get(string $name, array $default = []): array
     {
         $values = $this->values[$name] ?? $default;
@@ -63,15 +69,18 @@ class Headers extends Prototype implements HeadersInterface
         return $this->values[$name] = (array) $values;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function has(string $name): bool
     {
         return (bool) count($this->values[$name] ?? null);
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
-    public function send(): HeadersInterface
+    public function send(): HeaderManagerInterface
     {
         foreach ($this->values as $name => $values) {
             foreach ((array) $values as $value) {
@@ -83,9 +92,9 @@ class Headers extends Prototype implements HeadersInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
-    public function set(string $name, array $values): HeadersInterface
+    public function set(string $name, array $values): HeaderManagerInterface
     {
         $this->values[$name] = $values;
 

@@ -28,7 +28,10 @@ class Stream implements StreamInterface
     protected $resource;
 
     /**
+     * Stream constructor.
+     *
      * @param string|resource $stream
+     * @param string $mode
      * @throws Exception\InvalidStreamException
      */
     public function __construct($stream, string $mode = 'r')
@@ -48,11 +51,17 @@ class Stream implements StreamInterface
         throw new Exception\InvalidStreamException(static::INVALID_STREAM_EXCEPTION);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function __destruct()
     {
         fclose($this->resource);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function __toString(): string
     {
         $this->rewind();
@@ -61,7 +70,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws Exception\PositionFailureException
+     * @inheritDoc
      */
     public function getCurrentPosition(): int
     {
@@ -75,8 +84,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws Exception\NotReadableException
-     * @throws Exception\ReadFailureException
+     * @inheritDoc
      */
     public function getRemainingContents(): string
     {
@@ -91,6 +99,9 @@ class Stream implements StreamInterface
         throw new Exception\ReadFailureException(static::READ_FAILURE_EXCEPTION);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMetadata(string $key = null)
     {
         $metadata = stream_get_meta_data($this->resource);
@@ -102,16 +113,25 @@ class Stream implements StreamInterface
         return $metadata;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getSize(): ?int
     {
         return fstat($this->resource)['size'] ?? null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isEof(): bool
     {
         return feof($this->resource);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isReadable(): bool
     {
         $mode = stream_get_meta_data($this->resource)['mode'];
@@ -119,11 +139,17 @@ class Stream implements StreamInterface
         return strcspn($mode, 'r+') < strlen($mode);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isSeekable(): bool
     {
         return stream_get_meta_data($this->resource)['seekable'];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isWritable(): bool
     {
         $mode = stream_get_meta_data($this->resource)['mode'];
@@ -132,8 +158,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws Exception\NotReadableException
-     * @throws Exception\ReadFailureException
+     * @inheritDoc
      */
     public function read(int $length): string
     {
@@ -151,6 +176,9 @@ class Stream implements StreamInterface
     /**
      * Open resource
      *
+     * @param string $reference
+     * @param string $mode
+     * @return bool|resource
      * @throws Exception\InvalidStreamException
      */
     protected function resourceByReference(string $reference, string $mode)
@@ -175,7 +203,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function rewind(): StreamInterface
     {
@@ -183,9 +211,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws Exception\NotSeekableException
-     * @throws Exception\SeekFailureException
-     * @return $this
+     * @inheritDoc
      */
     public function seek(int $position, int $whence = SEEK_SET): StreamInterface
     {
@@ -201,8 +227,7 @@ class Stream implements StreamInterface
     }
 
     /**
-     * @throws Exception\NotWritableException
-     * @throws Exception\WriteFailureException
+     * @inheritDoc
      */
     public function write(string $string): int
     {

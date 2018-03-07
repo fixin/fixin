@@ -26,23 +26,35 @@ class Assistant implements AssistantInterface
      */
     protected $__prototype;
 
+    /**
+     * @inheritDoc
+     */
     public function __call($name, $arguments)
     {
         return call_user_func_array($this->$name, $arguments);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function __get(string $name): HelperInterface
     {
         return $this->$name = $this->__prototype->getHelper($name);
     }
 
+    /**
+     * Get helper
+     *
+     * @param string $name
+     * @return HelperInterface
+     */
     protected function getHelper(string $name): HelperInterface
     {
         return $this->$name = $this->__engine->getHelper($name);
     }
 
     /**
-     * @return static
+     * @inheritDoc
      */
     public function withEngine(EngineInterface $engine): AssistantInterface
     {

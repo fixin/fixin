@@ -30,11 +30,17 @@ class Union extends Prototype implements UnionInterface
      */
     protected $type;
 
+    /**
+     * @inheritDoc
+     */
     public function getRequest(): RequestInterface
     {
         return $this->request;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getType(): string
     {
         return $this->type;

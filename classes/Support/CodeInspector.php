@@ -15,6 +15,7 @@ class CodeInspector extends DoNotCreate
      * Get source code of function
      *
      * @param string|\Closure $function
+     * @return string
      */
     public static function functionSource($function): string
     {

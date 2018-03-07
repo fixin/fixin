@@ -24,6 +24,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and between
      *
+     * @param string $identifier
      * @param number|string|DateTimeImmutable $min
      * @param number|string|DateTimeImmutable $max
      * @return $this
@@ -34,7 +35,10 @@ interface WhereInterface extends PrototypeInterface
      * Add: and compare
      *
      * @param string|number|bool $left
+     * @param string $operator
      * @param string|number|bool|array|DateTimeImmutable $right
+     * @param string $leftType
+     * @param string $rightType
      * @return $this
      */
     public function compare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface;
@@ -42,11 +46,14 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and exists
      *
+     * @param RequestInterface $request
      * @return $this
      */
     public function exists(RequestInterface $request): WhereInterface;
 
     /**
+     * Get tags
+     *
      * @return TagInterface[]
      */
     public function getTags(): array;
@@ -54,6 +61,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and id
      *
+     * @param EntityIdInterface $entityId
      * @return $this
      */
     public function id(EntityIdInterface $entityId): WhereInterface;
@@ -78,6 +86,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and items from array
      *
+     * @param array $array
      * @return $this
      */
     public function items(array $array): WhereInterface;
@@ -85,6 +94,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and nested where
      *
+     * @param callable $callback
      * @return $this
      */
     public function nested(callable $callback): WhereInterface;
@@ -92,6 +102,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and not between
      *
+     * @param string $identifier
      * @param number|string|DateTimeImmutable $min
      * @param number|string|DateTimeImmutable $max
      * @return $this
@@ -101,6 +112,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and not exists
      *
+     * @param RequestInterface $request
      * @return $this
      */
     public function notExists(RequestInterface $request): WhereInterface;
@@ -117,6 +129,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and not nested where
      *
+     * @param callable $callback
      * @return $this
      */
     public function notNested(callable $callback): WhereInterface;
@@ -124,6 +137,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and not null
      *
+     * @param string $identifier
      * @return $this
      */
     public function notNull(string $identifier): WhereInterface;
@@ -131,6 +145,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and null
      *
+     * @param string $identifier
      * @return $this
      */
     public function null(string $identifier): WhereInterface;
@@ -138,6 +153,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or between
      *
+     * @param string $identifier
      * @param number|string|DateTimeImmutable $min
      * @param number|string|DateTimeImmutable $max
      * @return $this
@@ -148,7 +164,10 @@ interface WhereInterface extends PrototypeInterface
      * Add: or compare
      *
      * @param string|number|bool $left
+     * @param string $operator
      * @param string|number|bool|array|DateTimeImmutable $right
+     * @param string $leftType
+     * @param string $rightType
      * @return $this
      */
     public function orCompare($left, string $operator, $right, string $leftType = self::TYPE_IDENTIFIER, string $rightType = self::TYPE_VALUE): WhereInterface;
@@ -156,6 +175,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or exists
      *
+     * @param RequestInterface $request
      * @return $this
      */
     public function orExists(RequestInterface $request): WhereInterface;
@@ -163,6 +183,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or id
      *
+     * @param EntityIdInterface $entityId
      * @return $this
      */
     public function orId(EntityIdInterface $entityId): WhereInterface;
@@ -187,6 +208,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or items from array
      *
+     * @param array $array
      * @return $this
      */
     public function orItems(array $array): WhereInterface;
@@ -194,6 +216,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or nested where
      *
+     * @param callable $callback
      * @return $this
      */
     public function orNested(callable $callback): WhereInterface;
@@ -201,6 +224,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or not between
      *
+     * @param string $identifier
      * @param number|string|DateTimeImmutable $min
      * @param number|string|DateTimeImmutable $max
      * @return $this
@@ -210,6 +234,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or not exists
      *
+     * @param RequestInterface $request
      * @return $this
      */
     public function orNotExists(RequestInterface $request): WhereInterface;
@@ -226,6 +251,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or not nested where
      *
+     * @param callable $callback
      * @return $this
      */
     public function orNotNested(callable $callback): WhereInterface;
@@ -233,6 +259,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or not null
      *
+     * @param string $identifier
      * @return $this
      */
     public function orNotNull(string $identifier): WhereInterface;
@@ -240,6 +267,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or null
      *
+     * @param string $identifier
      * @return $this
      */
     public function orNull(string $identifier): WhereInterface;
@@ -247,6 +275,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: or sub where
      *
+     * @param WhereInterface $where
      * @return $this
      */
     public function orSub(WhereInterface $where): WhereInterface;
@@ -254,6 +283,7 @@ interface WhereInterface extends PrototypeInterface
     /**
      * Add: and sub where
      *
+     * @param WhereInterface $where
      * @return $this
      */
     public function sub(WhereInterface $where): WhereInterface;

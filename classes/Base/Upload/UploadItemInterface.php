@@ -20,13 +20,45 @@ interface UploadItemInterface extends PrototypeInterface
         TEMP_FILENAME = 'tempFilename',
         SIZE = 'size';
 
+    /**
+     * Get error
+     *
+     * @return int
+     */
     public function getError(): int;
+
+    /**
+     * Get client filename
+     *
+     * @return string
+     */
     public function getClientFilename(): string;
+
+    /**
+     * Get client MIME-type
+     *
+     * @return string
+     */
     public function getClientMimeType(): string;
+
+    /**
+     * Get size
+     *
+     * @return int
+     */
     public function getSize(): int;
+
+    /**
+     * Get temp filename
+     *
+     * @return string
+     */
     public function getTempFilename(): string;
 
     /**
+     * Move file
+     *
+     * @param string $to
      * @return $this
      */
     public function moveFile(string $to): UploadItemInterface;

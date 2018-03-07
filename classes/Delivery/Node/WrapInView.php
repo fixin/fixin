@@ -16,6 +16,11 @@ use Fixin\View\ViewInterface;
 
 class WrapInView extends Resource implements NodeInterface
 {
+    public const
+        CARGO_NAME = 'cargoName',
+        CONTENT_NAME = 'contentName',
+        TEMPLATE = 'template';
+
     protected const
         ALLOWED_TYPES = ['text/html'],
         THIS_SETS = [
@@ -23,11 +28,6 @@ class WrapInView extends Resource implements NodeInterface
             self::CONTENT_NAME => Types::STRING,
             self::TEMPLATE => Types::STRING
         ];
-
-    public const
-        CARGO_NAME = 'cargoName',
-        CONTENT_NAME = 'contentName',
-        TEMPLATE = 'template';
 
     /**
      * @var string
@@ -44,6 +44,9 @@ class WrapInView extends Resource implements NodeInterface
      */
     protected $template = '';
 
+    /**
+     * @inheritDoc
+     */
     public function handle(CargoInterface $cargo): CargoInterface
     {
         if (in_array($cargo->getContentType(), static::ALLOWED_TYPES)) {
@@ -62,7 +65,7 @@ class WrapInView extends Resource implements NodeInterface
             }
 
             if (is_array($content)) {
-                $view->replaceVariables($content);
+                $view->setMultipleVariables($content);
             }
             else {
                 $view->setVariable($this->contentName, $content);

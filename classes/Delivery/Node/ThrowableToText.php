@@ -19,6 +19,9 @@ class ThrowableToText extends Resource implements NodeInterface
     protected const
         CONTENT_TYPE = 'text/html';
 
+    /**
+     * @inheritDoc
+     */
     public function handle(CargoInterface $cargo): CargoInterface
     {
         if ($cargo->getContent() instanceof Throwable) {

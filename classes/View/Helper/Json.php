@@ -19,21 +19,30 @@ class Json extends AbstractHelper
      */
     protected $json;
 
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * @inheritDoc
+     */
+    public function __construct(ResourceManagerInterface $resourceManager, array $options)
     {
-        parent::__construct($resourceManager, $options, $name);
+        parent::__construct($resourceManager, $options);
 
         $this->json = $resourceManager->get('*\Base\Json\Json', JsonInterface::class);
     }
 
     /**
      * Invoke encode()
+     *
+     * @param $value
+     * @return string
      */
     public function __invoke($value): string
     {
         return $this->encode($value);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function encode($value): string
     {
         return $this->json->encode($value);

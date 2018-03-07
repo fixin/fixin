@@ -68,6 +68,9 @@ class Uri extends Prototype implements UriInterface
      */
     protected $userInfo = '';
 
+    /**
+     * @inheritDoc
+     */
     public function __toString(): string
     {
         return ltrim($this->scheme . '://', ':/')
@@ -77,6 +80,9 @@ class Uri extends Prototype implements UriInterface
             . rtrim('#' . $this->fragment, '#');
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getAuthority(): ?string
     {
         // Host
@@ -99,36 +105,57 @@ class Uri extends Prototype implements UriInterface
         return $authority;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getFragment(): ?string
     {
         return $this->fragment;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getHost(): string
     {
         return $this->host;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getPath(): string
     {
         return $this->path;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getPort(): ?int
     {
         return $this->port;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getQuery(): string
     {
         return $this->query;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getScheme(): string
     {
         return $this->scheme;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getUserInfo(): string
     {
         return $this->userInfo;
@@ -136,6 +163,10 @@ class Uri extends Prototype implements UriInterface
 
     /**
      * Determine port is default for scheme
+     *
+     * @param int|null $port
+     * @param string $scheme
+     * @return bool
      */
     protected function isStandardPort(?int $port, string $scheme): bool
     {

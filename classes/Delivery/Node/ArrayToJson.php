@@ -18,6 +18,9 @@ class ArrayToJson extends Resource implements NodeInterface
     protected const
         CONTENT_TYPE = 'application/json';
 
+    /**
+     * @inheritDoc
+     */
     public function handle(CargoInterface $cargo): CargoInterface
     {
         if (is_array($cargo->getContent())) {

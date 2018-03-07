@@ -19,15 +19,21 @@ abstract class AbstractEscapeHelper extends AbstractHelper
      */
     protected $escaper;
 
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * @inheritDoc
+     */
+    public function __construct(ResourceManagerInterface $resourceManager, array $options)
     {
-        parent::__construct($resourceManager, $options, $name);
+        parent::__construct($resourceManager, $options);
 
         $this->escaper = $resourceManager->get('*\Base\Escaper\Escaper', EscaperInterface::class);
     }
 
     /**
      * Normal escape or iterated for arrays
+     *
+     * @param $value
+     * @return string
      */
     public function __invoke($value): string
     {
@@ -38,5 +44,11 @@ abstract class AbstractEscapeHelper extends AbstractHelper
         return $this->escape($value);
     }
 
+    /**
+     * Escape value
+     *
+     * @param $value
+     * @return string
+     */
     abstract public function escape($value): string;
 }

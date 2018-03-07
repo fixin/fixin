@@ -18,9 +18,14 @@ use Fixin\Resource\ResourceManagerInterface;
 class ConsoleCargoFactory implements FactoryInterface
 {
     /**
+     * Produce console cargo
+     *
+     * @param ResourceManagerInterface $resourceManager
+     * @param array|null $options
+     * @return ConsoleCargoInterface
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): ConsoleCargoInterface
+    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null): ConsoleCargoInterface
     {
         $arguments = $_SERVER['argv'];
         $scriptName = array_shift($arguments);
@@ -34,6 +39,13 @@ class ConsoleCargoFactory implements FactoryInterface
         return $resourceManager->clone('*\Delivery\Cargo\ConsoleCargo', ConsoleCargoInterface::class, $options);
     }
 
+    /**
+     * Process arguments
+     *
+     * @param ResourceManagerInterface $resourceManager
+     * @param array $items
+     * @return array
+     */
     protected function processArguments(ResourceManagerInterface $resourceManager, array $items): array
     {
         $command = null;

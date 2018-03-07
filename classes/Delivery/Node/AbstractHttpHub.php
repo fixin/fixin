@@ -20,6 +20,9 @@ abstract class AbstractHttpHub extends Resource implements NodeInterface
         NOT_FOUND_CONTENT = 'The requested URL was not found.',
         NOT_FOUND_CONTENT_TYPE = 'text/html';
 
+    /**
+     * @inheritDoc
+     */
     public function handle(CargoInterface $cargo): CargoInterface
     {
         if ($cargo instanceof HttpCargoInterface && $cargo->getStatusCode() === Http::STATUS_CONTINUE_100) {
@@ -29,8 +32,20 @@ abstract class AbstractHttpHub extends Resource implements NodeInterface
         return $cargo;
     }
 
+    /**
+     * Handle HTTP cargo
+     *
+     * @param HttpCargoInterface $cargo
+     * @return CargoInterface
+     */
     abstract protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface;
 
+    /**
+     * Reply not found
+     *
+     * @param HttpCargoInterface $cargo
+     * @return HttpCargoInterface
+     */
     protected function replyNotFound(HttpCargoInterface $cargo): HttpCargoInterface
     {
         return $cargo

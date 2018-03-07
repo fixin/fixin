@@ -15,6 +15,9 @@ use Fixin\View\ViewInterface;
 
 class ViewRender extends Resource implements NodeInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function handle(CargoInterface $cargo): CargoInterface
     {
         $content = $cargo->getContent();

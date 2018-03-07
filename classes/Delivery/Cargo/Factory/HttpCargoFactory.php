@@ -12,7 +12,7 @@ namespace Fixin\Delivery\Cargo\Factory;
 use Fixin\Base\Container\ContainerInterface;
 use Fixin\Base\Container\VariableContainerInterface;
 use Fixin\Base\Cookie\CookieManagerInterface;
-use Fixin\Base\Header\HeadersInterface;
+use Fixin\Base\Header\HeaderManagerInterface;
 use Fixin\Base\Session\SessionManagerInterface;
 use Fixin\Base\Upload\UploadItemInterface;
 use Fixin\Base\Uri\UriInterface;
@@ -31,7 +31,14 @@ class HttpCargoFactory implements FactoryInterface
         FORM_PROCESSED_TYPE = 'text/html',
         STREAM_CLASS = 'Fixin\Base\Stream\Stream';
 
-    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null): HttpCargoInterface
+    /**
+     * Produce HTTP cargo
+     *
+     * @param ResourceManagerInterface $resourceManager
+     * @param array|null $options
+     * @return HttpCargoInterface
+     */
+    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null): HttpCargoInterface
     {
         $cookies = $resourceManager->clone('*\Base\Cookie\CookieManager', CookieManagerInterface::class, [
             CookieManagerInterface::COOKIES => $_COOKIE,
@@ -44,10 +51,10 @@ class HttpCargoFactory implements FactoryInterface
             HttpCargoInterface::METHOD => $_SERVER['REQUEST_METHOD'],
             HttpCargoInterface::PARAMETERS => $resourceManager->clone('*\Base\Container\VariableContainer', VariableContainerInterface::class)->setMultiple($_GET),
             HttpCargoInterface::PROTOCOL_VERSION => $this->getRequestProtocolVersion(),
-            HttpCargoInterface::REQUEST_HEADERS => $resourceManager->clone('*\Base\Header\Headers', HeadersInterface::class, [
-                HeadersInterface::VALUES => $requestHeaders
+            HttpCargoInterface::REQUEST_HEADERS => $resourceManager->clone('*\Base\Header\HeaderManager', HeaderManagerInterface::class, [
+                HeaderManagerInterface::VALUES => $requestHeaders
             ]),
-            HttpCargoInterface::RESPONSE_HEADERS => $resourceManager->clone('*\Base\Header\Headers', HeadersInterface::class),
+            HttpCargoInterface::RESPONSE_HEADERS => $resourceManager->clone('*\Base\Header\HeaderManager', HeaderManagerInterface::class),
             HttpCargoInterface::SERVER => $resourceManager->get('*\Support\Factory\ServerInfoFactory', ContainerInterface::class),
             HttpCargoInterface::SESSION => $resourceManager->clone('*\Base\Session\SessionManager', SessionManagerInterface::class, [
                 SessionManagerInterface::COOKIE_MANAGER => $cookies
@@ -56,6 +63,13 @@ class HttpCargoFactory implements FactoryInterface
         ] + $this->getContentOptions($resourceManager, $requestHeaders[Http::CONTENT_TYPE_HEADER] ?? 'text/html'));
     }
 
+    /**
+     * Get content options
+     *
+     * @param ResourceManagerInterface $resourceManager
+     * @param string $contentType
+     * @return array
+     */
     protected function getContentOptions(ResourceManagerInterface $resourceManager, string $contentType): array
     {
         $contentType = strstr($contentType, ';', true);
@@ -86,6 +100,11 @@ class HttpCargoFactory implements FactoryInterface
         ];
     }
 
+    /**
+     * Get request headers
+     *
+     * @return array
+     */
     protected function getRequestHeaders(): array
     {
         if (function_exists('getallheaders')) {
@@ -102,13 +121,29 @@ class HttpCargoFactory implements FactoryInterface
         return $headers;
     }
 
+    /**
+     * Get request protocol version
+     *
+     * @return string
+     */
     protected function getRequestProtocolVersion(): string
     {
         return isset($_SERVER['SERVER_PROTOCOL']) && strpos($_SERVER['SERVER_PROTOCOL'], Http::VERSION_1_0)
             ? Http::VERSION_1_0 : Http::VERSION_1_1;
     }
 
-    protected function processFiles(ResourceManagerInterface $resourceManager, $name, $type, $tempFilename, $error, $size): ?array
+    /**
+     * Process files
+     *
+     * @param ResourceManagerInterface $resourceManager
+     * @param $name
+     * @param $type
+     * @param $tempFilename
+     * @param $error
+     * @param $size
+     * @return mixed
+     */
+    protected function processFiles(ResourceManagerInterface $resourceManager, $name, $type, $tempFilename, $error, $size)
     {
         // Items
         if (is_array($name)) {

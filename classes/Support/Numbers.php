@@ -12,7 +12,10 @@ namespace Fixin\Support;
 class Numbers extends DoNotCreate
 {
     /**
-     * Determine if value is int or int string 
+     * Determine if value is int or int string
+     *
+     * @param mixed $value
+     * @return bool
      */
     public static function isInt($value): bool
     {

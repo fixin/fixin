@@ -43,7 +43,7 @@ class Json extends Resource implements JsonInterface
     protected $encodingMaxDepth = 512;
 
     /**
-     * @throws Exception\DecodingFailureException
+     * @inheritDoc
      */
     public function decode(string $json)
     {
@@ -57,7 +57,7 @@ class Json extends Resource implements JsonInterface
     }
 
     /**
-     * @throws Exception\EncodingFailureException
+     * @inheritDoc
      */
     public function encode($value): string
     {

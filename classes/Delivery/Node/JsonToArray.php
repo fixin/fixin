@@ -18,6 +18,9 @@ class JsonToArray extends Resource implements NodeInterface
     protected const
         ALLOWED_TYPES = ['application/json', 'application/jsonml+json'];
 
+    /**
+     * @inheritDoc
+     */
     public function handle(CargoInterface $cargo): CargoInterface
     {
         $content = $cargo->getContent();

@@ -14,6 +14,9 @@ use Fixin\Delivery\Cargo\HttpCargoInterface;
 
 class HttpNotFoundFallback extends AbstractHttpHub
 {
+    /**
+     * @inheritDoc
+     */
     protected function handleHttpCargo(HttpCargoInterface $cargo): CargoInterface
     {
         return $this->replyNotFound($cargo);

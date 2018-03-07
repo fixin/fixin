@@ -13,6 +13,10 @@ class Arrays extends DoNotCreate
 {
     /**
      * Get array item
+     *
+     * @param array $array
+     * @param $key
+     * @return array|null
      */
     public static function getArrayForKey(array $array, $key): ?array
     {
@@ -21,6 +25,13 @@ class Arrays extends DoNotCreate
         return is_array($value) ? $value : null;
     }
 
+    /**
+     * Intersect array by key list
+     *
+     * @param array $array
+     * @param array $keys
+     * @return array
+     */
     public static function intersectByKeyList(array $array, array $keys): array
     {
         return array_intersect_key($array, array_flip($keys));
@@ -28,6 +39,10 @@ class Arrays extends DoNotCreate
 
     /**
      * Set value at path
+     *
+     * @param array $array
+     * @param array $path
+     * @param $data
      */
     public static function setValueAtPath(array &$array, array $path, $data): void
     {

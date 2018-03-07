@@ -21,13 +21,16 @@ class Cargo extends AbstractCargo
      */
     protected $contentType = '';
 
+    /**
+     * @inheritDoc
+     */
     public function getContentType(): string
     {
         return $this->contentType;
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setContentType(string $contentType): CargoInterface
     {
