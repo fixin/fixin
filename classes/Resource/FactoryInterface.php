@@ -14,7 +14,9 @@ interface FactoryInterface
     /**
      * Produce resource
      *
-     * @return object|null
+     * @param ResourceManagerInterface $resourceManager
+     * @param array|null $options
+     * @return mixed
      */
-    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null);
+    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null);
 }

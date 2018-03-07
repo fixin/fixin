@@ -11,10 +11,13 @@ namespace Fixin\Resource;
 
 abstract class Resource extends Managed implements ResourceInterface
 {
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * @inheritDoc
+     */
+    public function __construct(ResourceManagerInterface $resourceManager, array $options)
     {
-        parent::__construct($resourceManager, $options, $name);
+        parent::__construct($resourceManager, $options);
 
-        $this->configurationTest($name ?? get_class());
+        $this->testManagedConfiguration();
     }
 }

@@ -27,6 +27,12 @@ class Performance extends DoNotCreate
      */
     protected static $lastTime = null;
 
+    /**
+     * Measure elapsed time
+     *
+     * @param string $title
+     * @return PerformanceResult
+     */
     public static function measure(string $title = ''): PerformanceResult
     {
         $time = microtime(true);
@@ -49,6 +55,12 @@ class Performance extends DoNotCreate
         return $result;
     }
 
+    /**
+     * Measure code execution time
+     *
+     * @param \Closure $function
+     * @return PerformanceResult
+     */
     public static function measureCode(\Closure $function): PerformanceResult
     {
         static::$lastMemoryUsage = memory_get_usage();

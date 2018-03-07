@@ -1,6 +1,6 @@
 <?php
 /**
- * Fixin Framework
+ * /Fixin Framework
  *
  * Copyright (c) Attila Jenei
  *
@@ -9,18 +9,20 @@
 
 namespace Fixin\Resource;
 
-interface PrototypeInterface extends ManagedInterface
+interface PrototypeInterface extends ResourceInterface
 {
     /**
-     * Cloned instance with changed options
+     * Clone with options
      *
+     * @param array $options
      * @return static
      */
     public function withOptions(array $options): PrototypeInterface;
 
     /**
-     * Cloned instance with replaced Resource Manager
+     * Clone with resource manager
      *
+     * @param ResourceManagerInterface $resourceManager
      * @return static
      */
     public function withResourceManager(ResourceManagerInterface $resourceManager): PrototypeInterface;

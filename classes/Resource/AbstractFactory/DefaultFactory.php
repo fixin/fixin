@@ -11,13 +11,20 @@ namespace Fixin\Resource\AbstractFactory;
 
 class DefaultFactory extends AbstractFactory
 {
+    /**
+     * @inheritDoc
+     */
     protected function canProduce(string $key): bool
     {
         return class_exists($key);
     }
 
-    protected function produce(string $key, array $options, string $name)
+    /**
+     * @inheritDoc
+     */
+    protected function produce(string $key, array $options)
     {
-        return new $key($this->resourceManager, $options, $name);
+        // TODO: check of ResourceInterface?
+        return new $key($this->resourceManager, $options);
     }
 }

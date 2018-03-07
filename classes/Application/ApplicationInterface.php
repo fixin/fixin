@@ -14,6 +14,7 @@ interface ApplicationInterface
     /**
      * Display error page
      *
+     * @param int $statusCode
      * @return $this
      */
     public function displayErrorPage(int $statusCode): ApplicationInterface;

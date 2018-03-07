@@ -58,19 +58,28 @@ class RepositoryFactory extends AbstractFactory
      */
     protected $storage;
 
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * @inheritDoc
+     */
+    public function __construct(ResourceManagerInterface $resourceManager, array $options)
     {
-        parent::__construct($resourceManager, $options, $name);
+        parent::__construct($resourceManager, $options);
 
         $this->keyPrefixLength = strlen($this->keyPrefix);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function canProduce(string $key): bool
     {
         return strncasecmp($key, $this->keyPrefix, $this->keyPrefixLength) === 0;
     }
 
-    protected function produce(string $key, array $options, string $name)
+    /**
+     * @inheritDoc
+     */
+    protected function produce(string $key, array $options)
     {
         // CamelCase tags
         $length = strlen($key);
@@ -108,6 +117,6 @@ class RepositoryFactory extends AbstractFactory
             RepositoryInterface::ENTITY_PROTOTYPE => $classPrefix . 'Entity\\' . $basenameSingular,
             RepositoryInterface::ENTITY_CACHE => $this->entityCache,
             RepositoryInterface::STORAGE => $this->storage
-        ], $name);
+        ]);
     }
 }

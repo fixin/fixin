@@ -1,6 +1,6 @@
 <?php
 /**
- * Fixin Framework
+ * /Fixin Framework
  *
  * Copyright (c) Attila Jenei
  *
@@ -9,9 +9,17 @@
 
 namespace Fixin\Base\Container;
 
-class VariableContainer implements VariableContainerInterface
+use Fixin\Resource\Prototype;
+use Fixin\Support\Types;
+
+class VariableContainer extends Prototype implements VariableContainerInterface
 {
     use ContainerTrait;
+
+    protected const
+        THIS_SETS = [
+            self::VALUES => Types::ARRAY
+        ];
 
     /**
      * @var bool
@@ -19,22 +27,24 @@ class VariableContainer implements VariableContainerInterface
     protected $modified = false;
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function clear(): VariableContainerInterface
     {
         $this->values = [];
+
         $this->modified = true;
 
         return $this;
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
-    public function delete(string $name): VariableContainerInterface
+    public function delete(string $key): VariableContainerInterface
     {
-        unset($this->values[$name]);
+        unset($this->values[$key]);
+
         $this->modified = true;
 
         return $this;
@@ -48,29 +58,36 @@ class VariableContainer implements VariableContainerInterface
         $this->values = array_diff_key($this->values, array_flip($keys));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function isModified(): bool
     {
         return $this->modified;
     }
 
-    public function serialize(): string
+    /**
+     * @inheritDoc
+     */
+    public function serialize()
     {
         return serialize($this->values);
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
-    public function set(string $name, $value): VariableContainerInterface
+    public function set(string $key, $value): VariableContainerInterface
     {
-        $this->values[$name] = $value;
+        $this->values[$key] = $value;
+
         $this->modified = true;
 
         return $this;
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setModified(bool $modified): VariableContainerInterface
     {
@@ -80,17 +97,21 @@ class VariableContainer implements VariableContainerInterface
     }
 
     /**
-     * @return $this
+     * @inheritDoc
      */
     public function setMultiple(array $values): VariableContainerInterface
     {
         $this->values = $values + $this->values;
+
         $this->modified = true;
 
         return $this;
     }
 
-    public function unserialize($serialized): void
+    /**
+     * @inheritDoc
+     */
+    public function unserialize($serialized)
     {
         $this->values = unserialize($serialized);
     }

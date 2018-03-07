@@ -14,19 +14,27 @@ interface ResourceManagerInterface
     /**
      * Clone prototype
      *
-     * @return $class|PrototypeInterface|object|null
+     * @param string $name
+     * @param string $expectedClass
+     * @param array $options
+     * @return $expectedClass
      */
-    public function clone(string $name, string $expectedClass, array $options = []);
+    public function clone(string $name, string $expectedClass, array $options = []): object;
 
     /**
-     * Get instance
+     * Get resource
      *
-     * @return $class|ResourceInterface|null
+     * @param string $name
+     * @param string $expectedClass
+     * @return $expectedClass
      */
-    public function get(string $name, string $expectedClass);
+    public function get(string $name, string $expectedClass): ResourceInterface;
 
     /**
      * Check if the name has been accessible
+     *
+     * @param string $name
+     * @return bool
      */
     public function has(string $name): bool;
 }

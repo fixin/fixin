@@ -9,10 +9,6 @@
 
 return [
     'resourceManager' => [
-        'definitions' => [
-            'defaultFileSystem' => '*\Base\FileSystem\Local',
-        ],
-
         'abstractFactories' => [
             'repository' => [
                 'class' => 'Fixin\Resource\AbstractFactory\RepositoryFactory',
@@ -30,6 +26,10 @@ return [
                 ]
             ],
             'default' => 'Fixin\Resource\AbstractFactory\DefaultFactory'
+        ],
+
+        'definitions' => [
+            'defaultFileSystem' => '*\Base\FileSystem\Local',
         ]
     ]
 ];

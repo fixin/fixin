@@ -11,18 +11,17 @@ namespace Fixin\Resource;
 
 use Fixin\Support\Types;
 
-abstract class Managed implements ManagedInterface
+abstract class Managed
 {
     protected const
         INVALID_ARGUMENT_EXCEPTION = "Invalid '%s' argument: %s allowed",
-        INVALID_OPTION_EXCEPTION = "Invalid option '%s'",
-        INVALID_RESOURCE_EXCEPTION = "Invalid '%s' resource: %s allowed",
-        LAZY_LOADING = -1,
+        LAZY_LOADING = -2,
         OPTION_TYPE_CHECKS = Types::CHECK_FUNCTIONS,
         OPTION_TYPE_NAMES = Types::NAME_LIST,
-        REQUIRED_PROPERTY_EXCEPTION = "'%s' is required for %s",
+        REQUIRED_PROPERTY_EXCEPTION = "'%s' is required",
         THIS_SETS = [],
-        USING_SETTER = -2;
+        UNKNOWN_ARGUMENT_EXCEPTION = "Unknown '%s' argument",
+        USING_SETTER = -1;
 
     /**
      * @var array[]
@@ -34,17 +33,23 @@ abstract class Managed implements ManagedInterface
      */
     protected $resourceManager;
 
-    public function __construct(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * Managed constructor.
+     *
+     * @param ResourceManagerInterface $resourceManager
+     * @param array $options
+     */
+    public function __construct(ResourceManagerInterface $resourceManager, array $options)
     {
         $this->resourceManager = $resourceManager;
 
-        // Options
-        if (isset($options)) {
-            $this->configureWithOptions($options);
-        }
+        $this->configureWithOptions($options);
     }
 
     /**
+     * Configure with options
+     *
+     * @param array $options
      * @return $this
      * @throws Exception\InvalidArgumentException
      */
@@ -74,7 +79,7 @@ abstract class Managed implements ManagedInterface
                         /** @var callable|bool $function */
                         $function = self::OPTION_TYPE_CHECKS[$type] ?? false;
 
-                        if ($function === true || ($function && $function ($value))) {
+                        if ($function === true || ($function && $function($value))) {
                             $this->$name = $value;
 
                             continue 2;
@@ -96,24 +101,18 @@ abstract class Managed implements ManagedInterface
                 throw new Exception\InvalidArgumentException(sprintf(static::INVALID_ARGUMENT_EXCEPTION, $name, $interface));
             }
 
-            throw new Exception\InvalidArgumentException(sprintf(static::INVALID_OPTION_EXCEPTION, $name));
+            throw new Exception\InvalidArgumentException(sprintf(static::UNKNOWN_ARGUMENT_EXCEPTION, $name));
         }
 
         return $this;
     }
 
     /**
-     * @return $this
-     */
-    protected function configurationTest(string $name): self
-    {
-        $this->requirementTest($name);
-
-        return $this;
-    }
-
-    /**
-     * @throws Exception\InvalidArgumentException
+     * Load lazy property
+     *
+     * @param string $propertyName
+     * @param array $prototypeOptions
+     * @return mixed
      */
     protected function loadLazyProperty(string $propertyName, array $prototypeOptions = [])
     {
@@ -121,24 +120,19 @@ abstract class Managed implements ManagedInterface
             $set = $this->lazyLoadingProperties[$propertyName];
             $interface = $set[1];
 
+            // TODO ellenorizni hogy Prototype-e ha Resource; instanceof?
             return $this->$propertyName = is_subclass_of($interface, ResourceInterface::class) ? $this->resourceManager->get($set[0], $interface) : $this->resourceManager->clone($set[0], $interface, $prototypeOptions);
         }
 
         return $this->$propertyName = null;
     }
 
-    protected function requirementTest(string $name): void
-    {
-        foreach (static::THIS_SETS as $key => $type) {
-            if (isset($this->$key) || $type === Types::NULL || (is_array($type) && in_array(Types::NULL, $type, true))) {
-                continue;
-            }
-
-            throw new Exception\RuntimeException(sprintf(static::REQUIRED_PROPERTY_EXCEPTION, $key, $name));
-        }
-    }
-
     /**
+     * Set lazy loading property
+     *
+     * @param string $propertyName
+     * @param string $interface
+     * @param $value
      * @throws Exception\InvalidArgumentException
      */
     protected function setLazyLoadingProperty(string $propertyName, string $interface, $value): void
@@ -162,4 +156,21 @@ abstract class Managed implements ManagedInterface
         throw new Exception\InvalidArgumentException(sprintf(static::INVALID_ARGUMENT_EXCEPTION, $propertyName, 'string or ' . $interface));
     }
 
+    /**
+     * Test managed configuration
+     *
+     * @return $this
+     */
+    protected function testManagedConfiguration(): self
+    {
+        foreach (static::THIS_SETS as $key => $type) {
+            if (isset($this->$key) || $type === Types::NULL || (is_array($type) && in_array(Types::NULL, $type, true))) {
+                continue;
+            }
+
+            throw new Exception\RuntimeException(sprintf(static::REQUIRED_PROPERTY_EXCEPTION, $key));
+        }
+
+        return $this;
+    }
 }

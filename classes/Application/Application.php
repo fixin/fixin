@@ -18,13 +18,6 @@ use Throwable;
 
 class Application implements ApplicationInterface
 {
-    protected const
-        CONSOLE_FATAL_ERROR_TEXT = 'Fatal Error',
-        DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\Resource\ResourceManager',
-        HTTP_FATAL_ERROR_CODE = 500,
-        HTTP_FATAL_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error',
-        HTTP_FATAL_ERROR_HTML = '<h1>500 Internal server error</h1>';
-
     public const
         APPLICATION_ROOT = 'application',
         CARGO = 'cargo',
@@ -33,6 +26,13 @@ class Application implements ApplicationInterface
         RESOURCE_MANAGER_ROOT = 'resourceManager',
         ROUTE = 'route',
         SHOW_FATAL_ERROR = 'showFatalError';
+
+    protected const
+        CONSOLE_FATAL_ERROR_TEXT = 'Fatal Error',
+        DEFAULT_RESOURCE_MANAGER_CLASS = 'Fixin\Resource\ResourceManager',
+        HTTP_FATAL_ERROR_CODE = 500,
+        HTTP_FATAL_ERROR_HEADER = 'HTTP/1.1 500 Internal Server Error',
+        HTTP_FATAL_ERROR_HTML = '<h1>500 Internal server error</h1>';
 
     /**
      * @var array
@@ -44,6 +44,11 @@ class Application implements ApplicationInterface
      */
     protected $resourceManager;
 
+    /**
+     * Application constructor.
+     *
+     * @param array $config
+     */
     public function __construct(array $config)
     {
         // Config
@@ -60,6 +65,27 @@ class Application implements ApplicationInterface
         $this->resourceManager = new $resourceManagerClass($resourceManagerConfig);
     }
 
+    /**
+     * Dispatch to error route
+     *
+     * @param CargoInterface $cargo
+     */
+    protected function dispatchToErrorRoute(CargoInterface $cargo): void
+    {
+        try {
+            $this->resourceManager->get($this->config[static::ERROR_ROUTE], RouteInterface::class)
+                ->handle($cargo)
+                ->unpack();
+        }
+        catch (Throwable $t) {
+            // Double error
+            $this->displayFatalError($t);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function displayErrorPage(int $statusCode): ApplicationInterface
     {
         try {
@@ -72,29 +98,21 @@ class Application implements ApplicationInterface
                 $cargo->setStatusCode($statusCode);
             }
 
-            $this->errorRoute($cargo);
+            $this->dispatchToErrorRoute($cargo);
         }
         catch (Throwable $t) {
-            $this->fatalError($t);
+            $this->displayFatalError($t);
         }
 
         return $this;
     }
 
-    protected function errorRoute(CargoInterface $cargo): void
-    {
-        try {
-            $this->resourceManager->get($this->config[static::ERROR_ROUTE], RouteInterface::class)
-                ->handle($cargo)
-                ->unpack();
-        }
-        catch (Throwable $t) {
-            // Double error
-            $this->fatalError($t);
-        }
-    }
-
-    protected function fatalError(Throwable $throwable): void
+    /**
+     * Display fatal error
+     *
+     * @param Throwable $throwable
+     */
+    protected function displayFatalError(Throwable $throwable): void
     {
         $text = get_class($throwable) . ': ' . $throwable->getMessage();
         $output = ($this->config[static::SHOW_FATAL_ERROR] ?? true) ? $text : '';
@@ -115,6 +133,9 @@ class Application implements ApplicationInterface
         exit;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function run(): ApplicationInterface
     {
         $resourceManager = $this->resourceManager;
@@ -141,10 +162,10 @@ class Application implements ApplicationInterface
                     $cargo->setStatusCode(Http::STATUS_INTERNAL_SERVER_ERROR_500);
                 }
 
-                $this->errorRoute($cargo);
+                $this->dispatchToErrorRoute($cargo);
             }
             catch (Throwable $t) {
-                $this->fatalError($t);
+                $this->displayFatalError($t);
             }
         }
 

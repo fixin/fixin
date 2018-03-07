@@ -13,13 +13,13 @@ use Fixin\Support\Types;
 
 class NamespaceFallbackFactory extends AbstractFactory
 {
+    public const
+        SEARCH_ORDER = 'searchOrder';
+
     protected const
         THIS_SETS = parent::THIS_SETS + [
             self::SEARCH_ORDER => Types::ARRAY
         ];
-
-    public const
-        SEARCH_ORDER = 'searchOrder';
 
     /**
      * @var bool[]|string[]
@@ -31,6 +31,9 @@ class NamespaceFallbackFactory extends AbstractFactory
      */
     protected $searchOrder = [];
 
+    /**
+     * @inheritDoc
+     */
     protected function canProduce(string $key): bool
     {
         if ($key[0] !== '*' || $key[1] !== '\\') {
@@ -57,10 +60,14 @@ class NamespaceFallbackFactory extends AbstractFactory
         return $this->map[$key] = false;
     }
 
-    protected function produce(string $key, array $options, string $name)
+    /**
+     * @inheritDoc
+     */
+    protected function produce(string $key, array $options)
     {
         $mapped = $this->map[$key];
 
-        return $mapped ? new $mapped($this->resourceManager, $options, $name) : null;
+        // TODO chain to the next?
+        return $mapped ? new $mapped($this->resourceManager, $options) : null;
     }
 }

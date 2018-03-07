@@ -10,13 +10,21 @@
 namespace Fixin\Support\Factory;
 
 use Fixin\Base\Container\Container;
+use Fixin\Base\Container\ContainerInterface;
 use Fixin\Resource\FactoryInterface;
 use Fixin\Resource\ResourceManagerInterface;
 
 class ServerInfoFactory implements FactoryInterface
 {
-    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null, string $name = null)
+    /**
+     * Produce server info container
+     *
+     * @param ResourceManagerInterface $resourceManager
+     * @param array|null $options
+     * @return ContainerInterface
+     */
+    public function __invoke(ResourceManagerInterface $resourceManager, array $options = null): ContainerInterface
     {
-        return new Container($resourceManager, [Container::VALUES => $_SERVER], $name);
+        return new Container($resourceManager, [Container::VALUES => $_SERVER]);
     }
 }

@@ -17,6 +17,25 @@ return [
     'resourceManager' => [
         'class' => 'Fixin\Resource\ResourceManager',
 
+        'abstractFactories' => [
+            'repository' => [
+                'class' => 'Fixin\Resource\AbstractFactory\RepositoryFactory',
+                'options' => [
+                    'keyPrefix' => 'repository.',
+                    'classPrefix' => '*\\',
+                    'entityCache' => '*\Model\Entity\Cache\RuntimeCache',
+                    'storage' => 'dbStorage'
+                ]
+            ],
+            'namespaceFallback' => [
+                'class' => 'Fixin\Resource\AbstractFactory\NamespaceFallbackFactory',
+                'options' => [
+                    'searchOrder' => ['App', 'Fixin']
+                ]
+            ],
+            'default' => 'Fixin\Resource\AbstractFactory\DefaultFactory'
+        ],
+
         'definitions' => [
             // By class
             '*\View\View' => [
@@ -72,25 +91,6 @@ return [
                 ]
             ],
             'mainRoute.viewRender' => '*\Delivery\Node\ViewRender'
-        ],
-
-        'abstractFactories' => [
-            'repository' => [
-                'class' => 'Fixin\Resource\AbstractFactory\RepositoryFactory',
-                'options' => [
-                    'keyPrefix' => 'repository.',
-                    'classPrefix' => '*\\',
-                    'entityCache' => '*\Model\Entity\Cache\RuntimeCache',
-                    'storage' => 'dbStorage'
-                ]
-            ],
-            'namespaceFallback' => [
-                'class' => 'Fixin\Resource\AbstractFactory\NamespaceFallbackFactory',
-                'options' => [
-                    'searchOrder' => ['App', 'Fixin']
-                ]
-            ],
-            'default' => 'Fixin\Resource\AbstractFactory\DefaultFactory'
         ]
     ]
 ];

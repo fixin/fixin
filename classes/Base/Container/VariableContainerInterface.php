@@ -1,6 +1,6 @@
 <?php
 /**
- * Fixin Framework
+ * /Fixin Framework
  *
  * Copyright (c) Attila Jenei
  *
@@ -9,17 +9,24 @@
 
 namespace Fixin\Base\Container;
 
-interface VariableContainerInterface extends \Serializable
+use Fixin\Resource\PrototypeInterface;
+
+interface VariableContainerInterface extends ContainerInterface, PrototypeInterface, \Serializable
 {
     /**
+     * Clear all values
+     *
      * @return $this
      */
     public function clear(): VariableContainerInterface;
 
     /**
+     * Delete value of key
+     *
+     * @param string $key
      * @return $this
      */
-    public function delete(string $name): VariableContainerInterface;
+    public function delete(string $key): VariableContainerInterface;
 
     /**
      * Delete multiple items
@@ -30,28 +37,33 @@ interface VariableContainerInterface extends \Serializable
     public function deleteMultiple(array $keys): VariableContainerInterface;
 
     /**
-     * Get value for key or return default value for non-set key
+     * Determine if is modified
+     *
+     * @return bool
      */
-    public function get(string $name, $default = null);
-
-    /**
-     * Determine the key has value
-     */
-    public function has(string $name): bool;
-
     public function isModified(): bool;
 
     /**
+     * Set value
+     *
+     * @param string $key
+     * @param $value
      * @return $this
      */
-    public function set(string $name, $value): VariableContainerInterface;
+    public function set(string $key, $value): VariableContainerInterface;
 
     /**
+     * Set modified
+     *
+     * @param bool $modified
      * @return $this
      */
     public function setModified(bool $modified): VariableContainerInterface;
 
     /**
+     * Set multiple values
+     *
+     * @param array $values
      * @return $this
      */
     public function setMultiple(array $values): VariableContainerInterface;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Fixin Framework
+ * /Fixin Framework
  *
  * Copyright (c) Attila Jenei
  *
@@ -12,17 +12,17 @@ namespace Fixin\Resource;
 abstract class Prototype extends Managed implements PrototypeInterface
 {
     /**
-     * @return static
+     * @inheritDoc
      */
     public function withOptions(array $options): PrototypeInterface
     {
         return (clone $this)
             ->configureWithOptions($options)
-            ->configurationTest(get_class($this));
+            ->testManagedConfiguration();
     }
 
     /**
-     * @return static
+     * @inheritDoc
      */
     public function withResourceManager(ResourceManagerInterface $resourceManager): PrototypeInterface
     {
