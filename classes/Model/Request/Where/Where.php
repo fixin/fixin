@@ -31,6 +31,7 @@ class Where extends Prototype implements WhereInterface
         COMPARISON_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\ComparisonTag',
         EXISTS_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\ExistsTag',
         EXPRESSION_PROTOTYPE = '*\Model\Request\Expression',
+        FALSE_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\FalseTag',
         IN_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\InTag',
         NULL_TAG_PROTOTYPE = '*\Model\Request\Where\Tag\NullTag',
         WHERE_PROTOTYPE = '*\Model\Request\Where\Where',
@@ -228,6 +229,16 @@ class Where extends Prototype implements WhereInterface
     /**
      * @inheritDoc
      */
+    public function false(): WhereInterface
+    {
+        $this->tags[] = $this->resourceManager->clone(static::FALSE_TAG_PROTOTYPE, TagInterface::class);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getTags(): array
     {
         return $this->tags;
@@ -246,6 +257,10 @@ class Where extends Prototype implements WhereInterface
      */
     public function ids(array $entityIds): WhereInterface
     {
+        if (!$entityIds) {
+            return $this->false();
+        }
+
         $list = [];
         foreach ($entityIds as $entityId) {
             $list[] = $entityId->getArrayCopy();

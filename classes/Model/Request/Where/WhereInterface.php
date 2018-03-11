@@ -52,6 +52,13 @@ interface WhereInterface extends PrototypeInterface
     public function exists(RequestInterface $request): WhereInterface;
 
     /**
+     * Add: false
+     *
+     * @return $this
+     */
+    public function false(): WhereInterface;
+
+    /**
      * Get tags
      *
      * @return TagInterface[]

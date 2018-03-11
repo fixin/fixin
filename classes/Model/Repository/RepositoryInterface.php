@@ -22,7 +22,6 @@ interface RepositoryInterface extends ResourceInterface
 {
     public const
         AUTO_INCREMENT_COLUMN = 'autoIncrementColumn',
-        ENTITY_CACHE = 'entityCache',
         ENTITY_PROTOTYPE = 'entityPrototype',
         NAME = 'name',
         PRIMARY_KEY = 'primaryKey',

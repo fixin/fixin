@@ -88,8 +88,6 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
     {
         $this->position++;
         $this->currentFetched = false;
-
-        $this->prefetch();
     }
 
     /**
@@ -111,8 +109,6 @@ class PdoStorageResult extends Prototype implements StorageResultInterface
         if ($this->position > 0) {
             throw new Exception\RuntimeException(static::REWIND_IS_NOT_ALLOWED_EXCEPTION);
         }
-
-        $this->prefetch();
     }
 
     /**

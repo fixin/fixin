@@ -9,48 +9,38 @@
 
 namespace Fixin\Model\Entity;
 
-use Fixin\Model\Entity\Cache\CacheInterface;
-use Fixin\Model\Repository\RepositoryInterface;
-use Fixin\Model\Storage\StorageResultInterface;
 use Fixin\Resource\Prototype;
-use Fixin\Support\Types;
 
 class EntitySet extends Prototype implements EntitySetInterface
 {
     protected const
+        INVALID_PREFETCH_SIZE_EXCEPTION = 'Invalid prefetch size',
+        ITEMS_AND_ITERATOR_PRESENT_EXCEPTION = 'Items and iterator present',
         THIS_SETS = [
-            self::ENTITY_CACHE => [self::LAZY_LOADING => CacheInterface::class, Types::NULL],
-            self::ID_FETCH_MODE => Types::BOOL,
             self::ITEMS => self::USING_SETTER,
-            self::PREFETCH_SIZE => self::USING_SETTER,
-            self::REPOSITORY => [self::LAZY_LOADING => RepositoryInterface::class, Types::NULL],
-            self::STORAGE_RESULT => [self::USING_SETTER, Types::NULL]
+            self::ITERATOR => self::USING_SETTER,
+            self::PREFETCH_SIZE => self::USING_SETTER
         ];
 
     /**
-     * @var CacheInterface|false|null
+     * @var int|null
      */
-    protected $entityCache;
-
-    /**
-     * @var int
-     */
-    protected $fetchPosition = 0;
+    protected $count;
 
     /**
      * @var bool
      */
-    protected $idFetchMode = false;
+    protected $fetchInProgress = true;
 
     /**
-     * @var int
-     */
-    protected $itemCount = 0;
-
-    /**
-     * @var array
+     * @var EntityInterface[]|EntityIdInterface[]
      */
     protected $items = [];
+
+    /**
+     * @var \Iterator|null
+     */
+    protected $iterator;
 
     /**
      * @var int
@@ -63,71 +53,50 @@ class EntitySet extends Prototype implements EntitySetInterface
     protected $prefetchSize = 1;
 
     /**
-     * @var RepositoryInterface|false|null
+     * @inheritDoc
      */
-    protected $repository;
+    public function count()
+    {
+        return $this->count
+            ?? function () {
+                if ($this->fetchInProgress) {
+                    $this->prefetchAllItems();
+                }
+
+                return $this->count = count($this->items);
+            };
+    }
 
     /**
-     * @var StorageResultInterface
+     * @inheritDoc
      */
-    protected $storageResult;
-
-    public function count(): int
+    public function current()
     {
-        return $this->itemCount;
-    }
-
-    public function current(): ?EntityInterface
-    {
-        $this->prefetch();
-
-        return $this->items[$this->position] ?? null;
-    }
-
-    protected function fetchEntitiesUntil(int $position): void
-    {
-        while ($this->fetchPosition <= $position) {
-            $this->items[$this->fetchPosition] = $this->getEntityCache()->fetchResultEntity($this->storageResult);
-
-            $this->fetchPosition++;
-        }
-    }
-
-    protected function fetchIdsUntil(int $position): void
-    {
-        while ($this->fetchPosition <= $position) {
-            $this->items[$this->fetchPosition] = $this->getRepository()->createId($this->storageResult->current());
-            $this->storageResult->next();
-
-            $this->fetchPosition++;
-        }
-    }
-
-    protected function fetchUntil(int $position): void
-    {
-        $position = min($this->itemCount - 1, $position);
-
-        // ID fetch mode
-        if ($this->idFetchMode) {
-            $this->fetchIdsUntil($position);
-
-            return;
+        if ($this->fetchInProgress) {
+            $this->prefetchItems();
         }
 
-        $this->fetchEntitiesUntil($position);
+        $item = $this->items[$this->position] ?? null;
+
+        if ($item instanceof EntityIdInterface) {
+            $this->prefetchEntities();
+
+            return $this->items[$this->position];
+        }
+
+        return $item;
     }
 
-    protected function getEntityCache(): CacheInterface
-    {
-        return $this->entityCache ?: $this->loadLazyProperty(static::ENTITY_CACHE);
-    }
-
+    /**
+     * @inheritDoc
+     */
     public function getEntityIds(): array
     {
-        $this->fetchUntil($this->itemCount - 1);
+        if ($this->fetchInProgress) {
+            $this->prefetchAllItems();
+        }
 
         $items = [];
-
         foreach ($this->items as $item) {
             $items[] = $item instanceof EntityInterface ? $item->getEntityId() : $item;
         }
@@ -135,107 +104,180 @@ class EntitySet extends Prototype implements EntitySetInterface
         return $items;
     }
 
-    public function getRepository(): RepositoryInterface
-    {
-        return $this->repository ?: $this->loadLazyProperty(static::REPOSITORY);
-    }
-
-    public function key(): int
+    /**
+     * @inheritDoc
+     */
+    public function key()
     {
         return $this->position;
     }
 
-    public function next(): void
+    /**
+     * @inheritDoc
+     */
+    public function next()
     {
         $this->position++;
-
-        $this->prefetch();
-    }
-
-    protected function prefetch(): void
-    {
-        if ($this->position < $this->itemCount) {
-            if ($this->fetchPosition <= $this->position) {
-                $this->fetchUntil($this->position + $this->prefetchSize - 1);
-            }
-
-            if ($this->items[$this->position] instanceof EntityIdInterface) {
-                $this->prefetchBlock($this->position, $this->prefetchSize);
-            }
-        }
-    }
-
-    protected function prefetchAll(): void
-    {
-        $this->fetchUntil($this->itemCount - 1);
-        $this->prefetchBlock(0, $this->itemCount);
     }
 
     /**
-     * Prefetch block of items
+     * Prefetch all items
      */
-    protected function prefetchBlock(int $offset, int $length): void
+    protected function prefetchAllItems(): void
     {
-        $length = min($length, $this->itemCount - $offset);
-        $ids = [];
+        while ($this->iterator->valid()) {
+            $this->items[] = $this->iterator->current();
 
-        $p = $offset;
-        while ($length) {
-            $item = $this->items[$p];
-            if ($item instanceof EntityInterface) {
+            $this->iterator->next();
+        }
+
+        $this->fetchInProgress = false;
+    }
+
+    /**
+     * Prefetch entities
+     */
+    protected function prefetchEntities(): void
+    {
+        $ids = $this->prefetchEntityIds();
+
+        $entities = [];
+        foreach ($ids[0]->getRepository()->getByIds($ids) as $entity) {
+            $entities[$entity->getEntityId()] = $entity;
+        }
+
+        $position = $this->position;
+        foreach ($ids as $id) {
+            $this->items[$position] = $entities[$id];
+            $position++;
+        }
+    }
+
+    /**
+     * Prefetch entity IDs
+     *
+     * @return EntityIdInterface[]
+     */
+    protected function prefetchEntityIds(): array
+    {
+        $repository = $this->items[$this->position]->getRepository();
+
+        $position = $this->position + 1;
+        $before = min($this->position + $this->prefetchSize, count($this->items));
+
+        while ($position < $before) {
+            $item = $this->items[$position];
+
+            if (!$item instanceof EntityIdInterface || $item->getRepository() !== $repository) {
                 break;
             }
 
-            $ids[] = $item;
-            $length--;
-            $p++;
+            $position++;
         }
 
-        if ($ids) {
-            array_splice($this->items, $offset, count($ids), $this->getEntityCache()->getByIds($ids));
-        }
-    }
-
-    public function rewind(): void
-    {
-        $this->position = 0;
-
-        $this->prefetch();
-    }
-
-    protected function setItems(array $items): void
-    {
-        $this->items = $items;
-        $this->itemCount = count($items);
-    }
-
-    protected function setPrefetchSize(int $prefetchSize): void
-    {
-        $this->prefetchSize = $prefetchSize ?: 1;
-    }
-
-    protected function setStorageResult(StorageResultInterface $storageResult): void
-    {
-        $this->storageResult = $storageResult;
-        $this->items = [];
-        $this->itemCount = $storageResult->count();
+        return array_slice($this->items, $this->position, $position - $this->position);
     }
 
     /**
-     * @return $this
+     * Prefetch items
+     */
+    protected function prefetchItems(): void
+    {
+        $count = $this->prefetchSize;
+
+        while ($count && $this->iterator->valid()) {
+            $this->items[] = $this->iterator->current();
+
+            $this->iterator->next();
+            $count--;
+        }
+
+        $this->fetchInProgress = $this->iterator->valid();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rewind()
+    {
+        $this->position = 0;
+    }
+
+    /**
+     * Set items
+     *
+     * @param array $items
+     * @throws Exception\InvalidArgumentException
+     */
+    protected function setItems(array $items): void
+    {
+        if (isset($this->iterator)) {
+            throw new Exception\InvalidArgumentException(static::ITEMS_AND_ITERATOR_PRESENT_EXCEPTION);
+        }
+
+        $this->items = $items;
+        $this->count = count($items);
+        $this->fetchInProgress = false;
+    }
+
+    /**
+     * Set iterator
+     *
+     * @param \Iterator $iterator
+     * @throws Exception\InvalidArgumentException
+     */
+    protected function setIterator(\Iterator $iterator): void
+    {
+        if (isset($this->items)) {
+            throw new Exception\InvalidArgumentException(static::ITEMS_AND_ITERATOR_PRESENT_EXCEPTION);
+        }
+
+        $this->iterator = $iterator;
+
+        if ($iterator instanceof \Countable) {
+            $this->count = $iterator->count();
+        }
+    }
+
+    /**
+     * Set prefetch size
+     *
+     * @param int $prefetchSize
+     * @throws Exception\InvalidArgumentException
+     */
+    protected function setPrefetchSize(int $prefetchSize): void
+    {
+        if ($prefetchSize < 1) {
+            throw new Exception\InvalidArgumentException(static::INVALID_PREFETCH_SIZE_EXCEPTION);
+        }
+
+        $this->prefetchSize = $prefetchSize;
+    }
+
+    /**
+     * @inheritDoc
      */
     public function shuffle(): EntitySetInterface
     {
-        $this->fetchUntil($this->itemCount - 1);
+        if ($this->fetchInProgress) {
+            $this->prefetchAllItems();
+        }
 
         shuffle($this->items);
+
+        $this->position = 0;
 
         return $this;
     }
 
-    public function valid(): bool
+    /**
+     * @inheritDoc
+     */
+    public function valid()
     {
-        $this->prefetch();
+        if ($this->fetchInProgress) {
+            $this->prefetchItems();
+        }
 
         return isset($this->items[$this->position]);
     }

@@ -10,7 +10,7 @@
 namespace Fixin\Model\Repository;
 
 use DateTimeImmutable;
-use Fixin\Model\Entity\Cache\CacheInterface;
+use Generator;
 use Fixin\Model\Entity\EntityIdInterface;
 use Fixin\Model\Entity\EntityInterface;
 use Fixin\Model\Entity\EntitySetInterface;
@@ -37,7 +37,6 @@ class Repository extends Resource implements RepositoryInterface
         REQUEST_PROTOTYPE = '*\Model\Request\Request',
         THIS_SETS = [
             self::AUTO_INCREMENT_COLUMN => [Types::STRING, Types::NULL],
-            self::ENTITY_CACHE => [self::LAZY_LOADING => CacheInterface::class],
             self::ENTITY_PROTOTYPE => [self::LAZY_LOADING => EntityInterface::class],
             self::NAME => self::USING_SETTER,
             self::PRIMARY_KEY => Types::ARRAY,
@@ -48,11 +47,6 @@ class Repository extends Resource implements RepositoryInterface
      * @var string|null
      */
     protected $autoIncrementColumn;
-
-    /**
-     * @var CacheInterface|false
-     */
-    protected $entityCache;
 
     /**
      * @var EntityInterface|false
@@ -74,11 +68,17 @@ class Repository extends Resource implements RepositoryInterface
      */
     protected $storage;
 
+    /**
+     * @inheritDoc
+     */
     public function create(): EntityInterface
     {
         return clone $this->getEntityPrototype();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function createExpression(string $expression, array $parameters = []): ExpressionInterface
     {
         return $this->resourceManager->clone(static::EXPRESSION_PROTOTYPE, ExpressionInterface::class, [
@@ -87,6 +87,9 @@ class Repository extends Resource implements RepositoryInterface
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function createId(...$entityId): EntityIdInterface
     {
         $columnCount = count($this->primaryKey);
@@ -96,7 +99,7 @@ class Repository extends Resource implements RepositoryInterface
             $entityId = array_intersect_key($entityId[0], array_flip($this->primaryKey));
 
             if (count($entityId) === $columnCount) {
-                return $this->createIdWithArray($entityId);
+                return $this->createIdByArray($entityId);
             }
 
             throw new Exception\InvalidArgumentException(static::INVALID_ID_EXCEPTION);
@@ -104,13 +107,19 @@ class Repository extends Resource implements RepositoryInterface
 
         // List
         if (count($entityId) === $columnCount) {
-            return $this->createIdWithArray(array_combine($this->primaryKey, $entityId));
+            return $this->createIdByArray(array_combine($this->primaryKey, $entityId));
         }
 
         throw new Exception\InvalidArgumentException(static::INVALID_ID_EXCEPTION);
     }
 
-    private function createIdWithArray(array $entityId): EntityIdInterface
+    /**
+     * Create ID by array
+     *
+     * @param array $entityId
+     * @return EntityIdInterface
+     */
+    private function createIdByArray(array $entityId): EntityIdInterface
     {
         return $this->resourceManager->clone(static::ENTITY_ID_PROTOTYPE, EntityIdInterface::class, [
             EntityIdInterface::ENTITY_ID => $entityId,
@@ -118,6 +127,9 @@ class Repository extends Resource implements RepositoryInterface
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function createRequest(): RequestInterface
     {
         return $this->resourceManager->clone(static::REQUEST_PROTOTYPE, RequestInterface::class, [
@@ -125,17 +137,19 @@ class Repository extends Resource implements RepositoryInterface
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function delete(RequestInterface $request): int
     {
         $this->validateRequest($request);
 
-        if ($result = $this->getStorage()->delete($request)) {
-            $this->getEntityCache()->invalidate();
-        }
-
-        return $result;
+        return $this->getStorage()->delete($request);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function deleteByIds(array $ids): int
     {
         $request = $this->createRequest();
@@ -144,35 +158,38 @@ class Repository extends Resource implements RepositoryInterface
         return $this->delete($request);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getAutoIncrementColumn(): ?string
     {
         return $this->autoIncrementColumn;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getById(EntityIdInterface $id): ?EntityInterface
     {
-        $entities = $this->getEntityCache()->getByIds([$id]);
-
-        return reset($entities);
+        return $this->getByIds([$id])->current();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getByIds(array $ids): EntitySetInterface
     {
-        return $this->resourceManager->clone(static::ENTITY_SET_PROTOTYPE, EntitySetInterface::class, [
-            EntitySetInterface::REPOSITORY => $this,
-            EntitySetInterface::ENTITY_CACHE => $this->getEntityCache(),
-            EntitySetInterface::ITEMS => $this->getEntityCache()->getByIds($ids)
-        ]);
+        $request = $this->createRequest();
+        $request->getWhere()->id($ids);
+
+        return $this->select($request);
     }
 
-    protected function getEntityCache(): CacheInterface
-    {
-        return $this->entityCache ?: $this->loadLazyProperty(static::ENTITY_CACHE, [
-            CacheInterface::REPOSITORY => $this,
-            CacheInterface::ENTITY_PROTOTYPE => $this->getEntityPrototype()
-        ]);
-    }
-
+    /**
+     * Get entity prototype
+     *
+     * @return EntityInterface
+     */
     protected function getEntityPrototype(): EntityInterface
     {
         return $this->entityPrototype ?: $this->loadLazyProperty(static::ENTITY_PROTOTYPE, [
@@ -180,21 +197,35 @@ class Repository extends Resource implements RepositoryInterface
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getPrimaryKey(): array
     {
         return $this->primaryKey;
     }
 
+    /**
+     * Get storage
+     *
+     * @return StorageInterface
+     */
     protected function getStorage(): StorageInterface
     {
         return $this->storage ?: $this->loadLazyProperty(static::STORAGE);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function insert(array $set): EntityIdInterface
     {
         if ($this->getStorage()->insert($this, $set)) {
@@ -204,12 +235,15 @@ class Repository extends Resource implements RepositoryInterface
                 $rowId[$this->autoIncrementColumn] = $this->storage->getLastInsertValue();
             }
 
-            return $this->createIdWithArray($rowId);
+            return $this->createIdByArray($rowId);
         }
 
         return null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function insertInto(RepositoryInterface $repository, RequestInterface $request): int
     {
         $this->validateRequest($request);
@@ -217,27 +251,62 @@ class Repository extends Resource implements RepositoryInterface
         return $this->getStorage()->insertInto($repository, $request);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function insertMultiple(array $rows): int
     {
         return $this->getStorage()->insertMultiple($this, $rows);
     }
 
     /**
-     * @throws Exception\EntityRefreshFaultException
-     * @throws Exception\NotStoredEntityException
+     * Iterate entities
      *
-     * @return $this
+     * @param RequestInterface $request
+     * @return Generator
+     */
+    protected function iterateEntities(RequestInterface $request): Generator
+    {
+        echo 'iterateEntities started', PHP_EOL;
+
+        $entityPrototype = $this->getEntityPrototype();
+
+        foreach ($this->selectRawData((clone $request)->setColumns([])) as $item) {
+            echo "iterateEntities foreach: ", print_r($item), PHP_EOL;
+
+            yield (clone $entityPrototype)->exchangeArray($item);
+        }
+    }
+
+    /**
+     * Iterate entity IDs
+     *
+     * @param RequestInterface $request
+     * @return Generator
+     */
+    protected function iterateEntityIds(RequestInterface $request): Generator
+    {
+        echo 'iterateEntityIds started', PHP_EOL;
+
+        foreach ($this->selectRawData((clone $request)->setColumns($this->primaryKey)) as $item) {
+            echo "iterateEntityIds foreach: ", print_r($item), PHP_EOL;
+
+            yield $this->createIdByArray($item);
+        }
+    }
+
+    /**
+     * @inheritDoc
      */
     public function refresh(EntityInterface $entity): RepositoryInterface
     {
         if ($entity->isStored()) {
             $request = $this->createRequest();
             $request->getWhere()->id($entity->getEntityId());
-            $data = $request->fetchRawData()->current();
 
+            $data = $request->fetchRawData()->current();
             if ($data !== false) {
                 $entity->exchangeArray($data);
-                $this->getEntityCache()->update($entity);
 
                 return $this;
             }
@@ -248,6 +317,9 @@ class Repository extends Resource implements RepositoryInterface
         throw new Exception\NotStoredEntityException(static::NOT_STORED_ENTITY_EXCEPTION);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function save(EntityInterface $entity): EntityIdInterface
     {
         $set = $entity->collectSaveData();
@@ -255,44 +327,48 @@ class Repository extends Resource implements RepositoryInterface
         if ($oldId = $entity->getEntityId()) {
             $request = $this->createRequest();
             $request->getWhere()->id($oldId);
+
             $this->getStorage()->update($set, $request);
 
             $id = array_replace($oldId->getArrayCopy(), Arrays::intersectByKeyList($set, $this->primaryKey));
-            if ($id === $oldId->getArrayCopy()) {
-                return $oldId;
-            }
 
-            $this->getEntityCache()->remove($entity);
-
-            return $this->createIdWithArray($id);
+            return $id === $oldId->getArrayCopy() ? $oldId : $this->createIdByArray($id);
         }
 
         return $this->insert($set);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function select(RequestInterface $request): EntitySetInterface
     {
-        $fetchRequest = clone $request;
-        $fetchRequest->setColumns($fetchRequest->isIdFetchEnabled() ? $this->primaryKey : []);
-
         return $this->resourceManager->clone(static::ENTITY_SET_PROTOTYPE, EntitySetInterface::class, [
-            EntitySetInterface::REPOSITORY => $this,
-            EntitySetInterface::ENTITY_CACHE => $this->getEntityCache(),
-            EntitySetInterface::STORAGE_RESULT => $this->selectRawData($fetchRequest),
-            EntitySetInterface::ID_FETCH_MODE => $fetchRequest->isIdFetchEnabled()
+            EntitySetInterface::ITERATOR => $request->isIdFetchEnabled() ? $this->iterateEntityIds($request) : $this->iterateEntities($request)
         ]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function selectAll(): EntitySetInterface
     {
         return $this->createRequest()->fetch();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function selectColumn(RequestInterface $request): StorageResultInterface
     {
+        $this->validateRequest($request);
+
         return $this->getStorage()->selectColumn($request);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function selectExistsValue(RequestInterface $request): bool
     {
         $this->validateRequest($request);
@@ -300,12 +376,20 @@ class Repository extends Resource implements RepositoryInterface
         return $this->getStorage()->selectExistsValue($request);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function selectRawData(RequestInterface $request): StorageResultInterface
     {
+        $this->validateRequest($request);
+
         return $this->getStorage()->select($request);
     }
 
     /**
+     * Set name
+     *
+     * @param string $name
      * @throws Exception\InvalidArgumentException
      */
     protected function setName(string $name): void
@@ -319,23 +403,28 @@ class Repository extends Resource implements RepositoryInterface
         throw new Exception\InvalidArgumentException(sprintf(static::INVALID_NAME_EXCEPTION, $name));
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toDateTime($value): ?DateTimeImmutable
     {
         return $this->getStorage()->toDateTime($value);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function update(array $set, RequestInterface $request): int
     {
         $this->validateRequest($request);
 
-        if ($result = $this->getStorage()->update($set, $request)) {
-            $this->getEntityCache()->invalidate();
-        }
-
-        return $result;
+        return $this->getStorage()->update($set, $request);
     }
 
     /**
+     * Validate request
+     *
+     * @param RequestInterface $request
      * @throws Exception\InvalidRequestException
      */
     protected function validateRequest(RequestInterface $request): void

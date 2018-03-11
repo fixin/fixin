@@ -81,6 +81,15 @@ interface DictionaryInterface extends ResourceInterface
     public function set(string $key, $value, int $expireTime = 0): DictionaryInterface;
 
     /**
+     * Set expire time of an item
+     *
+     * @param string $key
+     * @param int $expireTime
+     * @return $this
+     */
+    public function setExpireTime(string $key, int $expireTime = 0): DictionaryInterface;
+
+    /**
      * Store multiple items
      *
      * @param array $items

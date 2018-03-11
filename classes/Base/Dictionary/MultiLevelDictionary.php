@@ -45,9 +45,9 @@ class MultiLevelDictionary extends Resource implements DictionaryInterface
     public function decrement(string $key, int $step = 1): int
     {
         $levels = $this->levels;
-        $value = reset($levels)->decrement($key, $step);
+        $value = end($levels)->decrement($key, $step);
 
-        while ($level = next($levels)) {
+        while ($level = prev($levels)) {
             $level->set($key, $value);
         }
 
@@ -118,9 +118,9 @@ class MultiLevelDictionary extends Resource implements DictionaryInterface
     public function increment(string $key, int $step = 1): int
     {
         $levels = $this->levels;
-        $value = reset($levels)->increment($key, $step);
+        $value = end($levels)->increment($key, $step);
 
-        while ($level = next($levels)) {
+        while ($level = prev($levels)) {
             $level->set($key, $value);
         }
 
@@ -134,6 +134,18 @@ class MultiLevelDictionary extends Resource implements DictionaryInterface
     {
         foreach ($this->levels as $level) {
             $level->set($key, $value, $expireTime);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setExpireTime(string $key, int $expireTime = 0): DictionaryInterface
+    {
+        foreach ($this->levels as $level) {
+            $level->setExpireTime($key, $expireTime);
         }
 
         return $this;

@@ -179,8 +179,18 @@ class MemcachedDictionary extends Resource implements DictionaryInterface
      */
     public function set(string $key, $value, int $expireTime = 0): DictionaryInterface
     {
-        $this->memcached->set($key, $value, $expireTime > 0 ? (new \DateTimeImmutable("now +$expireTime seconds"))->getTimestamp() : $expireTime);
+        $this->memcached->set($key, $value, $expireTime > 0 ? (new \DateTimeImmutable("now +$expireTime seconds"))->getTimestamp() : 0);
 
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setExpireTime(string $key, int $expireTime = 0): DictionaryInterface
+    {
+        $this->memcached->touch($key, $expireTime > 0 ? (new \DateTimeImmutable("now +$expireTime seconds"))->getTimestamp() : 0);
+// TODO datetimeimmutable kirakasa functionbe?
         return $this;
     }
 
@@ -189,7 +199,7 @@ class MemcachedDictionary extends Resource implements DictionaryInterface
      */
     public function setMultiple(array $items, int $expireTime = 0): DictionaryInterface
     {
-        $this->memcached->setMulti($items, $expireTime > 0 ? (new \DateTimeImmutable("now +$expireTime seconds"))->getTimestamp() : $expireTime);
+        $this->memcached->setMulti($items, $expireTime > 0 ? (new \DateTimeImmutable("now +$expireTime seconds"))->getTimestamp() : 0);
 
         return $this;
     }
