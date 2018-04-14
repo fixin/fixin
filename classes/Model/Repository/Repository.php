@@ -90,6 +90,7 @@ class Repository extends Resource implements RepositoryInterface
     /**
      * @inheritDoc
      */
+    // TODO: atgondolni, hogy kell-e igy, vagy csak a tömbös változat legyen
     public function createId(...$entityId): EntityIdInterface
     {
         $columnCount = count($this->primaryKey);

@@ -9,6 +9,7 @@
 
 namespace Fixin\Resource\AbstractFactory;
 
+use Fixin\Model\Repository\CachedRepository;
 use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Resource\ResourceManagerInterface;
 use Fixin\Support\Types;
@@ -19,6 +20,7 @@ class RepositoryFactory extends AbstractFactory
     public const
         CLASS_PREFIX = 'classPrefix',
         ENTITY_CACHE = 'entityCache',
+        ENTITY_CACHE_PREFIX = 'entityCachePrefix',
         KEY_PREFIX = 'keyPrefix',
         STORAGE = 'storage';
 
@@ -29,6 +31,7 @@ class RepositoryFactory extends AbstractFactory
         THIS_SETS = parent::THIS_SETS + [
             self::CLASS_PREFIX => Types::STRING,
             self::ENTITY_CACHE => Types::STRING,
+            self::ENTITY_CACHE_PREFIX => Types::STRING,
             self::KEY_PREFIX => Types::STRING,
             self::STORAGE => Types::STRING
         ];
@@ -42,6 +45,11 @@ class RepositoryFactory extends AbstractFactory
      * @var string
      */
     protected $entityCache;
+
+    /**
+     * @var string
+     */
+    protected $entityCachePrefix = 'entity.';
 
     /**
      * @var string
@@ -112,11 +120,21 @@ class RepositoryFactory extends AbstractFactory
         }
 
         // Chaining
-        return $this->next->chainProduce($classPrefix . 'Repository\\' . $basename, $options + [
+        $className = $classPrefix . 'Repository\\' . $basename;
+
+        $options += [
             RepositoryInterface::NAME => $tableName,
             RepositoryInterface::ENTITY_PROTOTYPE => $classPrefix . 'Entity\\' . $basenameSingular,
-            RepositoryInterface::ENTITY_CACHE => $this->entityCache,
             RepositoryInterface::STORAGE => $this->storage
-        ]);
+        ];
+
+        if (is_subclass_of($className, CachedRepository::class)) {
+            $options + [
+                CachedRepository::CACHE => $this->entityCache,
+                CachedRepository::PREFIX => $this->entityCachePrefix . $tableName
+            ];
+        }
+
+        return $this->next->chainProduce($className, $options);
     }
 }

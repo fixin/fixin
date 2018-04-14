@@ -17,7 +17,7 @@ use Fixin\Model\Repository\RepositoryInterface;
 use Fixin\Model\Request\ExpressionInterface;
 use Fixin\Model\Request\RequestInterface;
 use Fixin\Model\Request\Where\Tag\BetweenTag;
-use Fixin\Model\Request\Where\Tag\CompareTag;
+use Fixin\Model\Request\Where\Tag\ComparisonTag;
 use Fixin\Model\Request\Where\Tag\ExistsTag;
 use Fixin\Model\Request\Where\Tag\InTag;
 use Fixin\Model\Request\Where\Tag\NullTag;
@@ -28,6 +28,7 @@ use Fixin\Support\Numbers;
 
 abstract class AbstractGrammar extends Resource implements GrammarInterface
 {
+    // TODO: atrakni masik classbe a whereXyz functionoket
     protected const
         ALIAS_MASK = '%s AS %s',
         ARRAY_MASK = '(%s)',
@@ -54,6 +55,13 @@ abstract class AbstractGrammar extends Resource implements GrammarInterface
         WHERE_TAG_METHOD = 'whereTag',
         WHERE_TAG_SEPARATOR = PHP_EOL . "\t %s ";
 
+    /**
+     * Convert expression array to string
+     *
+     * @param array $expression
+     * @param SentenceInterface $sentence
+     * @return string
+     */
     protected function expressionArrayToString(array $expression, SentenceInterface $sentence): string
     {
         if (!$expression) {
@@ -68,6 +76,13 @@ abstract class AbstractGrammar extends Resource implements GrammarInterface
         return sprintf(static::ARRAY_MASK, implode(static::LIST_SEPARATOR, $result));
     }
 
+    /**
+     * Convert expression to string
+     *
+     * @param $expression
+     * @param SentenceInterface $sentence
+     * @return string
+     */
     protected function expressionToString($expression, SentenceInterface $sentence): string
     {
         if (is_array($expression)) {
@@ -100,6 +115,9 @@ abstract class AbstractGrammar extends Resource implements GrammarInterface
         return static::PLACEHOLDER;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function insert(RepositoryInterface $repository, array $set): SentenceInterface
     {
         return $this->insertMultiple($repository, [$set]);
@@ -240,6 +258,9 @@ abstract class AbstractGrammar extends Resource implements GrammarInterface
         return $select->getText();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function toDateTime($value): ?DateTimeImmutable
     {
         if (Numbers::isInt($value)) {
@@ -255,7 +276,7 @@ abstract class AbstractGrammar extends Resource implements GrammarInterface
             , $this->expressionToString($tag->getMax(), $sentence));
     }
 
-    protected function whereTagCompare(CompareTag $tag, SentenceInterface $sentence): string
+    protected function whereTagCompare(ComparisonTag $tag, SentenceInterface $sentence): string
     {
         return static::POSITIVE_WHERE_TAG[$tag->isPositive()] . $this->expressionToString($tag->getLeft(), $sentence) . ' ' . $tag->getOperator() . ' ' . $this->expressionToString($tag->getRight(), $sentence);
     }

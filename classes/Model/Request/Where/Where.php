@@ -261,10 +261,9 @@ class Where extends Prototype implements WhereInterface
             return $this->false();
         }
 
-        $list = [];
-        foreach ($entityIds as $entityId) {
-            $list[] = $entityId->getArrayCopy();
-        }
+        $list = array_map(function (EntityIdInterface $id) {
+            return $id->getArrayCopy();
+        }, $entityIds);
 
         return $this->in(array_keys(reset($list)), $list);
     }

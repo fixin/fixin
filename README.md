@@ -9,13 +9,9 @@
 
 Framework for PHP 7
 
-## Alpha Version
-
-This is a preview. Architecture changes are possible. Should not be used in production.
-
 ## Requirements
 
-PHP 7.1.3+
+PHP 7.2+
 
 ## License
 

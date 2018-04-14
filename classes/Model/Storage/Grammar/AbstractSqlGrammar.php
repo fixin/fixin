@@ -17,6 +17,7 @@ use Fixin\Model\Request\UnionInterface;
 
 abstract class AbstractSqlGrammar extends AbstractGrammar
 {
+    // TODO: atrakni masik classbe a clauseXyz functionoket?
     protected const
         ALL_COLUMNS = '*',
         METHOD_PREFIX_CLAUSE = 'clause',

@@ -130,7 +130,7 @@ class MultiLevelDictionary extends Resource implements DictionaryInterface
     /**
      * @inheritDoc
      */
-    public function set(string $key, $value, int $expireTime = 0): DictionaryInterface
+    public function set(string $key, $value, ?int $expireTime = null): DictionaryInterface
     {
         foreach ($this->levels as $level) {
             $level->set($key, $value, $expireTime);
@@ -142,7 +142,7 @@ class MultiLevelDictionary extends Resource implements DictionaryInterface
     /**
      * @inheritDoc
      */
-    public function setExpireTime(string $key, int $expireTime = 0): DictionaryInterface
+    public function setExpireTime(string $key, ?int $expireTime = null): DictionaryInterface
     {
         foreach ($this->levels as $level) {
             $level->setExpireTime($key, $expireTime);
@@ -181,7 +181,7 @@ class MultiLevelDictionary extends Resource implements DictionaryInterface
     /**
      * @inheritDoc
      */
-    public function setMultiple(array $items, int $expireTime = 0): DictionaryInterface
+    public function setMultiple(array $items, ?int $expireTime = null): DictionaryInterface
     {
         foreach ($this->levels as $level) {
             $level->setMultiple($items, $expireTime);
